@@ -1,0 +1,6 @@
+include 'baleen'
+include 'baleen-avro-generator'
+include 'baleen-csv'
+include 'baleen-xml'
+
+rootProject.name = 'Baleen'

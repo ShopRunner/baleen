@@ -1,0 +1,6 @@
+dependencies {
+    compile project(':baleen')
+    compile "org.apache.avro:avro:1.8.1"
+    compile group: 'com.julianpeeters', name: 'avrohugger-core_2.11', version: '0.16.0'
+}
+
