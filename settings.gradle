@@ -2,5 +2,6 @@ include 'baleen'
 include 'baleen-avro-generator'
 include 'baleen-csv'
 include 'baleen-xml'
+include 'baleen-xsd-generator'
 
 rootProject.name = 'baleen'
