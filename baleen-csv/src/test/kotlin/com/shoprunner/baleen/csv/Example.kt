@@ -1,6 +1,7 @@
 package com.shoprunner.baleen.csv
 
 import com.shoprunner.baleen.Baleen
+import com.shoprunner.baleen.Baleen.describeBy
 import com.shoprunner.baleen.ValidationError
 import com.shoprunner.baleen.csv.PrintUtil.printErrors
 import com.shoprunner.baleen.csv.PrintUtil.printSuccessFailureCount
@@ -10,25 +11,25 @@ import com.shoprunner.baleen.types.StringCoercibleToLong
 import com.shoprunner.baleen.types.StringType
 import io.reactivex.rxkotlin.toFlowable
 
-val dogDescription = Baleen.describe("Dog") {
-    it.attr(
+val dogDescription = describeBy("Dog") {
+    attr(
         name = "name",
         type = StringType(),
         required = true)
 
-    it.attr(
+    attr(
         name = "license",
         type = StringType(),
         required = true)
 
-    it.attr(
+    attr(
         name = "legs",
         type = StringCoercibleToLong(LongType(min = 0, max = 4)),
         required = true)
 
-    it.warnOnExtraAttributes()
+    warnOnExtraAttributes()
 
-    it.test { dataTrace, data ->
+    test { dataTrace, data ->
         val license = data["license"]
         val name = data["name"]
         if (name !is String || license !is String ||
