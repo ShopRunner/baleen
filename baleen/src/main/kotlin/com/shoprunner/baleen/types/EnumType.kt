@@ -11,7 +11,6 @@ class EnumType(val enum: List<String>) : BaleenType {
 
     constructor(enum: Array<out Enum<*>>) : this(enum.map { it.name })
 
-
     override fun name() = "enum"
 
     override fun validate(dataTrace: DataTrace, value: Any?): Sequence<ValidationResult> =

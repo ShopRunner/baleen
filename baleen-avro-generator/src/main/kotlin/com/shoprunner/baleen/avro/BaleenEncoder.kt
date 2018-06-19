@@ -142,8 +142,8 @@ object BaleenEncoder {
                     when (schema.logicalType.name) {
                         "timestamp-millis" -> CodeBlock.of("%T()", LongCoercibleToInstant::class)
                     // TODO: Handle more logical types
-                    //"timestamp-micros" -> CodeBlock.of("%T()", ?::class)
-                    //"time-micros" -> CodeBlock.of("%T()", ?::class)
+                    // "timestamp-micros" -> CodeBlock.of("%T()", ?::class)
+                    // "time-micros" -> CodeBlock.of("%T()", ?::class)
                         else -> CodeBlock.of("%T()", LongType::class)
                     }
                 } else CodeBlock.of("%T()", LongType::class)

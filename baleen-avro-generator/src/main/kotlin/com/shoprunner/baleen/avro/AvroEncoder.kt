@@ -21,6 +21,7 @@ import org.apache.avro.LogicalTypes
 import org.apache.avro.Schema
 import java.io.File
 import java.nio.file.Path
+import java.time.Instant
 
 object AvroEncoder {
 
@@ -35,7 +36,7 @@ object AvroEncoder {
             is LongType -> Schema.create(Schema.Type.LONG)
             is StringType -> Schema.create(Schema.Type.STRING)
             is StringConstantType -> Schema.create(Schema.Type.STRING)
-            is EnumType -> Schema.createEnum(null, null, null, baleenType.enum.toList())
+            is EnumType -> Schema.createEnum("GeneratedEnum${Instant.now().toEpochMilli()}", null, null, baleenType.enum.toList())
             is InstantType -> LogicalTypes.timestampMillis().addToSchema(Schema.create(Schema.Type.LONG))
             is TimestampMillisType -> LogicalTypes.timestampMillis().addToSchema(Schema.create(Schema.Type.LONG))
             /* TODO: More Logical Types */
