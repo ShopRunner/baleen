@@ -19,4 +19,21 @@ internal class LongTypeTest {
         assertThat(LongType(min = 1).validate(dataTrace(), 1L)).isEmpty()
         assertThat(LongType(min = 1).validate(dataTrace(), 2L)).isEmpty()
     }
+
+    @Test
+    fun `checks maximum value`() {
+        assertThat(LongType(max = 1).validate(dataTrace(), 0L)).isEmpty()
+        assertThat(LongType(max = 1).validate(dataTrace(), 1L)).isEmpty()
+        assertThat(LongType(max = 1).validate(dataTrace(), 2L)).containsExactly(ValidationError(dataTrace(), "is greater than 1", 2L))
+    }
+
+    @Test
+    fun `checks null`() {
+        assertThat(LongType().validate(dataTrace(), null)).containsExactly(ValidationError(dataTrace(), "is null", null))
+    }
+
+    @Test
+    fun `checks not Long`() {
+        assertThat(LongType().validate(dataTrace(), false)).containsExactly(ValidationError(dataTrace(), "is not a long", false))
+    }
 }

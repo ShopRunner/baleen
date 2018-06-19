@@ -15,7 +15,7 @@ open class StringCoercibleToType<out T : BaleenType>(type: T, private val conver
                 else -> {
                     val newType = converter(value)
                     if (newType == null) {
-                        sequenceOf(ValidationError(dataTrace, "could not be parsed to ${type.name()}.", value))
+                        sequenceOf(ValidationError(dataTrace, "could not be parsed to ${type.name()}", value))
                     } else {
                         type.validate(dataTrace, newType)
                     }
