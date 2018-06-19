@@ -8,6 +8,7 @@ import com.shoprunner.baleen.types.DoubleType
 import com.shoprunner.baleen.types.IntType
 import com.shoprunner.baleen.types.LongType
 import com.shoprunner.baleen.types.LongCoercibleToInstant
+import com.shoprunner.baleen.types.InstantType
 import com.shoprunner.baleen.types.StringType
 import com.shoprunner.baleen.types.EnumType
 import com.shoprunner.baleen.types.MapType
@@ -140,7 +141,7 @@ object BaleenEncoder {
             Schema.Type.LONG -> {
                 if (schema.logicalType != null) {
                     when (schema.logicalType.name) {
-                        "timestamp-millis" -> CodeBlock.of("%T()", LongCoercibleToInstant::class)
+                        "timestamp-millis" -> CodeBlock.of("%T(%T())", LongCoercibleToInstant::class, InstantType::class)
                     // TODO: Handle more logical types
                     // "timestamp-micros" -> CodeBlock.of("%T()", ?::class)
                     // "time-micros" -> CodeBlock.of("%T()", ?::class)
