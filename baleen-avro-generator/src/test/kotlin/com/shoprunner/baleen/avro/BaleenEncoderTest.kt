@@ -180,7 +180,7 @@ internal class BaleenEncoderTest {
         fun `avroTypeToBaleenType converts Long time-micros`() {
             val timestampMilliSchema = LogicalType("timestamp-millis").addToSchema(Schema.create(Schema.Type.LONG))
             val code = BaleenEncoder.avroTypeToBaleenType(timestampMilliSchema)
-            Assertions.assertThat(codeToString(code)).contains("LongCoercibleToInstant()")
+            Assertions.assertThat(codeToString(code)).contains("LongCoercibleToInstant(InstantType())")
         }
 
         @Test
