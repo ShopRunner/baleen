@@ -19,30 +19,30 @@ internal class EnumTypeTest {
 
     @Test
     fun `passes string enum`() {
-        assertThat(EnumType("a", "b", "c").validate(dataTrace(), "a")).isEmpty()
-        assertThat(EnumType("a", "b", "c").validate(dataTrace(), "b")).isEmpty()
-        assertThat(EnumType("a", "b", "c").validate(dataTrace(), "c")).isEmpty()
+        assertThat(EnumType("Alphabet", "a", "b", "c").validate(dataTrace(), "a")).isEmpty()
+        assertThat(EnumType("Alphabet", "a", "b", "c").validate(dataTrace(), "b")).isEmpty()
+        assertThat(EnumType("Alphabet", "a", "b", "c").validate(dataTrace(), "c")).isEmpty()
     }
 
     @Test
     fun `passes enum objects`() {
-        assertThat(EnumType(Alphabet.values()).validate(dataTrace(), Alphabet.a)).isEmpty()
-        assertThat(EnumType(Alphabet.values()).validate(dataTrace(), Alphabet.b)).isEmpty()
-        assertThat(EnumType(Alphabet.values()).validate(dataTrace(), Alphabet.c)).isEmpty()
+        assertThat(EnumType("Alphabet", Alphabet.values()).validate(dataTrace(), Alphabet.a)).isEmpty()
+        assertThat(EnumType("Alphabet", Alphabet.values()).validate(dataTrace(), Alphabet.b)).isEmpty()
+        assertThat(EnumType("Alphabet", Alphabet.values()).validate(dataTrace(), Alphabet.c)).isEmpty()
     }
 
     @Test
     fun `checks unsupported string enums`() {
-        assertThat(EnumType("a", "b", "c").validate(dataTrace(), "one")).containsExactly(ValidationError(dataTrace(), "is not contained in enum [a, b, c]", "one"))
+        assertThat(EnumType("Alphabet", "a", "b", "c").validate(dataTrace(), "one")).containsExactly(ValidationError(dataTrace(), "is not contained in enum Alphabet [a, b, c]", "one"))
     }
 
     @Test
     fun `checks unsupported enums`() {
-        assertThat(EnumType(Alphabet.values()).validate(dataTrace(), Numbers.one)).containsExactly(ValidationError(dataTrace(), "is not contained in enum [a, b, c]", Numbers.one))
+        assertThat(EnumType("Alphabet", Alphabet.values()).validate(dataTrace(), Numbers.one)).containsExactly(ValidationError(dataTrace(), "is not contained in enum Alphabet [a, b, c]", Numbers.one))
     }
 
     @Test
     fun `checks null`() {
-        assertThat(EnumType("a", "b", "c").validate(dataTrace(), null)).containsExactly(ValidationError(dataTrace(), "is null", null))
+        assertThat(EnumType("Alphabet", "a", "b", "c").validate(dataTrace(), null)).containsExactly(ValidationError(dataTrace(), "is null", null))
     }
 }

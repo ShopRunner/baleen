@@ -5,11 +5,13 @@ import com.shoprunner.baleen.DataTrace
 import com.shoprunner.baleen.ValidationError
 import com.shoprunner.baleen.ValidationResult
 
-class EnumType(val enum: List<String>) : BaleenType {
+class EnumType(val enumName: String, val enum: List<String>) : BaleenType {
 
-    constructor(vararg enum: String) : this(enum.toList())
+    constructor(enumName: String, vararg enum: String) : this(enumName, enum.toList())
 
-    constructor(enum: Array<out Enum<*>>) : this(enum.map { it.name })
+    constructor(enumName: String, enum: Array<out Enum<*>>) : this(enumName, enum.map { it.name })
+
+    private val enumStr = enum.joinToString(", ")
 
     override fun name() = "enum"
 
@@ -18,11 +20,11 @@ class EnumType(val enum: List<String>) : BaleenType {
                 value == null -> sequenceOf(ValidationError(dataTrace, "is null", value))
                 value is String && !enum.contains(value) ->
                     sequenceOf(ValidationError(dataTrace,
-                            "is not contained in enum [${enum.joinToString(", ")}]",
+                            "is not contained in enum $enumName [$enumStr]",
                             value))
                 value is Enum<*> && !enum.contains(value.name) ->
                     sequenceOf(ValidationError(dataTrace,
-                            "is not contained in enum [${enum.joinToString(", ")}]",
+                            "is not contained in enum $enumName [$enumStr]",
                             value))
                 else -> emptySequence()
             }

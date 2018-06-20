@@ -86,9 +86,9 @@ class AvroEncoderTest {
 
         @Test
         fun `getAvroSchema encodes enum type`() {
-            val schema = AvroEncoder.getAvroSchema(EnumType("a", "b", "c"))
+            val schema = AvroEncoder.getAvroSchema(EnumType("MyEmail", "a", "b", "c"))
             assertThat(schema.type).isEqualTo(Schema.Type.ENUM)
-            assertThat(schema.name).startsWith("GeneratedEnum")
+            assertThat(schema.name).isEqualTo("MyEmail")
             assertThat(schema.enumSymbols).containsExactly("a", "b", "c")
         }
 
