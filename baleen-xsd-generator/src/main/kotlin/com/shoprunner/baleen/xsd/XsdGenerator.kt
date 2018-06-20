@@ -5,11 +5,13 @@ import com.shoprunner.baleen.BaleenType
 import com.shoprunner.baleen.DataDescription
 import com.shoprunner.baleen.types.AllowsNull
 import com.shoprunner.baleen.types.BooleanType
+import com.shoprunner.baleen.types.CoercibleType
 import com.shoprunner.baleen.types.FloatType
+import com.shoprunner.baleen.types.IntType
 import com.shoprunner.baleen.types.LongType
 import com.shoprunner.baleen.types.OccurrencesType
-import com.shoprunner.baleen.types.StringCoercibleToType
 import com.shoprunner.baleen.types.StringType
+import com.shoprunner.baleen.types.TimestampMillisType
 import com.shoprunner.baleen.xsd.xml.Annotation
 import com.shoprunner.baleen.xsd.xml.ComplexType
 import com.shoprunner.baleen.xsd.xml.Element
@@ -51,31 +53,38 @@ object XsdGenerator {
      * Maps baleen type to type details that are used for XSD.
      */
     fun defaultTypeMapper(baleenType: BaleenType): TypeDetails =
-        when(baleenType) {
+        when (baleenType) {
             is AllowsNull<*> -> defaultTypeMapper(baleenType.type)
             is BooleanType -> TypeDetails("xs:boolean")
             is DataDescription -> TypeDetails(baleenType.name)
             is FloatType -> TypeDetails(simpleType = SimpleType(
                                 Restriction(
-                                    base="xs:double",
+                                    base = "xs:float",
                                     maxInclusive = if (baleenType.max.isFinite()) MaxInclusive(baleenType.max.toBigDecimal()) else null,
                                     minInclusive = if (baleenType.min.isFinite()) MinInclusive(baleenType.min.toBigDecimal()) else null)
                             ))
+            is IntType -> TypeDetails(simpleType = SimpleType(
+                Restriction(
+                    base = "xs:int",
+                    maxInclusive = MaxInclusive(baleenType.max.toBigDecimal()),
+                    minInclusive = MinInclusive(baleenType.min.toBigDecimal()))
+            ))
             is LongType -> TypeDetails(simpleType = SimpleType(
                                 Restriction(
-                                    base="xs:int",
+                                    base = "xs:long",
                                     maxInclusive = MaxInclusive(baleenType.max.toBigDecimal()),
                                     minInclusive = MinInclusive(baleenType.min.toBigDecimal()))
                             ))
             is OccurrencesType -> defaultTypeMapper(baleenType.memberType).copy(maxOccurs = "unbounded")
-            is StringCoercibleToType<*> -> defaultTypeMapper(baleenType.type)
+            is CoercibleType -> defaultTypeMapper(baleenType.type)
             is StringType -> TypeDetails(
                                 simpleType = SimpleType(
                                         Restriction(
-                                            base="xs:string",
+                                            base = "xs:string",
                                             maxLength = MaxLength(baleenType.max),
                                             minLength = MinLength(baleenType.min))
                                         ))
+            is TimestampMillisType -> TypeDetails("xs:dateTime")
             else -> throw Exception("Unknown type: ${baleenType.name()}")
         }
 
@@ -83,7 +92,7 @@ object XsdGenerator {
             ComplexType(
                 name = type.name,
                 annotation = createDocumentationAnnotation(type.markdownDescription),
-                sequence = Sequence(type.attrs.map{ generateElement(it, typeMapper) })
+                sequence = Sequence(type.attrs.map { generateElement(it, typeMapper) })
             )
 
     private fun generateElement(attr: AttributeDescription, typeMapper: TypeMapper): Element {
@@ -99,26 +108,25 @@ object XsdGenerator {
     private fun createDocumentationAnnotation(doc: String) =
         doc.let { if (it.isNotBlank()) Annotation(documentation = it) else null }
 
-
     /**
      * Creates an XSD from a data description.
      */
-    fun encode(dataDescription: DataDescription, outputStream: PrintStream, typeMapper: TypeMapper = ::defaultTypeMapper) {
+    fun DataDescription.encode(outputStream: PrintStream, typeMapper: TypeMapper = ::defaultTypeMapper) {
         val jaxbContext = JAXBContext.newInstance(Schema::class.java)
         val jaxbMarshaller = jaxbContext.createMarshaller()
 
         // output pretty printed
         jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true)
 
-        val types = getDataDescriptions(dataDescription.attrs, mutableSetOf(dataDescription))
+        val types = getDataDescriptions(this.attrs, mutableSetOf(this))
 
-        val complexTypes = types.map{generateType(it, typeMapper)}
+        val complexTypes = types.map { generateType(it, typeMapper) }
 
         val schema = Schema(
             elements = listOf(
-                Element(name = dataDescription.name,
-                    type = dataDescription.name,
-                    annotation = createDocumentationAnnotation(dataDescription.markdownDescription))),
+                Element(name = this.name,
+                    type = this.name,
+                    annotation = createDocumentationAnnotation(this.markdownDescription))),
             complexTypes = complexTypes)
 
         jaxbMarshaller.marshal(schema, outputStream)
