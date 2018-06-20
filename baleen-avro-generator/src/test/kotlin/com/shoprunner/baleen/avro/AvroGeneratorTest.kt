@@ -4,7 +4,8 @@ import com.shoprunner.baleen.Baleen
 import com.shoprunner.baleen.BaleenType
 import com.shoprunner.baleen.DataTrace
 import com.shoprunner.baleen.ValidationResult
-import com.shoprunner.baleen.avro.AvroEncoder.encodeTo
+import com.shoprunner.baleen.avro.AvroGenerator.encode
+import com.shoprunner.baleen.avro.AvroGenerator.writeTo
 import com.shoprunner.baleen.types.UnionType
 import com.shoprunner.baleen.types.OccurrencesType
 import com.shoprunner.baleen.types.IntType
@@ -32,61 +33,61 @@ import java.io.File
 import java.io.PrintStream
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class AvroEncoderTest {
+class AvroGeneratorTest {
 
     @Nested
     inner class Types {
         @Test
         fun `getAvroSchema encodes the resulting coerced type`() {
-            val schema = AvroEncoder.getAvroSchema(StringCoercibleToFloat(FloatType()))
+            val schema = AvroGenerator.getAvroSchema(StringCoercibleToFloat(FloatType()))
             assertThat(schema.type).isEqualTo(Schema.Type.FLOAT)
         }
 
         @Test
         fun `getAvroSchema encodes boolean type`() {
-            val schema = AvroEncoder.getAvroSchema(BooleanType())
+            val schema = AvroGenerator.getAvroSchema(BooleanType())
             assertThat(schema.type).isEqualTo(Schema.Type.BOOLEAN)
         }
 
         @Test
         fun `getAvroSchema encodes float type`() {
-            val schema = AvroEncoder.getAvroSchema(FloatType())
+            val schema = AvroGenerator.getAvroSchema(FloatType())
             assertThat(schema.type).isEqualTo(Schema.Type.FLOAT)
         }
 
         @Test
         fun `getAvroSchema encodes double type`() {
-            val schema = AvroEncoder.getAvroSchema(DoubleType())
+            val schema = AvroGenerator.getAvroSchema(DoubleType())
             assertThat(schema.type).isEqualTo(Schema.Type.DOUBLE)
         }
 
         @Test
         fun `getAvroSchema encodes int type`() {
-            val schema = AvroEncoder.getAvroSchema(IntType())
+            val schema = AvroGenerator.getAvroSchema(IntType())
             assertThat(schema.type).isEqualTo(Schema.Type.INT)
         }
 
         @Test
         fun `getAvroSchema encodes long type`() {
-            val schema = AvroEncoder.getAvroSchema(LongType())
+            val schema = AvroGenerator.getAvroSchema(LongType())
             assertThat(schema.type).isEqualTo(Schema.Type.LONG)
         }
 
         @Test
         fun `getAvroSchema encodes string type`() {
-            val schema = AvroEncoder.getAvroSchema(StringType())
+            val schema = AvroGenerator.getAvroSchema(StringType())
             assertThat(schema.type).isEqualTo(Schema.Type.STRING)
         }
 
         @Test
         fun `getAvroSchema encodes string constant type`() {
-            val schema = AvroEncoder.getAvroSchema(StringConstantType("abc"))
+            val schema = AvroGenerator.getAvroSchema(StringConstantType("abc"))
             assertThat(schema.type).isEqualTo(Schema.Type.STRING)
         }
 
         @Test
         fun `getAvroSchema encodes enum type`() {
-            val schema = AvroEncoder.getAvroSchema(EnumType("MyEmail", "a", "b", "c"))
+            val schema = AvroGenerator.getAvroSchema(EnumType("MyEmail", "a", "b", "c"))
             assertThat(schema.type).isEqualTo(Schema.Type.ENUM)
             assertThat(schema.name).isEqualTo("MyEmail")
             assertThat(schema.enumSymbols).containsExactly("a", "b", "c")
@@ -94,21 +95,21 @@ class AvroEncoderTest {
 
         @Test
         fun `getAvroSchema encodes instant type`() {
-            val schema = AvroEncoder.getAvroSchema(InstantType())
+            val schema = AvroGenerator.getAvroSchema(InstantType())
             assertThat(schema.type).isEqualTo(Schema.Type.LONG)
             assertThat(schema.logicalType).isEqualTo(LogicalTypes.timestampMillis())
         }
 
         @Test
         fun `getAvroSchema encodes timestamp-millis type`() {
-            val schema = AvroEncoder.getAvroSchema(TimestampMillisType())
+            val schema = AvroGenerator.getAvroSchema(TimestampMillisType())
             assertThat(schema.type).isEqualTo(Schema.Type.LONG)
             assertThat(schema.logicalType).isEqualTo(LogicalTypes.timestampMillis())
         }
 
         @Test
         fun `getAvroSchema encodes map type`() {
-            val schema = AvroEncoder.getAvroSchema(MapType(StringType(), IntType()))
+            val schema = AvroGenerator.getAvroSchema(MapType(StringType(), IntType()))
             assertThat(schema.type).isEqualTo(Schema.Type.MAP)
             assertThat(schema.valueType.type).isEqualTo(Schema.Type.INT)
         }
@@ -116,20 +117,20 @@ class AvroEncoderTest {
         @Test
         fun `getAvroSchema fails map type with non-string key`() {
             assertThrows(Exception::class.java) {
-                AvroEncoder.getAvroSchema(MapType(IntType(), IntType()))
+                AvroGenerator.getAvroSchema(MapType(IntType(), IntType()))
             }
         }
 
         @Test
         fun `getAvroSchema encodes occurences type`() {
-            val schema = AvroEncoder.getAvroSchema(OccurrencesType(StringType()))
+            val schema = AvroGenerator.getAvroSchema(OccurrencesType(StringType()))
             assertThat(schema.type).isEqualTo(Schema.Type.ARRAY)
             assertThat(schema.elementType.type).isEqualTo(Schema.Type.STRING)
         }
 
         @Test
         fun `getAvroSchema encodes non-nullable union type`() {
-            val schema = AvroEncoder.getAvroSchema(UnionType(IntType(), LongType()))
+            val schema = AvroGenerator.getAvroSchema(UnionType(IntType(), LongType()))
             assertThat(schema.type).isEqualTo(Schema.Type.UNION)
             assertThat(schema.types[0].type).isEqualTo(Schema.Type.INT)
             assertThat(schema.types[1].type).isEqualTo(Schema.Type.LONG)
@@ -137,7 +138,7 @@ class AvroEncoderTest {
 
         @Test
         fun `getAvroSchema encodes union type of one not as a union`() {
-            val schema = AvroEncoder.getAvroSchema(UnionType(IntType()))
+            val schema = AvroGenerator.getAvroSchema(UnionType(IntType()))
             assertThat(schema.type).isEqualTo(Schema.Type.INT)
         }
 
@@ -149,7 +150,7 @@ class AvroEncoderTest {
             }
 
             assertThrows(Exception::class.java) {
-                AvroEncoder.getAvroSchema(BadType())
+                AvroGenerator.getAvroSchema(BadType())
             }
         }
     }
@@ -256,7 +257,7 @@ class AvroEncoderTest {
         @Test
         fun `single model`() {
             val outputStream = ByteArrayOutputStream()
-            dogDescription.encodeTo(PrintStream(outputStream))
+            encode(dogDescription).writeTo(PrintStream(outputStream))
 
             assertThat(outputStream.toString()).isEqualToIgnoringWhitespace(dogSchemaStr)
         }
@@ -264,7 +265,7 @@ class AvroEncoderTest {
         @Test
         fun `nested model`() {
             val outputStream = ByteArrayOutputStream()
-            packDescription.encodeTo(PrintStream(outputStream))
+            encode(packDescription).writeTo(PrintStream(outputStream))
 
             assertThat(outputStream.toString()).isEqualToIgnoringCase(packSchemaByValueStr)
         }
@@ -272,7 +273,7 @@ class AvroEncoderTest {
         @Test
         fun `nested model by reference is not supported`() {
             val outputStream = ByteArrayOutputStream()
-            packDescription.encodeTo(PrintStream(outputStream))
+            encode(packDescription).writeTo(PrintStream(outputStream))
 
             assertThat(outputStream.toString()).isNotEqualToIgnoringWhitespace(packSchemaByReferenceStr)
         }
@@ -281,7 +282,7 @@ class AvroEncoderTest {
         fun `write to avsc file`() {
             val dir = File("build/avro-gen-test")
             val sourceDir = File(dir, "src/main/avro-file")
-            dogDescription.encodeTo(sourceDir)
+            encode(dogDescription).writeTo(sourceDir)
 
             val dogFile = File(sourceDir, "com/shoprunner/data/dogs/Dog.avsc")
             Assertions.assertThat(dogFile).exists()
@@ -291,7 +292,7 @@ class AvroEncoderTest {
         fun `write to avsc path`() {
             val dir = File("build/avro-gen-test")
             val sourceDir = File(dir, "src/main/avro-path")
-            dogDescription.encodeTo(sourceDir.toPath())
+            encode(dogDescription).writeTo(sourceDir.toPath())
 
             val dogFile = File(sourceDir, "com/shoprunner/data/dogs/Dog.avsc")
             Assertions.assertThat(dogFile).exists()

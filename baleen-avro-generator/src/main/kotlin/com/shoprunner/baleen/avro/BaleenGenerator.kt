@@ -21,13 +21,11 @@ import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.FileSpec
 import org.apache.avro.Schema
-import java.io.File
-import java.nio.file.Path
 
 /**
  * Given a parsed Avro Schema, generate basic Baleen descriptions.
  */
-object BaleenEncoder {
+object BaleenGenerator {
 
     fun processSchema(schema: Schema): TypeSpec {
         val attrsCodeBlock = schema.fields.map(::processField)
@@ -174,20 +172,5 @@ object BaleenEncoder {
         return FileSpec.builder(schema.namespace, "${schema.name}Type")
                 .addType(processSchema(schema))
                 .build()
-    }
-
-    infix fun Schema.encodeTo(directory: File): File {
-        encode(this).writeTo(directory)
-        return directory
-    }
-
-    infix fun Schema.encodeTo(directory: Path): Path {
-        encode(this).writeTo(directory)
-        return directory
-    }
-
-    infix fun Schema.encodeTo(out: Appendable): Appendable {
-        encode(this).writeTo(out)
-        return out
     }
 }

@@ -7,7 +7,7 @@ Given legacy Avro schemas, create Baleen data descriptions to do validation.
 Create Baleen description files from Avro schemas
 
 ```kotlin
-import com.shoprunner.baleen.avro.BaleenEncoder.encodeTo
+import com.shoprunner.baleen.avro.BaleenGenerator.encode
 
 val parser = Schema.Parser()
 val dogSchemaStr = """
@@ -24,7 +24,7 @@ val dogSchemaStr = """
 """.trimMargin()
 val dogSchema = parser.parse(dogSchemaStr)
 
-val sourceDir = dogSchema.encodeTo(File("src/main/kotlin"))
+val sourceDir = encode(dogSchema).writeTo(File("src/main/kotlin"))
 ```
 
 This produces working Kotlin Code
@@ -68,8 +68,9 @@ object DogType {
 ## Goal 2: Generate Avro Schemas from Baleen descriptions
 
 ```kotlin
-import com.shoprunner.baleen.avro.AvroEncoder.encodeTo
+import com.shoprunner.baleen.avro.AvroGenerator.encode
+import com.shoprunner.baleen.avro.AvroGenerator.writeTo
 
 val sourceDir = File("src/main/avro")
-DogType.description.encodeTo(sourceDir)
+encode(DogType.description).writeTo(sourceDir)
 ```

@@ -1,6 +1,6 @@
 package com.shoprunner.baleen.avro
 
-import com.shoprunner.baleen.avro.BaleenEncoder.encodeTo
+import com.shoprunner.baleen.avro.BaleenGenerator.encode
 import com.shoprunner.baleen.BaleenType
 import com.shoprunner.baleen.DataDescription
 import com.squareup.kotlinpoet.CodeBlock
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.config.Services
 import java.net.URLClassLoader
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-internal class BaleenEncoderTest {
+internal class BaleenGeneratorTest {
 
     fun codeToString(codeBlock: CodeBlock): String {
         val strBuilder = StringBuilder()
@@ -41,7 +41,7 @@ internal class BaleenEncoderTest {
         @Test
         fun `processField converts field`() {
             val f = Schema.Field("name", Schema.create(Schema.Type.INT), "description", 0)
-            val code = BaleenEncoder.processField(f)
+            val code = BaleenGenerator.processField(f)
             Assertions.assertThat(codeToString(code)).contains("p.attr(")
             Assertions.assertThat(codeToString(code)).contains("name = \"name\"")
             Assertions.assertThat(codeToString(code)).contains("type = IntType()")
@@ -53,7 +53,7 @@ internal class BaleenEncoderTest {
         fun `processField converts field with aliases`() {
             val f = Schema.Field("name", Schema.create(Schema.Type.INT), "description", 0)
             f.addAlias("aliasName")
-            val code = BaleenEncoder.processField(f)
+            val code = BaleenGenerator.processField(f)
             Assertions.assertThat(codeToString(code)).contains("p.attr(")
             Assertions.assertThat(codeToString(code)).contains("name = \"name\"")
             Assertions.assertThat(codeToString(code)).contains("type = IntType()")
@@ -66,7 +66,7 @@ internal class BaleenEncoderTest {
         fun `processField converts not required field`() {
             val fSchema = Schema.createUnion(Schema.create(Schema.Type.NULL), Schema.create(Schema.Type.INT))
             val f = Schema.Field("name", fSchema, "description", 0)
-            val code = BaleenEncoder.processField(f)
+            val code = BaleenGenerator.processField(f)
             Assertions.assertThat(codeToString(code)).contains("p.attr(")
             Assertions.assertThat(codeToString(code)).contains("name = \"name\"")
             Assertions.assertThat(codeToString(code)).contains("type = IntType()")
@@ -78,7 +78,7 @@ internal class BaleenEncoderTest {
         fun `processField converts union fields`() {
             val fSchema = Schema.createUnion(Schema.create(Schema.Type.INT), Schema.create(Schema.Type.LONG))
             val f = Schema.Field("name", fSchema, "description", 0)
-            val code = BaleenEncoder.processField(f)
+            val code = BaleenGenerator.processField(f)
             Assertions.assertThat(codeToString(code)).contains("p.attr(")
             Assertions.assertThat(codeToString(code)).contains("name = \"name\"")
             Assertions.assertThat(codeToString(code)).contains("type = UnionType(IntType(), LongType())")
@@ -92,108 +92,108 @@ internal class BaleenEncoderTest {
 
         @Test
         fun `avroTypeToBaleenType converts Boolean`() {
-            val code = BaleenEncoder.avroTypeToBaleenType(Schema.create(Schema.Type.BOOLEAN))
+            val code = BaleenGenerator.avroTypeToBaleenType(Schema.create(Schema.Type.BOOLEAN))
             Assertions.assertThat(codeToString(code)).contains("BooleanType()")
         }
 
         @Test
         fun `avroTypeToBaleenType converts Double`() {
-            val code = BaleenEncoder.avroTypeToBaleenType(Schema.create(Schema.Type.DOUBLE))
+            val code = BaleenGenerator.avroTypeToBaleenType(Schema.create(Schema.Type.DOUBLE))
             Assertions.assertThat(codeToString(code)).contains("DoubleType()")
         }
 
         @Test
         fun `avroTypeToBaleenType converts Float`() {
-            val code = BaleenEncoder.avroTypeToBaleenType(Schema.create(Schema.Type.FLOAT))
+            val code = BaleenGenerator.avroTypeToBaleenType(Schema.create(Schema.Type.FLOAT))
             Assertions.assertThat(codeToString(code)).contains("FloatType()")
         }
 
         @Test
         fun `avroTypeToBaleenType converts Int`() {
-            val code = BaleenEncoder.avroTypeToBaleenType(Schema.create(Schema.Type.INT))
+            val code = BaleenGenerator.avroTypeToBaleenType(Schema.create(Schema.Type.INT))
             Assertions.assertThat(codeToString(code)).contains("IntType()")
         }
 
         @Test
         fun `avroTypeToBaleenType converts Long`() {
-            val code = BaleenEncoder.avroTypeToBaleenType(Schema.create(Schema.Type.LONG))
+            val code = BaleenGenerator.avroTypeToBaleenType(Schema.create(Schema.Type.LONG))
             Assertions.assertThat(codeToString(code)).contains("LongType()")
         }
 
         @Test
         fun `avroTypeToBaleenType converts String`() {
-            val code = BaleenEncoder.avroTypeToBaleenType(Schema.create(Schema.Type.STRING))
+            val code = BaleenGenerator.avroTypeToBaleenType(Schema.create(Schema.Type.STRING))
             Assertions.assertThat(codeToString(code)).contains("StringType()")
         }
 
         @Test
         fun `avroTypeToBaleenType converts Enum`() {
-            val code = BaleenEncoder.avroTypeToBaleenType(Schema.createEnum("myEnum", "", "", listOf("a", "b", "c")))
+            val code = BaleenGenerator.avroTypeToBaleenType(Schema.createEnum("myEnum", "", "", listOf("a", "b", "c")))
             Assertions.assertThat(codeToString(code)).contains("EnumType(\"a\", \"b\", \"c\")")
         }
 
         @Test
         fun `avroTypeToBaleenType converts Array`() {
-            val code = BaleenEncoder.avroTypeToBaleenType(Schema.createArray(Schema.create(Schema.Type.STRING)))
+            val code = BaleenGenerator.avroTypeToBaleenType(Schema.createArray(Schema.create(Schema.Type.STRING)))
             Assertions.assertThat(codeToString(code)).contains("OccurrencesType(StringType())")
         }
 
         @Test
         fun `avroTypeToBaleenType converts Map`() {
-            val code = BaleenEncoder.avroTypeToBaleenType(Schema.createMap(Schema.create(Schema.Type.INT)))
+            val code = BaleenGenerator.avroTypeToBaleenType(Schema.createMap(Schema.create(Schema.Type.INT)))
             Assertions.assertThat(codeToString(code)).contains("MapType(StringType(), IntType())")
         }
 
         @Test
         fun `avroTypeToBaleenType converts Record`() {
-            val code = BaleenEncoder.avroTypeToBaleenType(Schema.createRecord("MyRecord", "", "com.shoprunner.data", false))
+            val code = BaleenGenerator.avroTypeToBaleenType(Schema.createRecord("MyRecord", "", "com.shoprunner.data", false))
             Assertions.assertThat(codeToString(code)).contains("com.shoprunner.data.MyRecordType.description")
         }
 
         @Test
         fun `avroTypeToBaleenType converts Union`() {
-            val code = BaleenEncoder.avroTypeToBaleenType(Schema.createUnion(Schema.create(Schema.Type.INT), Schema.create(Schema.Type.LONG)))
+            val code = BaleenGenerator.avroTypeToBaleenType(Schema.createUnion(Schema.create(Schema.Type.INT), Schema.create(Schema.Type.LONG)))
             Assertions.assertThat(codeToString(code)).contains("UnionType(IntType(), LongType())")
         }
 
         @Test
         fun `avroTypeToBaleenType converts Nullable Type Union`() {
-            val code = BaleenEncoder.avroTypeToBaleenType(Schema.createUnion(Schema.create(Schema.Type.NULL), Schema.create(Schema.Type.LONG)))
+            val code = BaleenGenerator.avroTypeToBaleenType(Schema.createUnion(Schema.create(Schema.Type.NULL), Schema.create(Schema.Type.LONG)))
             Assertions.assertThat(codeToString(code)).contains("LongType()")
         }
 
         @Test
         fun `avroTypeToBaleenType converts Int date`() {
             val timestampMilliSchema = LogicalType("date").addToSchema(Schema.create(Schema.Type.INT))
-            val code = BaleenEncoder.avroTypeToBaleenType(timestampMilliSchema)
+            val code = BaleenGenerator.avroTypeToBaleenType(timestampMilliSchema)
             Assertions.assertThat(codeToString(code)).contains("IntType()")
         }
 
         @Test
         fun `avroTypeToBaleenType converts Int time-millis`() {
             val timestampMilliSchema = LogicalType("time-millis").addToSchema(Schema.create(Schema.Type.INT))
-            val code = BaleenEncoder.avroTypeToBaleenType(timestampMilliSchema)
+            val code = BaleenGenerator.avroTypeToBaleenType(timestampMilliSchema)
             Assertions.assertThat(codeToString(code)).contains("IntType()")
         }
 
         @Test
         fun `avroTypeToBaleenType converts Long time-micros`() {
             val timestampMilliSchema = LogicalType("timestamp-millis").addToSchema(Schema.create(Schema.Type.LONG))
-            val code = BaleenEncoder.avroTypeToBaleenType(timestampMilliSchema)
+            val code = BaleenGenerator.avroTypeToBaleenType(timestampMilliSchema)
             Assertions.assertThat(codeToString(code)).contains("LongCoercibleToInstant(InstantType())")
         }
 
         @Test
         fun `avroTypeToBaleenType converts Long timestamp-millis`() {
             val timestampMilliSchema = LogicalType("time-micros").addToSchema(Schema.create(Schema.Type.LONG))
-            val code = BaleenEncoder.avroTypeToBaleenType(timestampMilliSchema)
+            val code = BaleenGenerator.avroTypeToBaleenType(timestampMilliSchema)
             Assertions.assertThat(codeToString(code)).contains("LongType()")
         }
 
         @Test
         fun `avroTypeToBaleenType converts Long timestamp-micros`() {
             val timestampMilliSchema = LogicalType("timestamp-micros").addToSchema(Schema.create(Schema.Type.LONG))
-            val code = BaleenEncoder.avroTypeToBaleenType(timestampMilliSchema)
+            val code = BaleenGenerator.avroTypeToBaleenType(timestampMilliSchema)
             Assertions.assertThat(codeToString(code)).contains("LongType()")
         }
     }
@@ -253,11 +253,11 @@ internal class BaleenEncoderTest {
             classesDir.mkdirs()
 
             // Generate Baleen Kotlin Files
-            dogSchema.encodeTo(sourceDir)
+            encode(dogSchema).writeTo(sourceDir)
             val dogFile = File(sourceDir, "com/shoprunner/data/dogs/DogType.kt")
             Assertions.assertThat(dogFile).exists()
 
-            packSchema.encodeTo(sourceDir)
+            encode(packSchema).writeTo(sourceDir)
             val packFile = File(sourceDir, "com/shoprunner/data/dogs/PackType.kt")
             Assertions.assertThat(packFile).exists()
 

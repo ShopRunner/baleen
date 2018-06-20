@@ -22,7 +22,7 @@ import org.apache.avro.Schema
 import java.io.File
 import java.nio.file.Path
 
-object AvroEncoder {
+object AvroGenerator {
 
     fun getAvroSchema(baleenType: BaleenType): Schema {
         return when (baleenType) {
@@ -81,23 +81,21 @@ object AvroEncoder {
                 dataDescription.nameSpace, false, fields)
     }
 
-    infix fun DataDescription.encodeTo(directory: File): File {
-        val packageDir = File(directory, this.nameSpace.replace(".", "/"))
+    fun Schema.writeTo(directory: File): File {
+        val packageDir = File(directory, this.namespace.replace(".", "/"))
         packageDir.mkdirs()
         val avroFile = File(packageDir, "${this.name}.avsc")
-        val schema = encode(this)
 
-        avroFile.writeText(schema.toString(true))
+        avroFile.writeText(this.toString(true))
         return directory
     }
 
-    infix fun DataDescription.encodeTo(directory: Path): Path {
-        return this.encodeTo(directory.toFile()).toPath()
+    fun Schema.writeTo(directory: Path): Path {
+        return this.writeTo(directory.toFile()).toPath()
     }
 
-    infix fun DataDescription.encodeTo(out: Appendable): Appendable {
-        val schema = encode(this)
-        out.append(schema.toString(true))
+    fun Schema.writeTo(out: Appendable): Appendable {
+        out.append(this.toString(true))
         return out
     }
 }
