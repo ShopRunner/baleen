@@ -4,11 +4,11 @@ import com.shoprunner.baleen.AttributeDescription
 import com.shoprunner.baleen.BaleenType
 import com.shoprunner.baleen.DataDescription
 import com.shoprunner.baleen.types.AllowsNull
+import com.shoprunner.baleen.types.BooleanType
 import com.shoprunner.baleen.types.FloatType
 import com.shoprunner.baleen.types.LongType
 import com.shoprunner.baleen.types.OccurrencesType
-import com.shoprunner.baleen.types.StringCoercibleToFloat
-import com.shoprunner.baleen.types.StringCoercibleToLong
+import com.shoprunner.baleen.types.StringCoercibleToType
 import com.shoprunner.baleen.types.StringType
 import com.shoprunner.baleen.xsd.xml.Annotation
 import com.shoprunner.baleen.xsd.xml.ComplexType
@@ -53,6 +53,7 @@ object XsdGenerator {
     fun defaultTypeMapper(baleenType: BaleenType): TypeDetails =
         when(baleenType) {
             is AllowsNull<*> -> defaultTypeMapper(baleenType.type)
+            is BooleanType -> TypeDetails("xs:boolean")
             is DataDescription -> TypeDetails(baleenType.name)
             is FloatType -> TypeDetails(simpleType = SimpleType(
                                 Restriction(
@@ -67,8 +68,7 @@ object XsdGenerator {
                                     minInclusive = MinInclusive(baleenType.min.toBigDecimal()))
                             ))
             is OccurrencesType -> defaultTypeMapper(baleenType.memberType).copy(maxOccurs = "unbounded")
-            is StringCoercibleToFloat -> defaultTypeMapper(baleenType.type)
-            is StringCoercibleToLong -> defaultTypeMapper(baleenType.type)
+            is StringCoercibleToType<*> -> defaultTypeMapper(baleenType.type)
             is StringType -> TypeDetails(
                                 simpleType = SimpleType(
                                         Restriction(
