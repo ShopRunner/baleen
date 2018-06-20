@@ -1,6 +1,12 @@
 dependencies {
     compile project(':baleen')
     compile "org.apache.avro:avro:1.8.1"
-    compile group: 'com.julianpeeters', name: 'avrohugger-core_2.11', version: '0.16.0'
+    compile 'com.squareup:kotlinpoet:0.7.0'
+    testCompile "org.jetbrains.kotlin:kotlin-compiler:$kotlin_version"
 }
 
+junitPlatformTest {
+    HashMap map = new HashMap()
+    map.put("GEN_CLASSPATH", configurations.testCompile.files.path.join(":"))
+    environment map
+}
