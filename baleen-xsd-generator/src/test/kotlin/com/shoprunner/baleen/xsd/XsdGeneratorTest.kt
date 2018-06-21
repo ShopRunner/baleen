@@ -259,7 +259,7 @@ class XsdGeneratorTest {
             }
 
             fun customDogMapper(baleenType: BaleenType): TypeDetails =
-                when(baleenType) {
+                when (baleenType) {
                     is DogRatingType -> TypeDetails(simpleType = SimpleType(
                         Restriction(
                             minInclusive = MinInclusive(BigDecimal.TEN)
