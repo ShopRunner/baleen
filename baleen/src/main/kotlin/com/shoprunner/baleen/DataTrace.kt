@@ -12,6 +12,11 @@ class DataTrace private constructor(private val stack: List<String>) {
 
     operator fun plus(dataLocation: String) = DataTrace(this.stack.plus(dataLocation))
 
+    /**
+     * Exposes the data trace as a list with the top level first
+     */
+    fun toList(): List<String> = this.stack
+
     override fun toString(): String {
         return stack.toString()
     }
