@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.2.0] - 2018-06-21
+
+* Added method to datatrace to convert to list of strings.
+
 ## [1.1.0] - 2018-06-20
 
 * Added support for converting Baleen Data Descriptions to and from Avro Schema (https://github.com/ShopRunner/baleen/pull/6)
