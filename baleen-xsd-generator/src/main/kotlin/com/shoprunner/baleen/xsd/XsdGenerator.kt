@@ -6,7 +6,9 @@ import com.shoprunner.baleen.DataDescription
 import com.shoprunner.baleen.types.AllowsNull
 import com.shoprunner.baleen.types.BooleanType
 import com.shoprunner.baleen.types.CoercibleType
+import com.shoprunner.baleen.types.DoubleType
 import com.shoprunner.baleen.types.FloatType
+import com.shoprunner.baleen.types.InstantType
 import com.shoprunner.baleen.types.IntType
 import com.shoprunner.baleen.types.LongType
 import com.shoprunner.baleen.types.OccurrencesType
@@ -57,12 +59,19 @@ object XsdGenerator {
             is AllowsNull<*> -> defaultTypeMapper(baleenType.type)
             is BooleanType -> TypeDetails("xs:boolean")
             is DataDescription -> TypeDetails(baleenType.name)
+            is DoubleType -> TypeDetails(simpleType = SimpleType(
+                Restriction(
+                    base = "xs:double",
+                    maxInclusive = if (baleenType.max.isFinite()) MaxInclusive(baleenType.max.toBigDecimal()) else null,
+                    minInclusive = if (baleenType.min.isFinite()) MinInclusive(baleenType.min.toBigDecimal()) else null)
+            ))
             is FloatType -> TypeDetails(simpleType = SimpleType(
                                 Restriction(
                                     base = "xs:float",
                                     maxInclusive = if (baleenType.max.isFinite()) MaxInclusive(baleenType.max.toBigDecimal()) else null,
                                     minInclusive = if (baleenType.min.isFinite()) MinInclusive(baleenType.min.toBigDecimal()) else null)
                             ))
+            is InstantType -> TypeDetails("xs:dateTime")
             is IntType -> TypeDetails(simpleType = SimpleType(
                 Restriction(
                     base = "xs:int",
@@ -85,7 +94,7 @@ object XsdGenerator {
                                             minLength = MinLength(baleenType.min))
                                         ))
             is TimestampMillisType -> TypeDetails("xs:dateTime")
-            else -> throw Exception("Unknown type: ${baleenType.name()}")
+            else -> throw Exception("No mapping is defined for ${baleenType.name()} to XSD")
         }
 
     private fun generateType(type: DataDescription, typeMapper: TypeMapper) =

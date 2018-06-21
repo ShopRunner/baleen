@@ -1,17 +1,25 @@
 package com.shoprunner.baleen.xsd
 
 import com.shoprunner.baleen.Baleen
+import com.shoprunner.baleen.BaleenType
+import com.shoprunner.baleen.DataTrace
+import com.shoprunner.baleen.ValidationError
+import com.shoprunner.baleen.ValidationResult
 import com.shoprunner.baleen.types.FloatType
 import com.shoprunner.baleen.types.LongType
 import com.shoprunner.baleen.types.StringType
 import com.shoprunner.baleen.types.TimestampMillisType
 import com.shoprunner.baleen.xsd.XsdGenerator.encode
+import com.shoprunner.baleen.xsd.xml.MinInclusive
+import com.shoprunner.baleen.xsd.xml.Restriction
+import com.shoprunner.baleen.xsd.xml.SimpleType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
+import java.math.BigDecimal
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class XsdGeneratorTest {
@@ -218,6 +226,62 @@ class XsdGeneratorTest {
                 |    <xs:complexType name="Dog">
                 |        <xs:sequence>
                 |            <xs:element name="birthday" type="xs:dateTime"/>
+                |        </xs:sequence>
+                |    </xs:complexType>
+                |    <xs:element name="Dog" type="Dog"/>
+                |</xs:schema>
+                |""".trimMargin())
+        }
+    }
+
+    @Nested
+    inner class CustomTypes {
+        @Test
+        fun `can handle custom type mappings`() {
+            class DogRatingType : BaleenType {
+                override fun name() = "dog rating"
+
+                override fun validate(dataTrace: DataTrace, value: Any?): Sequence<ValidationResult> =
+                    when {
+                        value == null -> sequenceOf(ValidationError(dataTrace, "is null", value))
+                        value !is Long -> sequenceOf(ValidationError(dataTrace, "is not a long", value))
+                        value < 10 -> sequenceOf(ValidationError(dataTrace, "there good dogs, Brent", value))
+                        else -> sequenceOf()
+                    }
+            }
+
+            val dogDescription = Baleen.describe("Dog") {
+                it.attr(
+                    name = "rating",
+                    type = DogRatingType(),
+                    required = true
+                )
+            }
+
+            fun customDogMapper(baleenType: BaleenType): TypeDetails =
+                when(baleenType) {
+                    is DogRatingType -> TypeDetails(simpleType = SimpleType(
+                        Restriction(
+                            minInclusive = MinInclusive(BigDecimal.TEN)
+                    )))
+                    else -> XsdGenerator.defaultTypeMapper(baleenType)
+                }
+
+            val outputStream = ByteArrayOutputStream()
+            dogDescription.encode(PrintStream(outputStream), ::customDogMapper)
+
+            assertThat(outputStream.toString()).isEqualTo("""
+                |<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                |<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+                |    <xs:complexType name="Dog">
+                |        <xs:sequence>
+                |            <xs:element name="rating">
+                |                <xs:simpleType>
+                |                    <xs:restriction>
+                |                        <xs:minInclusive value="10"/>
+                |                    </xs:restriction>
+                |                </xs:simpleType>
+                |            </xs:element>
                 |        </xs:sequence>
                 |    </xs:complexType>
                 |    <xs:element name="Dog" type="Dog"/>
