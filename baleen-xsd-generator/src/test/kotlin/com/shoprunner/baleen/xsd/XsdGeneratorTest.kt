@@ -5,6 +5,7 @@ import com.shoprunner.baleen.BaleenType
 import com.shoprunner.baleen.DataTrace
 import com.shoprunner.baleen.ValidationError
 import com.shoprunner.baleen.ValidationResult
+import com.shoprunner.baleen.types.EnumType
 import com.shoprunner.baleen.types.FloatType
 import com.shoprunner.baleen.types.LongType
 import com.shoprunner.baleen.types.StringType
@@ -144,6 +145,40 @@ class XsdGeneratorTest {
 
     @Nested
     inner class Types {
+        @Test
+        fun `enum type`() {
+            val dogDescription = Baleen.describe("Dog") {
+                it.attr(
+                    name = "spots",
+                    type = EnumType("choice", "yes", "no"),
+                    required = true
+                )
+            }
+
+            val outputStream = ByteArrayOutputStream()
+            dogDescription.encode(PrintStream(outputStream))
+
+            assertThat(outputStream.toString()).isEqualTo("""
+                |<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                |<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+                |    <xs:complexType name="Dog">
+                |        <xs:sequence>
+                |            <xs:element name="spots">
+                |                <xs:simpleType>
+                |                    <xs:restriction base="xs:string">
+                |                        <xs:enumeration value="yes"/>
+                |                        <xs:enumeration value="no"/>
+                |                    </xs:restriction>
+                |                </xs:simpleType>
+                |            </xs:element>
+                |        </xs:sequence>
+                |    </xs:complexType>
+                |    <xs:element name="Dog" type="Dog"/>
+                |</xs:schema>
+                |""".trimMargin())
+        }
+
+
         @Test
         fun `long type`() {
             val dogDescription = Baleen.describe("Dog") {

@@ -7,6 +7,7 @@ import com.shoprunner.baleen.types.AllowsNull
 import com.shoprunner.baleen.types.BooleanType
 import com.shoprunner.baleen.types.CoercibleType
 import com.shoprunner.baleen.types.DoubleType
+import com.shoprunner.baleen.types.EnumType
 import com.shoprunner.baleen.types.FloatType
 import com.shoprunner.baleen.types.InstantType
 import com.shoprunner.baleen.types.IntType
@@ -17,6 +18,7 @@ import com.shoprunner.baleen.types.TimestampMillisType
 import com.shoprunner.baleen.xsd.xml.Annotation
 import com.shoprunner.baleen.xsd.xml.ComplexType
 import com.shoprunner.baleen.xsd.xml.Element
+import com.shoprunner.baleen.xsd.xml.Enumeration
 import com.shoprunner.baleen.xsd.xml.MaxInclusive
 import com.shoprunner.baleen.xsd.xml.MaxLength
 import com.shoprunner.baleen.xsd.xml.MinInclusive
@@ -64,6 +66,11 @@ object XsdGenerator {
                     base = "xs:double",
                     maxInclusive = if (baleenType.max.isFinite()) MaxInclusive(baleenType.max.toBigDecimal()) else null,
                     minInclusive = if (baleenType.min.isFinite()) MinInclusive(baleenType.min.toBigDecimal()) else null)
+            ))
+            is EnumType -> TypeDetails(simpleType = SimpleType(
+                Restriction(
+                    base="xs:string",
+                    enumeration = baleenType.enum.map { Enumeration(it) })
             ))
             is FloatType -> TypeDetails(simpleType = SimpleType(
                                 Restriction(
