@@ -178,7 +178,6 @@ class XsdGeneratorTest {
                 |""".trimMargin())
         }
 
-
         @Test
         fun `long type`() {
             val dogDescription = Baleen.describe("Dog") {

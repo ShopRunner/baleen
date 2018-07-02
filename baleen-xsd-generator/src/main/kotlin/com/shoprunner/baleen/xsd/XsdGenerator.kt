@@ -69,7 +69,7 @@ object XsdGenerator {
             ))
             is EnumType -> TypeDetails(simpleType = SimpleType(
                 Restriction(
-                    base="xs:string",
+                    base = "xs:string",
                     enumeration = baleenType.enum.map { Enumeration(it) })
             ))
             is FloatType -> TypeDetails(simpleType = SimpleType(
