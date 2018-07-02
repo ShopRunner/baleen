@@ -6,7 +6,6 @@ The generated XSD is not guarnteed to be as strict as the Baleen data descriptio
 ### The following types are not supported
 Pull requests welcome.
  
- - `EnumType`
  - `MapType`
  - `UnionType`
 
