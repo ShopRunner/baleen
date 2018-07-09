@@ -2,6 +2,7 @@ package com.shoprunner.baleen.avro
 
 import com.shoprunner.baleen.Baleen
 import com.shoprunner.baleen.DataDescription
+import com.shoprunner.baleen.Default
 import com.shoprunner.baleen.types.BooleanType
 import com.shoprunner.baleen.types.FloatType
 import com.shoprunner.baleen.types.DoubleType
@@ -90,7 +91,7 @@ object BaleenGenerator {
             add("%L = %L\n", DataDescription::attr.parameters[5].name, isRequired)
             // default
             if (field.defaultVal() != null) {
-                add("%L = %L\n", DataDescription::attr.parameters[6].name, field.defaultVal())
+                add("%L = %T(%L)\n", DataDescription::attr.parameters[6].name, Default::class, field.defaultVal())
             }
             unindent()
             add(")")

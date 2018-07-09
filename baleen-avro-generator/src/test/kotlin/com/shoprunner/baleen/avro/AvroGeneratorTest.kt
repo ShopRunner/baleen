@@ -2,6 +2,7 @@ package com.shoprunner.baleen.avro
 
 import com.shoprunner.baleen.Baleen
 import com.shoprunner.baleen.BaleenType
+import com.shoprunner.baleen.Default
 import com.shoprunner.baleen.DataTrace
 import com.shoprunner.baleen.ValidationResult
 import com.shoprunner.baleen.avro.AvroGenerator.encode
@@ -312,7 +313,7 @@ class AvroGeneratorTest {
                         type = UnionType(LongType(), IntType()),
                         markdownDescription = "The number of legs",
                         required = false,
-                        default = 4
+                        default = Default(4)
                 )
             }
 
@@ -343,7 +344,7 @@ class AvroGeneratorTest {
                         type = StringType(),
                         markdownDescription = "The name of the dog",
                         required = true,
-                        default = "Fido"
+                        default = Default("Fido")
                 )
                 p.attr(
                         name = "legs",

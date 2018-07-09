@@ -2,6 +2,7 @@ package com.shoprunner.baleen.avro
 
 import com.shoprunner.baleen.BaleenType
 import com.shoprunner.baleen.DataDescription
+import com.shoprunner.baleen.Default
 import com.shoprunner.baleen.types.CoercibleType
 import com.shoprunner.baleen.types.BooleanType
 import com.shoprunner.baleen.types.FloatType
@@ -70,7 +71,11 @@ object AvroGenerator {
             }
 
             val field = Schema.Field(attr.name, optionalAvroSchema, attr.markdownDescription.trim(),
-                    if (attr.default != null) attr.default else if (attr.required) null else JsonProperties.NULL_VALUE)
+                    when {
+                        attr.default is Default -> (attr.default as Default).value ?: JsonProperties.NULL_VALUE
+                        attr.required -> null
+                        else -> JsonProperties.NULL_VALUE
+                    })
 
             attr.aliases.forEach(field::addAlias)
             field

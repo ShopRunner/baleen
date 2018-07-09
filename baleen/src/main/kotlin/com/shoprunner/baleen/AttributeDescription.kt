@@ -7,7 +7,7 @@ class AttributeDescription(
     val markdownDescription: String,
     val aliases: Array<String>,
     val required: Boolean,
-    val default: Any?
+    val default: DefaultValue
 ) {
     fun test(validator: Validator) {
         // TODO change context

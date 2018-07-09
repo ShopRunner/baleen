@@ -78,7 +78,7 @@ internal class BaleenTest {
             p.attr(name = "name",
                     type = AllowsNull(StringType()),
                     required = true,
-                    default = "Fido")
+                    default = Default("Fido"))
         }
 
         @Test

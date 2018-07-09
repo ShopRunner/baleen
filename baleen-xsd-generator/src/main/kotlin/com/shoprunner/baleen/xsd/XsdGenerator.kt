@@ -3,6 +3,7 @@ package com.shoprunner.baleen.xsd
 import com.shoprunner.baleen.AttributeDescription
 import com.shoprunner.baleen.BaleenType
 import com.shoprunner.baleen.DataDescription
+import com.shoprunner.baleen.Default
 import com.shoprunner.baleen.types.AllowsNull
 import com.shoprunner.baleen.types.BooleanType
 import com.shoprunner.baleen.types.CoercibleType
@@ -119,7 +120,7 @@ object XsdGenerator {
             maxOccurs = typeDetails.maxOccurs,
             annotation = createDocumentationAnnotation(attr.markdownDescription),
             simpleType = typeDetails.simpleType,
-            default = attr.default?.toString())
+            default = if (attr.default is Default) (attr.default as Default).value.toString() else null)
     }
 
     private fun createDocumentationAnnotation(doc: String) =
