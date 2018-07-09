@@ -72,6 +72,38 @@ internal class BaleenTest {
     }
 
     @Nested
+    inner class RequiredWithDefaultAttribute {
+
+        private val dogDescription = Baleen.describe("Dog") { p ->
+            p.attr(name = "name",
+                    type = AllowsNull(StringType()),
+                    required = true,
+                    default = "Fido")
+        }
+
+        @Test
+        fun `validates when present`() {
+            val data = dataOf("name" to "Fido")
+            assertThat(dogDescription.validate(data)).isValid()
+            assertThat(dogDescription.validate(data).results).contains(ValidationInfo(dataTrace(), "has attribute \"name\"", data))
+        }
+
+        @Test
+        fun `validates data missing required attribute`() {
+            val data = dataOf<String>()
+            assertThat(dogDescription.validate(data)).isValid()
+            assertThat(dogDescription.validate(data).results).contains(ValidationInfo(dataTrace(), "has attribute \"name\" defaulted to `Fido`. Ignoring the null value", data))
+        }
+
+        @Test
+        fun `validates if data is set to null`() {
+            val data = dataOf("name" to null)
+            assertThat(dogDescription.validate(data)).isValid()
+            assertThat(dogDescription.validate(data).results).contains(ValidationInfo(dataTrace(), "has attribute \"name\"", data))
+        }
+    }
+
+    @Nested
     inner class NestedDesc {
         private val dogDescription = Baleen.describe("Dog") { p ->
             p.attr(name = "name",

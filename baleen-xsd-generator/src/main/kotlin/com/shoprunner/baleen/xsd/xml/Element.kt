@@ -20,5 +20,8 @@ data class Element(
     val annotation: Annotation? = null,
 
     @get:XmlElement(namespace = "http://www.w3.org/2001/XMLSchema")
-    val simpleType: SimpleType? = null
+    val simpleType: SimpleType? = null,
+
+    @get:XmlAttribute
+    val default: String? = null
 )

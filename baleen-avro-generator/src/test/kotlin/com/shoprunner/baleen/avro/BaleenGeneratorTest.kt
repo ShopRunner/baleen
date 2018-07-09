@@ -208,7 +208,7 @@ internal class BaleenGeneratorTest {
         |   "name": "Dog",
         |   "doc": "It's a dog. Ruff Ruff!",
         |   "fields": [
-        |        { "name": "name", "type": "string", "doc": "The name of the dog" },
+        |        { "name": "name", "type": "string", "doc": "The name of the dog", "default": "Fido" },
         |        { "name": "legs", "type": ["long", "int", "null"], "default": null, "doc": "The number of legs" }
         |   ]
         |}

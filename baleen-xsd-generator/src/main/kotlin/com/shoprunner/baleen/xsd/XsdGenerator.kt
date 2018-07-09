@@ -118,7 +118,8 @@ object XsdGenerator {
             minOccurs = if (attr.required) null else 0,
             maxOccurs = typeDetails.maxOccurs,
             annotation = createDocumentationAnnotation(attr.markdownDescription),
-            simpleType = typeDetails.simpleType)
+            simpleType = typeDetails.simpleType,
+            default = attr.default?.toString())
     }
 
     private fun createDocumentationAnnotation(doc: String) =

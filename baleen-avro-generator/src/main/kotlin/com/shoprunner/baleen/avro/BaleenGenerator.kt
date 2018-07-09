@@ -88,6 +88,10 @@ object BaleenGenerator {
             }
             // required
             add("%L = %L\n", DataDescription::attr.parameters[5].name, isRequired)
+            // default
+            if (field.defaultVal() != null) {
+                add("%L = %L\n", DataDescription::attr.parameters[6].name, field.defaultVal())
+            }
             unindent()
             add(")")
         }.build()

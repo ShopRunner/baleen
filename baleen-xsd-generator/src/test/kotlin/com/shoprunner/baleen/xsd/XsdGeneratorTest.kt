@@ -7,6 +7,7 @@ import com.shoprunner.baleen.ValidationError
 import com.shoprunner.baleen.ValidationResult
 import com.shoprunner.baleen.types.EnumType
 import com.shoprunner.baleen.types.FloatType
+import com.shoprunner.baleen.types.IntType
 import com.shoprunner.baleen.types.LongType
 import com.shoprunner.baleen.types.StringType
 import com.shoprunner.baleen.types.TimestampMillisType
@@ -140,6 +141,50 @@ class XsdGeneratorTest {
                 |    <xs:element name="Pack" type="Pack"/>
                 |</xs:schema>
                 |""".trimMargin())
+        }
+
+        @Test
+        fun `default value`() {
+            val dogDescription = Baleen.describe("Dog") {
+                it.attr(name = "name",
+                        type = StringType(),
+                        default = "Fido",
+                        required = true)
+
+                it.attr(name = "legs",
+                        type = IntType(),
+                        default = 4,
+                        required = false)
+            }
+
+            val outputStream = ByteArrayOutputStream()
+            dogDescription.encode(PrintStream(outputStream))
+
+            assertThat(outputStream.toString()).isEqualToIgnoringWhitespace("""
+                |<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                |<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+                |    <xs:complexType name="Dog">
+                |        <xs:sequence>
+                |            <xs:element default="Fido" name="name">
+                |                <xs:simpleType>
+                |                    <xs:restriction base="xs:string">
+                |                        <xs:maxLength value="2147483647"/>
+                |                        <xs:minLength value="0"/>
+                |                    </xs:restriction>
+                |                </xs:simpleType>
+                |            </xs:element>
+                |            <xs:element default="4" minOccurs="0" name="legs">
+                |                <xs:simpleType>
+                |                    <xs:restriction base="xs:int">
+                |                        <xs:maxInclusive value="2147483647"/>
+                |                        <xs:minInclusive value="-2147483648"/>
+                |                    </xs:restriction>
+                |                </xs:simpleType>
+                |            </xs:element>
+                |        </xs:sequence>
+                |    </xs:complexType>
+                |    <xs:element name="Dog" type="Dog"/>
+                |</xs:schema>""".trimMargin())
         }
     }
 

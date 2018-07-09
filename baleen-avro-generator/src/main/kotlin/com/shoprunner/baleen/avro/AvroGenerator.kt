@@ -70,7 +70,7 @@ object AvroGenerator {
             }
 
             val field = Schema.Field(attr.name, optionalAvroSchema, attr.markdownDescription.trim(),
-                    if (attr.required) null else JsonProperties.NULL_VALUE)
+                    if (attr.default != null) attr.default else if (attr.required) null else JsonProperties.NULL_VALUE)
 
             attr.aliases.forEach(field::addAlias)
             field

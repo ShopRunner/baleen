@@ -297,5 +297,79 @@ class AvroGeneratorTest {
             val dogFile = File(sourceDir, "com/shoprunner/data/dogs/Dog.avsc")
             Assertions.assertThat(dogFile).exists()
         }
+
+        @Test
+        fun `default values are added for optional fields`() {
+            val descriptionWithDefault = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") { p ->
+                p.attr(
+                        name = "name",
+                        type = StringType(),
+                        markdownDescription = "The name of the dog",
+                        required = true
+                )
+                p.attr(
+                        name = "legs",
+                        type = UnionType(LongType(), IntType()),
+                        markdownDescription = "The number of legs",
+                        required = false,
+                        default = 4
+                )
+            }
+
+            val schemaWithDefaultStr = """
+            |{
+            |   "type": "record",
+            |   "name": "Dog",
+            |   "namespace": "com.shoprunner.data.dogs",
+            |   "doc": "It's a dog. Ruff Ruff!",
+            |   "fields": [
+            |        { "name": "name", "type": "string", "doc": "The name of the dog" },
+            |        { "name": "legs", "type": [ "null", "long", "int" ], "doc": "The number of legs", "default": 4 }
+            |   ]
+            |}
+            """.trimMargin()
+
+            val outputStream = ByteArrayOutputStream()
+            encode(descriptionWithDefault).writeTo(PrintStream(outputStream))
+
+            assertThat(outputStream.toString()).isEqualToIgnoringWhitespace(schemaWithDefaultStr)
+        }
+
+        @Test
+        fun `default values are added for required fields`() {
+            val descriptionWithDefault = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") { p ->
+                p.attr(
+                        name = "name",
+                        type = StringType(),
+                        markdownDescription = "The name of the dog",
+                        required = true,
+                        default = "Fido"
+                )
+                p.attr(
+                        name = "legs",
+                        type = UnionType(LongType(), IntType()),
+                        markdownDescription = "The number of legs",
+                        required = false
+                )
+            }
+
+            val schemaWithDefaultStr = """
+            |{
+            |   "type": "record",
+            |   "name": "Dog",
+            |   "namespace": "com.shoprunner.data.dogs",
+            |   "doc": "It's a dog. Ruff Ruff!",
+            |   "fields": [
+            |        { "name": "name", "type": "string", "doc": "The name of the dog", "default": "Fido" },
+            |        { "name": "legs", "type": [ "null", "long", "int" ], "doc": "The number of legs", "default": null }
+            |   ]
+            |}
+            """.trimMargin()
+
+            val outputStream = ByteArrayOutputStream()
+            encode(descriptionWithDefault).writeTo(PrintStream(outputStream))
+
+            assertThat(outputStream.toString()).isEqualToIgnoringWhitespace(schemaWithDefaultStr)
+        }
     }
 }
