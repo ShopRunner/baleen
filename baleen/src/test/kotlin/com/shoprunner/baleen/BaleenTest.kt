@@ -78,7 +78,7 @@ internal class BaleenTest {
             p.attr(name = "name",
                     type = AllowsNull(StringType()),
                     required = true,
-                    default = Default("Fido"))
+                    default = "Fido")
         }
 
         @Test
@@ -92,7 +92,7 @@ internal class BaleenTest {
         fun `validates data missing required attribute`() {
             val data = dataOf<String>()
             assertThat(dogDescription.validate(data)).isValid()
-            assertThat(dogDescription.validate(data).results).contains(ValidationInfo(dataTrace(), "has attribute \"name\" defaulted to `Fido`. Ignoring the null value", data))
+            assertThat(dogDescription.validate(data).results).contains(ValidationInfo(dataTrace(), "has attribute \"name\" defaulted to `Fido` since it wasn't set.", data))
         }
 
         @Test

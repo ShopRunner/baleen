@@ -2,22 +2,21 @@ package com.shoprunner.baleen.avro
 
 import com.shoprunner.baleen.BaleenType
 import com.shoprunner.baleen.DataDescription
-import com.shoprunner.baleen.Default
-import com.shoprunner.baleen.types.CoercibleType
+import com.shoprunner.baleen.NoDefault
 import com.shoprunner.baleen.types.BooleanType
-import com.shoprunner.baleen.types.FloatType
+import com.shoprunner.baleen.types.CoercibleType
 import com.shoprunner.baleen.types.DoubleType
+import com.shoprunner.baleen.types.EnumType
+import com.shoprunner.baleen.types.FloatType
+import com.shoprunner.baleen.types.InstantType
 import com.shoprunner.baleen.types.IntType
 import com.shoprunner.baleen.types.LongType
-import com.shoprunner.baleen.types.StringType
-import com.shoprunner.baleen.types.StringConstantType
-import com.shoprunner.baleen.types.EnumType
-import com.shoprunner.baleen.types.InstantType
-import com.shoprunner.baleen.types.TimestampMillisType
 import com.shoprunner.baleen.types.MapType
 import com.shoprunner.baleen.types.OccurrencesType
+import com.shoprunner.baleen.types.StringConstantType
+import com.shoprunner.baleen.types.StringType
+import com.shoprunner.baleen.types.TimestampMillisType
 import com.shoprunner.baleen.types.UnionType
-import org.apache.avro.JsonProperties
 import org.apache.avro.LogicalTypes
 import org.apache.avro.Schema
 import java.io.File
@@ -59,23 +58,18 @@ object AvroGenerator {
 
     fun encode(dataDescription: DataDescription): Schema {
         val fields = dataDescription.attrs.map { attr ->
+            if (!attr.required && attr.default == NoDefault) {
+                throw IllegalArgumentException("Optional value without the required default value for ${attr.name}")
+            }
 
             val avroSchema = getAvroSchema(attr.type)
 
-            val optionalAvroSchema = if (attr.required) {
-                avroSchema
-            } else if (avroSchema.type != Schema.Type.UNION) {
-                Schema.createUnion(Schema.create(Schema.Type.NULL), avroSchema)
-            } else {
-                Schema.createUnion(listOf(Schema.create(Schema.Type.NULL)) + avroSchema.types)
+            val defaultValue = when (attr.default) {
+                NoDefault -> null
+                else -> attr.default
             }
 
-            val field = Schema.Field(attr.name, optionalAvroSchema, attr.markdownDescription.trim(),
-                    when {
-                        attr.default is Default -> (attr.default as Default).value ?: JsonProperties.NULL_VALUE
-                        attr.required -> null
-                        else -> JsonProperties.NULL_VALUE
-                    })
+            val field = Schema.Field(attr.name, avroSchema, attr.markdownDescription.trim(), defaultValue)
 
             attr.aliases.forEach(field::addAlias)
             field

@@ -2,7 +2,6 @@ package com.shoprunner.baleen.xsd
 
 import com.shoprunner.baleen.Baleen
 import com.shoprunner.baleen.BaleenType
-import com.shoprunner.baleen.Default
 import com.shoprunner.baleen.DataTrace
 import com.shoprunner.baleen.ValidationError
 import com.shoprunner.baleen.ValidationResult
@@ -149,12 +148,12 @@ class XsdGeneratorTest {
             val dogDescription = Baleen.describe("Dog") {
                 it.attr(name = "name",
                         type = StringType(),
-                        default = Default("Fido"),
+                        default = "Fido",
                         required = true)
 
                 it.attr(name = "legs",
                         type = IntType(),
-                        default = Default(4),
+                        default = 4,
                         required = false)
             }
 

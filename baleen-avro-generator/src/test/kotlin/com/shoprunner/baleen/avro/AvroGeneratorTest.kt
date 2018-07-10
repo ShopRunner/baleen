@@ -2,25 +2,24 @@ package com.shoprunner.baleen.avro
 
 import com.shoprunner.baleen.Baleen
 import com.shoprunner.baleen.BaleenType
-import com.shoprunner.baleen.Default
 import com.shoprunner.baleen.DataTrace
 import com.shoprunner.baleen.ValidationResult
 import com.shoprunner.baleen.avro.AvroGenerator.encode
 import com.shoprunner.baleen.avro.AvroGenerator.writeTo
-import com.shoprunner.baleen.types.UnionType
-import com.shoprunner.baleen.types.OccurrencesType
-import com.shoprunner.baleen.types.IntType
-import com.shoprunner.baleen.types.StringType
-import com.shoprunner.baleen.types.MapType
-import com.shoprunner.baleen.types.TimestampMillisType
-import com.shoprunner.baleen.types.InstantType
+import com.shoprunner.baleen.types.BooleanType
+import com.shoprunner.baleen.types.DoubleType
 import com.shoprunner.baleen.types.EnumType
 import com.shoprunner.baleen.types.FloatType
-import com.shoprunner.baleen.types.BooleanType
-import com.shoprunner.baleen.types.StringCoercibleToFloat
+import com.shoprunner.baleen.types.InstantType
+import com.shoprunner.baleen.types.IntType
 import com.shoprunner.baleen.types.LongType
-import com.shoprunner.baleen.types.DoubleType
+import com.shoprunner.baleen.types.MapType
+import com.shoprunner.baleen.types.OccurrencesType
+import com.shoprunner.baleen.types.StringCoercibleToFloat
 import com.shoprunner.baleen.types.StringConstantType
+import com.shoprunner.baleen.types.StringType
+import com.shoprunner.baleen.types.TimestampMillisType
+import com.shoprunner.baleen.types.UnionType
 import org.apache.avro.LogicalTypes
 import org.apache.avro.Schema
 import org.assertj.core.api.Assertions
@@ -169,7 +168,8 @@ class AvroGeneratorTest {
                     name = "legs",
                     type = UnionType(LongType(), IntType()),
                     markdownDescription = "The number of legs",
-                    required = false
+                    required = false,
+                    default = 4
             )
         }
 
@@ -197,7 +197,7 @@ class AvroGeneratorTest {
         |   "doc": "It's a dog. Ruff Ruff!",
         |   "fields": [
         |        { "name": "name", "type": "string", "doc": "The name of the dog" },
-        |        { "name": "legs", "type": [ "null", "long", "int" ], "doc": "The number of legs", "default": null }
+        |        { "name": "legs", "type": [ "long", "int" ], "doc": "The number of legs", "default": 4 }
         |   ]
         |}
         """.trimMargin()
@@ -244,9 +244,9 @@ class AvroGeneratorTest {
         |          "doc" : "The name of the dog"
         |        }, {
         |          "name" : "legs",
-        |          "type" : [ "null", "long", "int" ],
+        |          "type" : [ "long", "int" ],
         |          "doc" : "The number of legs",
-        |          "default" : null
+        |          "default" : 4
         |        } ]
         |      }
         |    },
@@ -313,7 +313,7 @@ class AvroGeneratorTest {
                         type = UnionType(LongType(), IntType()),
                         markdownDescription = "The number of legs",
                         required = false,
-                        default = Default(4)
+                        default = 4
                 )
             }
 
@@ -325,7 +325,7 @@ class AvroGeneratorTest {
             |   "doc": "It's a dog. Ruff Ruff!",
             |   "fields": [
             |        { "name": "name", "type": "string", "doc": "The name of the dog" },
-            |        { "name": "legs", "type": [ "null", "long", "int" ], "doc": "The number of legs", "default": 4 }
+            |        { "name": "legs", "type": [ "long", "int" ], "doc": "The number of legs", "default": 4 }
             |   ]
             |}
             """.trimMargin()
@@ -344,13 +344,14 @@ class AvroGeneratorTest {
                         type = StringType(),
                         markdownDescription = "The name of the dog",
                         required = true,
-                        default = Default("Fido")
+                        default = "Fido"
                 )
                 p.attr(
                         name = "legs",
                         type = UnionType(LongType(), IntType()),
                         markdownDescription = "The number of legs",
-                        required = false
+                        required = false,
+                        default = 4
                 )
             }
 
@@ -362,7 +363,7 @@ class AvroGeneratorTest {
             |   "doc": "It's a dog. Ruff Ruff!",
             |   "fields": [
             |        { "name": "name", "type": "string", "doc": "The name of the dog", "default": "Fido" },
-            |        { "name": "legs", "type": [ "null", "long", "int" ], "doc": "The number of legs", "default": null }
+            |        { "name": "legs", "type": [ "long", "int" ], "doc": "The number of legs", "default": 4 }
             |   ]
             |}
             """.trimMargin()
