@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.4.0] - 2018-07-11
+
+* Introduced the concept of default values.  This makes the attribute optional and is used in code generation.
+
 ## [1.3.0] - 2018-07-02
 
 * XSD generation now supports the map type.
