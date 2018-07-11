@@ -283,7 +283,7 @@ internal class BaleenGeneratorTest {
             val dogType = cl.loadClass("com.shoprunner.data.dogs.DogType")
             val dogDescription = dogType.getDeclaredField("description").type
             Assertions.assertThat(dogDescription).isEqualTo(DataDescription::class.java)
-            
+
             val packType = cl.loadClass("com.shoprunner.data.dogs.PackType")
             val packDescription = packType.getDeclaredField("description").type
             Assertions.assertThat(packDescription).isEqualTo(DataDescription::class.java)
