@@ -18,6 +18,7 @@ class DataDescription(
                 val attrDataTrace = dataTrace + "attribute \"${attr.name}\""
                 sequenceOf(ValidationInfo(dataTrace, "has attribute \"${attr.name}\"", data)).plus(type.validate(attrDataTrace, value))
             }
+            attr.default != NoDefault -> sequenceOf(ValidationInfo(dataTrace, "has attribute \"${attr.name}\" defaulted to `${attr.default}` since it wasn't set.", data))
             attr.required -> sequenceOf(ValidationError(dataTrace, "missing required attribute \"${attr.name}\"", data))
             else -> sequenceOf(ValidationInfo(dataTrace, "missing attribute \"${attr.name}\"", data))
         }
@@ -28,9 +29,10 @@ class DataDescription(
         type: BaleenType,
         markdownDescription: String = "",
         aliases: Array<String> = arrayOf(),
-        required: Boolean = false
+        required: Boolean = false,
+        default: Any? = NoDefault
     ): AttributeDescription {
-        val attr = AttributeDescription(this, name, type, markdownDescription, aliases, required)
+        val attr = AttributeDescription(this, name, type, markdownDescription, aliases, required, default)
         attrs.add(attr)
         tests.add(attrTest(attr, type))
         return attr

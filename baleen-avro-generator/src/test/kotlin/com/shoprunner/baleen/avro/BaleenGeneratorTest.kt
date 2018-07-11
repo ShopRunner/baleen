@@ -1,24 +1,24 @@
 package com.shoprunner.baleen.avro
 
-import com.shoprunner.baleen.avro.BaleenGenerator.encode
 import com.shoprunner.baleen.BaleenType
 import com.shoprunner.baleen.DataDescription
+import com.shoprunner.baleen.avro.BaleenGenerator.encode
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.PropertySpec
 import org.apache.avro.LogicalType
 import org.apache.avro.Schema
 import org.assertj.core.api.Assertions
-import org.junit.jupiter.api.Nested
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
-import java.io.File
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.Services
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
+import java.io.File
 import java.net.URLClassLoader
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -208,7 +208,7 @@ internal class BaleenGeneratorTest {
         |   "name": "Dog",
         |   "doc": "It's a dog. Ruff Ruff!",
         |   "fields": [
-        |        { "name": "name", "type": "string", "doc": "The name of the dog" },
+        |        { "name": "name", "type": "string", "doc": "The name of the dog", "default": "Fido" },
         |        { "name": "legs", "type": ["long", "int", "null"], "default": null, "doc": "The number of legs" }
         |   ]
         |}

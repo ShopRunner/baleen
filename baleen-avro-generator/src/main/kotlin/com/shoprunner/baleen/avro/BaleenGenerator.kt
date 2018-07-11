@@ -3,23 +3,24 @@ package com.shoprunner.baleen.avro
 import com.shoprunner.baleen.Baleen
 import com.shoprunner.baleen.DataDescription
 import com.shoprunner.baleen.types.BooleanType
-import com.shoprunner.baleen.types.FloatType
 import com.shoprunner.baleen.types.DoubleType
-import com.shoprunner.baleen.types.IntType
-import com.shoprunner.baleen.types.LongType
-import com.shoprunner.baleen.types.LongCoercibleToInstant
-import com.shoprunner.baleen.types.InstantType
-import com.shoprunner.baleen.types.StringType
 import com.shoprunner.baleen.types.EnumType
+import com.shoprunner.baleen.types.FloatType
+import com.shoprunner.baleen.types.InstantType
+import com.shoprunner.baleen.types.IntType
+import com.shoprunner.baleen.types.LongCoercibleToInstant
+import com.shoprunner.baleen.types.LongType
 import com.shoprunner.baleen.types.MapType
 import com.shoprunner.baleen.types.OccurrencesType
+import com.shoprunner.baleen.types.StringType
 import com.shoprunner.baleen.types.UnionType
-import com.squareup.kotlinpoet.TypeSpec
-import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.ClassName
-import com.squareup.kotlinpoet.PropertySpec
-import com.squareup.kotlinpoet.KModifier
+import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FileSpec
+import com.squareup.kotlinpoet.KModifier
+import com.squareup.kotlinpoet.PropertySpec
+import com.squareup.kotlinpoet.TypeSpec
+import org.apache.avro.JsonProperties
 import org.apache.avro.Schema
 
 /**
@@ -87,7 +88,16 @@ object BaleenGenerator {
                         field.aliases().joinToString(", ", prefix = "arrayOf(\"", postfix = "\")"))
             }
             // required
-            add("%L = %L\n", DataDescription::attr.parameters[5].name, isRequired)
+            add("%L = %L", DataDescription::attr.parameters[5].name, isRequired)
+            // default
+            if (field.defaultVal() != null) {
+                val defaultValue = if (field.defaultVal() == JsonProperties.NULL_VALUE) null else field.defaultVal()
+                if (defaultValue is String) {
+                    add(",\n%L = %S", DataDescription::attr.parameters[6].name, defaultValue)
+                } else {
+                    add(",\n%L = %L", DataDescription::attr.parameters[6].name, defaultValue)
+                }
+            }
             unindent()
             add(")")
         }.build()
