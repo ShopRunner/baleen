@@ -2,6 +2,7 @@ package com.shoprunner.baleen.avro
 
 import com.shoprunner.baleen.Baleen
 import com.shoprunner.baleen.DataDescription
+import com.shoprunner.baleen.types.AllowsNull
 import com.shoprunner.baleen.types.BooleanType
 import com.shoprunner.baleen.types.DoubleType
 import com.shoprunner.baleen.types.EnumType
@@ -67,8 +68,10 @@ object BaleenGenerator {
             required: Boolean = false
         )
          */
-        val isRequired = field.schema().type != Schema.Type.UNION ||
-                field.schema().types.none { it.type == Schema.Type.NULL }
+        val allowsNull = field.schema().type == Schema.Type.UNION &&
+                field.schema().types.any { it.type == Schema.Type.NULL }
+        val defaultNull = field.defaultVal() == JsonProperties.NULL_VALUE
+        val isOptional = allowsNull && defaultNull
 
         return CodeBlock.builder().apply {
             // create attribute
@@ -88,10 +91,10 @@ object BaleenGenerator {
                         field.aliases().joinToString(", ", prefix = "arrayOf(\"", postfix = "\")"))
             }
             // required
-            add("%L = %L", DataDescription::attr.parameters[5].name, isRequired)
+            add("%L = %L", DataDescription::attr.parameters[5].name, !isOptional)
             // default
             if (field.defaultVal() != null) {
-                val defaultValue = if (field.defaultVal() == JsonProperties.NULL_VALUE) null else field.defaultVal()
+                val defaultValue = if (defaultNull) null else field.defaultVal()
                 if (defaultValue is String) {
                     add(",\n%L = %S", DataDescription::attr.parameters[6].name, defaultValue)
                 } else {
@@ -160,7 +163,7 @@ object BaleenGenerator {
             Schema.Type.RECORD -> CodeBlock.of("${schema.namespace}.${schema.name}Type.description")
             Schema.Type.UNION -> {
                 val unionedTypes = schema.types.filterNot { it.type == Schema.Type.NULL }.map { avroTypeToBaleenType(it) }
-                if (unionedTypes.size > 1) {
+                val baleenTypeCode = if (unionedTypes.size > 1) {
                     val builder = CodeBlock.builder().add("%T(", UnionType::class)
                     unionedTypes.forEachIndexed { i, t ->
                         if (i == 0) {
@@ -172,6 +175,17 @@ object BaleenGenerator {
                     builder.add(")").build()
                 } else {
                     unionedTypes.first()
+                }
+
+                val isNullable = schema.types.any { it.type == Schema.Type.NULL }
+                if (isNullable) {
+                    CodeBlock.builder()
+                            .add("%T(", AllowsNull::class)
+                            .add(baleenTypeCode)
+                            .add(")")
+                            .build()
+                } else {
+                    baleenTypeCode
                 }
             }
             else -> throw IllegalArgumentException("avro type ${schema.type} not supported")

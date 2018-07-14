@@ -3,6 +3,7 @@ package com.shoprunner.baleen.avro
 import com.shoprunner.baleen.BaleenType
 import com.shoprunner.baleen.DataDescription
 import com.shoprunner.baleen.NoDefault
+import com.shoprunner.baleen.types.AllowsNull
 import com.shoprunner.baleen.types.BooleanType
 import com.shoprunner.baleen.types.CoercibleType
 import com.shoprunner.baleen.types.DoubleType
@@ -17,6 +18,7 @@ import com.shoprunner.baleen.types.StringConstantType
 import com.shoprunner.baleen.types.StringType
 import com.shoprunner.baleen.types.TimestampMillisType
 import com.shoprunner.baleen.types.UnionType
+import org.apache.avro.JsonProperties
 import org.apache.avro.LogicalTypes
 import org.apache.avro.Schema
 import java.io.File
@@ -44,6 +46,15 @@ object AvroGenerator {
                 Schema.createMap(getAvroSchema(baleenType.valueType))
             }
             is OccurrencesType -> Schema.createArray(getAvroSchema(baleenType.memberType))
+            is AllowsNull<*> -> {
+                val subType = getAvroSchema(baleenType.type)
+                val nullSchema = Schema.create(Schema.Type.NULL)
+                if (subType.type == Schema.Type.UNION) {
+                    Schema.createUnion((listOf(nullSchema) + subType.types).distinct())
+                } else {
+                    Schema.createUnion(listOf(nullSchema, subType))
+                }
+            }
             is UnionType -> {
                 val subTypes = baleenType.types.map(::getAvroSchema).distinct()
                 if (subTypes.size == 1) {
@@ -62,10 +73,13 @@ object AvroGenerator {
                 throw IllegalArgumentException("Optional value without the required default value for ${attr.name}")
             }
 
-            val avroSchema = getAvroSchema(attr.type)
+            val avroSchema =
+                    if (!attr.required && attr.default == null) getAvroSchema(AllowsNull(attr.type))
+                    else getAvroSchema(attr.type)
 
             val defaultValue = when (attr.default) {
                 NoDefault -> null
+                null -> JsonProperties.NULL_VALUE
                 else -> attr.default
             }
 
