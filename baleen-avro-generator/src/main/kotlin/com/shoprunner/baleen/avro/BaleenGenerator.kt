@@ -2,6 +2,7 @@ package com.shoprunner.baleen.avro
 
 import com.shoprunner.baleen.Baleen
 import com.shoprunner.baleen.DataDescription
+import com.shoprunner.baleen.types.AllowsNull
 import com.shoprunner.baleen.types.BooleanType
 import com.shoprunner.baleen.types.DoubleType
 import com.shoprunner.baleen.types.EnumType
@@ -160,7 +161,7 @@ object BaleenGenerator {
             Schema.Type.RECORD -> CodeBlock.of("${schema.namespace}.${schema.name}Type.description")
             Schema.Type.UNION -> {
                 val unionedTypes = schema.types.filterNot { it.type == Schema.Type.NULL }.map { avroTypeToBaleenType(it) }
-                if (unionedTypes.size > 1) {
+                val nonNullTypes = if (unionedTypes.size > 1) {
                     val builder = CodeBlock.builder().add("%T(", UnionType::class)
                     unionedTypes.forEachIndexed { i, t ->
                         if (i == 0) {
@@ -172,6 +173,16 @@ object BaleenGenerator {
                     builder.add(")").build()
                 } else {
                     unionedTypes.first()
+                }
+
+                val allowsNull = schema.types.any { it.type == Schema.Type.NULL }
+                if (allowsNull) {
+                    CodeBlock.builder().add("%T(", AllowsNull::class)
+                        .add(nonNullTypes)
+                        .add(")")
+                        .build()
+                } else {
+                    nonNullTypes
                 }
             }
             else -> throw IllegalArgumentException("avro type ${schema.type} not supported")

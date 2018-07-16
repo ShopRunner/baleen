@@ -3,6 +3,7 @@ package com.shoprunner.baleen.avro
 import com.shoprunner.baleen.BaleenType
 import com.shoprunner.baleen.DataDescription
 import com.shoprunner.baleen.NoDefault
+import com.shoprunner.baleen.types.AllowsNull
 import com.shoprunner.baleen.types.BooleanType
 import com.shoprunner.baleen.types.CoercibleType
 import com.shoprunner.baleen.types.DoubleType
@@ -24,8 +25,20 @@ import java.nio.file.Path
 
 object AvroGenerator {
 
+    fun flattenUnion(vararg schemas: Schema): Schema {
+        val types = schemas.flatMap {
+            if (Schema.Type.UNION == it.type) {
+                it.types
+            } else {
+                listOf(it)
+            }
+        }
+        return Schema.createUnion(types)
+    }
+
     fun getAvroSchema(baleenType: BaleenType): Schema {
         return when (baleenType) {
+            is AllowsNull<*> -> flattenUnion(getAvroSchema(baleenType.type), Schema.create(Schema.Type.NULL))
             is DataDescription -> encode(baleenType)
             is CoercibleType -> getAvroSchema(baleenType.type)
             is BooleanType -> Schema.create(Schema.Type.BOOLEAN)

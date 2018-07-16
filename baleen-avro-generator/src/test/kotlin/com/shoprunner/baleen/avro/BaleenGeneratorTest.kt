@@ -69,7 +69,7 @@ internal class BaleenGeneratorTest {
             val code = BaleenGenerator.processField(f)
             Assertions.assertThat(codeToString(code)).contains("p.attr(")
             Assertions.assertThat(codeToString(code)).contains("name = \"name\"")
-            Assertions.assertThat(codeToString(code)).contains("type = IntType()")
+            Assertions.assertThat(codeToString(code)).contains("type = AllowsNull(IntType())")
             Assertions.assertThat(codeToString(code)).contains("markdownDescription = \"description\"")
             Assertions.assertThat(codeToString(code)).contains("required = false")
         }
