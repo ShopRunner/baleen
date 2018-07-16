@@ -6,6 +6,7 @@ import com.shoprunner.baleen.DataTrace
 import com.shoprunner.baleen.ValidationResult
 import com.shoprunner.baleen.avro.AvroGenerator.encode
 import com.shoprunner.baleen.avro.AvroGenerator.writeTo
+import com.shoprunner.baleen.types.AllowsNull
 import com.shoprunner.baleen.types.BooleanType
 import com.shoprunner.baleen.types.DoubleType
 import com.shoprunner.baleen.types.EnumType
@@ -37,6 +38,23 @@ class AvroGeneratorTest {
 
     @Nested
     inner class Types {
+        @Test
+        fun `getAvroSchema encodes allows null type`() {
+            val schema = AvroGenerator.getAvroSchema(AllowsNull(BooleanType()))
+            assertThat(schema.type).isEqualTo(Schema.Type.UNION)
+            assertThat(schema.types[0].type).isEqualTo(Schema.Type.BOOLEAN)
+            assertThat(schema.types[1].type).isEqualTo(Schema.Type.NULL)
+        }
+
+        @Test
+        fun `getAvroSchema encodes allows null type on a union`() {
+            val schema = AvroGenerator.getAvroSchema(AllowsNull(UnionType(BooleanType(), LongType())))
+            assertThat(schema.type).isEqualTo(Schema.Type.UNION)
+            assertThat(schema.types[0].type).isEqualTo(Schema.Type.BOOLEAN)
+            assertThat(schema.types[1].type).isEqualTo(Schema.Type.LONG)
+            assertThat(schema.types[2].type).isEqualTo(Schema.Type.NULL)
+        }
+
         @Test
         fun `getAvroSchema encodes the resulting coerced type`() {
             val schema = AvroGenerator.getAvroSchema(StringCoercibleToFloat(FloatType()))
