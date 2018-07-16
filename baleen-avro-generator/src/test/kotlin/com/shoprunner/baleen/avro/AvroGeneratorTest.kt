@@ -6,6 +6,7 @@ import com.shoprunner.baleen.DataTrace
 import com.shoprunner.baleen.ValidationResult
 import com.shoprunner.baleen.avro.AvroGenerator.encode
 import com.shoprunner.baleen.avro.AvroGenerator.writeTo
+import com.shoprunner.baleen.types.AllowsNull
 import com.shoprunner.baleen.types.BooleanType
 import com.shoprunner.baleen.types.DoubleType
 import com.shoprunner.baleen.types.EnumType
@@ -16,6 +17,8 @@ import com.shoprunner.baleen.types.LongType
 import com.shoprunner.baleen.types.MapType
 import com.shoprunner.baleen.types.OccurrencesType
 import com.shoprunner.baleen.types.StringCoercibleToFloat
+import com.shoprunner.baleen.types.StringCoercibleToLong
+import com.shoprunner.baleen.types.StringCoercibleToInstant
 import com.shoprunner.baleen.types.StringConstantType
 import com.shoprunner.baleen.types.StringType
 import com.shoprunner.baleen.types.TimestampMillisType
@@ -41,6 +44,15 @@ class AvroGeneratorTest {
         fun `getAvroSchema encodes the resulting coerced type`() {
             val schema = AvroGenerator.getAvroSchema(StringCoercibleToFloat(FloatType()))
             assertThat(schema.type).isEqualTo(Schema.Type.FLOAT)
+        }
+
+        @Test
+        fun `getAvroSchema encodes the resulting nullable coerced type`() {
+            val schema = AvroGenerator.getAvroSchema(AllowsNull(StringCoercibleToFloat(FloatType())))
+            assertThat(schema.type).isEqualTo(Schema.Type.UNION)
+            assertThat(schema.types.size).isEqualTo(2)
+            assertThat(schema.types[0].type).isEqualTo(Schema.Type.NULL)
+            assertThat(schema.types[1].type).isEqualTo(Schema.Type.FLOAT)
         }
 
         @Test
@@ -115,6 +127,16 @@ class AvroGeneratorTest {
         }
 
         @Test
+        fun `getAvroSchema encodes nullable map type`() {
+            val schema = AvroGenerator.getAvroSchema(AllowsNull(MapType(StringType(), IntType())))
+            assertThat(schema.type).isEqualTo(Schema.Type.UNION)
+            assertThat(schema.types.size).isEqualTo(2)
+            assertThat(schema.types[0].type).isEqualTo(Schema.Type.NULL)
+            assertThat(schema.types[1].type).isEqualTo(Schema.Type.MAP)
+            assertThat(schema.types[1].valueType.type).isEqualTo(Schema.Type.INT)
+        }
+
+        @Test
         fun `getAvroSchema fails map type with non-string key`() {
             assertThrows(Exception::class.java) {
                 AvroGenerator.getAvroSchema(MapType(IntType(), IntType()))
@@ -129,9 +151,20 @@ class AvroGeneratorTest {
         }
 
         @Test
+        fun `getAvroSchema encodes nullable occurences type`() {
+            val schema = AvroGenerator.getAvroSchema(AllowsNull(OccurrencesType(StringType())))
+            assertThat(schema.type).isEqualTo(Schema.Type.UNION)
+            assertThat(schema.types.size).isEqualTo(2)
+            assertThat(schema.types[0].type).isEqualTo(Schema.Type.NULL)
+            assertThat(schema.types[1].type).isEqualTo(Schema.Type.ARRAY)
+            assertThat(schema.types[1].elementType.type).isEqualTo(Schema.Type.STRING)
+        }
+
+        @Test
         fun `getAvroSchema encodes non-nullable union type`() {
             val schema = AvroGenerator.getAvroSchema(UnionType(IntType(), LongType()))
             assertThat(schema.type).isEqualTo(Schema.Type.UNION)
+            assertThat(schema.types.size).isEqualTo(2)
             assertThat(schema.types[0].type).isEqualTo(Schema.Type.INT)
             assertThat(schema.types[1].type).isEqualTo(Schema.Type.LONG)
         }
@@ -140,6 +173,16 @@ class AvroGeneratorTest {
         fun `getAvroSchema encodes union type of one not as a union`() {
             val schema = AvroGenerator.getAvroSchema(UnionType(IntType()))
             assertThat(schema.type).isEqualTo(Schema.Type.INT)
+        }
+
+        @Test
+        fun `getAvroSchema encodes nullable union type`() {
+            val schema = AvroGenerator.getAvroSchema(AllowsNull(UnionType(IntType(), LongType())))
+            assertThat(schema.type).isEqualTo(Schema.Type.UNION)
+            assertThat(schema.types.size).isEqualTo(3)
+            assertThat(schema.types[0].type).isEqualTo(Schema.Type.NULL)
+            assertThat(schema.types[1].type).isEqualTo(Schema.Type.INT)
+            assertThat(schema.types[2].type).isEqualTo(Schema.Type.LONG)
         }
 
         @Test
@@ -310,6 +353,43 @@ class AvroGeneratorTest {
                 )
                 p.attr(
                         name = "legs",
+                        type = LongType(),
+                        markdownDescription = "The number of legs",
+                        required = false,
+                        default = 4
+                )
+            }
+
+            val schemaWithDefaultStr = """
+            |{
+            |   "type": "record",
+            |   "name": "Dog",
+            |   "namespace": "com.shoprunner.data.dogs",
+            |   "doc": "It's a dog. Ruff Ruff!",
+            |   "fields": [
+            |        { "name": "name", "type": "string", "doc": "The name of the dog" },
+            |        { "name": "legs", "type": "long", "doc": "The number of legs", "default": 4 }
+            |   ]
+            |}
+            """.trimMargin()
+
+            val outputStream = ByteArrayOutputStream()
+            encode(descriptionWithDefault).writeTo(PrintStream(outputStream))
+
+            assertThat(outputStream.toString()).isEqualToIgnoringWhitespace(schemaWithDefaultStr)
+        }
+
+        @Test
+        fun `default values are added for optional union fields`() {
+            val descriptionWithDefault = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") { p ->
+                p.attr(
+                        name = "name",
+                        type = StringType(),
+                        markdownDescription = "The name of the dog",
+                        required = true
+                )
+                p.attr(
+                        name = "legs",
                         type = UnionType(LongType(), IntType()),
                         markdownDescription = "The number of legs",
                         required = false,
@@ -326,6 +406,203 @@ class AvroGeneratorTest {
             |   "fields": [
             |        { "name": "name", "type": "string", "doc": "The name of the dog" },
             |        { "name": "legs", "type": [ "long", "int" ], "doc": "The number of legs", "default": 4 }
+            |   ]
+            |}
+            """.trimMargin()
+
+            val outputStream = ByteArrayOutputStream()
+            encode(descriptionWithDefault).writeTo(PrintStream(outputStream))
+
+            assertThat(outputStream.toString()).isEqualToIgnoringWhitespace(schemaWithDefaultStr)
+        }
+
+        @Test
+        fun `null default values are added for optional fields`() {
+            val descriptionWithDefault = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") { p ->
+                p.attr(
+                        name = "name",
+                        type = StringType(),
+                        markdownDescription = "The name of the dog",
+                        required = true
+                )
+                p.attr(
+                        name = "legs",
+                        type = LongType(),
+                        markdownDescription = "The number of legs",
+                        required = false,
+                        default = null
+                )
+            }
+
+            val schemaWithDefaultStr = """
+            |{
+            |   "type": "record",
+            |   "name": "Dog",
+            |   "namespace": "com.shoprunner.data.dogs",
+            |   "doc": "It's a dog. Ruff Ruff!",
+            |   "fields": [
+            |        { "name": "name", "type": "string", "doc": "The name of the dog" },
+            |        { "name": "legs", "type": [ "null", "long" ], "doc": "The number of legs", "default": null }
+            |   ]
+            |}
+            """.trimMargin()
+
+            val outputStream = ByteArrayOutputStream()
+            encode(descriptionWithDefault).writeTo(PrintStream(outputStream))
+
+            assertThat(outputStream.toString()).isEqualToIgnoringWhitespace(schemaWithDefaultStr)
+        }
+
+        @Test
+        fun `null default values are added for optional union fields`() {
+            val descriptionWithDefault = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") { p ->
+                p.attr(
+                        name = "name",
+                        type = StringType(),
+                        markdownDescription = "The name of the dog",
+                        required = true
+                )
+                p.attr(
+                        name = "legs",
+                        type = UnionType(LongType(), IntType()),
+                        markdownDescription = "The number of legs",
+                        required = false,
+                        default = null
+                )
+            }
+
+            val schemaWithDefaultStr = """
+            |{
+            |   "type": "record",
+            |   "name": "Dog",
+            |   "namespace": "com.shoprunner.data.dogs",
+            |   "doc": "It's a dog. Ruff Ruff!",
+            |   "fields": [
+            |        { "name": "name", "type": "string", "doc": "The name of the dog" },
+            |        { "name": "legs", "type": [ "null", "long", "int" ], "doc": "The number of legs", "default": null }
+            |   ]
+            |}
+            """.trimMargin()
+
+            val outputStream = ByteArrayOutputStream()
+            encode(descriptionWithDefault).writeTo(PrintStream(outputStream))
+
+            assertThat(outputStream.toString()).isEqualToIgnoringWhitespace(schemaWithDefaultStr)
+        }
+
+        @Test
+        fun `null default values are added for optional coercible fields`() {
+            val descriptionWithDefault = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") { p ->
+                p.attr(
+                        name = "name",
+                        type = StringType(),
+                        markdownDescription = "The name of the dog",
+                        required = true
+                )
+                p.attr(
+                        name = "legs",
+                        type = StringCoercibleToLong(LongType()),
+                        markdownDescription = "The number of legs",
+                        required = false,
+                        default = null
+                )
+            }
+
+            val schemaWithDefaultStr = """
+            |{
+            |   "type": "record",
+            |   "name": "Dog",
+            |   "namespace": "com.shoprunner.data.dogs",
+            |   "doc": "It's a dog. Ruff Ruff!",
+            |   "fields": [
+            |        { "name": "name", "type": "string", "doc": "The name of the dog" },
+            |        { "name": "legs", "type": [ "null", "long" ], "doc": "The number of legs", "default": null }
+            |   ]
+            |}
+            """.trimMargin()
+
+            val outputStream = ByteArrayOutputStream()
+            encode(descriptionWithDefault).writeTo(PrintStream(outputStream))
+
+            assertThat(outputStream.toString()).isEqualToIgnoringWhitespace(schemaWithDefaultStr)
+        }
+
+        @Test
+        fun `null default values are added for optional map fields`() {
+            val descriptionWithDefault = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") { p ->
+                p.attr(
+                        name = "name",
+                        type = StringType(),
+                        markdownDescription = "The name of the dog",
+                        required = true
+                )
+                p.attr(
+                        name = "doctor_visits",
+                        type = MapType(StringType(), StringCoercibleToInstant(InstantType())),
+                        markdownDescription = "Visits to doctor. Name to visit time",
+                        required = false,
+                        default = null
+                )
+            }
+
+            val schemaWithDefaultStr = """
+            |{
+            |   "type": "record",
+            |   "name": "Dog",
+            |   "namespace": "com.shoprunner.data.dogs",
+            |   "doc": "It's a dog. Ruff Ruff!",
+            |   "fields": [
+            |        { "name": "name", "type": "string", "doc": "The name of the dog" },
+            |        {
+            |          "name" : "doctor_visits",
+            |          "type" : [
+            |            "null",
+            |            { "type" : "map", "values" : { "type" : "long", "logicalType" : "timestamp-millis" } }
+            |           ],
+            |           "doc" : "Visits to doctor. Name to visit time",
+            |           "default" : null
+            |        }
+            |   ]
+            |}
+            """.trimMargin()
+
+            val outputStream = ByteArrayOutputStream()
+            encode(descriptionWithDefault).writeTo(PrintStream(outputStream))
+
+            assertThat(outputStream.toString()).isEqualToIgnoringWhitespace(schemaWithDefaultStr)
+        }
+
+        @Test
+        fun `null default values are added for optional occurence fields`() {
+            val descriptionWithDefault = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") { p ->
+                p.attr(
+                        name = "name",
+                        type = StringType(),
+                        markdownDescription = "The name of the dog",
+                        required = true
+                )
+                p.attr(
+                        name = "owner_names",
+                        type = OccurrencesType(StringType()),
+                        markdownDescription = "The owner names",
+                        required = false,
+                        default = null
+                )
+            }
+
+            val schemaWithDefaultStr = """
+            |{
+            |   "type": "record",
+            |   "name": "Dog",
+            |   "namespace": "com.shoprunner.data.dogs",
+            |   "doc": "It's a dog. Ruff Ruff!",
+            |   "fields": [
+            |        { "name": "name", "type": "string", "doc": "The name of the dog" },
+            |        {
+            |          "name" : "owner_names",
+            |          "type" : [ "null", { "type" : "array", "items" : "string" } ],
+            |          "doc" : "The owner names", "default" : null
+            |        }
             |   ]
             |}
             """.trimMargin()
@@ -364,6 +641,79 @@ class AvroGeneratorTest {
             |   "fields": [
             |        { "name": "name", "type": "string", "doc": "The name of the dog", "default": "Fido" },
             |        { "name": "legs", "type": [ "long", "int" ], "doc": "The number of legs", "default": 4 }
+            |   ]
+            |}
+            """.trimMargin()
+
+            val outputStream = ByteArrayOutputStream()
+            encode(descriptionWithDefault).writeTo(PrintStream(outputStream))
+
+            assertThat(outputStream.toString()).isEqualToIgnoringWhitespace(schemaWithDefaultStr)
+        }
+
+        @Test
+        fun `allows null for required field`() {
+            val descriptionWithDefault = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") { p ->
+                p.attr(
+                        name = "name",
+                        type = StringType(),
+                        markdownDescription = "The name of the dog",
+                        required = true
+                )
+                p.attr(
+                        name = "legs",
+                        type = AllowsNull(LongType()),
+                        markdownDescription = "The number of legs",
+                        required = true
+                )
+            }
+
+            val schemaWithDefaultStr = """
+            |{
+            |   "type": "record",
+            |   "name": "Dog",
+            |   "namespace": "com.shoprunner.data.dogs",
+            |   "doc": "It's a dog. Ruff Ruff!",
+            |   "fields": [
+            |        { "name": "name", "type": "string", "doc": "The name of the dog" },
+            |        { "name": "legs", "type": [ "null", "long" ], "doc": "The number of legs" }
+            |   ]
+            |}
+            """.trimMargin()
+
+            val outputStream = ByteArrayOutputStream()
+            encode(descriptionWithDefault).writeTo(PrintStream(outputStream))
+
+            assertThat(outputStream.toString()).isEqualToIgnoringWhitespace(schemaWithDefaultStr)
+        }
+
+        @Test
+        fun `allows null for optional field`() {
+            val descriptionWithDefault = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") { p ->
+                p.attr(
+                        name = "name",
+                        type = StringType(),
+                        markdownDescription = "The name of the dog",
+                        required = true
+                )
+                p.attr(
+                        name = "legs",
+                        type = AllowsNull(LongType()),
+                        markdownDescription = "The number of legs",
+                        required = false,
+                        default = null
+                )
+            }
+
+            val schemaWithDefaultStr = """
+            |{
+            |   "type": "record",
+            |   "name": "Dog",
+            |   "namespace": "com.shoprunner.data.dogs",
+            |   "doc": "It's a dog. Ruff Ruff!",
+            |   "fields": [
+            |        { "name": "name", "type": "string", "doc": "The name of the dog" },
+            |        { "name": "legs", "type": [ "null", "long" ], "doc": "The number of legs", "default": null }
             |   ]
             |}
             """.trimMargin()

@@ -6,6 +6,7 @@ import com.shoprunner.baleen.avro.BaleenGenerator.encode
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.PropertySpec
+import org.apache.avro.JsonProperties
 import org.apache.avro.LogicalType
 import org.apache.avro.Schema
 import org.assertj.core.api.Assertions
@@ -63,15 +64,28 @@ internal class BaleenGeneratorTest {
         }
 
         @Test
-        fun `processField converts not required field`() {
+        fun `processField converts optional field`() {
+            val fSchema = Schema.createUnion(Schema.create(Schema.Type.NULL), Schema.create(Schema.Type.INT))
+            val f = Schema.Field("name", fSchema, "description", JsonProperties.NULL_VALUE)
+            val code = BaleenGenerator.processField(f)
+            Assertions.assertThat(codeToString(code)).contains("p.attr(")
+            Assertions.assertThat(codeToString(code)).contains("name = \"name\"")
+            Assertions.assertThat(codeToString(code)).contains("type = AllowsNull(IntType())")
+            Assertions.assertThat(codeToString(code)).contains("markdownDescription = \"description\"")
+            Assertions.assertThat(codeToString(code)).contains("required = false")
+        }
+
+        @Test
+        fun `processField converts nullable required field`() {
             val fSchema = Schema.createUnion(Schema.create(Schema.Type.NULL), Schema.create(Schema.Type.INT))
             val f = Schema.Field("name", fSchema, "description", 0)
             val code = BaleenGenerator.processField(f)
             Assertions.assertThat(codeToString(code)).contains("p.attr(")
             Assertions.assertThat(codeToString(code)).contains("name = \"name\"")
-            Assertions.assertThat(codeToString(code)).contains("type = IntType()")
+            Assertions.assertThat(codeToString(code)).contains("type = AllowsNull(IntType())")
             Assertions.assertThat(codeToString(code)).contains("markdownDescription = \"description\"")
-            Assertions.assertThat(codeToString(code)).contains("required = false")
+            Assertions.assertThat(codeToString(code)).contains("required = true")
+            Assertions.assertThat(codeToString(code)).contains("default = 0")
         }
 
         @Test
@@ -195,6 +209,18 @@ internal class BaleenGeneratorTest {
             val timestampMilliSchema = LogicalType("timestamp-micros").addToSchema(Schema.create(Schema.Type.LONG))
             val code = BaleenGenerator.avroTypeToBaleenType(timestampMilliSchema)
             Assertions.assertThat(codeToString(code)).contains("LongType()")
+        }
+
+        @Test
+        fun `avroTypeToBaleenType converts Nullable types`() {
+            val code = BaleenGenerator.avroTypeToBaleenType(Schema.createUnion(Schema.create(Schema.Type.NULL), Schema.create(Schema.Type.LONG)))
+            Assertions.assertThat(codeToString(code)).contains("AllowsNull(LongType())")
+        }
+
+        @Test
+        fun `avroTypeToBaleenType converts Nullable unions`() {
+            val code = BaleenGenerator.avroTypeToBaleenType(Schema.createUnion(Schema.create(Schema.Type.NULL), Schema.create(Schema.Type.INT), Schema.create(Schema.Type.LONG)))
+            Assertions.assertThat(codeToString(code)).contains("AllowsNull(UnionType(IntType(), LongType()))")
         }
     }
 
