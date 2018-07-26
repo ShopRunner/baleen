@@ -1,6 +1,7 @@
 include 'baleen'
 include 'baleen-avro-generator'
 include 'baleen-csv'
+include 'baleen-jsonschema-generator'
 include 'baleen-xml'
 include 'baleen-xsd-generator'
 
