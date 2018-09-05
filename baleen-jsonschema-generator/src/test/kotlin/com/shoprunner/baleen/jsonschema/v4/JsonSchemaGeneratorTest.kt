@@ -4,8 +4,22 @@ import com.shoprunner.baleen.Baleen
 import com.shoprunner.baleen.BaleenType
 import com.shoprunner.baleen.DataTrace
 import com.shoprunner.baleen.ValidationResult
-import com.shoprunner.baleen.types.*
 import com.shoprunner.baleen.jsonschema.v4.JsonSchemaGenerator.writeTo
+import com.shoprunner.baleen.types.AllowsNull
+import com.shoprunner.baleen.types.BooleanType
+import com.shoprunner.baleen.types.DoubleType
+import com.shoprunner.baleen.types.EnumType
+import com.shoprunner.baleen.types.FloatType
+import com.shoprunner.baleen.types.InstantType
+import com.shoprunner.baleen.types.IntType
+import com.shoprunner.baleen.types.LongType
+import com.shoprunner.baleen.types.MapType
+import com.shoprunner.baleen.types.OccurrencesType
+import com.shoprunner.baleen.types.StringCoercibleToFloat
+import com.shoprunner.baleen.types.StringConstantType
+import com.shoprunner.baleen.types.StringType
+import com.shoprunner.baleen.types.TimestampMillisType
+import com.shoprunner.baleen.types.UnionType
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -14,14 +28,14 @@ import java.io.ByteArrayOutputStream
 import java.io.PrintStream
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class JsonSchemaGeneratorTest {
+internal class JsonSchemaGeneratorTest {
 
     @Nested
     inner class Types {
         @Test
         fun `getJsonSchema encodes the resulting coerced type`() {
-            val description = Baleen.describe("Dog") { p ->
-                p.attr(
+            val description = Baleen.describe("Dog") {
+                it.attr(
                         name = "number",
                         type = StringCoercibleToFloat(FloatType())
                 )
@@ -53,8 +67,8 @@ class JsonSchemaGeneratorTest {
 
         @Test
         fun `getJsonSchema encodes the resulting nullable coerced type`() {
-            val description = Baleen.describe("Dog") { p ->
-                p.attr(
+            val description = Baleen.describe("Dog") {
+                it.attr(
                         name = "number",
                         type = AllowsNull(StringCoercibleToFloat(FloatType()))
                 )
@@ -93,8 +107,8 @@ class JsonSchemaGeneratorTest {
 
         @Test
         fun `getJsonSchema encodes boolean type`() {
-            val description = Baleen.describe("Dog") { p ->
-                p.attr(
+            val description = Baleen.describe("Dog") {
+                it.attr(
                         name = "hasLegs",
                         type = BooleanType()
                 )
@@ -126,10 +140,10 @@ class JsonSchemaGeneratorTest {
 
         @Test
         fun `getJsonSchema encodes float type`() {
-            val description = Baleen.describe("Dog") { p ->
-                p.attr(
+            val description = Baleen.describe("Dog") {
+                it.attr(
                         name = "number",
-                        type = FloatType(min=-10.0f, max=10.0f)
+                        type = FloatType(min = -10.0f, max = 10.0f)
                 )
             }
 
@@ -161,10 +175,10 @@ class JsonSchemaGeneratorTest {
 
         @Test
         fun `getJsonSchema encodes double type`() {
-            val description = Baleen.describe("Dog") { p ->
-                p.attr(
+            val description = Baleen.describe("Dog") {
+                it.attr(
                         name = "number",
-                        type = DoubleType(min=-10.0, max=10.0)
+                        type = DoubleType(min = -10.0, max = 10.0)
                 )
             }
 
@@ -196,8 +210,8 @@ class JsonSchemaGeneratorTest {
 
         @Test
         fun `getJsonSchema encodes int type`() {
-            val description = Baleen.describe("Dog") { p ->
-                p.attr(
+            val description = Baleen.describe("Dog") {
+                it.attr(
                         name = "numLegs",
                         type = IntType()
                 )
@@ -231,8 +245,8 @@ class JsonSchemaGeneratorTest {
 
         @Test
         fun `getJsonSchema encodes long type`() {
-            val description = Baleen.describe("Dog") { p ->
-                p.attr(
+            val description = Baleen.describe("Dog") {
+                it.attr(
                         name = "numLegs",
                         type = LongType()
                 )
@@ -266,10 +280,10 @@ class JsonSchemaGeneratorTest {
 
         @Test
         fun `getJsonSchema encodes string type`() {
-            val description = Baleen.describe("Dog") { p ->
-                p.attr(
+            val description = Baleen.describe("Dog") {
+                it.attr(
                         name = "name",
-                        type = StringType(min=1, max=10)
+                        type = StringType(min = 1, max = 10)
                 )
             }
 
@@ -301,8 +315,8 @@ class JsonSchemaGeneratorTest {
 
         @Test
         fun `getJsonSchema encodes string constant type`() {
-            val description = Baleen.describe("Dog") { p ->
-                p.attr(
+            val description = Baleen.describe("Dog") {
+                it.attr(
                         name = "name",
                         type = StringConstantType("Fido")
                 )
@@ -335,8 +349,8 @@ class JsonSchemaGeneratorTest {
 
         @Test
         fun `getJsonSchema encodes enum type`() {
-            val description = Baleen.describe("Dog") { p ->
-                p.attr(
+            val description = Baleen.describe("Dog") {
+                it.attr(
                         name = "color",
                         type = EnumType("Color", "brown", "black", "white")
                 )
@@ -369,8 +383,8 @@ class JsonSchemaGeneratorTest {
 
         @Test
         fun `getJsonSchema encodes instant type`() {
-            val description = Baleen.describe("Dog") { p ->
-                p.attr(
+            val description = Baleen.describe("Dog") {
+                it.attr(
                         name = "birthday",
                         type = InstantType()
                 )
@@ -403,8 +417,8 @@ class JsonSchemaGeneratorTest {
 
         @Test
         fun `getJsonSchema encodes timestamp-millis type`() {
-            val description = Baleen.describe("Dog") { p ->
-                p.attr(
+            val description = Baleen.describe("Dog") {
+                it.attr(
                         name = "birthday",
                         type = TimestampMillisType()
                 )
@@ -437,8 +451,8 @@ class JsonSchemaGeneratorTest {
 
         @Test
         fun `getJsonSchema encodes map type`() {
-            val description = Baleen.describe("Dog") { p ->
-                p.attr(
+            val description = Baleen.describe("Dog") {
+                it.attr(
                         name = "favorite_items",
                         type = MapType(StringType(), StringType())
                 )
@@ -475,8 +489,8 @@ class JsonSchemaGeneratorTest {
 
         @Test
         fun `getJsonSchema encodes map type with AllowsNull`() {
-            val description = Baleen.describe("Dog") { p ->
-                p.attr(
+            val description = Baleen.describe("Dog") {
+                it.attr(
                         name = "favorite_items",
                         type = AllowsNull(MapType(StringType(), StringType()))
                 )
@@ -520,8 +534,8 @@ class JsonSchemaGeneratorTest {
 
         @Test
         fun `getJsonSchema fails map type with non-string key`() {
-            val description = Baleen.describe("Dog") { p ->
-                p.attr(
+            val description = Baleen.describe("Dog") {
+                it.attr(
                         name = "bad_map",
                         type = MapType(IntType(), IntType())
                 )
@@ -534,8 +548,8 @@ class JsonSchemaGeneratorTest {
 
         @Test
         fun `getJsonSchema encodes occurences type`() {
-            val description = Baleen.describe("Dog") { p ->
-                p.attr(
+            val description = Baleen.describe("Dog") {
+                it.attr(
                         name = "favorite_items",
                         type = OccurrencesType(StringType())
                 )
@@ -572,8 +586,8 @@ class JsonSchemaGeneratorTest {
 
         @Test
         fun `getJsonSchema encodes occurences type with AllowsNull`() {
-            val description = Baleen.describe("Dog") { p ->
-                p.attr(
+            val description = Baleen.describe("Dog") {
+                it.attr(
                         name = "favorite_items",
                         type = AllowsNull(OccurrencesType(StringType()))
                 )
@@ -617,8 +631,8 @@ class JsonSchemaGeneratorTest {
 
         @Test
         fun `getJsonSchema encodes occurence type with complex object`() {
-            val description = Baleen.describe("Dog") { p ->
-                p.attr(
+            val description = Baleen.describe("Dog") {
+                it.attr(
                         name = "color",
                         type = OccurrencesType(
                                 Baleen.describe("Color") { n ->
@@ -671,8 +685,8 @@ class JsonSchemaGeneratorTest {
 
         @Test
         fun `getJsonSchema encodes non-nullable union type`() {
-            val description = Baleen.describe("Dog") { p ->
-                p.attr(
+            val description = Baleen.describe("Dog") {
+                it.attr(
                         name = "num_legs",
                         type = UnionType(IntType(), LongType())
                 )
@@ -715,8 +729,8 @@ class JsonSchemaGeneratorTest {
 
         @Test
         fun `getJsonSchema encodes union type of one not as a union`() {
-            val description = Baleen.describe("Dog") { p ->
-                p.attr(
+            val description = Baleen.describe("Dog") {
+                it.attr(
                         name = "num_legs",
                         type = UnionType(IntType())
                 )
@@ -750,8 +764,8 @@ class JsonSchemaGeneratorTest {
 
         @Test
         fun `getJsonSchema encodes union type with AllowNull`() {
-            val description = Baleen.describe("Dog") { p ->
-                p.attr(
+            val description = Baleen.describe("Dog") {
+                it.attr(
                         name = "num_legs",
                         type = AllowsNull(UnionType(IntType(), LongType()))
                 )
@@ -797,8 +811,8 @@ class JsonSchemaGeneratorTest {
 
         @Test
         fun `getJsonSchema encodes union type with complex object`() {
-            val description = Baleen.describe("Dog") { p ->
-                p.attr(
+            val description = Baleen.describe("Dog") {
+                it.attr(
                         name = "name",
                         type = UnionType(
                                 StringType(),
@@ -863,8 +877,8 @@ class JsonSchemaGeneratorTest {
                 override fun validate(dataTrace: DataTrace, value: Any?): Sequence<ValidationResult> = emptySequence()
             }
 
-            val description = Baleen.describe("Dog") { p ->
-                p.attr(
+            val description = Baleen.describe("Dog") {
+                it.attr(
                         name = "bad_type",
                         type = BadType()
                 )
@@ -881,8 +895,8 @@ class JsonSchemaGeneratorTest {
 
         @Test
         fun `model with single attribute`() {
-            val description = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") { p ->
-                p.attr(
+            val description = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") {
+                it.attr(
                         name = "name",
                         type = StringType(),
                         markdownDescription = "The name of the dog"
@@ -919,14 +933,14 @@ class JsonSchemaGeneratorTest {
 
         @Test
         fun `model with multiple attribute`() {
-            val description = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") { p ->
-                p.attr(
+            val description = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") {
+                it.attr(
                         name = "name",
                         type = StringType(),
                         markdownDescription = "The name of the dog"
                 )
 
-                p.attr(
+                it.attr(
                         name = "legs",
                         type = IntType(),
                         markdownDescription = "The number of legs the dog has"
@@ -969,8 +983,8 @@ class JsonSchemaGeneratorTest {
 
         @Test
         fun `model with required attribute`() {
-            val description = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") { p ->
-                p.attr(
+            val description = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") {
+                it.attr(
                         name = "name",
                         type = StringType(),
                         markdownDescription = "The name of the dog",
@@ -1009,8 +1023,8 @@ class JsonSchemaGeneratorTest {
 
         @Test
         fun `model with nullable attribute`() {
-            val description = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") { p ->
-                p.attr(
+            val description = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") {
+                it.attr(
                         name = "name",
                         type = AllowsNull(StringType()),
                         markdownDescription = "The name of the dog"
@@ -1055,8 +1069,8 @@ class JsonSchemaGeneratorTest {
 
         @Test
         fun `model with attribute with default`() {
-            val description = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") { p ->
-                p.attr(
+            val description = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") {
+                it.attr(
                         name = "name",
                         type = StringType(),
                         markdownDescription = "The name of the dog",
@@ -1096,8 +1110,8 @@ class JsonSchemaGeneratorTest {
 
         @Test
         fun `model with nullable attribute default to null`() {
-            val description = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") { p ->
-                p.attr(
+            val description = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") {
+                it.attr(
                         name = "name",
                         type = AllowsNull(StringType()),
                         markdownDescription = "The name of the dog",
@@ -1144,8 +1158,8 @@ class JsonSchemaGeneratorTest {
 
         @Test
         fun `nested model`() {
-            val dogDescription = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") { p ->
-                p.attr(
+            val dogDescription = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") {
+                it.attr(
                         name = "name",
                         type = StringType(),
                         markdownDescription = "The name of the dog",
@@ -1153,15 +1167,15 @@ class JsonSchemaGeneratorTest {
                 )
             }
 
-            val packDescription = Baleen.describe("Pack", "com.shoprunner.data.dogs", "It's a pack of Dogs!") { p ->
-                p.attr(
+            val packDescription = Baleen.describe("Pack", "com.shoprunner.data.dogs", "It's a pack of Dogs!") {
+                it.attr(
                         name = "name",
                         type = StringType(),
                         markdownDescription = "The name of the pack",
                         required = true
                 )
 
-                p.attr(
+                it.attr(
                         name = "dogs",
                         type = OccurrencesType(dogDescription),
                         markdownDescription = "The dogs in the pack",
@@ -1221,8 +1235,8 @@ class JsonSchemaGeneratorTest {
 
         @Test
         fun `support data with additional attributes`() {
-            val dogDescription = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") { p ->
-                p.attr(
+            val dogDescription = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") {
+                it.attr(
                         name = "name",
                         type = StringType(),
                         markdownDescription = "The name of the dog",
@@ -1230,15 +1244,15 @@ class JsonSchemaGeneratorTest {
                 )
             }
 
-            val packDescription = Baleen.describe("Pack", "com.shoprunner.data.dogs", "It's a pack of Dogs!") { p ->
-                p.attr(
+            val packDescription = Baleen.describe("Pack", "com.shoprunner.data.dogs", "It's a pack of Dogs!") {
+                it.attr(
                         name = "name",
                         type = StringType(),
                         markdownDescription = "The name of the pack",
                         required = true
                 )
 
-                p.attr(
+                it.attr(
                         name = "dogs",
                         type = OccurrencesType(dogDescription),
                         markdownDescription = "The dogs in the pack",
@@ -1298,8 +1312,8 @@ class JsonSchemaGeneratorTest {
 
         @Test
         fun `model as self-describing`() {
-            val description = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") { p ->
-                p.attr(
+            val description = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") {
+                it.attr(
                         name = "name",
                         type = StringType(),
                         markdownDescription = "The name of the dog"

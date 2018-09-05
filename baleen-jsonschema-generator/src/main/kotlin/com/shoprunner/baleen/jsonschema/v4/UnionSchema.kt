@@ -1,3 +1,8 @@
 package com.shoprunner.baleen.jsonschema.v4
 
-data class UnionSchema(val type: List<JsonType>) : JsonSchema()
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+
+data class UnionSchema(
+    @JsonDeserialize(contentUsing = JsonSchemaDeserializer::class)
+    val type: List<JsonType>
+) : JsonSchema()

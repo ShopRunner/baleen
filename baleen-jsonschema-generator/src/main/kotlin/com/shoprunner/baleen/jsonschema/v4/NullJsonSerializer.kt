@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.SerializerProvider
 /**
  * Write Null as null in Json
  */
-class NullJsonSerializer: JsonSerializer<Null>() {
+class NullJsonSerializer : JsonSerializer<Null>() {
     override fun serialize(value: Null?, gen: JsonGenerator?, serializers: SerializerProvider?) {
         gen?.writeNull()
     }

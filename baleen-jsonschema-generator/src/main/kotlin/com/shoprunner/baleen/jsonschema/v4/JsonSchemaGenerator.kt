@@ -23,7 +23,6 @@ import com.shoprunner.baleen.types.UnionType
 import java.io.File
 import java.nio.file.Path
 
-
 object JsonSchemaGenerator {
 
     private fun encodeDescription(dataDescription: DataDescription, objectContext: Map<String, ObjectSchema>, withAdditionalAttributes: Boolean): Pair<ObjectReference, Map<String, ObjectSchema>> {
@@ -90,9 +89,7 @@ object JsonSchemaGenerator {
                     maximum = if (baleenType.max.isFinite()) baleenType.max.toDouble() else null,
                     minimum = if (baleenType.min.isFinite()) baleenType.min.toDouble() else null
             ) to objectContext
-            is InstantType -> StringSchema(
-                    format = StringFormats.`date-time`
-            ) to objectContext
+            is InstantType -> DateTimeSchema() to objectContext
             is LongType -> IntegerSchema(
                     maximum = baleenType.max,
                     minimum = baleenType.min
@@ -108,9 +105,7 @@ object JsonSchemaGenerator {
             is StringConstantType -> StringSchema(
                     enum = listOf(baleenType.constant)
             ) to objectContext
-            is TimestampMillisType -> StringSchema(
-                    format = StringFormats.`date-time`
-            ) to objectContext
+            is TimestampMillisType -> DateTimeSchema() to objectContext
             is UnionType -> {
                 val l = baleenType.types.map { getJsonSchema(it, objectContext, withAdditionalAttributes) }
                 val subSchemas = l.map { it.first }.distinct()
@@ -153,9 +148,8 @@ object JsonSchemaGenerator {
     }
 
     fun RootJsonSchema.writeTo(directory: File, prettyPrint: Boolean = false): File {
-        val lastDot = this.id.lastIndexOf('.')
-        val namespace = this.id.substring(0, lastDot)
-        val name = this.id.substring(lastDot)
+        val namespace = this.id?.substring(0, this.id.lastIndexOf('.')) ?: ""
+        val name = this.id?.substring(this.id.lastIndexOf('.')) ?: "UNNAMED"
         val packageDir = java.io.File(directory, namespace.replace(".", "/"))
         packageDir.mkdirs()
         val schemaFile = java.io.File(packageDir, "$name.schema.json")

@@ -1,7 +1,10 @@
 package com.shoprunner.baleen.jsonschema.v4
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+
 data class ArraySchema(
-        val items: JsonSchema
+    @JsonDeserialize(using = JsonSchemaDeserializer::class)
+    val items: JsonSchema
 ) : JsonSchema() {
-    val type = JsonType.array
+    var type = JsonType.array
 }

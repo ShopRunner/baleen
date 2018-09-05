@@ -30,7 +30,6 @@ import com.shoprunner.baleen.types.TimestampMillisType
 import com.shoprunner.baleen.types.UnionType
 import java.io.File
 import java.nio.file.Path
-import com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator as JsonSchemaGen
 
 object JsonSchemaGenerator {
 

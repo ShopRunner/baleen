@@ -35,7 +35,7 @@ import java.io.ByteArrayOutputStream
 import java.io.PrintStream
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class JsonSchemaGeneratorTest {
+internal class JsonSchemaGeneratorTest {
 
     @Nested
     inner class Types {
