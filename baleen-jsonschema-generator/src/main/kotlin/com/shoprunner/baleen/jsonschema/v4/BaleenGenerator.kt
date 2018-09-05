@@ -43,7 +43,7 @@ object BaleenGenerator {
             }
         }
         // Finally get it from "$ref"
-        else {
+        else if (schema.`$ref` != null) {
             val lastRefPart = schema.`$ref`.split("/").last()
             val recordPart = lastRefPart.split(":").last()
             val namespaceParts = recordPart.split(".")
@@ -52,6 +52,8 @@ object BaleenGenerator {
             } else {
                 "" to namespaceParts.first()
             }
+        } else {
+            "" to "NoName"
         }
     }
 
@@ -227,9 +229,20 @@ object BaleenGenerator {
     }
 
     fun encode(schema: RootJsonSchema): List<FileSpec> {
-        return schema.definitions.map { (record, objectSchema) ->
-            val (namespace, name) = getNamespaceAndName(record)
-            encode(namespace, name, objectSchema)
+        return if (schema.definitions != null) {
+            schema.definitions.map { (record, objectSchema) ->
+                val (namespace, name) = getNamespaceAndName(record)
+                encode(namespace, name, objectSchema)
+            }
+        } else if (schema.type == JsonType.`object`) {
+            val (namespace, name) = getNamespaceAndName(schema)
+            val objectSchema = ObjectSchema(
+                    schema.required,
+                    schema.additionalProperties,
+                    schema.properties ?: emptyMap())
+            listOf(encode(namespace, name, objectSchema))
+        } else {
+            emptyList()
         }
     }
 

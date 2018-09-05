@@ -14,7 +14,9 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import java.io.File
 import java.io.StringWriter
+import java.net.URL
 import java.net.URLClassLoader
+import java.net.UnknownHostException
 import java.util.logging.Logger
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -74,6 +76,16 @@ internal class BaleenGeneratorTest {
 
             Assertions.assertThat(namespace).isEqualTo("")
             Assertions.assertThat(name).isEqualTo("Dog")
+        }
+
+        @Test
+        fun `#getNamepaceAndName parses name without any information`() {
+            val schema = RootJsonSchema(null, emptyMap(), null, "")
+
+            val (namespace, name) = BaleenGenerator.getNamespaceAndName(schema)
+
+            Assertions.assertThat(namespace).isEqualTo("")
+            Assertions.assertThat(name).isEqualTo("NoName")
         }
 
         @Test
@@ -1386,6 +1398,52 @@ internal class BaleenGeneratorTest {
             val packType = cl.loadClass("com.shoprunner.data.dogs.PackKt")
             val packDescription = packType.getDeclaredField("Pack").type
             Assertions.assertThat(packDescription).isEqualTo(DataDescription::class.java)
+        }
+
+        @Test
+        fun `generate code from url that compiles`() {
+            try {
+                // Setup
+                val dir = File("build/baleen-gen-test")
+                val sourceDir = File(dir, "src/main/kotlin")
+                sourceDir.mkdirs()
+                val classesDir = File(dir, "classes/main/kotlin")
+                classesDir.mkdirs()
+
+                // Generate Baleen Kotlin Files
+                val schemaUrl = URL("https://raw.githubusercontent.com/snowplow/iglu-central/master/schemas/com.google.analytics/cookies/jsonschema/1-0-0")
+                BaleenGenerator.encode(schemaUrl.parseJsonSchema()).forEach {
+                    it.writeTo(sourceDir)
+                }
+
+                val cookiesFile = File(sourceDir, "com/google/analytics/cookies.kt")
+                Assertions.assertThat(cookiesFile).exists()
+
+                // Needs the Environment Variable passed in in order to compile. Gradle can give us this.
+                Assertions.assertThat(System.getenv("GEN_CLASSPATH")).isNotBlank()
+
+                val compiler = K2JVMCompiler()
+                val args = K2JVMCompilerArguments().apply {
+                    destination = classesDir.path
+                    freeArgs = listOf(sourceDir.path)
+                    classpath = System.getenv("GEN_CLASSPATH")
+                    noStdlib = true
+                }
+                compiler.exec(LogMessageCollector(), Services.EMPTY, args)
+
+                // Check that compilation worked
+                Assertions.assertThat(File(classesDir, "com/google/analytics/CookiesKt.class")).exists()
+
+                // Check if the compiled files can be loaded
+                val cl = URLClassLoader(arrayOf(classesDir.toURI().toURL()))
+
+                val cookiesType = cl.loadClass("com.google.analytics.CookiesKt")
+                val cookiesDescription = cookiesType.getDeclaredField("cookies").type
+                Assertions.assertThat(cookiesDescription).isEqualTo(DataDescription::class.java)
+            } catch (e: UnknownHostException) {
+                // Don't fail the test if there is no connection
+                return
+            }
         }
     }
 }
