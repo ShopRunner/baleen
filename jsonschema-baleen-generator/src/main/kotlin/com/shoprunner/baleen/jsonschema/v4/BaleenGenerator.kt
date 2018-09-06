@@ -31,11 +31,11 @@ object BaleenGenerator {
     fun getNamespaceAndName(schema: RootJsonSchema): Pair<String, String> {
         // Try to use "self" if it exists
         return if (schema.self != null) {
-            schema.self.vendor to schema.self.name
+            schema.self!!.vendor to schema.self!!.name
         }
         // Otherwise parse from "id" if it exists
         else if (schema.id != null) {
-            val namespaceParts = schema.id.split(".")
+            val namespaceParts = schema.id!!.split(".")
             if (namespaceParts.size > 1) {
                 namespaceParts.subList(0, namespaceParts.lastIndex).joinToString(".") to namespaceParts.last()
             } else {
@@ -44,7 +44,7 @@ object BaleenGenerator {
         }
         // Finally get it from "$ref"
         else if (schema.`$ref` != null) {
-            val lastRefPart = schema.`$ref`.split("/").last()
+            val lastRefPart = schema.`$ref`!!.split("/").last()
             val recordPart = lastRefPart.split(":").last()
             val namespaceParts = recordPart.split(".")
             if (namespaceParts.size > 1) {
@@ -193,15 +193,15 @@ object BaleenGenerator {
             }
             is StringSchema -> {
                 if (schema.enum != null) {
-                    if (schema.enum.size > 1) {
-                        val enumName = "Enum${schema.enum.map { it.capitalize().first() }.joinToString("")}"
+                    if (schema.enum!!.size > 1) {
+                        val enumName = "Enum${schema.enum!!.map { it.capitalize().first() }.joinToString("")}"
                         CodeBlock.builder()
                                 .add(CodeBlock.of("%T(%S, listOf(", EnumType::class, enumName))
-                                .add(schema.enum.map { CodeBlock.of("%S", it) }.reduceRight { a, b -> a.toBuilder().add(", ").add(b).build() })
+                                .add(schema.enum!!.map { CodeBlock.of("%S", it) }.reduceRight { a, b -> a.toBuilder().add(", ").add(b).build() })
                                 .add(CodeBlock.of("))"))
                                 .build()
-                    } else if (schema.enum.size == 1) {
-                        CodeBlock.of("%T(%S)", StringConstantType::class, schema.enum.first())
+                    } else if (schema.enum!!.size == 1) {
+                        CodeBlock.of("%T(%S)", StringConstantType::class, schema.enum!!.first())
                     } else {
                         throw Exception("Enum should have at least 1 value")
                     }
@@ -230,7 +230,7 @@ object BaleenGenerator {
 
     fun encode(schema: RootJsonSchema): List<FileSpec> {
         return if (schema.definitions != null) {
-            schema.definitions.map { (record, objectSchema) ->
+            schema.definitions!!.map { (record, objectSchema) ->
                 val (namespace, name) = getNamespaceAndName(record)
                 encode(namespace, name, objectSchema)
             }
