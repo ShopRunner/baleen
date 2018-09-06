@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import java.io.ByteArrayOutputStream
+import java.io.File
 import java.io.PrintStream
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -1354,6 +1355,138 @@ internal class JsonSchemaGeneratorTest {
                     .writeTo(PrintStream(outputStream), true)
 
             Assertions.assertThat(outputStream.toString()).isEqualToIgnoringWhitespace(schemaStr)
+        }
+    }
+
+    @Nested
+    inner class Writers {
+
+        @Test
+        fun `write to file`() {
+            val Dog = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") {
+                it.attr(
+                        name = "name",
+                        type = StringType(),
+                        markdownDescription = "The name of the dog",
+                        required = true
+                )
+                it.attr(
+                        name = "legs",
+                        type = AllowsNull(IntType()),
+                        markdownDescription = "The number of legs",
+                        required = false,
+                        default = null
+                )
+            }
+
+            val schemaStr = """
+            {
+              "id" : "com.shoprunner.data.dogs.Dog",
+              "definitions" : {
+                "record:com.shoprunner.data.dogs.Dog" : {
+                  "description" : "It's a dog. Ruff Ruff!",
+                  "type" : "object",
+                  "required" : [ "name" ],
+                  "additionalProperties" : false,
+                  "properties" : {
+                    "name" : {
+                      "description" : "The name of the dog",
+                      "type" : "string",
+                      "maxLength" : 2147483647,
+                      "minLength" : 0
+                    },
+                    "legs" : {
+                      "description" : "The number of legs",
+                      "default" : null,
+                      "oneOf" : [ {
+                        "type" : "null"
+                      }, {
+                        "type" : "integer",
+                        "maximum" : 2147483647,
+                        "minimum" : -2147483648
+                      } ]
+                    }
+                  }
+                }
+              },
+              "${'$'}ref" : "#/definitions/record:com.shoprunner.data.dogs.Dog",
+              "${'$'}schema" : "http://json-schema.org/draft-04/schema"
+            }
+            """.trimIndent()
+
+            val dir = File("build/jsonschema-gen-test/tofile")
+            dir.mkdirs()
+            JsonSchemaGenerator.encode(Dog).writeTo(dir, true)
+
+            val dogFile = File(dir, "com/shoprunner/data/dogs/Dog.schema.json")
+            Assertions.assertThat(dogFile).exists()
+            val content = dogFile.readText()
+
+            Assertions.assertThat(content).isEqualToIgnoringWhitespace(schemaStr)
+        }
+
+        @Test
+        fun `write to path`() {
+            val Dog = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") {
+                it.attr(
+                        name = "name",
+                        type = StringType(),
+                        markdownDescription = "The name of the dog",
+                        required = true
+                )
+                it.attr(
+                        name = "legs",
+                        type = AllowsNull(IntType()),
+                        markdownDescription = "The number of legs",
+                        required = false,
+                        default = null
+                )
+            }
+
+            val schemaStr = """
+            {
+              "id" : "com.shoprunner.data.dogs.Dog",
+              "definitions" : {
+                "record:com.shoprunner.data.dogs.Dog" : {
+                  "description" : "It's a dog. Ruff Ruff!",
+                  "type" : "object",
+                  "required" : [ "name" ],
+                  "additionalProperties" : false,
+                  "properties" : {
+                    "name" : {
+                      "description" : "The name of the dog",
+                      "type" : "string",
+                      "maxLength" : 2147483647,
+                      "minLength" : 0
+                    },
+                    "legs" : {
+                      "description" : "The number of legs",
+                      "default" : null,
+                      "oneOf" : [ {
+                        "type" : "null"
+                      }, {
+                        "type" : "integer",
+                        "maximum" : 2147483647,
+                        "minimum" : -2147483648
+                      } ]
+                    }
+                  }
+                }
+              },
+              "${'$'}ref" : "#/definitions/record:com.shoprunner.data.dogs.Dog",
+              "${'$'}schema" : "http://json-schema.org/draft-04/schema"
+            }
+            """.trimIndent()
+
+            val dir = File("build/jsonschema-gen-test/topath")
+            dir.mkdirs()
+            JsonSchemaGenerator.encode(Dog).writeTo(dir.toPath(), true)
+
+            val dogFile = File(dir, "com/shoprunner/data/dogs/Dog.schema.json")
+            Assertions.assertThat(dogFile).exists()
+            val content = dogFile.readText()
+
+            Assertions.assertThat(content).isEqualToIgnoringWhitespace(schemaStr)
         }
     }
 }

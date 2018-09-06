@@ -148,11 +148,15 @@ object JsonSchemaGenerator {
     }
 
     fun RootJsonSchema.writeTo(directory: File, prettyPrint: Boolean = false): File {
-        val namespace = this.id?.substring(0, this.id!!.lastIndexOf('.')) ?: ""
-        val name = this.id?.substring(this.id!!.lastIndexOf('.')) ?: "UNNAMED"
-        val packageDir = java.io.File(directory, namespace.replace(".", "/"))
-        packageDir.mkdirs()
-        val schemaFile = java.io.File(packageDir, "$name.schema.json")
+        val id = this.id
+        val schemaFile = if (id != null) {
+            val name = id.replace(".", "/")
+            File(directory, "$name.schema.json")
+        } else {
+            File(directory, "UNNAMED.schema.json")
+        }
+
+        schemaFile.parentFile.mkdirs()
 
         if (prettyPrint) {
             ObjectMapper()

@@ -13,9 +13,3 @@ dependencies {
     testRuntime 'org.junit.jupiter:junit-jupiter-engine:5.0.1'
     testRuntime 'org.junit.platform:junit-platform-runner:1.1.0'
 }
-
-junitPlatformTest {
-    HashMap map = new HashMap()
-    map.put("GEN_CLASSPATH", configurations.testCompile.files.path.join(":"))
-    environment map
-}
