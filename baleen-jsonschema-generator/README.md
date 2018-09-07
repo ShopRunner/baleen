@@ -19,11 +19,11 @@ val Dog = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff R
     )
 }
 
-JsonSchemaGenerator.encode(Dog).writeTo(File("Dog.schema.json"), true)
+JsonSchemaGenerator.encode(Dog).writeTo(File("outDir"), true)
 
 ```
 
-Will output to file `com/shoprunner/data/dogs/Dog.schema.json` with the following schema
+Will output to file `outDir/com/shoprunner/data/dogs/Dog.schema.json` with the following schema
 
 ```json
 {
@@ -66,7 +66,7 @@ Addiitonally, there is support writing self-describing json schemas.
 JsonSchemaGenerator.encodeAsSelfDescribing(Dog, version = "1-1-1").writeTo(dir, true)
 ```
 
-Will output to file `com/shoprunner/data/dogs/Dog.schema.json` with the following schema
+Will output to file `outDir/com/shoprunner/data/dogs/Dog.schema.json` with the following schema
 
 ```json
 {
