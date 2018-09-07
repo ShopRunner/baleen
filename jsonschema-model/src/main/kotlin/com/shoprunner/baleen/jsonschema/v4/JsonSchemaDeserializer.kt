@@ -16,15 +16,21 @@ class JsonSchemaDeserializer : StdDeserializer<JsonSchema>(JsonSchema::class.jav
 
         val type = when {
             tree.has("type") -> tree["type"].asText()
+            tree.has("allOf") -> "allOf"
+            tree.has("anyOf") -> "anyOf"
             tree.has("oneOf") -> "oneOf"
+            tree.has("not") -> "not"
             tree.has("${'$'}ref") -> "ref"
             else -> null
         }
 
         return when (type) {
+            "allOf" -> mapper.treeToValue(tree, AllOf::class.java)
+            "anyOf" -> mapper.treeToValue(tree, AnyOf::class.java)
             "array" -> mapper.treeToValue(tree, ArraySchema::class.java)
             "boolean" -> mapper.treeToValue(tree, BooleanSchema::class.java)
             "integer" -> mapper.treeToValue(tree, IntegerSchema::class.java)
+            "not" -> mapper.treeToValue(tree, Not::class.java)
             "number" -> mapper.treeToValue(tree, NumberSchema::class.java)
             "null" -> mapper.treeToValue(tree, NullSchema::class.java)
             "object" -> {

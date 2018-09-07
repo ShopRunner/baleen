@@ -76,3 +76,12 @@ val Dog: DataDescription = Baleen.describe("Dog", "com.shoprunner.data.dogs", "I
 }
 ```
 
+## Notes
+
+Not Supported (PR's welcome!):
+* `allOf`
+* `not`
+* `patternProperties`
+* All string `format`s except for `date-time`
+* When `additionalProperties` are not boolean, the `object` becomes a map even though `additionalProperties` can also be on `object`.
+* `dependencies`

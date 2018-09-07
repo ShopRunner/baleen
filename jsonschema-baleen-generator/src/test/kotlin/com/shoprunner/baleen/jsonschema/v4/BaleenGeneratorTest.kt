@@ -907,6 +907,118 @@ internal class BaleenGeneratorTest {
         }
 
         @Test
+        fun `json anyOf fails`() {
+            val schemaStr = """
+            {
+              "id" : "Dog",
+              "definitions" : {
+                "record:Dog" : {
+                  "type" : "object",
+                  "additionalProperties" : false,
+                  "properties" : {
+                    "num_legs" : {
+                      "anyOf" : [
+                        {
+                          "type" : "string"
+                        },
+                        {
+                          "type" : "integer"
+                        }
+                      ]
+                    }
+                  }
+                }
+              },
+              "${'$'}ref" : "#/definitions/record:Dog",
+              "${'$'}schema" : "http://json-schema.org/draft-04/schema"
+            }""".trimIndent()
+
+            val descriptionStr = """
+                import com.shoprunner.baleen.Baleen.describe
+                import com.shoprunner.baleen.DataDescription
+                import com.shoprunner.baleen.types.LongType
+                import com.shoprunner.baleen.types.StringType
+                import com.shoprunner.baleen.types.UnionType
+
+                val Dog: DataDescription = describe("Dog", "", "") {
+                    it.attr(
+                            name = "num_legs",
+                            type = UnionType(StringType(), LongType())
+                    )
+                }
+            """.trimIndent()
+
+            val outputStream = StringWriter()
+            val descriptions = BaleenGenerator.encode(schemaStr.parseJsonSchema())
+            descriptions.first().writeTo(outputStream)
+            val outputStr = outputStream.toString()
+
+            Assertions.assertThat(descriptions).hasSize(1)
+            Assertions.assertThat(outputStr).isEqualToIgnoringWhitespace(descriptionStr)
+        }
+
+        @Test
+        fun `json allOf fails`() {
+            val schemaStr = """
+            {
+              "id" : "Dog",
+              "definitions" : {
+                "record:Dog" : {
+                  "type" : "object",
+                  "additionalProperties" : false,
+                  "properties" : {
+                    "num_legs" : {
+                      "allOf" : [
+                        {
+                          "type" : "string"
+                        },
+                        {
+                          "type" : "integer"
+                        }
+                      ]
+                    }
+                  }
+                }
+              },
+              "${'$'}ref" : "#/definitions/record:Dog",
+              "${'$'}schema" : "http://json-schema.org/draft-04/schema"
+            }""".trimIndent()
+
+            Assertions
+                    .assertThatThrownBy { BaleenGenerator.encode(schemaStr.parseJsonSchema()) }
+                    .isInstanceOf(IllegalArgumentException::class.java)
+                    .hasMessageContaining("json type AllOf not supported")
+        }
+
+        @Test
+        fun `json not fails`() {
+            val schemaStr = """
+            {
+              "id" : "Dog",
+              "definitions" : {
+                "record:Dog" : {
+                  "type" : "object",
+                  "additionalProperties" : false,
+                  "properties" : {
+                    "num_legs" : {
+                      "not" : {
+                          "type" : "string"
+                      }
+                    }
+                  }
+                }
+              },
+              "${'$'}ref" : "#/definitions/record:Dog",
+              "${'$'}schema" : "http://json-schema.org/draft-04/schema"
+            }""".trimIndent()
+
+            Assertions
+                    .assertThatThrownBy { BaleenGenerator.encode(schemaStr.parseJsonSchema()) }
+                    .isInstanceOf(IllegalArgumentException::class.java)
+                    .hasMessageContaining("json type Not not supported")
+        }
+
+        @Test
         fun `json oneOf with duplicate types converts to duplicate types in Baleen`() {
             val schemaStr = """
             {

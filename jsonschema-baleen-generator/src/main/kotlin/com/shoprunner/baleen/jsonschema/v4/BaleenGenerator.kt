@@ -137,6 +137,7 @@ object BaleenGenerator {
 
     fun jsonSchemaToBaleenType(schema: JsonSchema): CodeBlock {
         return when (schema) {
+            is AnyOf -> toUnionType(schema.anyOf)
             is ArraySchema ->
                 CodeBlock.builder()
                         .add("%T(", OccurrencesType::class)
@@ -168,29 +169,7 @@ object BaleenGenerator {
                 }
             }
             is ObjectReference -> CodeBlock.of("%L", schema.`$ref`.split(":").last())
-            is OneOf -> {
-                val unionedTypes = schema.oneOf.filterNot { it is NullSchema }.map { jsonSchemaToBaleenType(it) }
-                val baleenTypeCode = if (unionedTypes.size > 1) {
-                    CodeBlock.builder()
-                            .add("%T(", UnionType::class)
-                            .add(schema.oneOf.map { jsonSchemaToBaleenType(it) }.reduceRight { a, b -> a.toBuilder().add(", ").add(b).build() })
-                            .add(")")
-                            .build()
-                } else {
-                    unionedTypes.first()
-                }
-
-                val isNullable = schema.oneOf.any { it is NullSchema }
-                if (isNullable) {
-                    CodeBlock.builder()
-                            .add("%T(", AllowsNull::class)
-                            .add(baleenTypeCode)
-                            .add(")")
-                            .build()
-                } else {
-                    baleenTypeCode
-                }
-            }
+            is OneOf -> toUnionType(schema.oneOf)
             is StringSchema -> {
                 if (schema.enum != null) {
                     if (schema.enum!!.size > 1) {
@@ -218,6 +197,30 @@ object BaleenGenerator {
                 }
             }
             else -> throw IllegalArgumentException("json type ${schema::class.simpleName} not supported")
+        }
+    }
+
+    private fun toUnionType(schemas: List<JsonSchema>): CodeBlock {
+        val unionedTypes = schemas.filterNot { it is NullSchema }.map { jsonSchemaToBaleenType(it) }
+        val baleenTypeCode = if (unionedTypes.size > 1) {
+            CodeBlock.builder()
+                    .add("%T(", UnionType::class)
+                    .add(schemas.map { jsonSchemaToBaleenType(it) }.reduceRight { a, b -> a.toBuilder().add(", ").add(b).build() })
+                    .add(")")
+                    .build()
+        } else {
+            unionedTypes.first()
+        }
+
+        val isNullable = schemas.any { it is NullSchema }
+        return if (isNullable) {
+            CodeBlock.builder()
+                    .add("%T(", AllowsNull::class)
+                    .add(baleenTypeCode)
+                    .add(")")
+                    .build()
+        } else {
+            baleenTypeCode
         }
     }
 
