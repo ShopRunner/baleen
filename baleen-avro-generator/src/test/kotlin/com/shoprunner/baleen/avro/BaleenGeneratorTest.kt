@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import java.io.File
 import java.net.URLClassLoader
+import java.util.logging.Logger
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class BaleenGeneratorTest {
@@ -260,12 +261,20 @@ internal class BaleenGeneratorTest {
         val packSchema = parser.parse(packSchemaStr)
 
         inner class LogMessageCollector : MessageCollector {
+            val logger = Logger.getLogger("LogMessageCollector")
+
             override fun clear() = Unit
 
             override fun hasErrors() = false
 
             override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation?) {
-                println("$severity: $message : $location")
+                when (severity) {
+                    CompilerMessageSeverity.ERROR -> logger.severe("$message : $location")
+                    CompilerMessageSeverity.EXCEPTION -> logger.severe("$message : $location")
+                    CompilerMessageSeverity.STRONG_WARNING -> logger.warning("$message : $location")
+                    CompilerMessageSeverity.WARNING -> logger.warning("$message : $location")
+                    else -> logger.info("$severity: $message : $location")
+                }
             }
         }
 

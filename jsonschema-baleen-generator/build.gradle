@@ -1,0 +1,22 @@
+apply plugin: 'kotlin'
+apply plugin: 'org.jmailen.kotlinter'
+
+dependencies {
+    compile project(':baleen')
+    compile project(':jsonschema-model')
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile 'com.fasterxml.jackson.core:jackson-core:2.9.6'
+    compile 'com.fasterxml.jackson.module:jackson-module-kotlin:2.9.6'
+    compile 'com.squareup:kotlinpoet:0.7.0'
+    testCompile 'org.junit.jupiter:junit-jupiter-api:5.0.2'
+    testCompile 'org.assertj:assertj-core:3.9.1'
+    testCompile "org.jetbrains.kotlin:kotlin-compiler:$kotlin_version"
+    testRuntime 'org.junit.jupiter:junit-jupiter-engine:5.0.1'
+    testRuntime 'org.junit.platform:junit-platform-runner:1.1.0'
+}
+
+junitPlatformTest {
+    HashMap map = new HashMap()
+    map.put("GEN_CLASSPATH", configurations.testCompile.files.path.join(":"))
+    environment map
+}
