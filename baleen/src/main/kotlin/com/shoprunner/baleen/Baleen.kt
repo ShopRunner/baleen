@@ -15,14 +15,13 @@ object Baleen {
         return dd
     }
 
-    fun describeBy(
-        name: String,
+    fun String.describeAs(
         nameSpace: String = "",
         markdownDescription: String = "",
         description: DataDescription.() -> Unit = {}
     ): DataDescription {
         val dd = DataDescription(
-            name = name,
+            name = this,
             nameSpace = nameSpace,
             markdownDescription = markdownDescription)
         dd.apply(description)

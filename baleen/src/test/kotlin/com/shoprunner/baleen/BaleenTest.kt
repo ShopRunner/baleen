@@ -1,6 +1,6 @@
 package com.shoprunner.baleen
 
-import com.shoprunner.baleen.Baleen.describeBy
+import com.shoprunner.baleen.Baleen.describeAs
 import com.shoprunner.baleen.TestHelper.dataOf
 import com.shoprunner.baleen.ValidationAssert.Companion.assertThat
 import com.shoprunner.baleen.types.AllowsNull
@@ -14,7 +14,7 @@ import org.junit.jupiter.api.TestInstance
 internal class BaleenTest {
     @Nested
     inner class EmptyDataSpecification {
-        private val dataDesc = describeBy("Empty")
+        private val dataDesc = "Empty".describeAs()
 
         @Test
         fun `accepts anything`() {
@@ -43,10 +43,10 @@ internal class BaleenTest {
     @Nested
     inner class RequiredAttribute {
 
-        private val dogDescription = describeBy("Dog") {
-             attr(name = "name",
-                    type = AllowsNull(StringType()),
-                    required = true)
+        private val dogDescription = "Dog".describeAs {
+            attr(name = "name",
+                type = AllowsNull(StringType()),
+                required = true)
         }
 
         @Test
@@ -75,7 +75,7 @@ internal class BaleenTest {
     @Nested
     inner class RequiredWithDefaultAttribute {
 
-        private val dogDescription = describeBy("Dog") {
+        private val dogDescription = "Dog".describeAs {
             attr(name = "name",
                     type = AllowsNull(StringType()),
                     required = true,
@@ -106,19 +106,19 @@ internal class BaleenTest {
 
     @Nested
     inner class NestedDesc {
-        private val dogDescription = describeBy("Dog") {
+        private val dogDescription = "Dog".describeAs {
             attr(name = "name",
                     type = StringType(),
                     required = true)
         }
 
-        private val packWithAlpha = describeBy("Pack") {
+        private val packWithAlpha = "Pack".describeAs {
             attr(name = "alpha",
                     type = dogDescription,
                     required = true)
         }
 
-        private val packOptionalAlpha = describeBy("Pack") {
+        private val packOptionalAlpha = "Pack".describeAs {
             attr(name = "alpha",
                     type = dogDescription,
                     required = false)
@@ -185,7 +185,7 @@ internal class BaleenTest {
 
     @Test
     fun `warn on extra attributes`() {
-        val dataDesc = describeBy("Empty") {
+        val dataDesc = "Empty".describeAs {
             warnOnExtraAttributes()
         }
 
@@ -202,7 +202,7 @@ internal class BaleenTest {
 
     @Test
     fun `custom test`() {
-        val dataDesc = describeBy("Empty") {
+        val dataDesc = "Empty".describeAs {
             test { dataTrace, value ->
                 when (value["favorite number"]) {
                     42 -> emptySequence()

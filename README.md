@@ -74,14 +74,14 @@ Join the [slack channel](https://join.slack.com/t/baleen-validation/signup)
 ## Example Schema Definition
 
 ```kotlin
-import com.shoprunner.baleen.Baleen.describeBy
+import com.shoprunner.baleen.Baleen.describeAs
 import com.shoprunner.baleen.ValidationError
 import com.shoprunner.baleen.dataTrace
 import com.shoprunner.baleen.types.StringType
 
 val departments = listOf("Mens", "Womens", "Boys", "Girls", "Kids", "Baby & Toddler")
 
-val productSpec = describeBy("Product") {
+val productSpec = "Product".describeAs {
     attr( name = "sku",
           type = StringType(min = 1, max = 500),
           required = true)
