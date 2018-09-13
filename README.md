@@ -81,17 +81,15 @@ import com.shoprunner.baleen.types.StringType
 
 val departments = listOf("Mens", "Womens", "Boys", "Girls", "Kids", "Baby & Toddler")
 
-val productSpec = "Product".describeAs {
-    attr( name = "sku",
-          type = StringType(min = 1, max = 500),
+val productDescription = "Product".describeAs {
+
+    "sku".type(StringType(min = 1, max = 500),
           required = true)
 
-    attr( name = "brand_manufacturer",
-          type = StringType(min = 1, max = 500),
+    "brand_manufacturer".type(StringType(min = 1, max = 500),
           required = true)
 
-    attr( name = "department",
-          type = StringType(min = 0, max = 100))
+    "department".type(StringType(min = 0, max = 100))
          .describe { attr ->
 
         attr.test { datatrace, value ->

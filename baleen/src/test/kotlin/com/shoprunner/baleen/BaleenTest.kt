@@ -44,7 +44,7 @@ internal class BaleenTest {
     inner class RequiredAttribute {
 
         private val dogDescription = "Dog".describeAs {
-            attr(name = "name",
+            "name".type(
                 type = AllowsNull(StringType()),
                 required = true)
         }
@@ -76,7 +76,7 @@ internal class BaleenTest {
     inner class RequiredWithDefaultAttribute {
 
         private val dogDescription = "Dog".describeAs {
-            attr(name = "name",
+            "name".type(
                     type = AllowsNull(StringType()),
                     required = true,
                     default = "Fido")
@@ -107,19 +107,19 @@ internal class BaleenTest {
     @Nested
     inner class NestedDesc {
         private val dogDescription = "Dog".describeAs {
-            attr(name = "name",
+            "name".type(
                     type = StringType(),
                     required = true)
         }
 
         private val packWithAlpha = "Pack".describeAs {
-            attr(name = "alpha",
+            "alpha".type(
                     type = dogDescription,
                     required = true)
         }
 
         private val packOptionalAlpha = "Pack".describeAs {
-            attr(name = "alpha",
+            "alpha".type(
                     type = dogDescription,
                     required = false)
         }

@@ -38,6 +38,19 @@ class DataDescription(
         return attr
     }
 
+    fun String.type(
+        type: BaleenType,
+        markdownDescription: String = "",
+        aliases: Array<String> = arrayOf(),
+        required: Boolean = false,
+        default: Any? = NoDefault
+    ): AttributeDescription {
+        val attr = AttributeDescription(this@DataDescription, this, type, markdownDescription, aliases, required, default)
+        attrs.add(attr)
+        tests.add(attrTest(attr, type))
+        return attr
+    }
+
     fun warnOnExtraAttributes() {
         tests.add(fun(dataTrace: DataTrace, data: Data): Sequence<ValidationResult> {
             val extraAttributes = data.keys - attrs.map { it.name }.toSet()

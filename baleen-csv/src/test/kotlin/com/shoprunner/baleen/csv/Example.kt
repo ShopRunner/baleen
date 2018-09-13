@@ -12,19 +12,14 @@ import com.shoprunner.baleen.types.StringType
 import io.reactivex.rxkotlin.toFlowable
 
 val dogDescription = "Dog".describeAs {
-    attr(
-        name = "name",
-        type = StringType(),
+
+    "name".type( StringType(),
         required = true)
 
-    attr(
-        name = "license",
-        type = StringType(),
+    "license".type( StringType(),
         required = true)
 
-    attr(
-        name = "legs",
-        type = StringCoercibleToLong(LongType(min = 0, max = 4)),
+    "legs".type( StringCoercibleToLong(LongType(min = 0, max = 4)),
         required = true)
 
     warnOnExtraAttributes()
