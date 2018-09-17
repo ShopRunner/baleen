@@ -5,8 +5,7 @@ dependencies {
     testCompile "org.jetbrains.kotlin:kotlin-compiler:$kotlin_version"
 }
 
-junitPlatformTest {
-    HashMap map = new HashMap()
-    map.put("GEN_CLASSPATH", configurations.testCompile.files.path.join(":"))
+test {
+    def map = [GEN_CLASSPATH: configurations.testCompile.files.path.join(":")]
     environment map
 }
