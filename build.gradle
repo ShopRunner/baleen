@@ -46,6 +46,7 @@ subprojects {
     }
 
     signing {
+        required { gradle.taskGraph.hasTask("publishMavenJavaPublicationToMavenRepository") }
         sign configurations.archives
     }
 
@@ -100,12 +101,6 @@ subprojects {
     model {
         tasks.generatePomFileForMavenJavaPublication {
             destination = file("$buildDir/generated-pom.xml")
-        }
-        tasks.publishMavenJavaPublicationToMavenLocal {
-            dependsOn project.tasks.signArchives
-        }
-        tasks.publishMavenJavaPublicationToMavenRepository {
-            dependsOn project.tasks.signArchives
         }
     }
 }
