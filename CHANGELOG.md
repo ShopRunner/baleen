@@ -3,6 +3,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.5.0] - 2018-08-17
+
+* Introduced generating JSON Schema's from Baleen Data Descriptions and vice-versa.
+* Added support for building baleen.xml with versions of Java 9 and above.
+
 ## [1.4.1] - 2018-07-16
 
 * Fix avro generation to use AllowsNull when the default value is null.
