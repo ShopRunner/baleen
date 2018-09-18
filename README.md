@@ -3,6 +3,8 @@
 Baleen is a library for validating streams of data (XML, CSV, ...).  It can be especially useful for 
 legacy data because a schema can slowly be introduced.
 
+Since it is written in Kotlin it can be easily used in any JVM language.
+
 ## Getting Started
 
 ### Binaries
@@ -72,20 +74,23 @@ Join the [slack channel](https://join.slack.com/t/baleen-validation/signup)
 ## Example Schema Definition
 
 ```kotlin
+import com.shoprunner.baleen.Baleen.describeAs
+import com.shoprunner.baleen.ValidationError
+import com.shoprunner.baleen.dataTrace
+import com.shoprunner.baleen.types.StringType
+
 val departments = listOf("Mens", "Womens", "Boys", "Girls", "Kids", "Baby & Toddler")
 
-val productSpec = Baleen.describe("Product") { p ->
-    p.attr(name = "sku",
-            type = StringType(min = 1, max = 500),
-            required = true)
+val productDescription = "Product".describeAs {
 
-    p.attr(name = "brand_manufacturer",
-            type = StringType(min = 1, max = 500),
-            required = true)
+    "sku".type(StringType(min = 1, max = 500),
+          required = true)
 
-    p.attr(name = "department",
-            type = StringType(min = 0, max = 100))
-            .describe { attr ->
+    "brand_manufacturer".type(StringType(min = 1, max = 500),
+          required = true)
+
+    "department".type(StringType(min = 0, max = 100))
+         .describe { attr ->
 
         attr.test { datatrace, value ->
             val department = value["department"]
