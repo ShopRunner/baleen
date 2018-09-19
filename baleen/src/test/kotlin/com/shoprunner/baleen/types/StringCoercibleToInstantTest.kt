@@ -6,6 +6,7 @@ import com.shoprunner.baleen.dataTrace
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeFormatterBuilder
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class StringCoercibleToInstantTest {
@@ -32,6 +33,12 @@ internal class StringCoercibleToInstantTest {
     @Test
     fun `passes an iso datetime as string`() {
         assertThat(StringCoercibleToInstant(InstantType(), DateTimeFormatter.ISO_DATE_TIME).validate(dataTrace(), "2018-07-01T10:15:30")).isEmpty()
+    }
+
+    @Test
+    fun `checks second formatter when multiple formatters`() {
+        val customFormat = DateTimeFormatterBuilder().append(DateTimeFormatter.ISO_LOCAL_TIME).appendLiteral('X').append(DateTimeFormatter.ISO_LOCAL_DATE).toFormatter()
+        assertThat(StringCoercibleToInstant(InstantType(), arrayOf(DateTimeFormatter.ISO_LOCAL_DATE_TIME, customFormat)).validate(dataTrace(), "10:15:30X2018-07-01")).isEmpty()
     }
 
     @Test

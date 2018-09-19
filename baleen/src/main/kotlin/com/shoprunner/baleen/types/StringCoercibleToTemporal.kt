@@ -17,7 +17,7 @@ abstract class StringCoercibleToTemporal<out TemporalBaleenType : BaleenType, ou
             if (dateTimeFormatters.isEmpty() || temporalQueries.isEmpty()) {
                 null
             } else {
-                dateTimeFormatters.asSequence().map { dateTimeFormatter ->
+                dateTimeFormatters.asSequence().flatMap { dateTimeFormatter ->
                     try {
 
                         val bestMatch = if (temporalQueries.size > 1) {
@@ -27,9 +27,9 @@ abstract class StringCoercibleToTemporal<out TemporalBaleenType : BaleenType, ou
                             dateTimeFormatter.parse(it, toTemporalQuery(temporalQueries[0]))
                         }
 
-                        converter(bestMatch)
+                        sequenceOf(converter(bestMatch))
                     } catch (ex: DateTimeParseException) {
-                        null
+                        emptySequence<TemporalClass>()
                     }
                 }.firstOrNull()
             }
