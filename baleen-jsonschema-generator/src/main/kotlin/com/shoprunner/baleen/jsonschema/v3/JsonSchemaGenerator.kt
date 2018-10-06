@@ -35,12 +35,12 @@ import java.nio.file.Path
 
 object JsonSchemaGenerator {
 
-    private fun encodeDescription(dataDescription: DataDescription): ObjectSchema {
+    private fun encodeDescription(dataDescription: DataDescription, mappingOverrides: List<BaleenOverride> = emptyList()): ObjectSchema {
         return ObjectSchema().apply {
             id = "${dataDescription.nameSpace}.${dataDescription.name}"
             description = dataDescription.markdownDescription
             dataDescription.attrs.forEach {
-                val subTypeSchema = getJsonSchema(it.type).apply {
+                val subTypeSchema = getJsonSchema(it.type, mappingOverrides).apply {
                     description = it.markdownDescription
                 }
                 if (it.required) {
@@ -52,10 +52,15 @@ object JsonSchemaGenerator {
         }
     }
 
-    fun getJsonSchema(baleenType: BaleenType): JsonSchema {
+    fun getJsonSchema(baleenType: BaleenType, mappingOverrides: List<BaleenOverride> = emptyList()): JsonSchema {
+        val overrideFun = mappingOverrides.firstOrNull { it.matches(baleenType) }
+        if (overrideFun != null) {
+            return overrideFun(baleenType)
+        }
+
         return when (baleenType) {
-            is DataDescription -> encodeDescription(baleenType)
-            is CoercibleType<*, *> -> getJsonSchema(baleenType.type)
+            is DataDescription -> encodeDescription(baleenType, mappingOverrides)
+            is CoercibleType<*, *> -> getJsonSchema(baleenType.type, mappingOverrides)
             is BooleanType -> BooleanSchema()
             is FloatType -> NumberSchema().apply {
                 maximum = baleenType.max.toDouble()
@@ -101,14 +106,14 @@ object JsonSchemaGenerator {
             is MapType -> {
                 if (baleenType.keyType !is StringType) throw Exception("Map keys can only be String in RootJsonSchema")
                 ObjectSchema().apply {
-                    additionalProperties = ObjectSchema.SchemaAdditionalProperties(getJsonSchema(baleenType.valueType))
+                    additionalProperties = ObjectSchema.SchemaAdditionalProperties(getJsonSchema(baleenType.valueType, mappingOverrides))
                 }
             }
             is OccurrencesType -> ArraySchema().apply {
-                setItemsSchema(getJsonSchema(baleenType.memberType))
+                setItemsSchema(getJsonSchema(baleenType.memberType, mappingOverrides))
             }
             is UnionType -> {
-                val subTypeSchemas = baleenType.types.map { getJsonSchema(it) }.distinct()
+                val subTypeSchemas = baleenType.types.map { getJsonSchema(it, mappingOverrides) }.distinct()
                 if (subTypeSchemas.size == 1) {
                     subTypeSchemas[0]
                 } else {
@@ -121,13 +126,13 @@ object JsonSchemaGenerator {
                 }
             }
         // V3 Does not support
-            is AllowsNull<*> -> getJsonSchema(baleenType.type)
+            is AllowsNull<*> -> getJsonSchema(baleenType.type, mappingOverrides)
             else -> throw Exception("Unknown type: " + baleenType::class.simpleName)
         }
     }
 
-    fun encode(dataDescription: DataDescription): ObjectSchema {
-        return encodeDescription(dataDescription).apply {
+    fun encode(dataDescription: DataDescription, mappingOverrides: List<BaleenOverride> = emptyList()): ObjectSchema {
+        return encodeDescription(dataDescription, mappingOverrides).apply {
             `$schema` = "http://json-schema.org/draft-03/schema"
         }
     }

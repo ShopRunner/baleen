@@ -27,7 +27,7 @@ import java.nio.file.Path
 
 object JsonSchemaGenerator {
 
-    private fun encodeDescription(dataDescription: DataDescription, objectContext: Map<String, ObjectSchema>, withAdditionalAttributes: Boolean): Pair<ObjectReference, Map<String, ObjectSchema>> {
+    private fun encodeDescription(dataDescription: DataDescription, objectContext: Map<String, ObjectSchema>, withAdditionalAttributes: Boolean, mappingOverrides: List<BaleenOverride>): Pair<ObjectReference, Map<String, ObjectSchema>> {
         val mutObjectContext = objectContext.toMutableMap()
         val id = if (dataDescription.nameSpace.isNotBlank()) "${dataDescription.nameSpace}.${dataDescription.name}" else dataDescription.name
         val ref = "record:$id"
@@ -36,7 +36,7 @@ object JsonSchemaGenerator {
                 required = if (requiredProperties.isNotEmpty()) requiredProperties else null,
                 additionalProperties = withAdditionalAttributes,
                 properties = dataDescription.attrs.map {
-                    val subType = getJsonSchema(it.type, objectContext, withAdditionalAttributes)
+                    val subType = getJsonSchema(it.type, objectContext, withAdditionalAttributes, mappingOverrides)
                     val subTypeSchema = subType.first.apply {
                         description = if (it.markdownDescription.isNotBlank()) it.markdownDescription else null
                         default = when (it.default) {
@@ -56,11 +56,16 @@ object JsonSchemaGenerator {
         return referenceSchema to (mutObjectContext.toMap() + (ref to objectSchema))
     }
 
-    fun getJsonSchema(baleenType: BaleenType, objectContext: Map<String, ObjectSchema>, withAdditionalAttributes: Boolean): Pair<JsonSchema, Map<String, ObjectSchema>> {
+    fun getJsonSchema(baleenType: BaleenType, objectContext: Map<String, ObjectSchema>, withAdditionalAttributes: Boolean, mappingOverrides: List<BaleenOverride>): Pair<JsonSchema, Map<String, ObjectSchema>> {
+        val overrideFun = mappingOverrides.firstOrNull { it.matches(baleenType) }
+        if (overrideFun != null) {
+            return overrideFun(baleenType) to objectContext
+        }
+
         return when (baleenType) {
-            is DataDescription -> encodeDescription(baleenType, objectContext, withAdditionalAttributes)
+            is DataDescription -> encodeDescription(baleenType, objectContext, withAdditionalAttributes, mappingOverrides)
             is AllowsNull<*> -> {
-                val (subSchema, subContext) = getJsonSchema(baleenType.type, objectContext, withAdditionalAttributes)
+                val (subSchema, subContext) = getJsonSchema(baleenType.type, objectContext, withAdditionalAttributes, mappingOverrides)
                 if (subSchema is OneOf) {
                     OneOf(listOf(NullSchema()) + subSchema.oneOf) to subContext
                 } else {
@@ -68,7 +73,7 @@ object JsonSchemaGenerator {
                 }
             }
             is BooleanType -> BooleanSchema to objectContext
-            is CoercibleType<*, *> -> getJsonSchema(baleenType.type, objectContext, withAdditionalAttributes)
+            is CoercibleType<*, *> -> getJsonSchema(baleenType.type, objectContext, withAdditionalAttributes, mappingOverrides)
             is DoubleType -> NumberSchema(
                 maximum = baleenType.max.takeIf { it.isFinite() }?.toBigDecimal(),
                 minimum = baleenType.min.takeIf { it.isFinite() }?.toBigDecimal()
@@ -88,7 +93,7 @@ object JsonSchemaGenerator {
                 if (baleenType.keyType !is StringType) {
                     throw Exception("Map keys can only be String")
                 }
-                val (subSchema, subContext) = getJsonSchema(baleenType.valueType, objectContext, withAdditionalAttributes)
+                val (subSchema, subContext) = getJsonSchema(baleenType.valueType, objectContext, withAdditionalAttributes, mappingOverrides)
                 MapSchema(additionalProperties = subSchema) to subContext
             }
             is FloatType -> NumberSchema(
@@ -105,7 +110,7 @@ object JsonSchemaGenerator {
                 minimum = baleenType.min
             ) to objectContext
             is OccurrencesType -> {
-                val (subSchema, subContext) = getJsonSchema(baleenType.memberType, objectContext, withAdditionalAttributes)
+                val (subSchema, subContext) = getJsonSchema(baleenType.memberType, objectContext, withAdditionalAttributes, mappingOverrides)
                 ArraySchema(items = subSchema) to subContext
             }
             is StringType -> StringSchema(
@@ -117,7 +122,7 @@ object JsonSchemaGenerator {
             ) to objectContext
             is TimestampMillisType -> DateTimeSchema() to objectContext
             is UnionType -> {
-                val l = baleenType.types.map { getJsonSchema(it, objectContext, withAdditionalAttributes) }
+                val l = baleenType.types.map { getJsonSchema(it, objectContext, withAdditionalAttributes, mappingOverrides) }
                 val subSchemas = l.map { it.first }.distinct()
                 val subContext = l.map { it.second }.reduce { x, y -> x + y }
                 if (subSchemas.size == 1) {
@@ -130,20 +135,20 @@ object JsonSchemaGenerator {
         }
     }
 
-    fun encode(dataDescription: DataDescription, withAdditionalAttributes: Boolean = false): RootJsonSchema {
+    fun encode(dataDescription: DataDescription, withAdditionalAttributes: Boolean = false, mappingOverrides: List<BaleenOverride> = emptyList()): RootJsonSchema {
         val id = if (dataDescription.nameSpace.isNotBlank()) "${dataDescription.nameSpace}.${dataDescription.name}" else dataDescription.name
         val ref = "#/definitions/record:$id"
         val schema = "http://json-schema.org/draft-04/schema"
 
-        val results = getJsonSchema(dataDescription, emptyMap(), withAdditionalAttributes)
+        val results = getJsonSchema(dataDescription, emptyMap(), withAdditionalAttributes, mappingOverrides)
 
         return RootJsonSchema(id, results.second.toSortedMap(), ref, schema)
     }
 
-    fun encodeAsSelfDescribing(dataDescription: DataDescription, version: String, withAdditionalAttributes: Boolean = false): RootJsonSchema {
+    fun encodeAsSelfDescribing(dataDescription: DataDescription, version: String, namespace: String = dataDescription.nameSpace, withAdditionalAttributes: Boolean = false, mappingOverrides: List<BaleenOverride> = emptyList()): RootJsonSchema {
         val selfDescribingSchema = "http://iglucentral.com/schemas/com.snowplowananalytics.self-desc/schema/jsonschema/1-0-0"
 
-        val rootSchema = encode(dataDescription, withAdditionalAttributes)
+        val rootSchema = encode(dataDescription, withAdditionalAttributes, mappingOverrides)
 
         return RootJsonSchema(
                 rootSchema.id,
@@ -151,7 +156,7 @@ object JsonSchemaGenerator {
                 rootSchema.`$ref`,
                 selfDescribingSchema,
                 SelfDescribing(
-                        dataDescription.nameSpace,
+                        namespace,
                         dataDescription.name,
                         version
                 ))

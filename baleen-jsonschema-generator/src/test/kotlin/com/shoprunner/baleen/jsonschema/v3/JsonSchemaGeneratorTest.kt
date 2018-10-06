@@ -1,6 +1,7 @@
 package com.shoprunner.baleen.jsonschema.v3
 
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonValueFormat
+import com.fasterxml.jackson.module.jsonSchema.JsonSchema
 import com.fasterxml.jackson.module.jsonSchema.types.ArraySchema
 import com.fasterxml.jackson.module.jsonSchema.types.IntegerSchema
 import com.fasterxml.jackson.module.jsonSchema.types.NumberSchema
@@ -24,6 +25,7 @@ import com.shoprunner.baleen.types.LongType
 import com.shoprunner.baleen.types.MapType
 import com.shoprunner.baleen.types.NumericType
 import com.shoprunner.baleen.types.OccurrencesType
+import com.shoprunner.baleen.types.StringCoercibleToBoolean
 import com.shoprunner.baleen.types.StringCoercibleToFloat
 import com.shoprunner.baleen.types.StringConstantType
 import com.shoprunner.baleen.types.StringType
@@ -462,6 +464,122 @@ internal class JsonSchemaGeneratorTest {
 
             val outputStream = ByteArrayOutputStream()
             JsonSchemaGenerator.encode(packDescription).writeTo(PrintStream(outputStream), true)
+
+            Assertions.assertThat(outputStream.toString()).isEqualToIgnoringWhitespace(schemaStr)
+        }
+    }
+
+    @Nested
+    inner class Overrides {
+        @Test
+        fun `add an override when generating schema`() {
+            val description = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") {
+                it.attr(
+                        name = "name",
+                        type = StringType(),
+                        markdownDescription = "The name of the dog"
+                )
+
+                it.attr(
+                        name = "hasSpots",
+                        type = StringCoercibleToBoolean(BooleanType()),
+                        markdownDescription = "Does the dog have spots"
+                )
+            }
+
+            @Suppress("UNUSED_PARAMETER")
+            fun mapStringCoercibleToBooleanAsStringSchema(b: StringCoercibleToBoolean): JsonSchema {
+                return StringSchema()
+            }
+
+            val stringCoercibleToBooleanOverrride = (::mapStringCoercibleToBooleanAsStringSchema).asBaleenOverride()
+
+            val schemaStr = """
+                {
+                  "type" : "object",
+                  "id" : "com.shoprunner.data.dogs.Dog",
+                  "${'$'}schema" : "http://json-schema.org/draft-03/schema",
+                  "description" : "It's a dog. Ruff Ruff!",
+                  "properties" : {
+                    "name" : {
+                      "type" : "string",
+                      "description" : "The name of the dog",
+                      "maxLength" : 2147483647,
+                      "minLength" : 0
+                    },
+                    "hasSpots" : {
+                      "type" : "string",
+                      "description" : "Does the dog have spots"
+                    }
+                  }
+                }
+            """.trimIndent()
+
+            val outputStream = ByteArrayOutputStream()
+            JsonSchemaGenerator.encode(description, mappingOverrides = listOf(stringCoercibleToBooleanOverrride)).writeTo(PrintStream(outputStream), true)
+
+            Assertions.assertThat(outputStream.toString()).isEqualToIgnoringWhitespace(schemaStr)
+        }
+
+        @Test
+        fun `add an override for a nested type when generating schema`() {
+            val description = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") {
+                it.attr(
+                        name = "name",
+                        type = StringType(),
+                        markdownDescription = "The name of the dog"
+                )
+
+                it.attr(
+                        name = "attributes",
+                        type = Baleen.describe("Attributes", "com.shoprunner.data.dogs", "Attributes") { p ->
+                            p.attr(
+                                    name = "hasSpots",
+                                    type = AllowsNull(StringCoercibleToBoolean(BooleanType())),
+                                    markdownDescription = "Does the dog have spots"
+                            )
+                        },
+                        markdownDescription = "Attributes"
+                )
+            }
+
+            @Suppress("UNUSED_PARAMETER")
+            fun mapStringCoercibleToBooleanAsStringSchema(b: StringCoercibleToBoolean): JsonSchema {
+                return StringSchema()
+            }
+
+            val stringCoercibleToBooleanOverrride = (::mapStringCoercibleToBooleanAsStringSchema).asBaleenOverride()
+
+            val schemaStr = """
+                {
+                  "type" : "object",
+                  "id" : "com.shoprunner.data.dogs.Dog",
+                  "${'$'}schema" : "http://json-schema.org/draft-03/schema",
+                  "description" : "It's a dog. Ruff Ruff!",
+                  "properties" : {
+                    "name" : {
+                      "type" : "string",
+                      "description" : "The name of the dog",
+                      "maxLength" : 2147483647,
+                      "minLength" : 0
+                    },
+                    "attributes" : {
+                      "type" : "object",
+                      "id" : "com.shoprunner.data.dogs.Attributes",
+                      "description" : "Attributes",
+                      "properties" : {
+                        "hasSpots" : {
+                          "type" : "string",
+                          "description" : "Does the dog have spots"
+                        }
+                      }
+                    }
+                  }
+                }
+            """.trimIndent()
+
+            val outputStream = ByteArrayOutputStream()
+            JsonSchemaGenerator.encode(description, mappingOverrides = listOf(stringCoercibleToBooleanOverrride)).writeTo(PrintStream(outputStream), true)
 
             Assertions.assertThat(outputStream.toString()).isEqualToIgnoringWhitespace(schemaStr)
         }

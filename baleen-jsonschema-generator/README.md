@@ -108,3 +108,52 @@ Will output to file `outDir/com/shoprunner/data/dogs/Dog.schema.json` with the f
   }
 }
 ``` 
+
+## Adding mapping overrides
+
+If the default Baleen to Json Schema mapping does not meet needs, a function override can be used.
+
+```kotlin
+fun mapIntTypeAsString(b: StringCoercibleToBoolean): JsonSchema {
+    return StringSchema()
+}
+
+val intTypeOverride = (::mapIntTypeAsString).asBaleenOverride()
+
+JsonSchemaGenerator.encode(Dog, mappingOverrides = listOf(intTypeOverride)).writeTo(File("outDir"), true)
+```
+
+This will output a json schema with string instead of integer.
+
+```json
+{
+  "id" : "com.shoprunner.data.dogs.Dog",
+  "definitions" : {
+    "record:com.shoprunner.data.dogs.Dog" : {
+      "description" : "It's a dog. Ruff Ruff!",
+      "type" : "object",
+      "required" : [ "name" ],
+      "additionalProperties" : false,
+      "properties" : {
+        "name" : {
+          "description" : "The name of the dog",
+          "type" : "string",
+          "maxLength" : 2147483647,
+          "minLength" : 0
+        },
+        "legs" : {
+          "description" : "The number of legs",
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        }
+      }
+    }
+  },
+  "$ref" : "#/definitions/record:com.shoprunner.data.dogs.Dog",
+  "$schema" : "http://json-schema.org/draft-04/schema"
+}
+```
