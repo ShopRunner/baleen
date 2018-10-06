@@ -68,9 +68,9 @@ object BaleenGenerator {
         }
     }
 
-    fun processSchema(namespace: String, name: String, schema: ObjectSchema): PropertySpec {
+    fun processSchema(namespace: String, name: String, schema: ObjectSchema, mappingOverrides: List<BaleenOverride>): PropertySpec {
         val attrsCodeBlock = schema.properties.map { (k, v) ->
-            processField(k, v, schema.required?.contains(k) ?: false)
+            processField(k, v, schema.required?.contains(k) ?: false, mappingOverrides)
         }
                 .fold(CodeBlock.builder(), { b, c -> b.add(c).add("\n") })
                 .build()
@@ -93,7 +93,7 @@ object BaleenGenerator {
                 .build()
     }
 
-    fun processField(fieldName: String, schema: JsonSchema, isRequired: Boolean): CodeBlock {
+    fun processField(fieldName: String, schema: JsonSchema, isRequired: Boolean, mappingOverrides: List<BaleenOverride>): CodeBlock {
         /*
         fun attr(
             name: String,
@@ -111,7 +111,7 @@ object BaleenGenerator {
             add("%L = %S,\n", DataDescription::attr.parameters[1].name, fieldName)
             // type
             add("%L = ", DataDescription::attr.parameters[2].name)
-            add(jsonSchemaToBaleenType(schema))
+            add(jsonSchemaToBaleenType(schema, mappingOverrides))
             // markdownDescription
             if (schema.description != null) {
                 add(",\n%L = %S", DataDescription::attr.parameters[3].name, schema.description)
@@ -135,13 +135,18 @@ object BaleenGenerator {
         }.build()
     }
 
-    fun jsonSchemaToBaleenType(schema: JsonSchema): CodeBlock {
+    fun jsonSchemaToBaleenType(schema: JsonSchema, mappingOverrides: List<BaleenOverride>): CodeBlock {
+        val overrideFun = mappingOverrides.firstOrNull { it.matches(schema) }
+        if (overrideFun != null) {
+            return overrideFun(schema)
+        }
+
         return when (schema) {
-            is AnyOf -> toUnionType(schema.anyOf)
+            is AnyOf -> toUnionType(schema.anyOf, mappingOverrides)
             is ArraySchema ->
                 CodeBlock.builder()
                         .add("%T(", OccurrencesType::class)
-                        .add(jsonSchemaToBaleenType(schema.items))
+                        .add(jsonSchemaToBaleenType(schema.items, mappingOverrides))
                         .add(")")
                         .build()
             is BooleanSchema -> CodeBlock.of("%T()", BooleanType::class)
@@ -163,7 +168,7 @@ object BaleenGenerator {
             is MapSchema -> {
                 CodeBlock.builder()
                         .add("%T(%T(), ", MapType::class, StringType::class)
-                        .add(jsonSchemaToBaleenType(schema.additionalProperties))
+                        .add(jsonSchemaToBaleenType(schema.additionalProperties, mappingOverrides))
                         .add(")")
                         .build()
             }
@@ -189,7 +194,7 @@ object BaleenGenerator {
                 }.build()
             }
             is ObjectReference -> CodeBlock.of("%L", schema.`$ref`.split(":").last())
-            is OneOf -> toUnionType(schema.oneOf)
+            is OneOf -> toUnionType(schema.oneOf, mappingOverrides)
             is StringSchema -> {
                 if (schema.enum != null) {
                     if (schema.enum!!.size > 1) {
@@ -220,12 +225,12 @@ object BaleenGenerator {
         }
     }
 
-    private fun toUnionType(schemas: List<JsonSchema>): CodeBlock {
-        val unionedTypes = schemas.filterNot { it is NullSchema }.map { jsonSchemaToBaleenType(it) }
+    private fun toUnionType(schemas: List<JsonSchema>, mappingOverrides: List<BaleenOverride>): CodeBlock {
+        val unionedTypes = schemas.filterNot { it is NullSchema }.map { jsonSchemaToBaleenType(it, mappingOverrides) }
         val baleenTypeCode = if (unionedTypes.size > 1) {
             CodeBlock.builder()
                     .add("%T(", UnionType::class)
-                    .add(schemas.map { jsonSchemaToBaleenType(it) }.reduceRight { a, b -> a.toBuilder().add(", ").add(b).build() })
+                    .add(schemas.map { jsonSchemaToBaleenType(it, mappingOverrides) }.reduceRight { a, b -> a.toBuilder().add(", ").add(b).build() })
                     .add(")")
                     .build()
         } else {
@@ -244,18 +249,18 @@ object BaleenGenerator {
         }
     }
 
-    fun encode(namespace: String, name: String, schema: ObjectSchema): FileSpec {
+    fun encode(namespace: String, name: String, schema: ObjectSchema, mappingOverrides: List<BaleenOverride> = emptyList()): FileSpec {
         return FileSpec.builder(namespace, name)
                 .addImport(Baleen::class, Baleen::describe.name)
-                .addProperty(processSchema(namespace, name, schema))
+                .addProperty(processSchema(namespace, name, schema, mappingOverrides))
                 .build()
     }
 
-    fun encode(schema: RootJsonSchema): List<FileSpec> {
+    fun encode(schema: RootJsonSchema, mappingOverrides: List<BaleenOverride> = emptyList()): List<FileSpec> {
         return if (schema.definitions != null) {
             schema.definitions!!.map { (record, objectSchema) ->
                 val (namespace, name) = getNamespaceAndName(record)
-                encode(namespace, name, objectSchema)
+                encode(namespace, name, objectSchema, mappingOverrides)
             }
         } else if (schema.type == JsonType.`object`) {
             val (namespace, name) = getNamespaceAndName(schema)
@@ -263,7 +268,7 @@ object BaleenGenerator {
                     schema.required,
                     schema.additionalProperties,
                     schema.properties ?: emptyMap())
-            listOf(encode(namespace, name, objectSchema))
+            listOf(encode(namespace, name, objectSchema, mappingOverrides))
         } else {
             emptyList()
         }
