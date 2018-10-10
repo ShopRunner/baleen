@@ -2,6 +2,7 @@ package com.shoprunner.baleen.jsonschema.v4
 
 import com.shoprunner.baleen.Baleen
 import com.shoprunner.baleen.BaleenType
+import com.shoprunner.baleen.DataDescription
 import com.shoprunner.baleen.DataTrace
 import com.shoprunner.baleen.ValidationResult
 import com.shoprunner.baleen.jsonschema.v4.JsonSchemaGenerator.writeTo
@@ -1683,7 +1684,8 @@ internal class JsonSchemaGeneratorTest {
             """.trimIndent()
 
             val outputStream = ByteArrayOutputStream()
-            JsonSchemaGenerator.encode(description, mappingOverrides = listOf(stringCoercibleToBooleanOverride)).writeTo(PrintStream(outputStream), true)
+            val baleenMapper = OverrideBaleenJsonSchemaMapper(listOf(stringCoercibleToBooleanOverride))
+            JsonSchemaGenerator.encode(description, baleenMapper = baleenMapper).writeTo(PrintStream(outputStream), true)
 
             Assertions.assertThat(outputStream.toString()).isEqualToIgnoringWhitespace(schemaStr)
         }
@@ -1761,9 +1763,101 @@ internal class JsonSchemaGeneratorTest {
             """.trimIndent()
 
             val outputStream = ByteArrayOutputStream()
-            JsonSchemaGenerator.encode(description, mappingOverrides = listOf(stringCoercibleToBooleanOverride)).writeTo(PrintStream(outputStream), true)
+            val baleenMapper = OverrideBaleenJsonSchemaMapper(listOf(stringCoercibleToBooleanOverride))
+            JsonSchemaGenerator.encode(description, baleenMapper = baleenMapper).writeTo(PrintStream(outputStream), true)
 
             Assertions.assertThat(outputStream.toString()).isEqualToIgnoringWhitespace(schemaStr)
+        }
+
+        @Test
+        fun `add an override for an data description when generating schema`() {
+            val dogDescription = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") {
+                it.attr(
+                        name = "name",
+                        type = StringType(),
+                        markdownDescription = "The name of the dog",
+                        required = true
+                )
+            }
+
+            val packDescription = Baleen.describe("Pack", "com.shoprunner.data.dogs", "It's a pack of Dogs!") {
+                it.attr(
+                        name = "name",
+                        type = StringType(),
+                        markdownDescription = "The name of the pack",
+                        required = true
+                )
+
+                it.attr(
+                        name = "dogs",
+                        type = OccurrencesType(dogDescription),
+                        markdownDescription = "The dogs in the pack",
+                        required = true
+                )
+            }
+
+            @Suppress("UNUSED_PARAMETER")
+            fun mapDogTypeToCustomObject(baleenType: DataDescription, context: ObjectContext): Pair<JsonSchema, ObjectContext> {
+                val id = "com.shoprunner.data.dogs.CustomDog"
+                val ref = "record:$id"
+                val obj = ObjectSchema(
+                        emptyList(),
+                        false,
+                        mapOf(
+                                "my_name" to StringSchema()
+                        )
+                    )
+                val referenceSchema = ObjectReference("#/definitions/$ref")
+                return referenceSchema to (context + (ref to obj))
+            }
+
+            val dogTypeOverride = (::mapDogTypeToCustomObject).asBaleenObjectOverrideFor("Dog")
+
+            val schemaStr = """
+            {
+              "id" : "com.shoprunner.data.dogs.Pack",
+              "definitions" : {
+                "record:com.shoprunner.data.dogs.CustomDog" : {
+                  "type" : "object",
+                  "required" : [ ],
+                  "additionalProperties" : false,
+                  "properties" : {
+                    "my_name" : {
+                      "type" : "string"
+                    }
+                  }
+                },
+                "record:com.shoprunner.data.dogs.Pack" : {
+                  "description" : "It's a pack of Dogs!",
+                  "type" : "object",
+                  "required" : [ "name", "dogs" ],
+                  "additionalProperties" : false,
+                  "properties" : {
+                    "name" : {
+                      "description" : "The name of the pack",
+                      "type" : "string",
+                      "maxLength" : 2147483647,
+                      "minLength" : 0
+                    },
+                    "dogs" : {
+                      "description" : "The dogs in the pack",
+                      "type" : "array",
+                      "items" : {
+                        "${'$'}ref" : "#/definitions/record:com.shoprunner.data.dogs.CustomDog"
+                      }
+                    }
+                  }
+                }
+              },
+              "${'$'}ref" : "#/definitions/record:com.shoprunner.data.dogs.Pack",
+              "${'$'}schema" : "http://json-schema.org/draft-04/schema"
+            }""".trimIndent()
+
+            val outputStream = ByteArrayOutputStream()
+            val baleenMapper = OverrideBaleenJsonSchemaMapper(listOf(dogTypeOverride))
+            JsonSchemaGenerator.encode(packDescription, baleenMapper = baleenMapper).writeTo(PrintStream(outputStream), true)
+
+            Assertions.assertThat(outputStream.toString()).isEqualTo(schemaStr)
         }
     }
 }

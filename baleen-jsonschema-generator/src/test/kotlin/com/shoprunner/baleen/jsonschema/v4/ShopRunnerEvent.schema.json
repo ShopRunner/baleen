@@ -1,0 +1,1736 @@
+{
+  "definitions" : {
+    "record:com.shoprunner.data.model.event.ShopRunnerEvent" : {
+      "description" : "Event enhanced with member information. Each specific event is nested into its own domain",
+      "type" : "object",
+      "required" : [ "event_type" ],
+      "additionalProperties" : true,
+      "properties" : {
+        "event_type" : {
+          "type" : "string"
+        },
+        "event_client_timestamp" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "integer",
+            "minimum" : -9223372036854775808,
+            "maximum" : 9223372036854775807
+          } ]
+        },
+        "event_processed_timestamp" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "integer",
+            "minimum" : -9223372036854775808,
+            "maximum" : 9223372036854775807
+          } ]
+        },
+        "member" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "$ref" : "#/definitions/record:com.shoprunner.data.model.member.Member"
+          } ]
+        },
+        "extension" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "$ref" : "#/definitions/record:com.shoprunner.data.model.extension.Extension"
+          } ]
+        },
+        "partner" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "$ref" : "#/definitions/record:com.shoprunner.data.model.partner.Partner"
+          } ]
+        },
+        "product" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "$ref" : "#/definitions/record:com.shoprunner.data.model.product.Product"
+          } ]
+        },
+        "cloudfront_event_raw" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "$ref" : "#/definitions/record:com.shoprunner.data.model.snowplow.CloudfrontLogEntry"
+          } ]
+        },
+        "snowplow_event" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "$ref" : "#/definitions/record:com.shoprunner.data.model.snowplow.SnowplowTrackerEvent"
+          } ]
+        },
+        "page_view_event" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "$ref" : "#/definitions/record:com.shoprunner.data.model.event.PageViewEvent"
+          } ]
+        },
+        "fact_page_event" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "$ref" : "#/definitions/record:com.shoprunner.data.model.event.FactPageEvent"
+          } ]
+        },
+        "order_event" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "$ref" : "#/definitions/record:com.shoprunner.data.model.event.OrderEvent"
+          } ]
+        },
+        "product_notification_event" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "$ref" : "#/definitions/record:com.shoprunner.data.model.event.ProductNotificationEvent"
+          } ]
+        },
+        "error" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "$ref" : "#/definitions/record:com.shoprunner.data.model.error.Error"
+          } ]
+        },
+        "application_error" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "$ref" : "#/definitions/record:com.shoprunner.data.model.event.ApplicationErrorEvent"
+          } ]
+        },
+        "next_page_view_event" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "$ref" : "#/definitions/record:com.shoprunner.data.model.event.NextPageViewEvent"
+          } ]
+        },
+        "next_product_event" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "$ref" : "#/definitions/record:com.shoprunner.data.model.event.NextProductEvent"
+          } ]
+        },
+        "next_product_details_event" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "$ref" : "#/definitions/record:com.shoprunner.data.model.event.NextProductDetailsEvent"
+          } ]
+        },
+        "product_ref" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "$ref" : "#/definitions/record:com.shoprunner.data.model.product.ProductRef"
+          } ]
+        },
+        "next_product_retrieved_event" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "$ref" : "#/definitions/record:com.shoprunner.data.model.event.NextProductRetrievedEvent"
+          } ]
+        },
+        "next_tap_event" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "$ref" : "#/definitions/record:com.shoprunner.data.model.event.NextTapEvent"
+          } ]
+        },
+        "modal_shown_ping_event" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "$ref" : "#/definitions/record:com.shoprunner.data.model.event.ModalShownPingEvent"
+          } ]
+        },
+        "bext_product_match_click_event" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "$ref" : "#/definitions/record:com.shoprunner.data.model.event.BextProductMatchClickEvent"
+          } ]
+        },
+        "bext_product_match_close_event" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "$ref" : "#/definitions/record:com.shoprunner.data.model.event.BextProductMatchCloseEvent"
+          } ]
+        },
+        "bext_product_match_event" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "$ref" : "#/definitions/record:com.shoprunner.data.model.event.BextProductMatchEvent"
+          } ]
+        },
+        "bext_product_page_event" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "$ref" : "#/definitions/record:com.shoprunner.data.model.event.BextProductPageEvent"
+          } ]
+        },
+        "validation_results" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/definitions/record:com.shoprunner.data.model.error.ValidationResult"
+            }
+          } ]
+        }
+      }
+    },
+    "record:com.shoprunner.data.model.member.Member" : {
+      "description" : "Member data of Shoprunner customers who are logged in",
+      "type" : "object",
+      "required" : [ "indicator" ],
+      "additionalProperties" : true,
+      "properties" : {
+        "auth_token" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "indicator" : {
+          "default" : false,
+          "type" : "boolean"
+        },
+        "id" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "sr_browser_id" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "logged_in_state" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "status" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "gender" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "signup_date" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "city" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "state" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "postal_code" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "is_sso_token" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "boolean"
+          } ]
+        },
+        "logon_flag" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "boolean"
+          } ]
+        }
+      }
+    },
+    "record:com.shoprunner.data.model.extension.Extension" : {
+      "description" : "Extension Related Data For All Browser EXTension (Bext) SRX Events",
+      "type" : "object",
+      "required" : [ "ext_version" ],
+      "additionalProperties" : true,
+      "properties" : {
+        "ext_version" : {
+          "type" : "string"
+        }
+      }
+    },
+    "record:com.shoprunner.data.model.partner.Partner" : {
+      "description" : "Partner Data For Browser EXTension (BEXT) SRX Events",
+      "type" : "object",
+      "required" : [ ],
+      "additionalProperties" : true,
+      "properties" : {
+        "doc_id" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "keyword_name" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "our_price" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "number"
+          } ]
+        },
+        "partner_code" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "partner_url" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "savings" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "number"
+          } ]
+        }
+      }
+    },
+    "record:com.shoprunner.data.model.product.Product" : {
+      "description" : "Product Data For All Browser EXTension (BEXT) SRX Events",
+      "type" : "object",
+      "required" : [ ],
+      "additionalProperties" : true,
+      "properties" : {
+        "base_price" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "number"
+          } ]
+        },
+        "brand" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "department" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "gender" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "image_url" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "name" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "product_page_code" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "product_identifier" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "sale_price" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "number"
+          } ]
+        },
+        "their_price" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "number"
+          } ]
+        }
+      }
+    },
+    "record:com.shoprunner.data.model.snowplow.CloudfrontLogEntry" : {
+      "description" : "Amazon Web Services Cloudfront log entry: http://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/AccessLogs.html",
+      "type" : "object",
+      "required" : [ "timestamp", "date", "time", "xEdgeLocation", "scBytes", "cIP", "csMethod", "csHost", "csUriStem", "scStatus", "csReferer", "csUserAgent", "csURIQuery", "csCookie", "xEdgeResultType", "xEdgeRequestId", "xHostHeader", "csProtocol", "csBytes", "timeTaken", "xForwardedFor", "sslProtocol", "sslCipher", "xEdgeResponseResultType", "csProtocolVersion" ],
+      "additionalProperties" : true,
+      "properties" : {
+        "timestamp" : {
+          "type" : "string"
+        },
+        "date" : {
+          "type" : "string"
+        },
+        "time" : {
+          "type" : "string"
+        },
+        "xEdgeLocation" : {
+          "type" : "string"
+        },
+        "scBytes" : {
+          "type" : "integer",
+          "minimum" : -9223372036854775808,
+          "maximum" : 9223372036854775807
+        },
+        "cIP" : {
+          "type" : "string"
+        },
+        "csMethod" : {
+          "type" : "string"
+        },
+        "csHost" : {
+          "type" : "string"
+        },
+        "csUriStem" : {
+          "type" : "string"
+        },
+        "scStatus" : {
+          "type" : "string"
+        },
+        "csReferer" : {
+          "type" : "string"
+        },
+        "csUserAgent" : {
+          "type" : "string"
+        },
+        "csURIQuery" : {
+          "oneOf" : [ {
+            "type" : "string"
+          }, {
+            "type" : "null"
+          } ]
+        },
+        "csCookie" : {
+          "oneOf" : [ {
+            "type" : "string"
+          }, {
+            "type" : "null"
+          } ]
+        },
+        "xEdgeResultType" : {
+          "type" : "string"
+        },
+        "xEdgeRequestId" : {
+          "type" : "string"
+        },
+        "xHostHeader" : {
+          "type" : "string"
+        },
+        "csProtocol" : {
+          "type" : "string"
+        },
+        "csBytes" : {
+          "type" : "integer",
+          "minimum" : -9223372036854775808,
+          "maximum" : 9223372036854775807
+        },
+        "timeTaken" : {
+          "type" : "number"
+        },
+        "xForwardedFor" : {
+          "oneOf" : [ {
+            "type" : "string"
+          }, {
+            "type" : "null"
+          } ]
+        },
+        "sslProtocol" : {
+          "oneOf" : [ {
+            "type" : "string"
+          }, {
+            "type" : "null"
+          } ]
+        },
+        "sslCipher" : {
+          "oneOf" : [ {
+            "type" : "string"
+          }, {
+            "type" : "null"
+          } ]
+        },
+        "xEdgeResponseResultType" : {
+          "type" : "string"
+        },
+        "csProtocolVersion" : {
+          "type" : "string"
+        },
+        "filename" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        }
+      }
+    },
+    "record:com.shoprunner.data.model.snowplow.SnowplowTrackerEvent" : {
+      "description" : "https://github.com/snowplow/snowplow/wiki/snowplow-tracker-protocol",
+      "type" : "object",
+      "required" : [ "nameTracker", "appID", "dvceCreatedTstamp", "dvceSentTstamp", "osTimezone", "event", "eventId" ],
+      "additionalProperties" : true,
+      "properties" : {
+        "nameTracker" : {
+          "type" : "string"
+        },
+        "appID" : {
+          "type" : "string"
+        },
+        "dvceCreatedTstamp" : {
+          "type" : "integer",
+          "minimum" : -9223372036854775808,
+          "maximum" : 9223372036854775807
+        },
+        "dvceSentTstamp" : {
+          "type" : "integer",
+          "minimum" : -9223372036854775808,
+          "maximum" : 9223372036854775807
+        },
+        "trueTstamp" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "integer",
+            "minimum" : -9223372036854775808,
+            "maximum" : 9223372036854775807
+          } ]
+        },
+        "osTimezone" : {
+          "type" : "string"
+        },
+        "event" : {
+          "type" : "string"
+        },
+        "eventId" : {
+          "type" : "string"
+        },
+        "unstruct_event" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "context" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "page_url" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "page_referrer" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "user_fingerprint" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "integer",
+            "minimum" : -9223372036854775808,
+            "maximum" : 9223372036854775807
+          } ]
+        },
+        "v_tracker" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "platform" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "br_lang" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "doc_charset" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "domain_sessionid" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "domain_sessionidx" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "integer",
+            "minimum" : -9223372036854775808,
+            "maximum" : 9223372036854775807
+          } ]
+        },
+        "domain_userid" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "br_cookies" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "boolean"
+          } ]
+        }
+      }
+    },
+    "record:com.shoprunner.data.model.event.PageViewEvent" : {
+      "description" : "Page View Event tracking in PIK. Collects data about each page a retailer's customer may see",
+      "type" : "object",
+      "required" : [ "retailer_code", "page_id", "page_url" ],
+      "additionalProperties" : true,
+      "properties" : {
+        "retailer_code" : {
+          "type" : "string"
+        },
+        "brand_id" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "retailer_category" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "sr_browser_id" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "pik_session_id" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "page_id" : {
+          "type" : "string"
+        },
+        "page_url" : {
+          "type" : "string"
+        },
+        "page_title" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "page_type" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "referrer" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "time_spent_on_page" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "integer",
+            "minimum" : -2147483648,
+            "maximum" : 2147483647
+          } ]
+        },
+        "auth_token" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "experiments" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "sku" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "doc_id" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "picked_option" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "boolean"
+          } ]
+        },
+        "item_name" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "item_price" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "number"
+          } ]
+        },
+        "item_original_price" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "number"
+          } ]
+        },
+        "cart_is_added" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "boolean"
+          } ]
+        },
+        "cart_total" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "number"
+          } ]
+        },
+        "cart_subtotal" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "number"
+          } ]
+        },
+        "cart_shipping" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "number"
+          } ]
+        },
+        "cart_discount" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "number"
+          } ]
+        },
+        "cart_gift_card" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "number"
+          } ]
+        },
+        "cart_tax" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "number"
+          } ]
+        },
+        "items_in_cart" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "integer",
+            "minimum" : -2147483648,
+            "maximum" : 2147483647
+          } ]
+        },
+        "order_id" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "order_email" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "payment_type" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "shipping_type" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "utm_medium" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "utm_content" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "country" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "loyalty_id" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "customer_email" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "purchased_skus" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          } ]
+        },
+        "purchased_doc_ids" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          } ]
+        }
+      }
+    },
+    "record:com.shoprunner.data.model.event.FactPageEvent" : {
+      "description" : "Event tracking in Factpages.",
+      "type" : "object",
+      "required" : [ ],
+      "additionalProperties" : true,
+      "properties" : {
+        "page_title" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "action" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "action_origin" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "category" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "session_id" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "member_id" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "sr_browser_id" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "experiments" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        }
+      }
+    },
+    "record:com.shoprunner.data.model.event.OrderEvent" : {
+      "description" : "Representation of a shoprunner Member Order Event",
+      "type" : "object",
+      "required" : [ "member", "order", "retailer" ],
+      "additionalProperties" : true,
+      "properties" : {
+        "member" : {
+          "$ref" : "#/definitions/record:com.shoprunner.data.model.member.Member"
+        },
+        "order" : {
+          "$ref" : "#/definitions/record:com.shoprunner.data.model.order.Order"
+        },
+        "retailer" : {
+          "$ref" : "#/definitions/record:com.shoprunner.data.model.retailer.Retailer"
+        }
+      }
+    },
+    "record:com.shoprunner.data.model.order.Order" : {
+      "description" : "Representation of a shoprunner Order ",
+      "type" : "object",
+      "required" : [ "order_source", "event_date", "order_status_id", "total_number_of_items", "total_number_of_sr_items", "merchant_order_id", "order_total", "order_sub_total", "order_tax", "shipping_saving" ],
+      "additionalProperties" : true,
+      "properties" : {
+        "order_source" : {
+          "type" : "string"
+        },
+        "event_date" : {
+          "type" : "integer",
+          "minimum" : -9223372036854775808,
+          "maximum" : 9223372036854775807
+        },
+        "order_status_id" : {
+          "type" : "integer",
+          "minimum" : -2147483648,
+          "maximum" : 2147483647
+        },
+        "total_number_of_items" : {
+          "type" : "integer",
+          "minimum" : -2147483648,
+          "maximum" : 2147483647
+        },
+        "total_number_of_sr_items" : {
+          "type" : "integer",
+          "minimum" : -2147483648,
+          "maximum" : 2147483647
+        },
+        "merchant_order_id" : {
+          "type" : "string"
+        },
+        "order_total" : {
+          "type" : "number"
+        },
+        "order_sub_total" : {
+          "type" : "number"
+        },
+        "order_tax" : {
+          "type" : "number"
+        },
+        "shipping_saving" : {
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "number"
+          } ]
+        }
+      }
+    },
+    "record:com.shoprunner.data.model.retailer.Retailer" : {
+      "description" : "Representation of a shoprunner Retailer ",
+      "type" : "object",
+      "required" : [ "retailer_code", "retailer_name" ],
+      "additionalProperties" : true,
+      "properties" : {
+        "retailer_code" : {
+          "type" : "string"
+        },
+        "retailer_name" : {
+          "type" : "string"
+        },
+        "cut_off" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "integer",
+            "minimum" : -2147483648,
+            "maximum" : 2147483647
+          } ]
+        },
+        "mov" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "number"
+          } ]
+        }
+      }
+    },
+    "record:com.shoprunner.data.model.event.ProductNotificationEvent" : {
+      "description" : "An event for tracking product out-of-stock notifications",
+      "type" : "object",
+      "required" : [ "event_type", "sr_browser_id", "brand_id" ],
+      "additionalProperties" : true,
+      "properties" : {
+        "event_type" : {
+          "type" : "string"
+        },
+        "sr_browser_id" : {
+          "type" : "string"
+        },
+        "memberId" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "auth_token" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "customer_email" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "sku" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "brand_id" : {
+          "type" : "string"
+        },
+        "item_price" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "number"
+          } ]
+        },
+        "experiment" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "item_style" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "item_name" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "item_color" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "item_size" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "item_width" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        }
+      }
+    },
+    "record:com.shoprunner.data.model.error.Error" : {
+      "description" : "Representation of an error when processing the event",
+      "type" : "object",
+      "required" : [ "message" ],
+      "additionalProperties" : true,
+      "properties" : {
+        "message" : {
+          "type" : "string"
+        },
+        "stack_trace" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "raw_data" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        }
+      }
+    },
+    "record:com.shoprunner.data.model.event.ApplicationErrorEvent" : {
+      "description" : "Tracking application errors with Snowplow's 'trackError' method (https://goo.gl/cNZGsg)",
+      "type" : "object",
+      "required" : [ "message" ],
+      "additionalProperties" : true,
+      "properties" : {
+        "message" : {
+          "type" : "string"
+        },
+        "file_name" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "line_number" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "integer",
+            "minimum" : -2147483648,
+            "maximum" : 2147483647
+          } ]
+        },
+        "line_column" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "integer",
+            "minimum" : -2147483648,
+            "maximum" : 2147483647
+          } ]
+        },
+        "stack_trace" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        }
+      }
+    },
+    "record:com.shoprunner.data.model.event.NextPageViewEvent" : {
+      "description" : "An event that tracks when a page is shown in Next",
+      "type" : "object",
+      "required" : [ "screen_name", "action" ],
+      "additionalProperties" : true,
+      "properties" : {
+        "screen_name" : {
+          "type" : "string"
+        },
+        "action" : {
+          "type" : "string"
+        },
+        "user_id" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        }
+      }
+    },
+    "record:com.shoprunner.data.model.event.NextProductEvent" : {
+      "description" : "An event for tracking product interactions in Next.",
+      "type" : "object",
+      "required" : [ "product_list", "product_rank", "screen_name", "action" ],
+      "additionalProperties" : true,
+      "properties" : {
+        "product_list" : {
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          } ]
+        },
+        "product_rank" : {
+          "type" : "integer",
+          "minimum" : -2147483648,
+          "maximum" : 2147483647
+        },
+        "screen_name" : {
+          "type" : "string"
+        },
+        "action" : {
+          "type" : "string"
+        },
+        "user_id" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        }
+      }
+    },
+    "record:com.shoprunner.data.model.event.NextProductDetailsEvent" : {
+      "description" : "An event for tracking product details interactions in Next.",
+      "type" : "object",
+      "required" : [ "partner_code", "price", "filter_color", "filter_size", "action", "screen_name" ],
+      "additionalProperties" : true,
+      "properties" : {
+        "partner_code" : {
+          "type" : "string"
+        },
+        "price" : {
+          "type" : "string"
+        },
+        "image_count" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "integer",
+            "minimum" : -2147483648,
+            "maximum" : 2147483647
+          } ]
+        },
+        "filter_color" : {
+          "type" : "string"
+        },
+        "filter_size" : {
+          "type" : "string"
+        },
+        "action" : {
+          "type" : "string"
+        },
+        "action_target" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "screen_name" : {
+          "type" : "string"
+        },
+        "user_id" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        }
+      }
+    },
+    "record:com.shoprunner.data.model.product.ProductRef" : {
+      "description" : "A reference to a product. This is often sent with an event from Next.",
+      "type" : "object",
+      "required" : [ "doc_id" ],
+      "additionalProperties" : true,
+      "properties" : {
+        "doc_id" : {
+          "type" : "string"
+        }
+      }
+    },
+    "record:com.shoprunner.data.model.event.NextProductRetrievedEvent" : {
+      "description" : "An event that tracks what products were retrieved from the API via Next",
+      "type" : "object",
+      "required" : [ "product_list", "rank_list", "screen_name", "action", "product_count" ],
+      "additionalProperties" : true,
+      "properties" : {
+        "product_list" : {
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          } ]
+        },
+        "rank_list" : {
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "array",
+            "items" : {
+              "type" : "integer",
+              "minimum" : -2147483648,
+              "maximum" : 2147483647
+            }
+          } ]
+        },
+        "screen_name" : {
+          "type" : "string"
+        },
+        "action" : {
+          "type" : "string"
+        },
+        "product_count" : {
+          "type" : "integer",
+          "minimum" : -2147483648,
+          "maximum" : 2147483647
+        },
+        "user_id" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        }
+      }
+    },
+    "record:com.shoprunner.data.model.event.NextTapEvent" : {
+      "description" : "An event that tracks when something was tapped in Next",
+      "type" : "object",
+      "required" : [ "screen_name", "action", "action_target" ],
+      "additionalProperties" : true,
+      "properties" : {
+        "screen_name" : {
+          "type" : "string"
+        },
+        "action" : {
+          "type" : "string"
+        },
+        "action_target" : {
+          "type" : "string"
+        },
+        "user_id" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        }
+      }
+    },
+    "record:com.shoprunner.data.model.event.ModalShownPingEvent" : {
+      "description" : "Tracking in the PIK for CHICOS, SOMA, and WHBM to monitor their interstitial modal before our Express Checkout initialization. Used for analytics to determine if their modal affects our EC conversion",
+      "type" : "object",
+      "required" : [ "retailer_code" ],
+      "additionalProperties" : true,
+      "properties" : {
+        "retailer_code" : {
+          "type" : "string"
+        },
+        "sr_browser_id" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        },
+        "precheckout_modal_shown" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "boolean"
+          } ]
+        },
+        "modal_button_clicked" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        }
+      }
+    },
+    "record:com.shoprunner.data.model.event.BextProductMatchClickEvent" : {
+      "description" : "Event Tracking for Browser EXTension (BEXT) SRX Match Click On A Product Details Page",
+      "type" : "object",
+      "required" : [ "action", "page_url" ],
+      "additionalProperties" : true,
+      "properties" : {
+        "action" : {
+          "type" : "string"
+        },
+        "page_url" : {
+          "type" : "string"
+        }
+      }
+    },
+    "record:com.shoprunner.data.model.event.BextProductMatchCloseEvent" : {
+      "description" : "Event Tracking for Browser EXTension (BEXT) SRX Close Of The Product Match",
+      "type" : "object",
+      "required" : [ "action", "page_url" ],
+      "additionalProperties" : true,
+      "properties" : {
+        "action" : {
+          "type" : "string"
+        },
+        "page_url" : {
+          "type" : "string"
+        }
+      }
+    },
+    "record:com.shoprunner.data.model.event.BextProductMatchEvent" : {
+      "description" : "Event Tracking for Browser EXTension (BEXT) SRX Match On A Product Details Page",
+      "type" : "object",
+      "required" : [ "action", "page_url" ],
+      "additionalProperties" : true,
+      "properties" : {
+        "action" : {
+          "type" : "string"
+        },
+        "page_url" : {
+          "type" : "string"
+        }
+      }
+    },
+    "record:com.shoprunner.data.model.event.BextProductPageEvent" : {
+      "description" : "Event Tracking for Browser EXTension (BEXT) SRX Product Details Page Visit",
+      "type" : "object",
+      "required" : [ "action", "page_url" ],
+      "additionalProperties" : true,
+      "properties" : {
+        "action" : {
+          "type" : "string"
+        },
+        "page_url" : {
+          "type" : "string"
+        }
+      }
+    },
+    "record:com.shoprunner.data.model.error.ValidationResult" : {
+      "description" : "The results of running Baleen against the raw data. There might be Warnings, Info, or Error Messages",
+      "type" : "object",
+      "required" : [ "severity", "message", "data_trace" ],
+      "additionalProperties" : true,
+      "properties" : {
+        "severity" : {
+          "type" : "string"
+        },
+        "message" : {
+          "type" : "string"
+        },
+        "data_trace" : {
+          "type" : "string"
+        },
+        "value" : {
+          "default" : null,
+          "oneOf" : [ {
+            "type" : "null"
+          }, {
+            "type" : "string"
+          } ]
+        }
+      }
+    }
+  },
+  "$ref" : "#/definitions/record:com.shoprunner.data.model.event.ShopRunnerEvent",
+  "$schema" : "http://iglucentral.com/schemas/com.snowplowananalytics.self-desc/schema/jsonschema/1-0-0#",
+  "self" : {
+    "vendor" : "com.shoprunner.data.model.event",
+    "name" : "ShopRunnerEvent",
+    "format" : "jsonschema",
+    "version" : "0-0-0-add-filename-to-cf-SNAPSHOT"
+  }
+}
