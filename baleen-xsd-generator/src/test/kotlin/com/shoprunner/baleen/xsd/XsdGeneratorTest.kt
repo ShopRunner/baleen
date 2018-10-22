@@ -5,6 +5,7 @@ import com.shoprunner.baleen.BaleenType
 import com.shoprunner.baleen.DataTrace
 import com.shoprunner.baleen.ValidationError
 import com.shoprunner.baleen.ValidationResult
+import com.shoprunner.baleen.types.AllowsNull
 import com.shoprunner.baleen.types.EnumType
 import com.shoprunner.baleen.types.FloatType
 import com.shoprunner.baleen.types.IntType
@@ -344,6 +345,59 @@ class XsdGeneratorTest {
                             minInclusive = MinInclusive(BigDecimal.TEN)
                     )))
                     else -> XsdGenerator.defaultTypeMapper(baleenType)
+                }
+
+            val outputStream = ByteArrayOutputStream()
+            dogDescription.encode(PrintStream(outputStream), ::customDogMapper)
+
+            assertThat(outputStream.toString()).isEqualTo("""
+                |<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                |<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+                |    <xs:complexType name="Dog">
+                |        <xs:sequence>
+                |            <xs:element name="rating">
+                |                <xs:simpleType>
+                |                    <xs:restriction>
+                |                        <xs:minInclusive value="10"/>
+                |                    </xs:restriction>
+                |                </xs:simpleType>
+                |            </xs:element>
+                |        </xs:sequence>
+                |    </xs:complexType>
+                |    <xs:element name="Dog" type="Dog"/>
+                |</xs:schema>
+                |""".trimMargin())
+        }
+
+        @Test
+        fun `can handle nesting`() {
+            class DogRatingType : BaleenType {
+                override fun name() = "dog rating"
+
+                override fun validate(dataTrace: DataTrace, value: Any?): Sequence<ValidationResult> =
+                    when {
+                        value == null -> sequenceOf(ValidationError(dataTrace, "is null", value))
+                        value !is Long -> sequenceOf(ValidationError(dataTrace, "is not a long", value))
+                        value < 10 -> sequenceOf(ValidationError(dataTrace, "there good dogs, Brent", value))
+                        else -> sequenceOf()
+                    }
+            }
+
+            val dogDescription = Baleen.describe("Dog") {
+                it.attr(
+                    name = "rating",
+                    type = AllowsNull(DogRatingType()),
+                    required = true
+                )
+            }
+
+            fun customDogMapper(baleenType: BaleenType): TypeDetails =
+                when (baleenType) {
+                    is DogRatingType -> TypeDetails(simpleType = SimpleType(
+                        Restriction(
+                            minInclusive = MinInclusive(BigDecimal.TEN)
+                        )))
+                    else -> XsdGenerator.recursiveTypeMapper(::customDogMapper, baleenType)
                 }
 
             val outputStream = ByteArrayOutputStream()
