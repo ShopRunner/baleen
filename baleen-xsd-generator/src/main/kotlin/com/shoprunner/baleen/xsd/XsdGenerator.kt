@@ -54,12 +54,15 @@ object XsdGenerator {
         return descriptions
     }
 
+    fun defaultTypeMapper(baleenType: BaleenType): TypeDetails =
+        recursiveTypeMapper({ recursiveTypeMapper(::defaultTypeMapper, it) }, baleenType)
+
     /**
      * Maps baleen type to type details that are used for XSD.
      */
-    fun defaultTypeMapper(baleenType: BaleenType): TypeDetails =
+    fun recursiveTypeMapper(typeMapper: TypeMapper, baleenType: BaleenType): TypeDetails =
         when (baleenType) {
-            is AllowsNull<*> -> defaultTypeMapper(baleenType.type)
+            is AllowsNull<*> -> typeMapper(baleenType.type)
             is BooleanType -> TypeDetails("xs:boolean")
             is DataDescription -> TypeDetails(baleenType.name)
             is DoubleType -> TypeDetails(simpleType = SimpleType(
@@ -92,8 +95,8 @@ object XsdGenerator {
                                     maxInclusive = MaxInclusive(baleenType.max.toBigDecimal()),
                                     minInclusive = MinInclusive(baleenType.min.toBigDecimal()))
                             ))
-            is OccurrencesType -> defaultTypeMapper(baleenType.memberType).copy(maxOccurs = "unbounded")
-            is CoercibleType -> defaultTypeMapper(baleenType.type)
+            is OccurrencesType -> recursiveTypeMapper(typeMapper, baleenType.memberType).copy(maxOccurs = "unbounded")
+            is CoercibleType -> recursiveTypeMapper(typeMapper, baleenType.type)
             is StringType -> TypeDetails(
                                 simpleType = SimpleType(
                                         Restriction(
