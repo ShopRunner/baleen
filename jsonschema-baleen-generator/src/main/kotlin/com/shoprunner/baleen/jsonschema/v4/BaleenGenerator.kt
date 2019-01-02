@@ -226,7 +226,7 @@ object BaleenGenerator {
 
     fun encode(namespace: String, name: String, schema: ObjectSchema): FileSpec {
         return FileSpec.builder(namespace, name)
-                .addStaticImport(Baleen::class, Baleen::describe.name)
+                .addImport(Baleen::class, Baleen::describe.name)
                 .addProperty(processSchema(namespace, name, schema))
                 .build()
     }
