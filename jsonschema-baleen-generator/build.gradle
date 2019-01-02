@@ -2,7 +2,7 @@ dependencies {
     compile project(':baleen')
     compile project(':jsonschema-model')
     compile 'com.squareup:kotlinpoet:0.7.0'
-    testCompile "org.jetbrains.kotlin:kotlin-compiler:$kotlin_version"
+    testCompile "org.jetbrains.kotlin:kotlin-compiler"
 }
 
 test {

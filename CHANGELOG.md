@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.6.0] - 2019-01-02
+
+* Upgrade Kotlin to 1.3
+
 ## [1.5.0] - 2018-08-17
 
 * Introduced generating JSON Schema's from Baleen Data Descriptions and vice-versa.
