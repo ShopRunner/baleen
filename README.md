@@ -1,3 +1,5 @@
+[![Maven Central](https://img.shields.io/maven-central/v/com.shoprunner/baleen.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22com.shoprunner%22%20AND%20%22baleen%22)
+
 # Baleen
 
 Baleen is a library for validating streams of data (XML, CSV, ...).  It can be especially useful for 
@@ -8,7 +10,7 @@ Since it is written in Kotlin it can be easily used in any JVM language.
 ## Getting Started
 
 ### Binaries
-Binaries and dependency information for Maven, Ivy, Gradle and others can be found at [maven.org](http://search.maven.org).
+Binaries and dependency information for Maven, Ivy, Gradle and others can be found at [maven.org](https://search.maven.org/search?q=g:%22com.shoprunner%22%20AND%20%22baleen%22).
 
 You will need the `baleen` core for describing the data and one or more parsers `baleen-csv` or `baleen-xml`.
 
