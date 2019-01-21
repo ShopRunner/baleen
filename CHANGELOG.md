@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.7.0] - 2019-01-21
+
+* Upgrade build to gradle 5
+
 ## [1.6.0] - 2019-01-02
 
 * Upgrade Kotlin to 1.3

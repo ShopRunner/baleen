@@ -1,11 +1,13 @@
 dependencies {
-    compile project(':baleen')
-    compile project(':jsonschema-model')
-    compile 'com.squareup:kotlinpoet:1.0.0'
-    testCompile "org.jetbrains.kotlin:kotlin-compiler"
+    api project(':jsonschema-model')
+    api 'com.fasterxml.jackson.core:jackson-core:2.9.6'
+    implementation project(':baleen')
+    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.9.8'
+    implementation 'com.squareup:kotlinpoet:1.0.0'
+    testImplementation "org.jetbrains.kotlin:kotlin-compiler"
 }
 
 test {
-    def map = [GEN_CLASSPATH: configurations.testCompile.files.path.join(":")]
+    def map = [GEN_CLASSPATH: configurations.testCompileClasspath.files.path.join(":")]
     environment map
 }
