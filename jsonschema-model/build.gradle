@@ -1,5 +1,5 @@
 dependencies {
-    compile project(':baleen')
-    compile 'com.fasterxml.jackson.core:jackson-core:2.9.6'
-    compile 'com.fasterxml.jackson.module:jackson-module-kotlin:2.9.8'
+    api project(':baleen')
+    api 'com.fasterxml.jackson.core:jackson-core:2.9.6'
+    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.9.8'
 }

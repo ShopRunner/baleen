@@ -13,13 +13,13 @@ import io.reactivex.rxkotlin.toFlowable
 
 val dogDescription = "Dog".describeAs {
 
-    "name".type( StringType(),
+    "name".type(StringType(),
         required = true)
 
-    "license".type( StringType(),
+    "license".type(StringType(),
         required = true)
 
-    "legs".type( StringCoercibleToLong(LongType(min = 0, max = 4)),
+    "legs".type(StringCoercibleToLong(LongType(min = 0, max = 4)),
         required = true)
 
     warnOnExtraAttributes()
