@@ -10,7 +10,7 @@ import com.shoprunner.baleen.ValidationResult
  * then all errors are returned.
  */
 class UnionType(vararg val types: BaleenType) : BaleenType {
-    override fun name(): String = "union of ${types.joinToString { it.name() }}"
+    override val name = "union of ${types.joinToString { it.name }}"
 
     override fun validate(dataTrace: DataTrace, value: Any?): Sequence<ValidationResult> {
         val successful = types.any { !it.validate(dataTrace, value).any { it is ValidationError } }

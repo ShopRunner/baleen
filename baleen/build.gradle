@@ -1,0 +1,26 @@
+def klockVersion = "1.4.0"
+
+kotlin {
+    jvm()
+
+    sourceSets {
+        commonMain {
+            dependencies {
+                api "com.soywiz:klock-metadata:$klockVersion"
+            }
+        }
+
+        jvm().compilations.main.defaultSourceSet {
+            dependencies {
+                implementation "com.soywiz:klock-jvm:$klockVersion"
+            }
+        }
+
+        js().compilations.main.defaultSourceSet {
+            dependencies {
+                implementation "com.soywiz:klock-js:$klockVersion"
+            }
+        }
+    }
+}
+

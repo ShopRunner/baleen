@@ -7,7 +7,7 @@ import com.shoprunner.baleen.ValidationResult
 import com.shoprunner.baleen.ValidationWarning
 
 class ErrorsAreWarnings<out T : BaleenType>(val type: T) : BaleenType {
-    override fun name() = "null or ${type.name()}"
+    override val name = "null or ${type.name}"
 
     override fun validate(dataTrace: DataTrace, value: Any?): Sequence<ValidationResult> =
             type.validate(dataTrace, value).map { when (it) {

@@ -1,14 +1,12 @@
 package com.shoprunner.baleen
 
 class DataDescription(
-    val name: String,
+    override val name: String,
     val nameSpace: String = "",
     val markdownDescription: String
 ) : BaleenType {
     val attrs = mutableListOf<AttributeDescription>()
     private val tests = mutableListOf<Validator>()
-
-    override fun name() = name
 
     private fun attrTest(attr: AttributeDescription, type: BaleenType) = fun(dataTrace: DataTrace, data: Data): Sequence<ValidationResult> {
         return when {
@@ -63,7 +61,7 @@ class DataDescription(
             return sequenceOf(ValidationError(dataTrace, "is null", value))
         }
         if (value !is Data) {
-            return sequenceOf(ValidationError(dataTrace, "expected to be of type Data but is " + value.javaClass, value))
+            return sequenceOf(ValidationError(dataTrace, "expected to be of type Data", value))
         }
 
         return tests.asSequence().flatMap { it(dataTrace, value) }

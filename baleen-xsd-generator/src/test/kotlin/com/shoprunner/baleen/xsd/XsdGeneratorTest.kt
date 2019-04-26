@@ -318,7 +318,7 @@ class XsdGeneratorTest {
         @Test
         fun `can handle custom type mappings`() {
             class DogRatingType : BaleenType {
-                override fun name() = "dog rating"
+                override val name = "dog rating"
 
                 override fun validate(dataTrace: DataTrace, value: Any?): Sequence<ValidationResult> =
                     when {

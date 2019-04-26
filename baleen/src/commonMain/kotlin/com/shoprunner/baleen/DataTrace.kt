@@ -23,9 +23,7 @@ class DataTrace private constructor(private val stack: List<String>) {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as DataTrace
+        if (other !is DataTrace) return false
 
         if (stack != other.stack) return false
 

@@ -7,7 +7,7 @@ import com.shoprunner.baleen.ValidationResult
 
 class OccurrencesType(val memberType: BaleenType) : BaleenType {
 
-    override fun name() = "multiple occurrences of ${memberType.name()}"
+    override val name = "multiple occurrences of ${memberType.name}"
 
     override fun validate(dataTrace: DataTrace, value: Any?): Sequence<ValidationResult> =
             when (value) {

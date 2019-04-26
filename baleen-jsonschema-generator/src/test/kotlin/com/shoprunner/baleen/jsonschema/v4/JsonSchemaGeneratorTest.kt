@@ -874,7 +874,7 @@ internal class JsonSchemaGeneratorTest {
         @Test
         fun `getJsonSchema fails with an unsupported type`() {
             class BadType : BaleenType {
-                override fun name() = "bad"
+                override val name = "bad"
                 override fun validate(dataTrace: DataTrace, value: Any?): Sequence<ValidationResult> = emptySequence()
             }
 

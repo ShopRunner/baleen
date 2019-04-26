@@ -7,7 +7,7 @@ import com.shoprunner.baleen.ValidationResult
 
 class MapType(val keyType: BaleenType, val valueType: BaleenType) : BaleenType {
 
-    override fun name() = "map of occurrences of ${keyType.name()} to ${valueType.name()}"
+    override val name = "map of occurrences of ${keyType.name} to ${valueType.name}"
 
     override fun validate(dataTrace: DataTrace, value: Any?): Sequence<ValidationResult> =
             when (value) {

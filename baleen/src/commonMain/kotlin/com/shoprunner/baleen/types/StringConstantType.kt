@@ -6,7 +6,7 @@ import com.shoprunner.baleen.ValidationError
 import com.shoprunner.baleen.ValidationResult
 
 class StringConstantType(val constant: String) : BaleenType {
-    override fun name() = "string constant"
+    override val name = "string constant"
 
     override fun validate(dataTrace: DataTrace, value: Any?): Sequence<ValidationResult> =
             when (constant) {

@@ -13,7 +13,7 @@ class EnumType(val enumName: String, val enum: List<String>) : BaleenType {
 
     private val enumStr = enum.joinToString(", ")
 
-    override fun name() = "enum"
+    override val name = "enum"
 
     override fun validate(dataTrace: DataTrace, value: Any?): Sequence<ValidationResult> =
             when {

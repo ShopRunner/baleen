@@ -7,7 +7,7 @@ import com.shoprunner.baleen.ValidationResult
 import java.time.Instant
 
 class InstantType(val before: Instant = Instant.MAX, val after: Instant = Instant.MIN) : BaleenType {
-    override fun name() = "instant"
+    override val name = "instant"
 
     override fun validate(dataTrace: DataTrace, value: Any?): Sequence<ValidationResult> =
             when (value) {

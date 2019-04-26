@@ -102,7 +102,7 @@ object XsdGenerator {
                                             minLength = MinLength(baleenType.min))
                                         ))
             is TimestampMillisType -> TypeDetails("xs:dateTime")
-            else -> throw Exception("No mapping is defined for ${baleenType.name()} to XSD")
+            else -> throw Exception("No mapping is defined for ${baleenType.name} to XSD")
         }
 
     private fun generateType(type: DataDescription, typeMapper: TypeMapper) =

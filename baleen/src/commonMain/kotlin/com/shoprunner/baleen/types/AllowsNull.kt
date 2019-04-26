@@ -5,7 +5,7 @@ import com.shoprunner.baleen.DataTrace
 import com.shoprunner.baleen.ValidationResult
 
 class AllowsNull<out T : BaleenType>(val type: T) : BaleenType {
-    override fun name() = "null or ${type.name()}"
+    override val name = "null or ${type.name}"
 
     override fun validate(dataTrace: DataTrace, value: Any?): Sequence<ValidationResult> =
             when (value) {

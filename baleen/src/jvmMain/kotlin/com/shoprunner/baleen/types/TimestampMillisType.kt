@@ -4,14 +4,15 @@ import com.shoprunner.baleen.BaleenType
 import com.shoprunner.baleen.DataTrace
 import com.shoprunner.baleen.ValidationError
 import com.shoprunner.baleen.ValidationResult
+import java.time.LocalDateTime
 
-class BooleanType : BaleenType {
-    override fun name() = "boolean"
+class TimestampMillisType : BaleenType {
+    override val name = "timestampMillis"
 
     override fun validate(dataTrace: DataTrace, value: Any?): Sequence<ValidationResult> =
             when (value) {
                 null -> sequenceOf(ValidationError(dataTrace, "is null", value))
-                !is Boolean -> sequenceOf(ValidationError(dataTrace, "is not a boolean", value))
+                !is LocalDateTime -> sequenceOf(ValidationError(dataTrace, "is not a a localDateTime", value))
                 else -> emptySequence()
             }
 }

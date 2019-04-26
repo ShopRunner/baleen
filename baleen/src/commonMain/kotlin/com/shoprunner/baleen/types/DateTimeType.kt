@@ -4,15 +4,15 @@ import com.shoprunner.baleen.BaleenType
 import com.shoprunner.baleen.DataTrace
 import com.shoprunner.baleen.ValidationError
 import com.shoprunner.baleen.ValidationResult
-import java.time.LocalDateTime
+import com.soywiz.klock.DateTime
 
-class TimestampMillisType : BaleenType {
-    override fun name() = "timestampMillis"
+class DateTimeType : BaleenType {
+    override val name = "datateTime"
 
     override fun validate(dataTrace: DataTrace, value: Any?): Sequence<ValidationResult> =
             when (value) {
                 null -> sequenceOf(ValidationError(dataTrace, "is null", value))
-                !is LocalDateTime -> sequenceOf(ValidationError(dataTrace, "is not a a localDateTime", value))
+                !is DateTime -> sequenceOf(ValidationError(dataTrace, "is not a DateTime", value))
                 else -> emptySequence()
             }
 }
