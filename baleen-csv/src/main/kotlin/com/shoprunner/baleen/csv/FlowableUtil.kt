@@ -4,6 +4,7 @@ import com.opencsv.CSVReader
 import com.shoprunner.baleen.Context
 import com.shoprunner.baleen.Data
 import com.shoprunner.baleen.DataTrace
+import com.shoprunner.baleen.DataValue
 import io.reactivex.Flowable
 import io.reactivex.rxkotlin.Flowables
 import io.reactivex.rxkotlin.toFlowable
@@ -24,6 +25,10 @@ object FlowableUtil {
             return row[index]
         }
 
+        override fun attributeDataValue(key: String, dataTrace: DataTrace): DataValue {
+            return super.attributeDataValue(key, dataTrace.tag("column", headMap[key].toString()))
+        }
+
         override fun toString(): String {
             val mapString = headMap.map { entry -> "${entry.key}=${row[entry.value]}" }.joinToString()
             return "CsvData($mapString)"
@@ -42,9 +47,16 @@ object FlowableUtil {
 
         val trace: DataTrace = dataTrace
 
-        val lineNumbers = IntRange(2, Int.MAX_VALUE)
+        val rowNumbers = IntRange(0, Int.MAX_VALUE)
 
         val dataFlow = Flowables.zip(headMap.repeat(), rest, headSet.repeat(), ::CsvData)
-        return Flowables.zip(dataFlow, lineNumbers.toFlowable(), { data, lineNumber -> Context(data, trace + "line $lineNumber") })
+        return Flowables.zip(dataFlow, rowNumbers.toFlowable()) { data, rowNumber ->
+            val lineNumber = rowNumber + 2
+            Context(
+                data = data,
+                dataTrace = (trace + "line $lineNumber")
+                    .tag("row", rowNumber.toString())
+                    .tag("line", lineNumber.toString()))
+        }
     }
 }
