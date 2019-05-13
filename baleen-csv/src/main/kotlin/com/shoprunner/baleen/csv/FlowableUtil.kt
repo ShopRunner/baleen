@@ -4,6 +4,8 @@ import com.opencsv.CSVReader
 import com.shoprunner.baleen.Context
 import com.shoprunner.baleen.Data
 import com.shoprunner.baleen.DataTrace
+import com.shoprunner.baleen.DataValue
+import com.shoprunner.baleen.TraceLocation
 import io.reactivex.Flowable
 import io.reactivex.rxkotlin.Flowables
 import io.reactivex.rxkotlin.toFlowable
@@ -14,14 +16,19 @@ object FlowableUtil {
     class CsvData(
         val headMap: Map<String, Int>,
         val row: Array<String>,
+        val rowNumber: Int,
         override val keys: Set<String>
     ) : Data {
 
         override fun containsKey(key: String): Boolean = keys.contains(key)
 
         override fun get(key: String): Any? {
+            return getDataValue(key)?.value
+        }
+
+        override fun getDataValue(key: String): DataValue<*>? {
             val index = headMap[key] ?: return null
-            return row[index]
+            return DataValue(row[index], rowNumber)
         }
 
         override fun toString(): String {
@@ -44,7 +51,7 @@ object FlowableUtil {
 
         val lineNumbers = IntRange(2, Int.MAX_VALUE)
 
-        val dataFlow = Flowables.zip(headMap.repeat(), rest, headSet.repeat(), ::CsvData)
-        return Flowables.zip(dataFlow, lineNumbers.toFlowable(), { data, lineNumber -> Context(data, trace + "line $lineNumber") })
+        val dataFlow = Flowables.zip(headMap.repeat(), rest, lineNumbers.toFlowable(), headSet.repeat(), ::CsvData)
+        return Flowables.zip(dataFlow, lineNumbers.toFlowable(), { data, lineNumber -> Context(data, trace + TraceLocation("line $lineNumber", lineNumber)) })
     }
 }

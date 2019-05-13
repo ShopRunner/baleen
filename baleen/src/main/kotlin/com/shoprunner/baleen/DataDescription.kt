@@ -13,10 +13,10 @@ class DataDescription(
     private fun attrTest(attr: AttributeDescription, type: BaleenType) = fun(dataTrace: DataTrace, data: Data): Sequence<ValidationResult> {
         return when {
             data.containsKey(attr.name) -> {
-                val value = data[attr.name]
+                val dataValue = data.getDataValue(attr.name)
                 // TODO add to context
-                val attrDataTrace = dataTrace + "attribute \"${attr.name}\""
-                sequenceOf(ValidationInfo(dataTrace, "has attribute \"${attr.name}\"", data)).plus(type.validate(attrDataTrace, value))
+                val attrDataTrace = dataTrace + TraceLocation("attribute \"${attr.name}\"", dataValue?.lineNumber, dataValue?.columnNumber)
+                sequenceOf(ValidationInfo(dataTrace, "has attribute \"${attr.name}\"", data)).plus(type.validate(attrDataTrace, dataValue?.value))
             }
             attr.default != NoDefault -> sequenceOf(ValidationInfo(dataTrace, "has attribute \"${attr.name}\" defaulted to `${attr.default}` since it wasn't set.", data))
             attr.required -> sequenceOf(ValidationError(dataTrace, "missing required attribute \"${attr.name}\"", data))
