@@ -30,11 +30,11 @@ object XmlUtil {
      * Given an InputStream where data is the root, validate it against the DataDescription
      */
     @JvmStatic
-    fun validateFromRoot(description: DataDescription, inputStream: InputStream): Validation {
+    fun validateFromRoot(description: DataDescription, inputStream: InputStream, dataTrace: DataTrace = DataTrace()): Validation {
         val root = Baleen.describe("root") {
             it.attr(description.name(), description)
         }
-        val context = fromXmlToContext(DataTrace(), inputStream)
+        val context = fromXmlToContext(dataTrace, inputStream)
         return root.validate(context)
     }
 
@@ -42,17 +42,17 @@ object XmlUtil {
      * Given an File where data is the root, validate it against the DataDescription
      */
     @JvmStatic
-    fun validateFromRoot(description: DataDescription, file: File): Validation {
-        return validateFromRoot(description, file.inputStream())
+    fun validateFromRoot(description: DataDescription, file: File, dataTrace: DataTrace = DataTrace(file.name)): Validation {
+        return validateFromRoot(description, file.inputStream(), dataTrace)
     }
 
     /**
      * Given an String where data is the root, validate it against the DataDescription
      */
     @JvmStatic
-    fun validateFromRoot(description: DataDescription, xml: String): Validation {
+    fun validateFromRoot(description: DataDescription, xml: String, dataTrace: DataTrace = DataTrace()): Validation {
         return with(ByteArrayInputStream(xml.toByteArray(Charsets.UTF_8))) {
-            validateFromRoot(description, this)
+            validateFromRoot(description, this, dataTrace)
         }
     }
 }

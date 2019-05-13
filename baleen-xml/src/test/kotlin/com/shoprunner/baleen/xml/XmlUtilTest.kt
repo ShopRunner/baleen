@@ -8,12 +8,16 @@ import com.shoprunner.baleen.types.OccurrencesType
 import com.shoprunner.baleen.types.StringType
 import com.shoprunner.baleen.xml.ValidationAssert.Companion.assertThat
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class XmlUtilTest {
+
+    private fun hashData(map: Map<String, Any?>) = HashData(map.map { (k, v) -> Pair(k, DataValue(v)) }.toMap())
+    private fun emptyHashData() = HashData(emptyMap())
 
     private val dogDescription = Baleen.describe("Dog") { p ->
         p.attr(name = "name",
@@ -92,10 +96,91 @@ internal class XmlUtilTest {
     }
 
     @Nested
-    inner class NilHandling {
+    inner class Attributes {
 
-        fun hashData(map: Map<String, Any?>) = HashData(map.map { (k, v) -> Pair(k, DataValue(v)) }.toMap())
-        fun emptyHashData() = HashData(emptyMap())
+        private val dogDescription = Baleen.describe("Dog") { p ->
+            p.attr(name = "name",
+                type = StringType(),
+                required = true)
+
+            p.attr(name = "type",
+                type = StringType(),
+                required = true)
+        }
+
+        private val pack = Baleen.describe("Pack") { p ->
+            p.attr(name = "dog",
+                type = OccurrencesType(dogDescription),
+                required = true)
+        }
+
+        private val attributes = """
+            <pack>
+                <dog type="labrador">
+                    <name>Doug</name>
+                </dog>
+            </pack>
+            """
+
+        @Test
+        fun `produces data with context`() {
+            val inputStream = attributes.byteInputStream()
+            val context = XmlUtil.fromXmlToContext(dataTrace("example.xml"), inputStream)
+            assertThat(context.dataTrace).isEqualTo(dataTrace("example.xml"))
+            val data = context.data
+            assertThat(data).isEqualTo(hashData(mapOf("pack" to hashData(mapOf("dog" to hashData(mapOf("type" to "labrador", "name" to "Doug")))))))
+        }
+
+        @Test
+        fun `returned data validates`() {
+            val inputStream = attributes.byteInputStream()
+            assertTrue(XmlUtil.validateFromRoot(pack, inputStream, dataTrace("example.xml")).isValid())
+        }
+    }
+
+    @Nested
+    inner class AttributesAndText {
+
+        private val dogDescription = Baleen.describe("Dog") { p ->
+            p.attr(name = "#text",
+                type = StringType(),
+                required = true)
+
+            p.attr(name = "type",
+                type = StringType(),
+                required = true)
+        }
+
+        private val pack = Baleen.describe("Pack") { p ->
+            p.attr(name = "dog",
+                type = OccurrencesType(dogDescription),
+                required = true)
+        }
+
+        private val attributes = """
+            <pack>
+                <dog type="labrador">Doug</dog>
+            </pack>
+            """
+
+        @Test
+        fun `produces data with context`() {
+            val inputStream = attributes.byteInputStream()
+            val context = XmlUtil.fromXmlToContext(dataTrace("example.xml"), inputStream)
+            assertThat(context.dataTrace).isEqualTo(dataTrace("example.xml"))
+            val data = context.data
+            assertThat(data).isEqualTo(hashData(mapOf("pack" to hashData(mapOf("dog" to hashData(mapOf("type" to "labrador", "#text" to "Doug")))))))
+        }
+
+        @Test
+        fun `returned data validates`() {
+            val inputStream = attributes.byteInputStream()
+            assertTrue(XmlUtil.validateFromRoot(pack, inputStream, dataTrace("example.xml")).isValid())
+        }
+    }
+
+    @Nested
+    inner class NilHandling {
 
         private val emptyElement = """
             <dog>
