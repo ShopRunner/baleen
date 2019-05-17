@@ -23,7 +23,7 @@ object XmlUtil {
         val handler = LineAwareHandler()
 
         parser.parse(inputStream, handler)
-        return Context(handler.getData(), dataTrace)
+        return Context(handler.data, dataTrace)
     }
 
     /**
@@ -43,7 +43,9 @@ object XmlUtil {
      */
     @JvmStatic
     fun validateFromRoot(description: DataDescription, file: File): Validation {
-        return validateFromRoot(description, file.inputStream())
+        return with(file.inputStream()) {
+            validateFromRoot(description, this)
+        }
     }
 
     /**
