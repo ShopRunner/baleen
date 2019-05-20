@@ -4,7 +4,7 @@ import com.shoprunner.baleen.Data
 import com.shoprunner.baleen.DataTrace
 import com.shoprunner.baleen.DataValue
 
-internal sealed class XmlData( val line: Int?, val column: Int?)
+internal sealed class XmlData(val line: Int?, val column: Int?)
 
 internal class XmlDataLeaf(val value: Any?, line: Int?, column: Int?) : XmlData(line, column) {
     override fun toString(): String {
@@ -25,14 +25,14 @@ internal class XmlDataNode(line: Int? = null, column: Int? = null) : Data, XmlDa
         }
 
     override val keys: Set<String> = hash.keys
-    override fun attributeDataValue(key: String, dataTrace: DataTrace) : DataValue {
+    override fun attributeDataValue(key: String, dataTrace: DataTrace): DataValue {
         return DataValue(
             value = get(key),
             dataTrace = attributeDataTrace(key, dataTrace)
         )
     }
 
-    private fun attributeDataTrace(key: String, dataTrace: DataTrace) : DataTrace {
+    private fun attributeDataTrace(key: String, dataTrace: DataTrace): DataTrace {
         val line = hash[key]?.line
         val column = hash[key]?.column
         return (dataTrace + "attribute \"$key\"")

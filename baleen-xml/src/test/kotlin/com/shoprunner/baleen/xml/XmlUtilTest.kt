@@ -3,6 +3,7 @@ package com.shoprunner.baleen.xml
 import com.shoprunner.baleen.Baleen
 import com.shoprunner.baleen.Context
 import com.shoprunner.baleen.Data
+import com.shoprunner.baleen.DataValue
 import com.shoprunner.baleen.dataTrace
 import com.shoprunner.baleen.datawrappers.HashData
 import com.shoprunner.baleen.types.OccurrencesType
@@ -32,6 +33,45 @@ internal class XmlUtilTest {
         p.attr(name = "pack",
             type = pack,
             required = true)
+    }
+
+    @Test
+    fun `attributeDataValue handles text nodes`() {
+        val inputStream = """
+            <pack>
+                <dog>Doug</dog>
+            </pack>
+            """.trimIndent().byteInputStream()
+
+        val context = XmlUtil.fromXmlToContext(dataTrace(), inputStream)
+        val data = context.data.attributeDataValue("pack", dataTrace()).value as Data
+        assertThat(data.attributeDataValue("dog", dataTrace()))
+            .isEqualTo(
+                DataValue(
+                    value = "Doug",
+                    dataTrace = dataTrace("attribute \"dog\"")
+                        .tag("line", "2")
+                        .tag("column", "10"))
+                )
+    }
+
+    @Test
+    fun `attributeDataValue handles node attributes`() {
+        val inputStream = """
+            <pack dog="Doug">
+            </pack>
+            """.trimIndent().byteInputStream()
+
+        val context = XmlUtil.fromXmlToContext(dataTrace(), inputStream)
+        val data = context.data.attributeDataValue("pack", dataTrace()).value as Data
+        assertThat(data.attributeDataValue("dog", dataTrace()))
+            .isEqualTo(
+                DataValue(
+                    value = "Doug",
+                    dataTrace = dataTrace("attribute \"dog\"")
+                        .tag("line", "1")
+                        .tag("column", "18"))
+            )
     }
 
     @Nested
@@ -107,23 +147,6 @@ internal class XmlUtilTest {
             val inputStream = singleOccurrence.byteInputStream()
             val context = XmlUtil.fromXmlToContext(dataTrace("example.xml"), inputStream)
             assertThat(packContainer.validate(context)).isValid()
-        }
-
-        @Test
-        fun `data trace of child is correct`() {
-            val inputStream = """
-            <pack>
-                <dog>Doug</dog>
-            </pack>
-            """.trimIndent().byteInputStream()
-
-            val context = XmlUtil.fromXmlToContext(dataTrace("example.xml"), inputStream)
-            val data = context.data.attributeDataValue("pack", dataTrace()).value as Data
-            assertThat(data.attributeDataValue("dog", dataTrace()).dataTrace)
-                .isEqualTo(
-                    dataTrace("attribute \"dog\"")
-                        .tag("line", "2")
-                        .tag("column", "10"))
         }
     }
 
