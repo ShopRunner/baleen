@@ -13,9 +13,7 @@ class DataDescription(
     private fun attrTest(attr: AttributeDescription, type: BaleenType) = fun(dataTrace: DataTrace, data: Data): Sequence<ValidationResult> {
         return when {
             data.containsKey(attr.name) -> {
-                val value = data[attr.name]
-                // TODO add to context
-                val attrDataTrace = dataTrace + "attribute \"${attr.name}\""
+                val (value, attrDataTrace) = data.attributeDataValue(attr.name, dataTrace)
                 sequenceOf(ValidationInfo(dataTrace, "has attribute \"${attr.name}\"", data)).plus(type.validate(attrDataTrace, value))
             }
             attr.default != NoDefault -> sequenceOf(ValidationInfo(dataTrace, "has attribute \"${attr.name}\" defaulted to `${attr.default}` since it wasn't set.", data))
