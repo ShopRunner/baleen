@@ -11,7 +11,7 @@ class DataTrace private constructor(
     val tags: Map<String, String> = emptyMap()
 ) {
 
-    constructor(vararg dataLocations: String): this(dataLocations.toList())
+    constructor(vararg dataLocations: String) : this(dataLocations.toList())
 
     operator fun plus(dataLocation: String) =
         DataTrace(
