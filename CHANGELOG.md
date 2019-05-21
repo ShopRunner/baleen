@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.8.0] - 2019-05-21
+
+* Add support for adding tags to data traces.  This allows the capture of line number, column number or custom attributes in the data trace.
+
 ## [1.7.0] - 2019-01-21
 
 * Upgrade build to gradle 5
