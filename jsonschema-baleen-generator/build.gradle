@@ -3,7 +3,7 @@ dependencies {
     api 'com.fasterxml.jackson.core:jackson-core:2.9.9'
     implementation project(':baleen')
     implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.9.8'
-    implementation 'com.squareup:kotlinpoet:1.0.0'
+    implementation 'com.squareup:kotlinpoet:1.2.0'
     testImplementation "org.jetbrains.kotlin:kotlin-compiler"
 }
 
