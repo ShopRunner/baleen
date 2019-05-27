@@ -1,6 +1,7 @@
 package com.shoprunner.baleen.csv
 
-import com.opencsv.CSVReader
+import com.opencsv.CSVParserBuilder
+import com.opencsv.CSVReaderBuilder
 import com.shoprunner.baleen.Context
 import com.shoprunner.baleen.Data
 import com.shoprunner.baleen.DataTrace
@@ -36,7 +37,16 @@ object FlowableUtil {
     }
 
     fun fromCsvWithHeader(dataTrace: DataTrace, readerSupplier: () -> Reader, delimiter: Char = ',', quote: Char = '"', escape: Char = '\\'): Flowable<Context> {
-        val readerFactory = { CSVReader(readerSupplier(), delimiter, quote, escape) }
+        val readerFactory = {
+            CSVReaderBuilder(readerSupplier())
+                .withCSVParser(
+                    CSVParserBuilder()
+                        .withSeparator(delimiter)
+                        .withQuoteChar(quote)
+                        .withEscapeChar(escape)
+                        .build())
+                .build()
+        }
 
         val rows = Flowable.using(readerFactory, { Flowable.fromIterable(it) }, { it.close() })
         val head = rows.take(1).cache()
