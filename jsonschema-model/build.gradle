@@ -1,5 +1,5 @@
 dependencies {
     api project(':baleen')
-    api 'com.fasterxml.jackson.core:jackson-core:2.9.6'
+    api 'com.fasterxml.jackson.core:jackson-core:2.9.9'
     implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.9.8'
 }
