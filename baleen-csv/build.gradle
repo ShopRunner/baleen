@@ -1,6 +1,6 @@
 dependencies {
     api project(':baleen')
-    api 'io.reactivex.rxjava2:rxjava:2.0.7'
+    api 'io.reactivex.rxjava2:rxjava:2.2.8'
     implementation 'io.reactivex.rxjava2:rxkotlin:2.0.3'
     implementation 'com.opencsv:opencsv:4.6'
 }
