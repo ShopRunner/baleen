@@ -1,10 +1,9 @@
 plugins {
+    id 'idea'
     id "org.jetbrains.dokka" version "0.9.17" apply false
-    id 'org.jetbrains.kotlin.jvm' version '1.3.11' apply false
-    id 'org.jmailen.kotlinter' version '1.20.1' apply false
+    id 'org.jetbrains.kotlin.jvm' version '1.3.31' apply false
+    id 'org.jmailen.kotlinter' version '1.25.2' apply false
 }
-
-apply plugin: 'idea'
 
 subprojects {
     apply plugin: 'org.jetbrains.dokka'
