@@ -3,6 +3,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.10.0] - 2019-05-31
+
+* Dependencies bump
+* Fixed bug xsd generation so types can be overridden that are nested.
+
 ## [1.9.0] - 2019-05-28
 
 Dependencies bump
