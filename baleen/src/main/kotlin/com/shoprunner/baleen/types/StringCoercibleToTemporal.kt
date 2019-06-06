@@ -7,7 +7,7 @@ import java.time.temporal.Temporal
 import java.time.temporal.TemporalAccessor
 import java.time.temporal.TemporalQuery
 
-abstract class StringCoercibleToTemporal<out TemporalBaleenType : BaleenType, out TemporalClass : Temporal>(
+open class StringCoercibleToTemporal<out TemporalBaleenType : BaleenType, out TemporalClass : Temporal>(
     temporalType: TemporalBaleenType,
     private val dateTimeFormatters: Array<DateTimeFormatter>,
     temporalQueries: Array<out (TemporalAccessor) -> Temporal>,
