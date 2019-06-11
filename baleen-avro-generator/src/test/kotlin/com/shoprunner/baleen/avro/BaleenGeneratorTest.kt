@@ -78,7 +78,7 @@ internal class BaleenGeneratorTest {
 
         @Test
         fun `processField converts nullable required field`() {
-            val fSchema = Schema.createUnion(Schema.create(Schema.Type.NULL), Schema.create(Schema.Type.INT))
+            val fSchema = Schema.createUnion(Schema.create(Schema.Type.INT), Schema.create(Schema.Type.NULL))
             val f = Schema.Field("name", fSchema, "description", 0)
             val code = BaleenGenerator.processField(f)
             Assertions.assertThat(codeToString(code)).contains("p.attr(")
@@ -236,7 +236,7 @@ internal class BaleenGeneratorTest {
         |   "doc": "It's a dog. Ruff Ruff!",
         |   "fields": [
         |        { "name": "name", "type": "string", "doc": "The name of the dog", "default": "Fido" },
-        |        { "name": "legs", "type": ["long", "int", "null"], "default": null, "doc": "The number of legs" }
+        |        { "name": "legs", "type": ["null", "long", "int"], "default": null, "doc": "The number of legs" }
         |   ]
         |}
         """.trimMargin()
