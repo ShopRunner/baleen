@@ -2,6 +2,7 @@ package com.shoprunner.baleen.types
 
 import com.shoprunner.baleen.SequenceAssert.Companion.assertThat
 import com.shoprunner.baleen.ValidationError
+import com.shoprunner.baleen.ValidationInfo
 import com.shoprunner.baleen.dataTrace
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -11,6 +12,13 @@ internal class LongTypeTest {
     @Test
     fun `passes a Long`() {
         assertThat(LongType().validate(dataTrace(), 0L)).isEmpty()
+    }
+
+    @Test
+    fun `passes a Int`() {
+        assertThat(LongType().validate(dataTrace(), 0)).containsExactly(
+            ValidationInfo(dataTrace(), message = "is coerced to long from int", value = 0)
+        )
     }
 
     @Test
