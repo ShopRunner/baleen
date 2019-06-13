@@ -3,6 +3,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.10.1] - 2019-06-13
+
+* Upgrade avro to 1.9.0
+* Upgrade Dokka to 0.9.18
+
 ## [1.10.0] - 2019-05-31
 
 * Dependencies bump
