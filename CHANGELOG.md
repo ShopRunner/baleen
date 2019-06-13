@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.10.2] - 2019-06-13
+
+Add JCenter to the gradle repositories to fix Dokka dependency.
+
 ## [1.10.1] - 2019-06-13
 
 * Upgrade avro to 1.9.0
