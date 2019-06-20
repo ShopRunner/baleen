@@ -6,6 +6,7 @@ import com.shoprunner.baleen.ValidationError
 import com.shoprunner.baleen.ValidationResult
 import java.time.LocalDateTime
 
+@Deprecated("Use com.shoprunner.baleen.types.InstantType")
 class TimestampMillisType : BaleenType {
     override fun name() = "timestampMillis"
 
