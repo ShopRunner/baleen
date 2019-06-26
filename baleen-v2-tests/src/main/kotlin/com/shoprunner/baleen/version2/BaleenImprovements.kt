@@ -16,6 +16,30 @@ import kotlin.reflect.KClass
 
 // API Improvements, that we may want to add to the Baleen API
 
+fun <T : Any> KClass<T>.learnSchema(): DataDescription {
+    throw NotImplementedError()
+}
+
+fun <T : Any> T.learnSchema(): DataDescription {
+    return this::class.learnSchema()
+}
+
+fun Iterable<Map<String, Any?>>.learnSchema(): DataDescription {
+    throw NotImplementedError()
+}
+
+fun InputStream.learnSchema(dataHandler: DataHandler): DataDescription {
+    throw NotImplementedError()
+}
+
+fun Schema.learnSchema(): DataDescription {
+    throw NotImplementedError()
+}
+
+fun GenericRecord.learnSchema(): DataDescription {
+    return this.schema.learnSchema()
+}
+
 fun Map<String, Any?>.validate(schema: DataDescription, dataTrace: DataTrace = dataTrace()): Validation {
     return schema.validate(Context(HashData(this), dataTrace))
 }
