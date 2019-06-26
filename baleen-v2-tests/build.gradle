@@ -4,12 +4,20 @@ dependencies {
     api project(':baleen-xml')
     api project(':baleen-xsd-generator')
     api project(':jsonschema-baleen-generator')
+    api project(':baleen-jsonschema-generator')
     api project(':baleen-avro-generator')
     api "org.apache.avro:avro:1.9.0"
     implementation 'org.jetbrains.kotlin:kotlin-reflect'
 
+    // For Json schema validation tests
+    testImplementation 'com.github.everit-org.json-schema:org.everit.json.schema:1.11.1'
+
     // Just to get some test helpers. Promote those test helpers to top-level module.
     testImplementation files(project(":baleen").sourceSets.test.output)
+}
+
+repositories {
+    maven { url "https://jitpack.io" }
 }
 
 test {

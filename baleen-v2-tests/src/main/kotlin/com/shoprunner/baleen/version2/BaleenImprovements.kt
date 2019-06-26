@@ -5,10 +5,12 @@ import com.shoprunner.baleen.Data
 import com.shoprunner.baleen.DataDescription
 import com.shoprunner.baleen.DataTrace
 import com.shoprunner.baleen.Validation
+import com.shoprunner.baleen.avro.AvroGenerator.encode as encodeAvroSchema
 import com.shoprunner.baleen.csv.FlowableUtil
 import com.shoprunner.baleen.dataTrace
 import com.shoprunner.baleen.datawrappers.HashData
-import com.shoprunner.baleen.jsonschema.v4.BaleenGenerator
+import com.shoprunner.baleen.jsonschema.v4.JsonSchemaGenerator.encode as encodeJsonSchema
+import com.shoprunner.baleen.jsonschema.v4.JsonSchemaGenerator.writeTo as writeJsonSchemaTo
 import com.shoprunner.baleen.jsonschema.v4.JsonSchema
 import com.shoprunner.baleen.xml.XmlUtil
 import org.apache.avro.Schema as AvroSchema
@@ -17,6 +19,10 @@ import java.io.InputStream
 import kotlin.reflect.KClass
 import com.shoprunner.baleen.xsd.xml.Schema as XSD
 import com.shoprunner.baleen.jsonschema.v4.BaleenGenerator.parseJsonSchema
+import com.shoprunner.baleen.xsd.XsdGenerator.encode as encodeXsd
+import java.io.ByteArrayOutputStream
+import java.io.PrintStream
+import kotlin.reflect.full.primaryConstructor
 
 // API Improvements, that we may want to add to the Baleen API
 
@@ -134,4 +140,29 @@ fun String.asJsonSchema(): JsonSchema {
 fun String.asAvroSchema(): AvroSchema {
     val parser = AvroSchema.Parser()
     return parser.parse(this)
+}
+
+fun DataDescription.toXSD(): String {
+    val outputStream = ByteArrayOutputStream()
+    this.encodeXsd(PrintStream(outputStream))
+    return outputStream.toString()
+}
+
+fun DataDescription.toJsonSchema(): String {
+    val outputStream = ByteArrayOutputStream()
+    val schema = encodeJsonSchema(this)
+    schema.writeJsonSchemaTo(PrintStream(outputStream))
+    return outputStream.toString()
+}
+
+fun DataDescription.toAvroSchema(): AvroSchema {
+    return encodeAvroSchema(this)
+}
+
+fun DataDescription.toDataClass(): KClass<*> {
+    throw NotImplementedError()
+}
+
+fun DataDescription.toDataClassInstance(vararg attrs: Any?): Any {
+    return this.toDataClass().primaryConstructor!!.call(*attrs)
 }

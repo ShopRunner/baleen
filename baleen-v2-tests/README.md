@@ -14,6 +14,6 @@ Do test driven development for version 2
 
 [UseCase3Test.kt](./src/test/kotlin/com/shoprunner/baleen/version2/UseCase3Test.kt)
 
-## Use Case 4 - Given a Baleen schema, create external schema (Avro, XSD, Json-Schema, Kotlin data class) and validate the data
+## Use Case 4 - Given a Baleen schema, create external schema (Avro, XSD, Json-Schema, Kotlin data class) and validate the data with the external schema
 
 [UseCase4Test.kt](./src/test/kotlin/com/shoprunner/baleen/version2/UseCase4Test.kt)
