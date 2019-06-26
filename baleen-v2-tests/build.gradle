@@ -2,6 +2,9 @@ dependencies {
     api project(':baleen')
     api project(':baleen-csv')
     api project(':baleen-xml')
+    api project(':baleen-xsd-generator')
+    api project(':jsonschema-baleen-generator')
+    api project(':baleen-avro-generator')
     api "org.apache.avro:avro:1.9.0"
     implementation 'org.jetbrains.kotlin:kotlin-reflect'
 

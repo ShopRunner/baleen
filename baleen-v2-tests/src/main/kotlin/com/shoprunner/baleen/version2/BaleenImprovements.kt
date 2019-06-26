@@ -8,11 +8,15 @@ import com.shoprunner.baleen.Validation
 import com.shoprunner.baleen.csv.FlowableUtil
 import com.shoprunner.baleen.dataTrace
 import com.shoprunner.baleen.datawrappers.HashData
+import com.shoprunner.baleen.jsonschema.v4.BaleenGenerator
+import com.shoprunner.baleen.jsonschema.v4.JsonSchema
 import com.shoprunner.baleen.xml.XmlUtil
-import org.apache.avro.Schema
+import org.apache.avro.Schema as AvroSchema
 import org.apache.avro.generic.GenericRecord
 import java.io.InputStream
 import kotlin.reflect.KClass
+import com.shoprunner.baleen.xsd.xml.Schema as XSD
+import com.shoprunner.baleen.jsonschema.v4.BaleenGenerator.parseJsonSchema
 
 // API Improvements, that we may want to add to the Baleen API
 
@@ -32,7 +36,15 @@ fun InputStream.learnSchema(dataHandler: DataHandler): DataDescription {
     throw NotImplementedError()
 }
 
-fun Schema.learnSchema(): DataDescription {
+fun AvroSchema.learnSchema(): DataDescription {
+    throw NotImplementedError()
+}
+
+fun XSD.learnSchema(): DataDescription {
+    throw NotImplementedError()
+}
+
+fun JsonSchema.learnSchema(): DataDescription {
     throw NotImplementedError()
 }
 
@@ -109,4 +121,17 @@ fun GenericRecord.validate(schema: DataDescription, dataTrace: DataTrace = dataT
 
 fun <T> T.validate(schema: DataDescription, dataTrace: DataTrace = dataTrace()): Validation {
     throw NotImplementedError()
+}
+
+fun String.asXSD(): XSD {
+    throw NotImplementedError()
+}
+
+fun String.asJsonSchema(): JsonSchema {
+    return this.parseJsonSchema()
+}
+
+fun String.asAvroSchema(): AvroSchema {
+    val parser = AvroSchema.Parser()
+    return parser.parse(this)
 }
