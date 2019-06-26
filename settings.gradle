@@ -6,5 +6,6 @@ include 'baleen-jsonschema-generator'
 include 'jsonschema-baleen-generator'
 include 'baleen-xml'
 include 'baleen-xsd-generator'
+include 'baleen-v2-tests'
 
 rootProject.name = 'baleen'

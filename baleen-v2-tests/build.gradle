@@ -1,0 +1,14 @@
+dependencies {
+    api project(':baleen')
+    api project(':baleen-csv')
+    api project(':baleen-xml')
+    api "org.apache.avro:avro:1.9.0"
+    implementation 'org.jetbrains.kotlin:kotlin-reflect'
+
+    // Just to get some test helpers. Promote those test helpers to top-level module.
+    testImplementation files(project(":baleen").sourceSets.test.output)
+}
+
+test {
+    ignoreFailures = true
+}
