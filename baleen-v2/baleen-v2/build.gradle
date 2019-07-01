@@ -1,0 +1,43 @@
+plugins {
+    id 'org.jetbrains.kotlin.multiplatform'
+}
+
+kotlin {
+    // Targets
+    jvm() // Creates a JVM target with the default name 'jvm'
+    js()  // JS target named 'js'
+
+    sourceSets {
+        commonMain {
+            kotlin {
+                srcDir project(":baleen").file("src/main/kotlin")
+            }
+
+            dependencies {
+                implementation kotlin('stdlib-common')
+            }
+        }
+        commonTest {
+//            kotlin {
+//                srcDir project(":baleen").file("src/test/kotlin")
+//            }
+
+            dependencies {
+                implementation kotlin('test-common')
+                implementation kotlin('test-annotations-common')
+            }
+        }
+
+        jvmTest {
+            dependencies {
+                implementation kotlin('test-junit')
+            }
+        }
+    }
+}
+
+if (!project.hasProperty("version2")) {
+    project.tasks.each {
+        it.onlyIf { false }
+    }
+}

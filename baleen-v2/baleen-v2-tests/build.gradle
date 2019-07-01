@@ -23,3 +23,9 @@ repositories {
 test {
     ignoreFailures = true
 }
+
+if (!project.hasProperty("version2")) {
+    project.tasks.each {
+        it.onlyIf { false }
+    }
+}
