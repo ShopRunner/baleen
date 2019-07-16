@@ -65,9 +65,23 @@ internal class LineAwareHandler : DefaultHandler() {
             }
         }
 
-        parent.hash[localName] = currentNode
+        pushParent(parent, localName, currentNode)
 
         elementStack.push(currentNode)
+    }
+
+    private fun pushParent(parent: XmlDataNode, key: String, value: XmlDataNode) {
+        // If the key is present
+        if (parent.containsKey(key)) {
+            val existing = parent.hash[key]
+            if (existing is XmlDataLeaf && existing.value is Iterable<*>) {
+                parent.hash[key] = XmlDataLeaf(existing.value + value, existing.line, existing.column)
+            } else {
+                parent.hash[key] = XmlDataLeaf(listOf(existing, value), existing?.line, existing?.column)
+            }
+        } else {
+            parent.hash[key] = value
+        }
     }
 
     /**
