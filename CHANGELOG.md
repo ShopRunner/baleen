@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.10.4] - 2019-07-17
+
+Fix issed where occurences of XML elements containing text weren't being validated (https://github.com/ShopRunner/baleen/pull/51)
+
 ## [1.10.3] - 2019-07-16
 
 Fix line aware handler for xml of occurrences (https://github.com/ShopRunner/baleen/pull/50)
