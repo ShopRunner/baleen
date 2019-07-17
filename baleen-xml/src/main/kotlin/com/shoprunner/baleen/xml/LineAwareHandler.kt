@@ -96,7 +96,19 @@ internal class LineAwareHandler : DefaultHandler() {
                 elementStack.pop()
                 val current = elementStack.peek()
                 val old = current.hash[localName]!!
-                current.hash[localName] = XmlDataLeaf(value = textBuffer.trim(), line = old.line, column = old.column)
+
+                if (old is XmlDataLeaf && old.value is Iterable<*>) {
+                    val head = old.value.flatMap {
+                        when (it) {
+                            is XmlDataLeaf -> listOf(it.value)
+                            is String -> listOf(it)
+                            else -> emptyList()
+                        }
+                    }
+                    current.hash[localName] = XmlDataLeaf(head + textBuffer.trim(), old.line, old.column)
+                } else {
+                    current.hash[localName] = XmlDataLeaf(value = textBuffer.trim(), line = old.line, column = old.column)
+                }
                 textBuffer.clear()
             }
             else -> elementStack.pop()
