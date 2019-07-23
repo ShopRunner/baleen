@@ -6,6 +6,9 @@ import com.shoprunner.baleen.avro.BaleenGenerator.encode
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.PropertySpec
+import java.io.File
+import java.net.URLClassLoader
+import java.util.logging.Logger
 import org.apache.avro.JsonProperties
 import org.apache.avro.LogicalType
 import org.apache.avro.Schema
@@ -19,9 +22,6 @@ import org.jetbrains.kotlin.config.Services
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import java.io.File
-import java.net.URLClassLoader
-import java.util.logging.Logger
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class BaleenGeneratorTest {

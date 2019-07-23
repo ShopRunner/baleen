@@ -16,13 +16,13 @@ import com.shoprunner.baleen.xsd.XsdGenerator.encode
 import com.shoprunner.baleen.xsd.xml.MinInclusive
 import com.shoprunner.baleen.xsd.xml.Restriction
 import com.shoprunner.baleen.xsd.xml.SimpleType
+import java.io.ByteArrayOutputStream
+import java.io.PrintStream
+import java.math.BigDecimal
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import java.io.ByteArrayOutputStream
-import java.io.PrintStream
-import java.math.BigDecimal
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class XsdGeneratorTest {
