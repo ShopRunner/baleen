@@ -27,12 +27,12 @@ import com.shoprunner.baleen.types.StringConstantType
 import com.shoprunner.baleen.types.StringType
 import com.shoprunner.baleen.types.TimestampMillisType
 import com.shoprunner.baleen.types.UnionType
+import java.io.ByteArrayOutputStream
+import java.io.PrintStream
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import java.io.ByteArrayOutputStream
-import java.io.PrintStream
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class JsonSchemaGeneratorTest {

@@ -18,11 +18,11 @@ import com.shoprunner.baleen.types.StringConstantType
 import com.shoprunner.baleen.types.StringType
 import com.shoprunner.baleen.types.TimestampMillisType
 import com.shoprunner.baleen.types.UnionType
+import java.io.File
+import java.nio.file.Path
 import org.apache.avro.JsonProperties
 import org.apache.avro.LogicalTypes
 import org.apache.avro.Schema
-import java.io.File
-import java.nio.file.Path
 
 object AvroGenerator {
 

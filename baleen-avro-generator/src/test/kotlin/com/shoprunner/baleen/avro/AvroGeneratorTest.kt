@@ -17,12 +17,15 @@ import com.shoprunner.baleen.types.LongType
 import com.shoprunner.baleen.types.MapType
 import com.shoprunner.baleen.types.OccurrencesType
 import com.shoprunner.baleen.types.StringCoercibleToFloat
-import com.shoprunner.baleen.types.StringCoercibleToLong
 import com.shoprunner.baleen.types.StringCoercibleToInstant
+import com.shoprunner.baleen.types.StringCoercibleToLong
 import com.shoprunner.baleen.types.StringConstantType
 import com.shoprunner.baleen.types.StringType
 import com.shoprunner.baleen.types.TimestampMillisType
 import com.shoprunner.baleen.types.UnionType
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.PrintStream
 import org.apache.avro.LogicalTypes
 import org.apache.avro.Schema
 import org.assertj.core.api.Assertions
@@ -31,9 +34,6 @@ import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.PrintStream
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class AvroGeneratorTest {

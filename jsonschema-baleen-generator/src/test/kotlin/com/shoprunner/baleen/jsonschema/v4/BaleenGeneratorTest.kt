@@ -2,6 +2,12 @@ package com.shoprunner.baleen.jsonschema.v4
 
 import com.shoprunner.baleen.DataDescription
 import com.shoprunner.baleen.jsonschema.v4.BaleenGenerator.parseJsonSchema
+import java.io.File
+import java.io.StringWriter
+import java.net.URL
+import java.net.URLClassLoader
+import java.net.UnknownHostException
+import java.util.logging.Logger
 import org.assertj.core.api.Assertions
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
@@ -12,12 +18,6 @@ import org.jetbrains.kotlin.config.Services
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import java.io.File
-import java.io.StringWriter
-import java.net.URL
-import java.net.URLClassLoader
-import java.net.UnknownHostException
-import java.util.logging.Logger
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class BaleenGeneratorTest {

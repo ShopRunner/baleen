@@ -10,9 +10,9 @@ import com.shoprunner.baleen.types.LongType
 import com.shoprunner.baleen.types.StringCoercibleToLong
 import com.shoprunner.baleen.types.StringType
 import io.reactivex.rxkotlin.toFlowable
+import java.io.StringReader
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import java.io.StringReader
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class FlowableUtilTest {
