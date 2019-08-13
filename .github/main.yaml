@@ -1,0 +1,14 @@
+name: Check Pull Request
+on: [push]
+
+jobs:
+  build:
+    name: Check
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@latest
+    - uses: actions/setup-java@v1
+      with:
+        version: 9.0.4
+        architecture: x64 
+    - run: ./gradlew check
