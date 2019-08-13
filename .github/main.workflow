@@ -5,5 +5,5 @@ workflow "New workflow" {
 
 action "Gradle Check" {
   uses = "actions/setup-java@v1.0.0"
-  run = "./gradlew check"
+  args = "./gradlew check"
 }
