@@ -4,6 +4,9 @@ import com.shoprunner.baleen.Baleen
 import com.shoprunner.baleen.Context
 import com.shoprunner.baleen.Data
 import com.shoprunner.baleen.DataValue
+import com.shoprunner.baleen.ValidationError
+import com.shoprunner.baleen.ValidationInfo
+import com.shoprunner.baleen.ValidationSuccess
 import com.shoprunner.baleen.dataTrace
 import com.shoprunner.baleen.datawrappers.HashData
 import com.shoprunner.baleen.types.OccurrencesType
@@ -101,6 +104,113 @@ internal class XmlUtilTest {
             val inputStream = multipleOccurrences.byteInputStream()
             val context = XmlUtil.fromXmlToContext(dataTrace("example.xml"), inputStream)
             assertThat(packContainer.validate(context)).isValid()
+        }
+
+        @Test
+        fun `returned data validation returns the nested list`() {
+            val inputStream = multipleOccurrences.byteInputStream()
+            val context = XmlUtil.fromXmlToContext(dataTrace("example.xml"), inputStream)
+
+            val fidoLeaf = XmlDataLeaf(value = "Fido", line = 3, column = 15)
+            val fidoNameNode = XmlDataNode(2, 10).apply { hash["name"] = fidoLeaf }
+            val dougLeaf = XmlDataLeaf(value = "Doug", line = 6, column = 15)
+            val dougNameNode = XmlDataNode(5, 10).apply { hash["name"] = dougLeaf }
+            val dogLeaf = XmlDataLeaf(value = listOf(fidoNameNode, dougNameNode), line = 2, column = 10)
+
+            val packNode = XmlDataNode(1, 7).apply { hash["dog"] = dogLeaf }
+
+            val rootNode = XmlDataNode().apply { hash["pack"] = packNode }
+
+            val validation = packContainer.validate(context)
+            val results = validation.results.toList()
+
+            assertThat(validation.context).isEqualTo(context)
+
+            assertThat(results).hasSize(5)
+
+            assertThat(results[0]).isEqualTo(ValidationInfo(
+                dataTrace = dataTrace("example.xml"),
+                message = "has attribute \"pack\"",
+                value = rootNode
+            ))
+
+            assertThat(results[1]).isEqualTo(ValidationInfo(
+                dataTrace = dataTrace("example.xml", "attribute \"pack\"").tag("line", "1").tag("column", "7"),
+                message = "has attribute \"dog\"",
+                value = packNode
+            ))
+
+            assertThat(results[2]).isEqualTo(ValidationInfo(
+                dataTrace = dataTrace("example.xml", "attribute \"pack\"", "attribute \"dog\"", "index 0").tag("line", "2").tag("column", "10"),
+                message = "has attribute \"name\"",
+                value = fidoNameNode
+            ))
+
+            assertThat(results[3]).isEqualTo(ValidationInfo(
+                dataTrace = dataTrace("example.xml", "attribute \"pack\"", "attribute \"dog\"", "index 1").tag("line", "2").tag("column", "10"),
+                message = "has attribute \"name\"",
+                value = dougNameNode
+            ))
+
+            assertThat(results[4]).isEqualTo(ValidationSuccess(
+                dataTrace = dataTrace("example.xml"),
+                value = rootNode
+            ))
+        }
+
+        @Test
+        fun `can validate a list of strings`() {
+            val pack = Baleen.describe("Pack") { p ->
+                p.attr(name = "dog",
+                    type = OccurrencesType(StringType(max = 3)),
+                    required = true)
+            }
+            val packContainer = Baleen.describe("PackContainer") { p ->
+                p.attr(name = "pack",
+                    type = pack,
+                    required = true)
+            }
+
+            val multipleOccurrences = """
+            <pack>
+                <dog>Dug</dog>
+                <dog>Fido</dog>
+                <dog>Bo</dog>
+            </pack>
+            """.trimIndent()
+
+            val dogLeaf = XmlDataLeaf(value = listOf("Dug", "Fido", "Bo"), line = 2, column = 7)
+
+            val packNode = XmlDataNode(1, 7).apply { hash["dog"] = dogLeaf }
+            val rootNode = XmlDataNode().apply { hash["pack"] = packNode }
+
+            val inputStream = multipleOccurrences.byteInputStream()
+            val context = XmlUtil.fromXmlToContext(dataTrace("example.xml"), inputStream)
+
+            val validation = packContainer.validate(context)
+            val results = validation.results.toList()
+
+            assertThat(validation.context).isEqualTo(context)
+
+            assertThat(results).hasSize(3)
+
+            assertThat(results[0]).isEqualTo(ValidationInfo(
+                dataTrace = dataTrace("example.xml"),
+                message = "has attribute \"pack\"",
+                value = rootNode
+            ))
+
+            assertThat(results[1]).isEqualTo(ValidationInfo(
+                dataTrace = dataTrace("example.xml", "attribute \"pack\"").tag("line", "1").tag("column", "7"),
+                message = "has attribute \"dog\"",
+                value = packNode
+            ))
+
+            assertThat(results[2]).isEqualTo(ValidationError(
+                dataTrace = dataTrace("example.xml", "attribute \"pack\"", "attribute \"dog\"", "index 1").tag("line", "2").tag("column", "10"),
+                message = "is more than 3 characters",
+                value = "Fido"
+            ))
         }
 
         @Test

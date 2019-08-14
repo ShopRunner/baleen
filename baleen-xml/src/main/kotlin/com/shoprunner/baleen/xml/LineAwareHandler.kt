@@ -1,9 +1,9 @@
 package com.shoprunner.baleen.xml
 
+import java.util.Stack
 import org.xml.sax.Attributes
 import org.xml.sax.Locator
 import org.xml.sax.helpers.DefaultHandler
-import java.util.Stack
 
 /**
  * SAX Parser Handler to create the LineAware data from XML
@@ -65,9 +65,23 @@ internal class LineAwareHandler : DefaultHandler() {
             }
         }
 
-        parent.hash[localName] = currentNode
+        pushParent(parent, localName, currentNode)
 
         elementStack.push(currentNode)
+    }
+
+    private fun pushParent(parent: XmlDataNode, key: String, value: XmlDataNode) {
+        // If the key is present
+        if (parent.containsKey(key)) {
+            val existing = parent.hash[key]
+            if (existing is XmlDataLeaf && existing.value is Iterable<*>) {
+                parent.hash[key] = XmlDataLeaf(existing.value + value, existing.line, existing.column)
+            } else {
+                parent.hash[key] = XmlDataLeaf(listOf(existing, value), existing?.line, existing?.column)
+            }
+        } else {
+            parent.hash[key] = value
+        }
     }
 
     /**
@@ -82,7 +96,19 @@ internal class LineAwareHandler : DefaultHandler() {
                 elementStack.pop()
                 val current = elementStack.peek()
                 val old = current.hash[localName]!!
-                current.hash[localName] = XmlDataLeaf(value = textBuffer.trim(), line = old.line, column = old.column)
+
+                if (old is XmlDataLeaf && old.value is Iterable<*>) {
+                    val head = old.value.flatMap {
+                        when (it) {
+                            is XmlDataLeaf -> listOf(it.value)
+                            is String -> listOf(it)
+                            else -> emptyList()
+                        }
+                    }
+                    current.hash[localName] = XmlDataLeaf(head + textBuffer.trim(), old.line, old.column)
+                } else {
+                    current.hash[localName] = XmlDataLeaf(value = textBuffer.trim(), line = old.line, column = old.column)
+                }
                 textBuffer.clear()
             }
             else -> elementStack.pop()
