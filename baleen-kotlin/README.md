@@ -94,14 +94,16 @@ val DogType: DataDescription = Baleen.describe("Dog", "com.shoprunner.baleen.kot
         name = "name",
         type = StringType(),
         markdownDescription = "A non-nullable name field",
-        required = true)
+        required = true
+      )
         
       /* @org.jetbrains.annotations.Nullable numLegs: java.lang.Integer */
       it.attr(
         name = "numLegs",
         type = AllowsNull(IntType()),
         markdownDescription = "A nullable (optional) number of legs field",
-        required = false)
+        required = true
+      )
         
       /* 
          @org.jetbrains.annotations.NotNull,@com.shoprunner.baleen.annotation.DataTest

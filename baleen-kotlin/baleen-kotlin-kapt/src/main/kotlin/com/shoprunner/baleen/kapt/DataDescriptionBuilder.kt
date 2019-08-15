@@ -123,16 +123,14 @@ internal class DataDescriptionBuilder(
                 add(
                     // "%L = %L,\n",
                     // com.shoprunner.baleen.DataDescription::attr.parameters[4].name,
-                    "aliases = %L,",
+                    "aliases = %L,\n",
                     aliases.joinToString(", ", prefix = "arrayOf(\"", postfix = "\")")
                 )
             }
-            // required
+            // required always set from data classes by default
             add(
-                // "%L = %L",
-                // com.shoprunner.baleen.DataDescription::attr.parameters[5].name,
-                "required = %L",
-                param.isNotNullField()
+                "required = %L\n",
+                true
             )
             // default
             // add(",\n%L = %S", com.shoprunner.baleen.DataDescription::attr.parameters[6].name, defaultValue)
