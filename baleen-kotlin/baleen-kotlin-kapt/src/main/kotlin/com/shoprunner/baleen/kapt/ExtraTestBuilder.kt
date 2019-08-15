@@ -29,20 +29,15 @@ internal class ExtraTestBuilder(
             beginControlFlow("try")
             add("val obj = %M(data)\n", MemberName("com.shoprunner.baleen.kotlin", "as${typeElement.simpleName}"))
 
+            val memberName = MemberName(
+                elementUtils.getPackageOf(extraTest.executableElement).toString(),
+                extraTest.executableElement.simpleName.toString()
+            )
+
             if (extraTest.isExtension) {
-                add(
-                    "obj.%M(dataTrace).asSequence()", MemberName(
-                        elementUtils.getPackageOf(extraTest.executableElement).toString(),
-                        extraTest.executableElement.simpleName.toString()
-                    )
-                )
+                add("obj.%M(dataTrace).asSequence()", memberName)
             } else {
-                add(
-                    "%M(obj, dataTrace).asSequence()", MemberName(
-                        elementUtils.getPackageOf(extraTest.executableElement).toString(),
-                        extraTest.executableElement.simpleName.toString()
-                    )
-                )
+                add("%M(obj, dataTrace).asSequence()", memberName)
             }
             add("\n")
             endControlFlow()
@@ -50,14 +45,14 @@ internal class ExtraTestBuilder(
             add(
                 "sequenceOf(%T(dataTrace, %P, data))\n",
                 ValidationError::class.java,
-                "Unable to cast data map to a '$typeElement': '\${npe.message}'"
+                "Unable to run test `${memberName.canonicalName}`: '\${npe.message}'"
             )
             endControlFlow()
             beginControlFlow("catch(cce: %T)", ClassCastException::class.java)
             add(
                 "sequenceOf(%T(dataTrace, %P, data))\n",
                 ValidationError::class.java,
-                "Unable to cast data map to a '$typeElement': '\${cce.message}'"
+                "Unable to run test `${memberName.canonicalName}`: '\${cce.message}'"
             )
             endControlFlow()
             unindent()

@@ -117,12 +117,12 @@ val DogType: DataDescription = Baleen.describe("Dog", "com.shoprunner.baleen.kot
           }
           catch(npe: NullPointerException) {
             sequenceOf(ValidationError(dataTrace,
-                """Unable to cast data map to a 'com.shoprunner.baleen.kotlin.example.Dog': '${npe.message}'""",
+                """Unable to run test `com.shoprunner.baleen.kotlin.example.assert3orMoreLegs`: '${npe.message}'""",
                 data))
           }
           catch(cce: ClassCastException) {
             sequenceOf(ValidationError(dataTrace,
-                """Unable to cast data map to a 'com.shoprunner.baleen.kotlin.example.Dog': '${cce.message}'""",
+                """Unable to run test `com.shoprunner.baleen.kotlin.example.assert3orMoreLegs`: '${cce.message}'""",
                 data))
           }
       }
