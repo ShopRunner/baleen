@@ -57,40 +57,22 @@ class DataDescriptionProcessor : AbstractProcessor() {
     override fun process(annotations: MutableSet<out TypeElement>, roundEnv: RoundEnvironment): Boolean {
         messager.note { "Running DataDescriptionProcessor" }
 
+        val annotatedWithDataDescription = roundEnv.getElementsAnnotatedWith(DataDescription::class.java)
         val annotatedWithDataTest = roundEnv.getElementsAnnotatedWith(DataTest::class.java)
 
-        // Validation
-        annotatedWithDataTest.all {
+        annotatedWithDataDescription.forEach {
             when {
-                it.kind != ElementKind.METHOD -> {
-                    messager.error { "Method annotated with @DataTest is not a method: $it" }
-                    false
+                it.kind != ElementKind.CLASS ->
+                    messager.error { "Element annotated with @DataDescription is not a class: `$it`" }
+                it is TypeElement && it.asClassName().canonicalName in allSchemas ->
+                    messager.warning { "Class annotated with @DataDescription already processed: `$it`" }
+                else -> {
+                    messager.note { "@DataDescription identified: `$it`" }
                 }
-                !returnValidationResultIterable(it as ExecutableElement) -> {
-                    messager.error { "Method annotated with @DataTest does not return Iterable<ValidationResult> or Sequence<ValidationResult>: $it" }
-                    false
-                }
-                !isValidDataTestFunction(it) -> {
-                    messager.error { "Method annotated with @DataTest is not a valid function in format @DataTest fun name(data: DataClass, dataTrace: DataTrace): Iterable<ValidationResult> : $it" }
-                    false
-                }
-                else -> true
             }
         }
 
-        val allExtraTests = annotatedWithDataTest
-            .filter { it.kind == ElementKind.METHOD }
-            .map { it as ExecutableElement }
-            .filter(::returnValidationResultIterable)
-            .filter(::isValidDataTestFunction)
-            .map { DataTestElement(it, it.parameters.first().asType() as DeclaredType, it.isExtension()) }
-            .groupBy { it.receiverType.toString() }
-
-        allExtraTests.values.flatten().forEach {
-            messager.note { "Test '${it.executableElement}' identified for '${it.receiverType}'" }
-        }
-
-        val schemas = roundEnv.getElementsAnnotatedWith(DataDescription::class.java)
+        val schemas = annotatedWithDataDescription
             .filter { it.kind == ElementKind.CLASS }
             .map {
                 val typeElement = it as TypeElement
@@ -101,7 +83,33 @@ class DataDescriptionProcessor : AbstractProcessor() {
             }
             .map { it.typeElement.asClassName().canonicalName to it }
             .toMap()
+
+        // We already warned when name collisions happen.
         allSchemas.putAll(schemas)
+
+        // Validation
+        annotatedWithDataTest.forEach {
+            when {
+                it.kind != ElementKind.METHOD ->
+                    messager.error { "Element annotated with @DataTest is not a method: `$it`" }
+                !returnValidationResultIterable(it as ExecutableElement) ->
+                    messager.error { "Method annotated with @DataTest does not return Iterable<ValidationResult> or Sequence<ValidationResult>: `$it`" }
+                !isValidDataTestFunction(it) ->
+                    messager.error { "Method annotated with @DataTest is not a valid function in format `@DataTest fun name(data: DataClass, dataTrace: DataTrace): Sequence<ValidationResult>` : $it" }
+                it.parameters.first().asType().toString() !in allSchemas ->
+                    messager.error { "Method annotated with @DataTest does not have a valid data class to apply to: `$it`. Class `${it.parameters.first().asType()}` is not annotated with @DataDescription" }
+                else ->
+                    messager.note { "@DataTest '$it' identified for '${it.parameters.first().asType()}'" }
+            }
+        }
+
+        val allExtraTests = annotatedWithDataTest
+            .filter { it.kind == ElementKind.METHOD }
+            .map { it as ExecutableElement }
+            .filter(::returnValidationResultIterable)
+            .filter(::isValidDataTestFunction)
+            .map { DataTestElement(it, it.parameters.first().asType() as DeclaredType, it.isExtension()) }
+            .groupBy { it.receiverType.toString() }
 
         schemas.forEach {
             val fullName = it.key
