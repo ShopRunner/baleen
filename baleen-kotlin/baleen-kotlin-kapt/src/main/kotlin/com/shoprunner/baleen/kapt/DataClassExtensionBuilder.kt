@@ -330,7 +330,7 @@ internal class DataClassExtensionBuilder(
                     add("?.let { it as %T }", member.asType().asTypeName().javaToKotlinType())
             }
 
-            if (member.isAnnotationPresent(NotNull::class.java)) {
+            if (member.isNotNullField()) {
                 add("!!")
             }
         }.build()

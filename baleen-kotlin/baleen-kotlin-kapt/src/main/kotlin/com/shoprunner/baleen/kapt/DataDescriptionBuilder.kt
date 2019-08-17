@@ -143,16 +143,16 @@ internal class DataDescriptionBuilder(
         attrType: TypeMirror,
         allSchemas: Map<String, DataDescriptionElement>
     ): CodeBlock {
-        val name = attrType.toString()
+        val name = attrType.asTypeName().javaToKotlinType().toString()
         return when {
-            name == "java.lang.String" -> CodeBlock.of("%T()", StringType::class)
-            name == "java.lang.Boolean" -> CodeBlock.of("%T()", BooleanType::class)
+            name == "kotlin.String" -> CodeBlock.of("%T()", StringType::class)
+            name == "kotlin.Boolean" -> CodeBlock.of("%T()", BooleanType::class)
 
             // Numeric Types
-            name == "java.lang.Float" -> CodeBlock.of("%T()", FloatType::class)
-            name == "java.lang.Double" -> CodeBlock.of("%T()", DoubleType::class)
-            name == "java.lang.Integer" -> CodeBlock.of("%T()", IntType::class)
-            name == "java.lang.Long" -> CodeBlock.of("%T()", LongType::class)
+            name == "kotlin.Float" -> CodeBlock.of("%T()", FloatType::class)
+            name == "kotlin.Double" -> CodeBlock.of("%T()", DoubleType::class)
+            name == "kotlin.Int" -> CodeBlock.of("%T()", IntType::class)
+            name == "kotlin.Long" -> CodeBlock.of("%T()", LongType::class)
 
             // Time Types
             name == "java.time.Instant" -> CodeBlock.of("%T()", InstantType::class)
