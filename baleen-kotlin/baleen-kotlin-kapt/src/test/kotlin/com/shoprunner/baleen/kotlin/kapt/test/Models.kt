@@ -3,6 +3,7 @@ package com.shoprunner.baleen.kotlin.kapt.test
 import com.shoprunner.baleen.annotation.DataDescription
 import java.time.Instant
 
+/** This is a string model */
 @DataDescription
 data class StringModel(
     /** A string field **/
