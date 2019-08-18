@@ -77,7 +77,7 @@ class DataDescriptionProcessor : AbstractProcessor() {
             .map {
                 val typeElement = it as TypeElement
                 val ddAnn = typeElement.getAnnotation(DataDescription::class.java)
-                val packageName = ddAnn.packageName.takeIf { it.isNotBlank() } ?: typeElement.asClassName().packageName
+                val packageName = ddAnn.namespace.takeIf { it.isNotBlank() } ?: typeElement.asClassName().packageName
                 val name = ddAnn.name.takeIf { it.isNotBlank() } ?: typeElement.asClassName().simpleName
                 DataDescriptionElement(typeElement, packageName, name)
             }

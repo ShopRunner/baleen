@@ -25,4 +25,18 @@ internal class DataDescriptionGenerationTest {
 
         assertThat(model.validate().isValid()).isTrue()
     }
+
+    @Test
+    fun `test data class valid data descriptions with manually specified name and namespace`() {
+        val model = StringModelWithOverriddenName("hello", null)
+
+        assertBaleen(model.dataDescription())
+            .hasName("ManuallyNamed")
+            .hasNamespace("com.shoprunner.baleen.kotlin.different")
+            .hasMarkdownDescription("This is a string model")
+            .hasAttribute("string", StringType(), "A string field")
+            .hasAttribute("nullableString", AllowsNull(StringType()), "A nullable string field")
+
+        assertThat(model.validate().isValid()).isTrue()
+    }
 }

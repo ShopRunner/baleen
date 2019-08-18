@@ -213,3 +213,13 @@ data class MapNestedModel(
     /** A nullable map field with nested keys **/
     var nullableMapNestedKeys: Map<NestedModel, Int>?
 )
+
+/** This is a string model */
+@DataDescription("ManuallyNamed", "com.shoprunner.baleen.kotlin.different")
+data class StringModelWithOverriddenName(
+    /** A string field **/
+    var string: String,
+
+    /** A nullable string field **/
+    var nullableString: String?
+)

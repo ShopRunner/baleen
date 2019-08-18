@@ -9,7 +9,7 @@ annotation class DataDescription(
      */
     val name: String = "",
     /**
-     * The package of the data object. If not specified then the package's data class name is use.
+     * The namespace of the data object. If not specified then the package's data class name is use.
      */
-    val packageName: String = ""
+    val namespace: String = ""
 )
