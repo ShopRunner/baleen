@@ -41,6 +41,19 @@ data class Dog(
 )
 ```
 
+### Supported types
+
+* String
+* Boolean
+* Float
+* Double
+* Int
+* Long
+* Instant
+* Array
+* Iterable (List, Set, etc)
+* Map
+
 ## @DataTest
 
 Annotation on a top-level method to add additional tests.
