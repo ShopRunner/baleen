@@ -13,8 +13,8 @@ fun assert3orMoreLegs(dog: Dog, dataTrace: DataTrace = dataTrace()): Sequence<Va
     if (numLegs == null) {
         return emptySequence()
     } else if (numLegs >= 3) {
-        return sequenceOf(ValidationInfo(dataTrace, "Num Legs greater or equal to 3", numLegs))
+        return sequenceOf(ValidationInfo(dataTrace + "attr numLegs", "Num Legs greater or equal to 3", numLegs))
     } else {
-        return sequenceOf(ValidationError(dataTrace, "Num Legs less than 3", numLegs))
+        return sequenceOf(ValidationError(dataTrace + "attr numLegs", "Num Legs less than 3", numLegs))
     }
 }

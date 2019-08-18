@@ -7,22 +7,24 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-internal class DogValidationTest {
+internal class PackValidationTest {
     @Test
     fun `test data description is generated`() {
         val dog = Dog("Fido", 4)
-        assertThat(dog.dataDescription()).isNotNull
+        val pack = Pack("Wolfpack", listOf(dog))
+        assertThat(pack.dataDescription()).isNotNull
     }
 
     @Test
     fun `test validate method is generated`() {
         val dog = Dog("Fido", 4)
-        assertThat(dog.validate().isValid()).isTrue()
+        val pack = Pack("Wolfpack", listOf(dog))
+        assertThat(pack.validate().isValid()).isTrue()
     }
 
     @Test
-    fun `test data test 'assert3orMoreLegs' is called`() {
-        val dog = Dog("Fido", 2)
-        assertThat(dog.validate().isValid()).isFalse()
+    fun `test data test 'assertNotEmptyPack' is called`() {
+        val pack = Pack("Wolfpack", emptyList())
+        assertThat(pack.validate().isValid()).isFalse()
     }
 }
