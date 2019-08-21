@@ -9,6 +9,7 @@ include 'baleen-xml'
 include 'baleen-xsd-generator'
 include 'baleen-kotlin:baleen-kotlin-api'
 include 'baleen-kotlin:baleen-kotlin-kapt'
+include 'baleen-kotlin:baleen-kotlin-generator'
 include 'baleen-kotlin:example'
 
 rootProject.name = 'baleen'
