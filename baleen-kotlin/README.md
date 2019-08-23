@@ -49,9 +49,13 @@ data class Dog(
 * Double
 * Int
 * Long
+* Byte
+* Short
+* BigDecimal
+* BigInteger
 * Instant
 * Array
-* Iterable (List, Set, etc)
+* Iterable: List & Set
 * Map
 
 ## @DataTest
@@ -196,7 +200,7 @@ dog.validate(externalDogType, dataTrace("External Source"))
 
 ## TODO
 
-* Missing Data Types (enums, BigDecimal, BigInteger, LocalDate, etc.)
+* Missing Data Types (enums, LocalDate, etc.)
 * Support for annotations from popular libraries
   * Java's validation annotations - javax.validation.annotations
   * Kotlinx Serialization
