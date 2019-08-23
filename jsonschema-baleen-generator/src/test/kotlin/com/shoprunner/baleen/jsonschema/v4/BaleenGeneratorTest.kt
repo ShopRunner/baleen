@@ -220,12 +220,12 @@ internal class BaleenGeneratorTest {
             val descriptionStr = """
                 import com.shoprunner.baleen.Baleen.describe
                 import com.shoprunner.baleen.DataDescription
-                import com.shoprunner.baleen.types.DoubleType
+                import com.shoprunner.baleen.types.NumericType
 
                 val Dog: DataDescription = describe("Dog", "", "") {
                     it.attr(
                             name = "number",
-                            type = DoubleType()
+                            type = NumericType()
                     )
                 }
             """.trimIndent()
@@ -240,7 +240,7 @@ internal class BaleenGeneratorTest {
         }
 
         @Test
-        fun `json number with min and max converts to double in Baleen`() {
+        fun `json number with min and max converts to numeric in Baleen`() {
             val schemaStr = """
             {
               "id" : "Dog",
@@ -264,12 +264,12 @@ internal class BaleenGeneratorTest {
             val descriptionStr = """
                 import com.shoprunner.baleen.Baleen.describe
                 import com.shoprunner.baleen.DataDescription
-                import com.shoprunner.baleen.types.DoubleType
+                import com.shoprunner.baleen.types.NumericType
 
                 val Dog: DataDescription = describe("Dog", "", "") {
                     it.attr(
                             name = "number",
-                            type = DoubleType(0.0, 100.0)
+                            type = NumericType(min = 0.toBigDecimal(), max = 100.toBigDecimal())
                     )
                 }
             """.trimIndent()
@@ -307,12 +307,12 @@ internal class BaleenGeneratorTest {
             val descriptionStr = """
                 import com.shoprunner.baleen.Baleen.describe
                 import com.shoprunner.baleen.DataDescription
-                import com.shoprunner.baleen.types.DoubleType
+                import com.shoprunner.baleen.types.NumericType
 
                 val Dog: DataDescription = describe("Dog", "", "") {
                     it.attr(
                             name = "number",
-                            type = DoubleType(),
+                            type = NumericType(),
                             default = 1.1
                     )
                 }
@@ -350,12 +350,12 @@ internal class BaleenGeneratorTest {
             val descriptionStr = """
                 import com.shoprunner.baleen.Baleen.describe
                 import com.shoprunner.baleen.DataDescription
-                import com.shoprunner.baleen.types.LongType
+                import com.shoprunner.baleen.types.IntegerType
 
                 val Dog: DataDescription = describe("Dog", "", "") {
                     it.attr(
                             name = "numLegs",
-                            type = LongType()
+                            type = IntegerType()
                     )
                 }
             """.trimIndent()
@@ -394,12 +394,12 @@ internal class BaleenGeneratorTest {
             val descriptionStr = """
                 import com.shoprunner.baleen.Baleen.describe
                 import com.shoprunner.baleen.DataDescription
-                import com.shoprunner.baleen.types.LongType
+                import com.shoprunner.baleen.types.IntegerType
 
                 val Dog: DataDescription = describe("Dog", "", "") {
                     it.attr(
                             name = "numLegs",
-                            type = LongType(0, 100)
+                            type = IntegerType(min = 0.toBigInteger(), max = 100.toBigInteger())
                     )
                 }
             """.trimIndent()
@@ -437,12 +437,12 @@ internal class BaleenGeneratorTest {
             val descriptionStr = """
                 import com.shoprunner.baleen.Baleen.describe
                 import com.shoprunner.baleen.DataDescription
-                import com.shoprunner.baleen.types.LongType
+                import com.shoprunner.baleen.types.IntegerType
 
                 val Dog: DataDescription = describe("Dog", "", "") {
                     it.attr(
                             name = "numLegs",
-                            type = LongType(),
+                            type = IntegerType(),
                             default = 10L
                     )
                 }
@@ -885,14 +885,14 @@ internal class BaleenGeneratorTest {
             val descriptionStr = """
                 import com.shoprunner.baleen.Baleen.describe
                 import com.shoprunner.baleen.DataDescription
-                import com.shoprunner.baleen.types.LongType
+                import com.shoprunner.baleen.types.IntegerType
                 import com.shoprunner.baleen.types.StringType
                 import com.shoprunner.baleen.types.UnionType
 
                 val Dog: DataDescription = describe("Dog", "", "") {
                     it.attr(
                             name = "num_legs",
-                            type = UnionType(StringType(), LongType())
+                            type = UnionType(StringType(), IntegerType())
                     )
                 }
             """.trimIndent()
@@ -936,14 +936,14 @@ internal class BaleenGeneratorTest {
             val descriptionStr = """
                 import com.shoprunner.baleen.Baleen.describe
                 import com.shoprunner.baleen.DataDescription
-                import com.shoprunner.baleen.types.LongType
+                import com.shoprunner.baleen.types.IntegerType
                 import com.shoprunner.baleen.types.StringType
                 import com.shoprunner.baleen.types.UnionType
 
                 val Dog: DataDescription = describe("Dog", "", "") {
                     it.attr(
                             name = "num_legs",
-                            type = UnionType(StringType(), LongType())
+                            type = UnionType(StringType(), IntegerType())
                     )
                 }
             """.trimIndent()
@@ -1050,13 +1050,19 @@ internal class BaleenGeneratorTest {
             val descriptionStr = """
                 import com.shoprunner.baleen.Baleen.describe
                 import com.shoprunner.baleen.DataDescription
-                import com.shoprunner.baleen.types.LongType
+                import com.shoprunner.baleen.types.IntegerType
                 import com.shoprunner.baleen.types.UnionType
 
                 val Dog: DataDescription = describe("Dog", "", "") {
                     it.attr(
                             name = "num_legs",
-                            type = UnionType(LongType(), LongType())
+                            type = UnionType(
+                                IntegerType(), 
+                                IntegerType(
+                                    min = -9223372036854775808.toBigInteger(), 
+                                    max = 9223372036854775807.toBigInteger()
+                                )
+                            )
                     )
                 }
             """.trimIndent()
@@ -1104,13 +1110,22 @@ internal class BaleenGeneratorTest {
             val descriptionStr = """
                 import com.shoprunner.baleen.Baleen.describe
                 import com.shoprunner.baleen.DataDescription
-                import com.shoprunner.baleen.types.LongType
+                import com.shoprunner.baleen.types.IntegerType
                 import com.shoprunner.baleen.types.UnionType
 
                 val Dog: DataDescription = describe("Dog", "", "") {
                     it.attr(
                         name = "num_legs",
-                        type = UnionType(LongType(-2147483648, 2147483647), LongType())
+                        type = UnionType(
+                            IntegerType(
+                                min = -2147483648.toBigInteger(), 
+                                max = 2147483647.toBigInteger()
+                            ), 
+                            IntegerType(
+                                min = -9223372036854775808.toBigInteger(), 
+                                max = 9223372036854775807.toBigInteger()
+                            )
+                        )
                     )
                 }
             """.trimIndent()
@@ -1151,12 +1166,12 @@ internal class BaleenGeneratorTest {
             val descriptionStr = """
                 import com.shoprunner.baleen.Baleen.describe
                 import com.shoprunner.baleen.DataDescription
-                import com.shoprunner.baleen.types.LongType
+                import com.shoprunner.baleen.types.IntegerType
 
                 val Dog: DataDescription = describe("Dog", "", "") {
                     it.attr(
                             name = "num_legs",
-                            type = LongType()
+                            type = IntegerType()
                     )
                 }
             """.trimIndent()
@@ -1201,12 +1216,12 @@ internal class BaleenGeneratorTest {
                 import com.shoprunner.baleen.Baleen.describe
                 import com.shoprunner.baleen.DataDescription
                 import com.shoprunner.baleen.types.AllowsNull
-                import com.shoprunner.baleen.types.LongType
+                import com.shoprunner.baleen.types.IntegerType
 
                 val Dog: DataDescription = describe("Dog", "", "") {
                     it.attr(
                             name = "num_legs",
-                            type = AllowsNull(LongType())
+                            type = AllowsNull(IntegerType())
                     )
                 }
             """.trimIndent()
@@ -1252,12 +1267,12 @@ internal class BaleenGeneratorTest {
                 import com.shoprunner.baleen.Baleen.describe
                 import com.shoprunner.baleen.DataDescription
                 import com.shoprunner.baleen.types.AllowsNull
-                import com.shoprunner.baleen.types.LongType
+                import com.shoprunner.baleen.types.IntegerType
 
                 val Dog: DataDescription = describe("Dog", "", "") {
                     it.attr(
                             name = "num_legs",
-                            type = AllowsNull(LongType()),
+                            type = AllowsNull(IntegerType()),
                             default = null
                     )
                 }
@@ -1332,7 +1347,7 @@ internal class BaleenGeneratorTest {
 
                 import com.shoprunner.baleen.Baleen.describe
                 import com.shoprunner.baleen.DataDescription
-                import com.shoprunner.baleen.types.LongType
+                import com.shoprunner.baleen.types.IntegerType
                 import com.shoprunner.baleen.types.StringType
 
                 /**
@@ -1346,7 +1361,7 @@ internal class BaleenGeneratorTest {
                     )
                     it.attr(
                             name = "num_legs",
-                            type = LongType(),
+                            type = IntegerType(),
                             markdownDescription = "The number of legs a dog has",
                             default = 4L
                     )
