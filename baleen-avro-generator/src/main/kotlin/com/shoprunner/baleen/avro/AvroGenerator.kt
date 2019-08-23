@@ -11,8 +11,10 @@ import com.shoprunner.baleen.types.EnumType
 import com.shoprunner.baleen.types.FloatType
 import com.shoprunner.baleen.types.InstantType
 import com.shoprunner.baleen.types.IntType
+import com.shoprunner.baleen.types.IntegerType
 import com.shoprunner.baleen.types.LongType
 import com.shoprunner.baleen.types.MapType
+import com.shoprunner.baleen.types.NumericType
 import com.shoprunner.baleen.types.OccurrencesType
 import com.shoprunner.baleen.types.StringConstantType
 import com.shoprunner.baleen.types.StringType
@@ -35,6 +37,8 @@ object AvroGenerator {
             is DoubleType -> Schema.create(Schema.Type.DOUBLE)
             is IntType -> Schema.create(Schema.Type.INT)
             is LongType -> Schema.create(Schema.Type.LONG)
+            is IntegerType -> Schema.create(Schema.Type.LONG)
+            is NumericType -> Schema.create(Schema.Type.DOUBLE)
             is StringType -> Schema.create(Schema.Type.STRING)
             is StringConstantType -> Schema.create(Schema.Type.STRING)
             is EnumType -> Schema.createEnum(baleenType.enumName, null, null, baleenType.enum.toList())
