@@ -12,7 +12,7 @@ import java.math.BigInteger
  */
 class NumericType(val min: BigDecimal? = null, val max: BigDecimal? = null) : BaleenType {
 
-    override fun name(): String = "numeric"
+    override fun name(): String = "number"
 
     override fun validate(dataTrace: DataTrace, value: Any?): Sequence<ValidationResult> =
             when (value) {
@@ -65,6 +65,6 @@ class NumericType(val min: BigDecimal? = null, val max: BigDecimal? = null) : Ba
                         max != null && value > max -> sequenceOf(ValidationError(dataTrace, "is greater than $max", value))
                         else -> sequenceOf()
                     }
-                else -> sequenceOf(ValidationError(dataTrace, "is not a numeric", value))
+                else -> sequenceOf(ValidationError(dataTrace, "is not a number", value))
             }
 }

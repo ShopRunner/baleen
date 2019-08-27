@@ -170,6 +170,6 @@ internal class NumericTypeTest {
 
     @Test
     fun `checks not numeric`() {
-        assertThat(NumericType().validate(dataTrace(), false)).containsExactly(ValidationError(dataTrace(), "is not a numeric", false))
+        assertThat(NumericType().validate(dataTrace(), false)).containsExactly(ValidationError(dataTrace(), "is not a number", false))
     }
 }
