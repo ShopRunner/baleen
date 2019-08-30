@@ -3,6 +3,7 @@ package com.shoprunner.baleen.kotlin.kapt.test
 import com.shoprunner.baleen.AttributeDescription
 import com.shoprunner.baleen.BaleenType
 import com.shoprunner.baleen.DataDescription
+import com.shoprunner.baleen.NoDefault
 import org.assertj.core.api.AbstractAssert
 
 class DataDescriptionAssert(actual: com.shoprunner.baleen.DataDescription) :
@@ -114,6 +115,18 @@ AbstractAssert<AttributeDescriptionAssert, AttributeDescription>(actual, Attribu
                 expectedAlias.toList()
             )
         }
+    }
+
+    fun hasDefaultValue(expectedDefaultValue: Any?): AttributeDescriptionAssert {
+        if (actual.default != expectedDefaultValue) {
+            failWithMessage(
+                "Attribute ${actual.name} has a different default value. %s vs %s",
+                actual.default,
+                expectedDefaultValue
+            )
+        }
         return this
     }
+
+    fun hasNoDefaultValue() = hasDefaultValue(NoDefault)
 }

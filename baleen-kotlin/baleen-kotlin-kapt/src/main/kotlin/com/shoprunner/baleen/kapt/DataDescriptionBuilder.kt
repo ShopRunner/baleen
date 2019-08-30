@@ -3,6 +3,8 @@ package com.shoprunner.baleen.kapt
 import com.shoprunner.baleen.Baleen
 import com.shoprunner.baleen.annotation.Alias
 import com.shoprunner.baleen.annotation.Name
+import com.shoprunner.baleen.annotation.DefaultValue
+import com.shoprunner.baleen.annotation.DefaultValueType
 import com.shoprunner.baleen.types.AllowsNull
 import com.shoprunner.baleen.types.BooleanType
 import com.shoprunner.baleen.types.DoubleType
@@ -28,6 +30,7 @@ import javax.lang.model.element.ElementKind
 import javax.lang.model.element.VariableElement
 import javax.lang.model.type.ArrayType
 import javax.lang.model.type.DeclaredType
+import javax.lang.model.type.MirroredTypeException
 import javax.lang.model.type.TypeMirror
 import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
@@ -133,11 +136,30 @@ internal class DataDescriptionBuilder(
             }
             // required always set from data classes by default
             add(
-                "required = %L\n",
+                "required = %L",
                 true
             )
             // default
-            // add(",\n%L = %S", com.shoprunner.baleen.DataDescription::attr.parameters[6].name, defaultValue)
+
+            if (param.isAnnotationPresent(DefaultValue::class.java)) {
+                val defaultValueAnnotation = param.getAnnotation(DefaultValue::class.java)
+                add(",\n")
+                when (defaultValueAnnotation.type) {
+                    DefaultValueType.Null -> add("default = null")
+                    DefaultValueType.Boolean -> add("default = %L", defaultValueAnnotation.defaultBooleanValue)
+                    DefaultValueType.String -> add("default = %S", defaultValueAnnotation.defaultStringValue)
+                    DefaultValueType.Int -> add("default = %L", defaultValueAnnotation.defaultIntValue)
+                    DefaultValueType.Long -> add("default = %LL", defaultValueAnnotation.defaultLongValue)
+                    DefaultValueType.Float -> add("default = %Lf", defaultValueAnnotation.defaultFloatValue)
+                    DefaultValueType.Double -> add("default = %L", defaultValueAnnotation.defaultDoubleValue)
+                    DefaultValueType.DataClass -> add("default = %T()\n", try {
+                        defaultValueAnnotation.defaultDataClassValue
+                    } catch (e: MirroredTypeException) {
+                        e.typeMirror.asTypeName()
+                    })
+                }
+            }
+            add("\n")
             unindent()
             add(")")
         }.build()
