@@ -3,6 +3,7 @@ package com.shoprunner.baleen.kotlin.kapt.test
 import com.shoprunner.baleen.AttributeDescription
 import com.shoprunner.baleen.BaleenType
 import com.shoprunner.baleen.DataDescription
+import com.shoprunner.baleen.NoDefault
 import org.assertj.core.api.AbstractAssert
 
 class DataDescriptionAssert(actual: com.shoprunner.baleen.DataDescription) :
@@ -116,4 +117,67 @@ AbstractAssert<AttributeDescriptionAssert, AttributeDescription>(actual, Attribu
         }
         return this
     }
+
+    fun hasDefaultValue(expectedDefaultValue: Any?): AttributeDescriptionAssert {
+        val actualValue = actual.default
+        when {
+            actualValue is Array<*> && expectedDefaultValue is Array<*> -> {
+                if (actualValue.size != expectedDefaultValue.size ||
+                    (actualValue.isNotEmpty() && actualValue.zip(expectedDefaultValue).any { it.first != it.second })
+                ) {
+                    failWithMessage(
+                        "Attribute ${actual.name} has a different default value. %s vs %s",
+                        actualValue.toList(),
+                        expectedDefaultValue.toList()
+                    )
+                }
+            }
+
+            actualValue is List<*> && expectedDefaultValue is List<*> -> {
+                if (actualValue.size != expectedDefaultValue.size ||
+                    (actualValue.isNotEmpty() && actualValue.zip(expectedDefaultValue).any { it.first != it.second })
+                ) {
+                    failWithMessage(
+                        "Attribute ${actual.name} has a different default value. %s vs %s",
+                        actualValue,
+                        expectedDefaultValue
+                    )
+                }
+            }
+
+            actualValue is Set<*> && expectedDefaultValue is Set<*> -> {
+                if (actualValue.size != expectedDefaultValue.size ||
+                    (actualValue.isNotEmpty() && !actualValue.containsAll(expectedDefaultValue))
+                ) {
+                    failWithMessage(
+                        "Attribute ${actual.name} has a different default value. %s vs %s",
+                        actualValue,
+                        expectedDefaultValue
+                    )
+                }
+            }
+
+            actualValue is Map<*, *> && expectedDefaultValue is Map<*, *> -> {
+                if (actualValue.size != expectedDefaultValue.size ||
+                    (actualValue.isNotEmpty() && actualValue.any { (k, v) -> expectedDefaultValue[k] != v })
+                ) {
+                    failWithMessage(
+                        "Attribute ${actual.name} has a different default value. %s vs %s",
+                        actualValue,
+                        expectedDefaultValue
+                    )
+                }
+            }
+
+            actualValue != expectedDefaultValue ->
+                failWithMessage(
+                    "Attribute ${actual.name} has a different default value. %s vs %s",
+                    actualValue,
+                    expectedDefaultValue
+                )
+        }
+        return this
+    }
+
+    fun hasNoDefaultValue() = hasDefaultValue(NoDefault)
 }

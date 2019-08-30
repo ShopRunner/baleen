@@ -18,9 +18,12 @@ import com.shoprunner.baleen.types.StringType
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FileSpec
+import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.MemberName
 import com.squareup.kotlinpoet.PropertySpec
+import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asTypeName
+import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import java.io.File
 import javax.annotation.processing.Messager
 import javax.lang.model.element.Element
@@ -28,10 +31,13 @@ import javax.lang.model.element.ElementKind
 import javax.lang.model.element.VariableElement
 import javax.lang.model.type.ArrayType
 import javax.lang.model.type.DeclaredType
+import javax.lang.model.type.MirroredTypeException
 import javax.lang.model.type.TypeMirror
 import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
+import kotlin.reflect.KClass
 
+@KotlinPoetMetadataPreview
 internal class DataDescriptionBuilder(
     private val kaptKotlinGeneratedDir: String,
     private val elementUtils: Elements,
@@ -50,11 +56,22 @@ internal class DataDescriptionBuilder(
         val members = (typeElement.enclosedElements ?: emptyList<Element>())
             .filter { it.kind == ElementKind.FIELD }
 
+        val defaultValueContainer = typeElement.defaultValues()
+
         FileSpec.builder(packageName, fileName)
             .addAnnotation(
                 AnnotationSpec.builder(JvmName::class)
                     .useSiteTarget(AnnotationSpec.UseSiteTarget.FILE)
                     .addMember("%S", fileName)
+                    .build()
+            )
+            .addProperty(
+                PropertySpec.builder(
+                    "${name.capitalize()}Defaults",
+                    typeElement.asType().asTypeName(),
+                    KModifier.INTERNAL
+                )
+                    .initializer(defaultValueContainer.defaultValueInstance)
                     .build()
             )
             .addProperty(
@@ -75,8 +92,9 @@ internal class DataDescriptionBuilder(
                         add(", markdownDescription = %S", comment)
                     }
                     beginControlFlow(")")
+
                     members.forEach {
-                        add(generateAttributes(it as VariableElement, allSchemas))
+                        add(generateAttributes(it as VariableElement, allSchemas, defaultValueContainer))
                         add("\n\n")
                     }
                     extraTests.forEach {
@@ -91,7 +109,7 @@ internal class DataDescriptionBuilder(
             .writeTo(File(kaptKotlinGeneratedDir))
     }
 
-    private fun generateAttributes(param: VariableElement, allSchemas: Map<String, DataDescriptionElement>): CodeBlock {
+    private fun generateAttributes(param: VariableElement, allSchemas: Map<String, DataDescriptionElement>, defaultValueContainer: DefaultValueContainer): CodeBlock {
         val attrName = param.simpleName
         val attrType = param.asType().asTypeName()
 
@@ -133,14 +151,26 @@ internal class DataDescriptionBuilder(
             }
             // required always set from data classes by default
             add(
-                "required = %L\n",
+                "required = %L",
                 true
             )
             // default
-            // add(",\n%L = %S", com.shoprunner.baleen.DataDescription::attr.parameters[6].name, defaultValue)
+            val defaultValue = defaultValueContainer.attributes[param.simpleName.toString()]
+            if (defaultValue != null) {
+                add(",\n")
+                add("default = ")
+                add(defaultValue)
+            }
+            add("\n")
             unindent()
             add(")")
         }.build()
+    }
+
+    private inline fun toTypeName(clazzFun: () -> KClass<*>): TypeName = try {
+        clazzFun().asTypeName()
+    } catch (e: MirroredTypeException) {
+        e.typeMirror.asTypeName()
     }
 
     private fun getAttrType(

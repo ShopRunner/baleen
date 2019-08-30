@@ -11,5 +11,5 @@ data class Dog(
     var name: String,
 
     /** A nullable (optional) number of legs field */
-    var numLegs: Int?
+    var numLegs: Int? = null
 )

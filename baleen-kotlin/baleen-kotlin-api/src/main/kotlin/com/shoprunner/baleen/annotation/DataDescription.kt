@@ -1,6 +1,6 @@
 package com.shoprunner.baleen.annotation
 
-@Retention(AnnotationRetention.BINARY)
+@Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.CLASS)
 @MustBeDocumented
 annotation class DataDescription(

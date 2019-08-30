@@ -6,6 +6,7 @@ import com.shoprunner.baleen.ValidationResult
 import com.shoprunner.baleen.annotation.DataDescription
 import com.shoprunner.baleen.annotation.DataTest
 import com.squareup.kotlinpoet.asClassName
+import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import javax.annotation.processing.AbstractProcessor
 import javax.annotation.processing.Messager
 import javax.annotation.processing.ProcessingEnvironment
@@ -28,6 +29,7 @@ import javax.lang.model.util.Types
 @AutoService(Processor::class) // For registering the service
 @SupportedSourceVersion(SourceVersion.RELEASE_8) // to support Java 8
 @SupportedOptions(DataDescriptionProcessor.KAPT_KOTLIN_GENERATED_OPTION_NAME)
+@KotlinPoetMetadataPreview
 class DataDescriptionProcessor : AbstractProcessor() {
     companion object {
         const val KAPT_KOTLIN_GENERATED_OPTION_NAME = "kapt.kotlin.generated"
