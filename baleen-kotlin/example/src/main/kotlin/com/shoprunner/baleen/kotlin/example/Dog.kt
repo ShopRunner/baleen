@@ -1,6 +1,8 @@
 package com.shoprunner.baleen.kotlin.example
 
 import com.shoprunner.baleen.annotation.DataDescription
+import com.shoprunner.baleen.annotation.DefaultValue
+import com.shoprunner.baleen.annotation.DefaultValueType
 
 /**
  * The dog data class
@@ -11,5 +13,6 @@ data class Dog(
     var name: String,
 
     /** A nullable (optional) number of legs field */
-    var numLegs: Int?
+    @DefaultValue(DefaultValueType.Null)
+    var numLegs: Int? = null
 )

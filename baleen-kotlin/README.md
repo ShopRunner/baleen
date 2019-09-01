@@ -3,6 +3,10 @@
 Given a Kotlin Data class, generate at compile time, a baleen data description using Kotlin annotation processing (kapt).
 Two Baleen annotations are given along with base extension methods.
 
+Data classes can also be used as source of truth for schemas, using Baleen as the bridge to other data formats such as 
+Avro, XSD, and json-schema. This can allow for modeling data in code and then using code generation tools to build schemas
+across multiple formats.  To support this effort, annotations are added for sefault value and aliases. 
+
 ## Setup
 
 Kapt is used to generate the required files. Using the gradle plugin is mandatory. The baleen-kotlin-api is separated
@@ -112,6 +116,51 @@ data class ModelWithAliases(
     @Alias("another_name1", "another_name2")
     var anotherName: String
 )
+```
+
+## @DefaultValue
+
+Unfortunately, kotlin annotation processing does not support reading the default value specified in the parameter declaration.
+Therefore this extra annotation is necessary.  This annotation is recommended when using data classes as source of truth for
+schemas and needing to de/serialize to other formats such as json or avro where default values are needed. Otherwise it
+can be omitted for simplicity sake.
+
+Here are examples of the different default values.
+
+```kotlin
+import com.shoprunner.baleen.annotation.DataDescription
+import com.shoprunner.baleen.annotation.DefaultValue
+import com.shoprunner.baleen.annotation.DefaultValueType
+
+@DataDescription
+data class ModelWithDefaultValues(
+    @DefaultValue(DefaultValueType.Null)
+    var nullDefault: String? = null,
+
+    @DefaultValue(DefaultValueType.Boolean, defaultBooleanValue = true)
+    var booleanDefault: Boolean = true,
+
+    @DefaultValue(DefaultValueType.String, defaultStringValue = "default")
+    var stringDefault: String = "default",
+
+    @DefaultValue(DefaultValueType.Int, defaultIntValue = 100)
+    var intDefault: Int = 100,
+
+    @DefaultValue(DefaultValueType.Long, defaultLongValue = 100L)
+    var longDefault: Long = 100L,
+
+    @DefaultValue(DefaultValueType.Float, defaultFloatValue = 1.1f)
+    var floatDefault: Float = 1.1f,
+
+    @DefaultValue(DefaultValueType.Double, defaultDoubleValue = 1.1)
+    var doubleDefault: Double = 1.1,
+
+    @DefaultValue(DefaultValueType.DataClass, defaultDataClassValue = SubModelWithDefaults::class)
+    var classDefault: SubModelWithDefaults = SubModelWithDefaults(),
+
+    var noDefault: String?
+)
+
 ```
 
 ## Generated files
