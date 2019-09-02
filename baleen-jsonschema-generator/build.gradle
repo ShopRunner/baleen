@@ -1,6 +1,6 @@
 dependencies {
     api project(':baleen')
     implementation project(':jsonschema-model')
-    implementation 'com.fasterxml.jackson.module:jackson-module-jsonSchema:2.9.9'
+    implementation 'com.fasterxml.jackson.module:jackson-module-jsonSchema:2.10.0.pr2'
     implementation 'org.jetbrains.kotlin:kotlin-reflect'
 }
