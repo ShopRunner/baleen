@@ -20,8 +20,16 @@ internal class DataDescriptionGenerationTest {
             .hasName("StringModel")
             .hasNamespace("com.shoprunner.baleen.kotlin.kapt.test")
             .hasMarkdownDescription("This is a string model")
-            .hasAttribute("string", StringType(), "A string field")
-            .hasAttribute("nullableString", AllowsNull(StringType()), "A nullable string field")
+            .hasAttribute("string") {
+                AttributeDescriptionAssert.assertThat(it)
+                    .hasType(StringType())
+                    .hasMarkdownDescription("A string field")
+            }
+            .hasAttribute("nullableString") {
+                AttributeDescriptionAssert.assertThat(it)
+                    .hasType(AllowsNull(StringType()))
+                    .hasMarkdownDescription("A nullable string field")
+            }
 
         assertThat(model.validate().isValid()).isTrue()
     }
@@ -34,8 +42,16 @@ internal class DataDescriptionGenerationTest {
             .hasName("ManuallyNamed")
             .hasNamespace("com.shoprunner.baleen.kotlin.different")
             .hasMarkdownDescription("This is a string model")
-            .hasAttribute("string", StringType(), "A string field")
-            .hasAttribute("nullableString", AllowsNull(StringType()), "A nullable string field")
+            .hasAttribute("string") {
+                AttributeDescriptionAssert.assertThat(it)
+                    .hasType(StringType())
+                    .hasMarkdownDescription("A string field")
+            }
+            .hasAttribute("nullableString") {
+                AttributeDescriptionAssert.assertThat(it)
+                    .hasType(AllowsNull(StringType()))
+                    .hasMarkdownDescription("A nullable string field")
+            }
 
         assertThat(model.validate().isValid()).isTrue()
     }

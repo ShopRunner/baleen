@@ -85,6 +85,35 @@ fun assert3orMoreLegs(dog: Dog, dataTrace: DataTrace = dataTrace()): Sequence<Va
 }
 ```
 
+## @Name
+
+Overrides the attribute name in the data. Without the annotation by default the field's name is used.  Different than @Alias since the original
+attribute name is no longer used.
+
+```kotlin
+@DataDescription
+data class ModelWithDifferentFieldNames(
+    @Name("field_name")
+    var fieldName: String
+)
+```
+
+## @Alias
+
+Specifies additional attribute names that the data responds to. Useful for backwards compatibility when field names
+change.
+
+```kotlin
+@DataDescription
+data class ModelWithAliases(
+    @Alias("field_name")
+    var fieldName: String,
+
+    @Alias("another_name1", "another_name2")
+    var anotherName: String
+)
+```
+
 ## Generated files
 
 Gradle task `kotlinKapt` is called before `kotlinCompile`. When called, Each data class adds two files, 

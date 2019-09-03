@@ -1,6 +1,8 @@
 package com.shoprunner.baleen.kotlin.kapt.test
 
+import com.shoprunner.baleen.annotation.Alias
 import com.shoprunner.baleen.annotation.DataDescription
+import com.shoprunner.baleen.annotation.Name
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.time.Instant
@@ -260,4 +262,19 @@ data class StringModelWithOverriddenName(
 
     /** A nullable string field **/
     var nullableString: String?
+)
+
+@DataDescription
+data class ModelWithDifferentFieldNames(
+    @Name("field_name")
+    var fieldName: String
+)
+
+@DataDescription
+data class ModelWithAliases(
+    @Alias("field_name")
+    var fieldName: String,
+
+    @Alias("another_name1", "another_name2")
+    var anotherName: String
 )
