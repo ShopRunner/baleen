@@ -22,6 +22,7 @@ import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.MemberName
 import com.squareup.kotlinpoet.PropertySpec
+import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asTypeName
 import java.io.File
 import javax.annotation.processing.Messager
@@ -34,6 +35,7 @@ import javax.lang.model.type.MirroredTypeException
 import javax.lang.model.type.TypeMirror
 import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
+import kotlin.reflect.KClass
 
 internal class DataDescriptionBuilder(
     private val kaptKotlinGeneratedDir: String,
@@ -152,17 +154,34 @@ internal class DataDescriptionBuilder(
                     DefaultValueType.Long -> add("default = %LL", defaultValueAnnotation.defaultLongValue)
                     DefaultValueType.Float -> add("default = %Lf", defaultValueAnnotation.defaultFloatValue)
                     DefaultValueType.Double -> add("default = %L", defaultValueAnnotation.defaultDoubleValue)
-                    DefaultValueType.DataClass -> add("default = %T()\n", try {
+                    DefaultValueType.DataClass -> add("default = %T()", toTypeName {
                         defaultValueAnnotation.defaultDataClassValue
-                    } catch (e: MirroredTypeException) {
-                        e.typeMirror.asTypeName()
                     })
+                    DefaultValueType.EmptyArray -> add("default = emptyArray<%T>()",
+                        toTypeName { defaultValueAnnotation.defaultElementClass }.javaToKotlinType()
+                    )
+                    DefaultValueType.EmptyList -> add("default = emptyList<%T>()",
+                        toTypeName { defaultValueAnnotation.defaultElementClass }.javaToKotlinType()
+                    )
+                    DefaultValueType.EmptySet -> add("default = emptySet<%T>()",
+                        toTypeName { defaultValueAnnotation.defaultElementClass }.javaToKotlinType()
+                    )
+                    DefaultValueType.EmptyMap -> add("default = emptyMap<%T, %T>()",
+                        toTypeName { defaultValueAnnotation.defaultKeyClass }.javaToKotlinType(),
+                        toTypeName { defaultValueAnnotation.defaultElementClass }.javaToKotlinType()
+                    )
                 }
             }
             add("\n")
             unindent()
             add(")")
         }.build()
+    }
+
+    private inline fun toTypeName(clazzFun: () -> KClass<*>): TypeName = try {
+        clazzFun().asTypeName()
+    } catch (e: MirroredTypeException) {
+        e.typeMirror.asTypeName()
     }
 
     private fun getAttrType(

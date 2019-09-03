@@ -158,6 +158,21 @@ data class ModelWithDefaultValues(
     @DefaultValue(DefaultValueType.DataClass, defaultDataClassValue = SubModelWithDefaults::class)
     var classDefault: SubModelWithDefaults = SubModelWithDefaults(),
 
+    @DefaultValue(DefaultValueType.EmptyArray, defaultElementClass = Int::class)
+    var arrayDefault: Array<Int> = emptyArray(),
+
+    @DefaultValue(DefaultValueType.EmptyList, defaultElementClass = Int::class)
+    var listDefault: List<Int> = emptyList(),
+
+    @DefaultValue(DefaultValueType.EmptySet, defaultElementClass = Int::class)
+    var setDefault: Set<Int> = emptySet(),
+
+    @DefaultValue(DefaultValueType.EmptyMap, defaultKeyClass = String::class, defaultElementClass = Int::class)
+    var mapDefault: Map<String, Int> = emptyMap(),
+
+    @DefaultValue(DefaultValueType.EmptyList, defaultElementClass = SubModelWithDefaults::class)
+    var listOfModelDefault: List<SubModelWithDefaults> = emptyList(),
+
     var noDefault: String?
 )
 

@@ -8,6 +8,8 @@ import com.shoprunner.baleen.types.DoubleType
 import com.shoprunner.baleen.types.FloatType
 import com.shoprunner.baleen.types.IntType
 import com.shoprunner.baleen.types.LongType
+import com.shoprunner.baleen.types.MapType
+import com.shoprunner.baleen.types.OccurrencesType
 import com.shoprunner.baleen.types.StringType
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
@@ -56,6 +58,36 @@ internal class DefaultValueTest {
                 AttributeDescriptionAssert.assertThat(it)
                     .hasType(DoubleType())
                     .hasDefaultValue(1.1)
+            }
+            .hasAttribute("classDefault") {
+                AttributeDescriptionAssert.assertThat(it)
+                    .hasType(SubModelWithDefaults().dataDescription())
+                    .hasDefaultValue(SubModelWithDefaults())
+            }
+            .hasAttribute("arrayDefault") {
+                AttributeDescriptionAssert.assertThat(it)
+                    .hasType(OccurrencesType(IntType()))
+                    .hasDefaultValue(emptyArray<Int>())
+            }
+            .hasAttribute("listDefault") {
+                AttributeDescriptionAssert.assertThat(it)
+                    .hasType(OccurrencesType(IntType()))
+                    .hasDefaultValue(emptyList<Int>())
+            }
+            .hasAttribute("setDefault") {
+                AttributeDescriptionAssert.assertThat(it)
+                    .hasType(OccurrencesType(IntType()))
+                    .hasDefaultValue(emptySet<Int>())
+            }
+            .hasAttribute("mapDefault") {
+                AttributeDescriptionAssert.assertThat(it)
+                    .hasType(MapType(StringType(), IntType()))
+                    .hasDefaultValue(emptyMap<String, Int>())
+            }
+            .hasAttribute("listOfModelDefault") {
+                AttributeDescriptionAssert.assertThat(it)
+                    .hasType(OccurrencesType(SubModelWithDefaults().dataDescription()))
+                    .hasDefaultValue(emptyList<SubModelWithDefaults>())
             }
             .hasAttribute("noDefault") {
                 AttributeDescriptionAssert.assertThat(it)

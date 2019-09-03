@@ -118,12 +118,62 @@ AbstractAssert<AttributeDescriptionAssert, AttributeDescription>(actual, Attribu
     }
 
     fun hasDefaultValue(expectedDefaultValue: Any?): AttributeDescriptionAssert {
-        if (actual.default != expectedDefaultValue) {
-            failWithMessage(
-                "Attribute ${actual.name} has a different default value. %s vs %s",
-                actual.default,
-                expectedDefaultValue
-            )
+        val actualValue = actual.default
+        when {
+            actualValue is Array<*> && expectedDefaultValue is Array<*> -> {
+                if (actualValue.size != expectedDefaultValue.size ||
+                    (actualValue.isNotEmpty() && actualValue.zip(expectedDefaultValue).all { it.first == it.second })
+                ) {
+                    failWithMessage(
+                        "Attribute ${actual.name} has a different default value. %s vs %s",
+                        actualValue.toList(),
+                        expectedDefaultValue.toList()
+                    )
+                }
+            }
+
+            actualValue is List<*> && expectedDefaultValue is List<*> -> {
+                if (actualValue.size != expectedDefaultValue.size ||
+                    (actualValue.isNotEmpty() && actualValue.zip(expectedDefaultValue).all { it.first == it.second })
+                ) {
+                    failWithMessage(
+                        "Attribute ${actual.name} has a different default value. %s vs %s",
+                        actualValue,
+                        expectedDefaultValue
+                    )
+                }
+            }
+
+            actualValue is Set<*> && expectedDefaultValue is Set<*> -> {
+                if (actualValue.size != expectedDefaultValue.size ||
+                    (actualValue.isNotEmpty() && actualValue.containsAll(expectedDefaultValue))
+                ) {
+                    failWithMessage(
+                        "Attribute ${actual.name} has a different default value. %s vs %s",
+                        actualValue,
+                        expectedDefaultValue
+                    )
+                }
+            }
+
+            actualValue is Map<*, *> && expectedDefaultValue is Map<*, *> -> {
+                if (actualValue.size != expectedDefaultValue.size ||
+                    (actualValue.isNotEmpty() && actualValue.all { (k, v) -> expectedDefaultValue[k] == v })
+                ) {
+                    failWithMessage(
+                        "Attribute ${actual.name} has a different default value. %s vs %s",
+                        actualValue,
+                        expectedDefaultValue
+                    )
+                }
+            }
+
+            actualValue != expectedDefaultValue ->
+                failWithMessage(
+                    "Attribute ${actual.name} has a different default value. %s vs %s",
+                    actualValue,
+                    expectedDefaultValue
+                )
         }
         return this
     }

@@ -70,12 +70,16 @@ annotation class DefaultValue(
      * ```
      *
      */
-    val defaultDataClassValue: KClass<out Any> = Any::class
+    val defaultDataClassValue: KClass<out Any> = Any::class,
+
+    val defaultKeyClass: KClass<out Any> = Any::class,
+
+    val defaultElementClass: KClass<out Any> = Any::class
 )
 
 /**
  * Supported Default Value types
  */
 enum class DefaultValueType {
-    Null, Boolean, String, Int, Long, Float, Double, DataClass
+    Null, Boolean, String, Int, Long, Float, Double, DataClass, EmptyArray, EmptyList, EmptySet, EmptyMap
 }
