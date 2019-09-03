@@ -146,7 +146,7 @@ AbstractAssert<AttributeDescriptionAssert, AttributeDescription>(actual, Attribu
 
             actualValue is Set<*> && expectedDefaultValue is Set<*> -> {
                 if (actualValue.size != expectedDefaultValue.size ||
-                    (actualValue.isNotEmpty() && actualValue.containsAll(expectedDefaultValue))
+                    (actualValue.isNotEmpty() && !actualValue.containsAll(expectedDefaultValue))
                 ) {
                     failWithMessage(
                         "Attribute ${actual.name} has a different default value. %s vs %s",
