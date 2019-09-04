@@ -12,8 +12,10 @@ import com.shoprunner.baleen.types.EnumType
 import com.shoprunner.baleen.types.FloatType
 import com.shoprunner.baleen.types.InstantType
 import com.shoprunner.baleen.types.IntType
+import com.shoprunner.baleen.types.IntegerType
 import com.shoprunner.baleen.types.LongType
 import com.shoprunner.baleen.types.MapType
+import com.shoprunner.baleen.types.NumericType
 import com.shoprunner.baleen.types.OccurrencesType
 import com.shoprunner.baleen.types.StringCoercibleToFloat
 import com.shoprunner.baleen.types.StringConstantType
@@ -265,6 +267,142 @@ internal class JsonSchemaGeneratorTest {
                       "type" : "integer",
                       "maximum" : 9223372036854775807,
                       "minimum" : -9223372036854775808
+                    }
+                  }
+                }
+              },
+              "${'$'}ref" : "#/definitions/record:Dog",
+              "${'$'}schema" : "http://json-schema.org/draft-04/schema"
+            }""".trimIndent()
+
+            val outputStream = ByteArrayOutputStream()
+            JsonSchemaGenerator.encode(description).writeTo(PrintStream(outputStream), true)
+
+            Assertions.assertThat(outputStream.toString()).isEqualToIgnoringWhitespace(schemaStr)
+        }
+
+        @Test
+        fun `getJsonSchema encodes integer type`() {
+            val description = Baleen.describe("Dog") {
+                it.attr(
+                    name = "numLegs",
+                    type = IntegerType()
+                )
+            }
+
+            val schemaStr = """
+            {
+              "id" : "Dog",
+              "definitions" : {
+                "record:Dog" : {
+                  "type" : "object",
+                  "additionalProperties": false,
+                  "properties" : {
+                    "numLegs" : {
+                      "type" : "integer"
+                    }
+                  }
+                }
+              },
+              "${'$'}ref" : "#/definitions/record:Dog",
+              "${'$'}schema" : "http://json-schema.org/draft-04/schema"
+            }""".trimIndent()
+
+            val outputStream = ByteArrayOutputStream()
+            JsonSchemaGenerator.encode(description).writeTo(PrintStream(outputStream), true)
+
+            Assertions.assertThat(outputStream.toString()).isEqualToIgnoringWhitespace(schemaStr)
+        }
+
+        @Test
+        fun `getJsonSchema encodes integer type with limits`() {
+            val description = Baleen.describe("Dog") {
+                it.attr(
+                    name = "numLegs",
+                    type = IntegerType(min = 0.toBigInteger(), max = 10.toBigInteger())
+                )
+            }
+
+            val schemaStr = """
+            {
+              "id" : "Dog",
+              "definitions" : {
+                "record:Dog" : {
+                  "type" : "object",
+                  "additionalProperties": false,
+                  "properties" : {
+                    "numLegs" : {
+                      "type" : "integer",
+                      "maximum" : 10,
+                      "minimum" : 0
+                    }
+                  }
+                }
+              },
+              "${'$'}ref" : "#/definitions/record:Dog",
+              "${'$'}schema" : "http://json-schema.org/draft-04/schema"
+            }""".trimIndent()
+
+            val outputStream = ByteArrayOutputStream()
+            JsonSchemaGenerator.encode(description).writeTo(PrintStream(outputStream), true)
+
+            Assertions.assertThat(outputStream.toString()).isEqualToIgnoringWhitespace(schemaStr)
+        }
+
+        @Test
+        fun `getJsonSchema encodes numeric type`() {
+            val description = Baleen.describe("Dog") {
+                it.attr(
+                    name = "numLegs",
+                    type = NumericType()
+                )
+            }
+
+            val schemaStr = """
+            {
+              "id" : "Dog",
+              "definitions" : {
+                "record:Dog" : {
+                  "type" : "object",
+                  "additionalProperties": false,
+                  "properties" : {
+                    "numLegs" : {
+                      "type" : "number"
+                    }
+                  }
+                }
+              },
+              "${'$'}ref" : "#/definitions/record:Dog",
+              "${'$'}schema" : "http://json-schema.org/draft-04/schema"
+            }""".trimIndent()
+
+            val outputStream = ByteArrayOutputStream()
+            JsonSchemaGenerator.encode(description).writeTo(PrintStream(outputStream), true)
+
+            Assertions.assertThat(outputStream.toString()).isEqualToIgnoringWhitespace(schemaStr)
+        }
+
+        @Test
+        fun `getJsonSchema encodes numeric type with limits`() {
+            val description = Baleen.describe("Dog") {
+                it.attr(
+                    name = "numLegs",
+                    type = NumericType(min = 0.toBigDecimal(), max = 10.toBigDecimal())
+                )
+            }
+
+            val schemaStr = """
+            {
+              "id" : "Dog",
+              "definitions" : {
+                "record:Dog" : {
+                  "type" : "object",
+                  "additionalProperties": false,
+                  "properties" : {
+                    "numLegs" : {
+                      "type" : "number",
+                      "maximum" : 10,
+                      "minimum" : 0
                     }
                   }
                 }

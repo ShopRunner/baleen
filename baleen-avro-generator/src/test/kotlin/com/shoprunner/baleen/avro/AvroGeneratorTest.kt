@@ -13,8 +13,10 @@ import com.shoprunner.baleen.types.EnumType
 import com.shoprunner.baleen.types.FloatType
 import com.shoprunner.baleen.types.InstantType
 import com.shoprunner.baleen.types.IntType
+import com.shoprunner.baleen.types.IntegerType
 import com.shoprunner.baleen.types.LongType
 import com.shoprunner.baleen.types.MapType
+import com.shoprunner.baleen.types.NumericType
 import com.shoprunner.baleen.types.OccurrencesType
 import com.shoprunner.baleen.types.StringCoercibleToFloat
 import com.shoprunner.baleen.types.StringCoercibleToInstant
@@ -83,6 +85,18 @@ class AvroGeneratorTest {
         fun `getAvroSchema encodes long type`() {
             val schema = AvroGenerator.getAvroSchema(LongType())
             assertThat(schema.type).isEqualTo(Schema.Type.LONG)
+        }
+
+        @Test
+        fun `getAvroSchema encodes intger type`() {
+            val schema = AvroGenerator.getAvroSchema(IntegerType())
+            assertThat(schema.type).isEqualTo(Schema.Type.LONG)
+        }
+
+        @Test
+        fun `getAvroSchema encodes numeric type`() {
+            val schema = AvroGenerator.getAvroSchema(NumericType())
+            assertThat(schema.type).isEqualTo(Schema.Type.DOUBLE)
         }
 
         @Test

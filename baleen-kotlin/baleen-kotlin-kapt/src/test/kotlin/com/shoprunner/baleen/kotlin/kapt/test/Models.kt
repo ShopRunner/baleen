@@ -1,6 +1,8 @@
 package com.shoprunner.baleen.kotlin.kapt.test
 
 import com.shoprunner.baleen.annotation.DataDescription
+import java.math.BigDecimal
+import java.math.BigInteger
 import java.time.Instant
 
 /** This is a string model */
@@ -47,6 +49,42 @@ data class DoubleModel(
 
     /** A nullable double number field */
     var nullableDoubleNumber: Double?
+)
+
+@DataDescription
+data class ByteModel(
+    /** A byte number field */
+    var byteNumber: Byte,
+
+    /** A nullable byte number field */
+    var nullableByteNumber: Byte?
+)
+
+@DataDescription
+data class ShortModel(
+    /** A short number field */
+    var shortNumber: Short,
+
+    /** A nullable short number field */
+    var nullableShortNumber: Short?
+)
+
+@DataDescription
+data class BigIntegerModel(
+    /** A BigInteger number field */
+    var bigIntegerNumber: BigInteger,
+
+    /** A nullable BigInteger number field */
+    var nullableBigIntegerNumber: BigInteger?
+)
+
+@DataDescription
+data class BigDecimalModel(
+    /** A BigDecimal number field */
+    var bigDecimalNumber: BigDecimal,
+
+    /** A nullable BigDecimal number field */
+    var nullableBigDecimalNumber: BigDecimal?
 )
 
 @DataDescription
