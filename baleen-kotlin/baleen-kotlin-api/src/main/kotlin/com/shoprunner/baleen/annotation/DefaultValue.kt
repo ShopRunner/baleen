@@ -12,8 +12,10 @@ import kotlin.reflect.KClass
  *  * String
  *  * Int
  *  * Long
+ *  * BigInteger
  *  * Float
  *  * Double
+ *  * BigDecimal
  *  * DataClass
  *  * EmptyArray
  *  * EmptyList
@@ -41,6 +43,33 @@ annotation class DefaultValue(
      *
      * ```
      * default = "hello"
+     * ```
+     *
+     * Also used for `type = BigInteger` or `type = BigDecimal` since these are string backed numeric types and can
+     * be larger and have better precision than Double and Long.
+     *
+     * ```
+     * type = DataValueType.BigInteger,
+     * defaultStringValue = "100"
+     * ```
+     *
+     * becomes
+     *
+     * ```
+     * default = "100".toBigInteger()
+     * ```
+     *
+     * and
+     *
+     * ```
+     * type = DataValueType.BigDecimal,
+     * defaultStringValue = "100.00"
+     * ```
+     *
+     * becomes
+     *
+     * ```
+     * default = "100.00".toBigDecimal()
      * ```
      */
     val defaultStringValue: String = "",
@@ -185,5 +214,5 @@ annotation class DefaultValue(
  * Supported Default Value types
  */
 enum class DefaultValueType {
-    Null, Boolean, String, Int, Long, Float, Double, DataClass, EmptyArray, EmptyList, EmptySet, EmptyMap
+    Null, Boolean, String, Int, Long, BigInteger, Float, Double, BigDecimal, DataClass, EmptyArray, EmptyList, EmptySet, EmptyMap
 }

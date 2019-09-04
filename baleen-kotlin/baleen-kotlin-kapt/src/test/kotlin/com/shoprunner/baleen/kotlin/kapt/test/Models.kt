@@ -299,11 +299,17 @@ data class ModelWithDefaultValues(
     @DefaultValue(DefaultValueType.Long, defaultLongValue = 100L)
     var longDefault: Long = 100L,
 
+    @DefaultValue(DefaultValueType.BigInteger, defaultStringValue = "100")
+    var bigIntDefault: BigInteger = 100L.toBigInteger(),
+
     @DefaultValue(DefaultValueType.Float, defaultFloatValue = 1.1f)
     var floatDefault: Float = 1.1f,
 
     @DefaultValue(DefaultValueType.Double, defaultDoubleValue = 1.1)
     var doubleDefault: Double = 1.1,
+
+    @DefaultValue(DefaultValueType.BigDecimal, defaultStringValue = "100.01")
+    var bigDecimalDefault: BigDecimal = 100.01.toBigDecimal(),
 
     @DefaultValue(DefaultValueType.DataClass, defaultDataClassValue = SubModelWithDefaults::class)
     var classDefault: SubModelWithDefaults = SubModelWithDefaults(),

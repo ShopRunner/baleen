@@ -7,8 +7,10 @@ import com.shoprunner.baleen.types.BooleanType
 import com.shoprunner.baleen.types.DoubleType
 import com.shoprunner.baleen.types.FloatType
 import com.shoprunner.baleen.types.IntType
+import com.shoprunner.baleen.types.IntegerType
 import com.shoprunner.baleen.types.LongType
 import com.shoprunner.baleen.types.MapType
+import com.shoprunner.baleen.types.NumericType
 import com.shoprunner.baleen.types.OccurrencesType
 import com.shoprunner.baleen.types.StringType
 import org.assertj.core.api.Assertions
@@ -49,6 +51,11 @@ internal class DefaultValueTest {
                     .hasType(LongType())
                     .hasDefaultValue(100L)
             }
+            .hasAttribute("bigIntDefault") {
+                AttributeDescriptionAssert.assertThat(it)
+                    .hasType(IntegerType())
+                    .hasDefaultValue(100L.toBigInteger())
+            }
             .hasAttribute("floatDefault") {
                 AttributeDescriptionAssert.assertThat(it)
                     .hasType(FloatType())
@@ -58,6 +65,11 @@ internal class DefaultValueTest {
                 AttributeDescriptionAssert.assertThat(it)
                     .hasType(DoubleType())
                     .hasDefaultValue(1.1)
+            }
+            .hasAttribute("bigDecimalDefault") {
+                AttributeDescriptionAssert.assertThat(it)
+                    .hasType(NumericType())
+                    .hasDefaultValue(100.01.toBigDecimal())
             }
             .hasAttribute("classDefault") {
                 AttributeDescriptionAssert.assertThat(it)

@@ -152,8 +152,10 @@ internal class DataDescriptionBuilder(
                     DefaultValueType.String -> add("default = %S", defaultValueAnnotation.defaultStringValue)
                     DefaultValueType.Int -> add("default = %L", defaultValueAnnotation.defaultIntValue)
                     DefaultValueType.Long -> add("default = %LL", defaultValueAnnotation.defaultLongValue)
+                    DefaultValueType.BigInteger -> add("default = %S.toBigInteger()", defaultValueAnnotation.defaultStringValue)
                     DefaultValueType.Float -> add("default = %Lf", defaultValueAnnotation.defaultFloatValue)
                     DefaultValueType.Double -> add("default = %L", defaultValueAnnotation.defaultDoubleValue)
+                    DefaultValueType.BigDecimal -> add("default = %S.toBigDecimal()", defaultValueAnnotation.defaultStringValue)
                     DefaultValueType.DataClass -> add("default = %T()", toTypeName {
                         defaultValueAnnotation.defaultDataClassValue
                     })
