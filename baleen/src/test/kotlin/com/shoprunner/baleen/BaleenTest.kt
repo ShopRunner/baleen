@@ -105,6 +105,40 @@ internal class BaleenTest {
     }
 
     @Nested
+    inner class AttributeWithAlias {
+
+        private val dogDescription = Baleen.describe("Dog") { p ->
+            p.attr(name = "name",
+                    type = AllowsNull(StringType()),
+                    aliases = arrayOf("nickname"),
+                    required = true)
+        }
+
+        @Test
+        fun `validates attribute when present`() {
+            val data = dataOf("name" to "Fido")
+            assertThat(dogDescription.validate(data)).isValid()
+            assertThat(dogDescription.validate(data).results).contains(ValidationInfo(dataTrace(), "has attribute \"name\"", data))
+        }
+
+        @Test
+        fun `warns validation when attribute alias is present`() {
+            val data = dataOf("nickname" to "Fido")
+            assertThat(dogDescription.validate(data)).isValid()
+            assertThat(dogDescription.validate(data).results).contains(
+                    ValidationWarning(dataTrace(), "has alias \"nickname\" for attribute \"name\"", data))
+        }
+
+        @Test
+        fun `fails validation when data missing required attribute or alias`() {
+            val data = dataOf<String>()
+            assertThat(dogDescription.validate(data)).isNotValid()
+            assertThat(dogDescription.validate(data).results).contains(
+                    ValidationError(dataTrace(), "missing required attribute \"name\"", data))
+        }
+    }
+
+    @Nested
     inner class NestedDesc {
         private val dogDescription = "Dog".describeAs {
             "name".type(

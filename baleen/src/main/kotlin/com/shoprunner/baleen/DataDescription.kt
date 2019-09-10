@@ -16,6 +16,13 @@ class DataDescription(
                 val (value, attrDataTrace) = data.attributeDataValue(attr.name, dataTrace)
                 sequenceOf(ValidationInfo(dataTrace, "has attribute \"${attr.name}\"", data)).plus(type.validate(attrDataTrace, value))
             }
+            attr.aliases.any { data.containsKey(it) } -> {
+                val alias = attr.aliases.first { data.containsKey(it) }
+                val value = data[alias]
+                // TODO add to context
+                val attrDataTrace = dataTrace + "attribute \"${attr.name}\"" + "alias \"$alias\""
+                sequenceOf(ValidationWarning(dataTrace, "has alias \"$alias\" for attribute \"${attr.name}\"", data)).plus(type.validate(attrDataTrace, value))
+            }
             attr.default != NoDefault -> sequenceOf(ValidationInfo(dataTrace, "has attribute \"${attr.name}\" defaulted to `${attr.default}` since it wasn't set.", data))
             attr.required -> sequenceOf(ValidationError(dataTrace, "missing required attribute \"${attr.name}\"", data))
             else -> sequenceOf(ValidationInfo(dataTrace, "missing attribute \"${attr.name}\"", data))
