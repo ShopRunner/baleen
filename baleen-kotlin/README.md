@@ -268,6 +268,15 @@ dog.validate(externalDogType, dataTrace("External Source"))
 If DataDescriptions already exist, generate data classes and use annotation processing
 to manage Baleen schemas.
 
+In the gradle project
+```
+dependencies {
+    implementation 'com.shoprunner:baleen-kotlin-generator:x.y.z'
+}
+```
+
+Then where the generation happens:
+
 ```kotlin
 val dataDescription: DataDescription = // Generated elsewhere
 
