@@ -110,7 +110,7 @@ object XsdGenerator {
                     minInclusive = baleenType.min?.let { MinInclusive(it) })
             ))
             is OccurrencesType -> recursiveTypeMapper(typeMapper, baleenType.memberType).copy(maxOccurs = "unbounded")
-            is CoercibleType -> recursiveTypeMapper(typeMapper, baleenType.type)
+            is CoercibleType<*, *> -> recursiveTypeMapper(typeMapper, baleenType.type)
             is StringType -> TypeDetails(
                                 simpleType = SimpleType(
                                         Restriction(

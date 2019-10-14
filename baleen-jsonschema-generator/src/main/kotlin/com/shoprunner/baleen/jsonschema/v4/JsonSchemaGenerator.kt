@@ -68,7 +68,7 @@ object JsonSchemaGenerator {
                 }
             }
             is BooleanType -> BooleanSchema to objectContext
-            is CoercibleType -> getJsonSchema(baleenType.type, objectContext, withAdditionalAttributes)
+            is CoercibleType<*, *> -> getJsonSchema(baleenType.type, objectContext, withAdditionalAttributes)
             is DoubleType -> NumberSchema(
                 maximum = baleenType.max.takeIf { it.isFinite() }?.toBigDecimal(),
                 minimum = baleenType.min.takeIf { it.isFinite() }?.toBigDecimal()
