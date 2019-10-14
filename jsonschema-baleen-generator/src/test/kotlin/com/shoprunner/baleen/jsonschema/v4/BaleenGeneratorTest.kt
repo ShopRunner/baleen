@@ -1538,7 +1538,8 @@ internal class BaleenGeneratorTest {
                 classesDir.mkdirs()
 
                 // Generate Baleen Kotlin Files
-                val schemaUrl = URL("https://raw.githubusercontent.com/snowplow/iglu-central/master/schemas/com.google.analytics/cookies/jsonschema/1-0-0")
+                val schemaUrl =
+                    URL("https://raw.githubusercontent.com/snowplow/iglu-central/master/schemas/com.google.analytics/cookies/jsonschema/1-0-0")
                 BaleenGenerator.encode(schemaUrl.parseJsonSchema()).forEach {
                     it.writeTo(sourceDir)
                 }
@@ -1547,26 +1548,27 @@ internal class BaleenGeneratorTest {
                 Assertions.assertThat(cookiesFile).exists()
 
                 // Needs the Environment Variable passed in in order to compile. Gradle can give us this.
-                Assertions.assertThat(System.getenv("GEN_CLASSPATH")).isNotBlank()
+                val genClassPath = System.getenv("GEN_CLASSPATH")
+                if (genClassPath?.isNotBlank() == true) {
+                    val compiler = K2JVMCompiler()
+                    val args = K2JVMCompilerArguments().apply {
+                        destination = classesDir.path
+                        freeArgs = listOf(sourceDir.path)
+                        classpath = genClassPath
+                        noStdlib = true
+                    }
+                    compiler.exec(LogMessageCollector(), Services.EMPTY, args)
 
-                val compiler = K2JVMCompiler()
-                val args = K2JVMCompilerArguments().apply {
-                    destination = classesDir.path
-                    freeArgs = listOf(sourceDir.path)
-                    classpath = System.getenv("GEN_CLASSPATH")
-                    noStdlib = true
+                    // Check that compilation worked
+                    Assertions.assertThat(File(classesDir, "com/google/analytics/CookiesKt.class")).exists()
+
+                    // Check if the compiled files can be loaded
+                    val cl = URLClassLoader(arrayOf(classesDir.toURI().toURL()))
+
+                    val cookiesType = cl.loadClass("com.google.analytics.CookiesKt")
+                    val cookiesDescription = cookiesType.getDeclaredField("cookies").type
+                    Assertions.assertThat(cookiesDescription).isEqualTo(DataDescription::class.java)
                 }
-                compiler.exec(LogMessageCollector(), Services.EMPTY, args)
-
-                // Check that compilation worked
-                Assertions.assertThat(File(classesDir, "com/google/analytics/CookiesKt.class")).exists()
-
-                // Check if the compiled files can be loaded
-                val cl = URLClassLoader(arrayOf(classesDir.toURI().toURL()))
-
-                val cookiesType = cl.loadClass("com.google.analytics.CookiesKt")
-                val cookiesDescription = cookiesType.getDeclaredField("cookies").type
-                Assertions.assertThat(cookiesDescription).isEqualTo(DataDescription::class.java)
             } catch (e: UnknownHostException) {
                 // Don't fail the test if there is no connection
                 return

@@ -1,5 +1,17 @@
 
 dependencies {
     implementation project(':baleen')
+    implementation project(':baleen-kotlin:baleen-kotlin-api')
     implementation 'com.squareup:kotlinpoet:1.3.0'
+    implementation 'org.jetbrains.kotlin:kotlin-reflect:1.3.41'
+    testImplementation "org.jetbrains.kotlin:kotlin-compiler"
+}
+
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+
+test {
+    def map = [GEN_CLASSPATH: configurations.testCompileClasspath.files.path.join(":")]
+    environment map
 }
