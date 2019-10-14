@@ -674,7 +674,7 @@ internal class DataClassGeneratorForSimpleModelsTest {
 
         """.trimIndent()
 
-        val dataClassSpecs = DataClassGenerator.encode(model, Options(coercibleHandler = CoercibleHandler.FROM))
+        val dataClassSpecs = DataClassGenerator.encode(model, Options(coercibleHandler = CoercibleHandlerOption.FROM))
         val outputStream = StringWriter()
         dataClassSpecs[model]!!.writeTo(outputStream)
         val outputStr = outputStream.toString()
@@ -715,7 +715,7 @@ internal class DataClassGeneratorForSimpleModelsTest {
 
         """.trimIndent()
 
-        val dataClassSpecs = DataClassGenerator.encode(model, Options(coercibleHandler = CoercibleHandler.TO))
+        val dataClassSpecs = DataClassGenerator.encode(model, Options(coercibleHandler = CoercibleHandlerOption.TO))
         val outputStream = StringWriter()
         dataClassSpecs[model]!!.writeTo(outputStream)
         val outputStr = outputStream.toString()
@@ -756,11 +756,11 @@ internal class DataClassGeneratorForSimpleModelsTest {
 
         """.trimIndent()
 
-        val stringOverrideToLong = TypeMapOverride(
+        val stringOverrideToLong = TypeOverride(
             isOverridable = { it is StringType },
             override = { Long::class }
         )
-        val dataClassSpecs = DataClassGenerator.encode(model, Options(overrides = listOf(stringOverrideToLong)))
+        val dataClassSpecs = DataClassGenerator.encode(model, Options(typeOverrides = listOf(stringOverrideToLong)))
         val outputStream = StringWriter()
         dataClassSpecs[model]!!.writeTo(outputStream)
         val outputStr = outputStream.toString()

@@ -263,6 +263,38 @@ val externalDogType = generatedElseWhere()
 dog.validate(externalDogType, dataTrace("External Source"))
 ```
 
+## Generating Data Classes from Existing Baleen DataDescriptions
+
+If DataDescriptions already exist, generate data classes and use annotation processing
+to manage Baleen schemas.
+
+```kotlin
+val dataDescription: DataDescription = // Generated elsewhere
+
+val dir = File("build/baleen-gen-test")
+val sourceDir = File(dir, "src/main/kotlin")
+
+// Generate Data Class Files
+dataDescription.writeDataClassesTo(sourceDir)
+
+// Or with some optional overrides
+dataDescription.writeDataClassesTo(
+    dir = sourceDir,
+    options = Options(
+        // Set how to interpret coercible types
+        coercibleHandler = CoercibleHandlerOption.FROM,
+
+        // Set overrides
+        typeOverrides = listOf(
+            TypeOverride(
+                isOverridable = { t -> t is StringType },
+                override = { Long::class }
+            )
+        )
+    )
+)
+```
+
 ## TODO
 
 * Missing Data Types (enums, LocalDate, etc.)

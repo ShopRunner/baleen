@@ -44,10 +44,13 @@ import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.isSubtypeOf
 import kotlin.reflect.full.starProjectedType
 
+/**
+ * Generates Kotlin Data Classes from Baleen Data Descriptions.
+ */
 object DataClassGenerator {
 
     internal fun BaleenType.asTypeName(options: Options): TypeName {
-        val override = options.overrides.find { it.isOverridable(this) }
+        val override = options.typeOverrides.find { it.isOverridable(this) }
         if (override != null) {
             return override.override(this).asTypeName()
         }
@@ -73,11 +76,11 @@ object DataClassGenerator {
             is StringConstantType -> String::class.asClassName()
             is TimestampMillisType -> LocalDateTime::class.asClassName()
             is CoercibleType<*, *> -> when (options.coercibleHandler) {
-                CoercibleHandler.FROM -> {
+                CoercibleHandlerOption.FROM -> {
                     val fromBaleenType = createCoercibleFromType()
                     fromBaleenType.asTypeName(options)
                 }
-                CoercibleHandler.TO -> this.type.asTypeName(options)
+                CoercibleHandlerOption.TO -> this.type.asTypeName(options)
             }
             else -> throw Exception("Unknown type: " + this::class)
         }
@@ -224,8 +227,8 @@ object DataClassGenerator {
         is OccurrencesType -> memberType.flattenElements(options)
         is MapType -> keyType.flattenElements(options) + valueType.flattenElements(options)
         is CoercibleType<*, *> -> when (options.coercibleHandler) {
-            CoercibleHandler.TO -> type.flattenElements(options)
-            CoercibleHandler.FROM -> createCoercibleFromType().flattenElements(options)
+            CoercibleHandlerOption.TO -> type.flattenElements(options)
+            CoercibleHandlerOption.FROM -> createCoercibleFromType().flattenElements(options)
         }
         else -> listOf(this)
     }
@@ -242,10 +245,19 @@ object DataClassGenerator {
         }.toSet()
     }
 
+    /**
+     * Given a Data Description, return a map of all the Data Descriptions and Files to be generated. It will return
+     * itself and all children classes.
+     *
+     * @param dataDescription The DataDescription to generated data classes for
+     * @param options The optional configuration that can change generating the data classes.
+     * @param alreadyProcessed The optional classes that can be skipped if already processed elsewhere.
+     * @return A map of DataDescriptions to the FileSpec for the data classes to be generated.
+     */
     fun encode(dataDescription: DataDescription, options: Options = Options(), alreadyProcessed: Set<ClassName> = emptySet()): Map<DataDescription, FileSpec> {
         val allSubTypes = dataDescription
             .allSubTypes(options, alreadyProcessed + dataDescription.asClassName())
-            .filter { child -> options.overrides.none { override -> override.isOverridable(child) } }
+            .filter { child -> options.typeOverrides.none { override -> override.isOverridable(child) } }
 
         return (allSubTypes + dataDescription).map {
             it to FileSpec.builder(it.nameSpace, it.name)
@@ -254,6 +266,13 @@ object DataClassGenerator {
         }.toMap()
     }
 
+    /**
+     * Given a DataDescription, write the data classes generated to a directory.
+     *
+     * The DataDescription to generated data classes for
+     * @param dir The source directory to write the generated files to.
+     * @param options The optional configuration that can change generating the data classes.
+     */
     fun DataDescription.writeDataClassesTo(dir: File, options: Options = Options()) {
         encode(this, options).forEach { (_, fileSpec) -> fileSpec.writeTo(dir) }
     }

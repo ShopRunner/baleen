@@ -2,6 +2,7 @@ package com.shoprunner.baleen.kotlin
 
 import com.shoprunner.baleen.Baleen.describeAs
 import com.shoprunner.baleen.kotlin.DataClassGenerator.writeDataClassesTo
+import com.shoprunner.baleen.types.AllowsNull
 import com.shoprunner.baleen.types.StringType
 import java.io.File
 import java.net.URLClassLoader
@@ -41,8 +42,9 @@ class DataClassGeneratorWriteAndCompileTest {
             markdownDescription = "Test Child"
         ) {
             "field".type(
-                type = StringType(),
-                markdownDescription = "Test field"
+                type = AllowsNull(StringType()),
+                markdownDescription = "Test field",
+                default = null
             )
         }
         val parentModel = "Parent".describeAs(

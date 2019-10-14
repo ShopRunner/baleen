@@ -411,7 +411,7 @@ internal class DataClassGeneratorForNestedModelsTest {
 
         """.trimIndent()
 
-        val dataClassSpecs = DataClassGenerator.encode(parentModel, Options(coercibleHandler = CoercibleHandler.TO))
+        val dataClassSpecs = DataClassGenerator.encode(parentModel, Options(coercibleHandler = CoercibleHandlerOption.TO))
         assertThat(dataClassSpecs).hasSize(2)
 
         val childOutputStream = StringWriter()
@@ -460,7 +460,7 @@ internal class DataClassGeneratorForNestedModelsTest {
 
         """.trimIndent()
 
-        val dataClassSpecs = DataClassGenerator.encode(parentModel, Options(coercibleHandler = CoercibleHandler.FROM))
+        val dataClassSpecs = DataClassGenerator.encode(parentModel, Options(coercibleHandler = CoercibleHandlerOption.FROM))
         assertThat(dataClassSpecs).hasSize(1)
 
         val parentOutputStream = StringWriter()
@@ -487,7 +487,7 @@ internal class DataClassGeneratorForNestedModelsTest {
         }
 
         val e = assertThrows<IllegalArgumentException> {
-            DataClassGenerator.encode(parentModel, Options(coercibleHandler = CoercibleHandler.FROM))
+            DataClassGenerator.encode(parentModel, Options(coercibleHandler = CoercibleHandlerOption.FROM))
         }
         assertThat(e.message).startsWith("Unable to handle CoercibleType FROM type for Type")
         assertThat(e.message).endsWith("class com.shoprunner.baleen.DataDescription")
@@ -612,11 +612,11 @@ internal class DataClassGeneratorForNestedModelsTest {
 
         """.trimIndent()
 
-        val childOverrideToString = TypeMapOverride(
+        val childOverrideToString = TypeOverride(
             isOverridable = { it.name() == model.name },
             override = { String::class }
         )
-        val dataClassSpecs = DataClassGenerator.encode(parentModel, Options(overrides = listOf(childOverrideToString)))
+        val dataClassSpecs = DataClassGenerator.encode(parentModel, Options(typeOverrides = listOf(childOverrideToString)))
         assertThat(dataClassSpecs).hasSize(1)
 
         val outputStream = StringWriter()
