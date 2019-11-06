@@ -1027,6 +1027,48 @@ internal class JsonSchemaGeneratorTest {
                 JsonSchemaGenerator.encode(description)
             }
         }
+
+        @Test
+        fun `getJsonSchema encodes overriden type`() {
+            val description = Baleen.describe("Dog") {
+                it.attr(
+                    name = "birthday",
+                    type = InstantType()
+                )
+            }
+
+            val schemaStr = """
+            {
+              "id" : "Dog",
+              "definitions" : {
+                "record:Dog" : {
+                  "type" : "object",
+                  "additionalProperties" : false,
+                  "properties" : {
+                    "birthday" : {
+                      "oneOf" : [ {
+                        "type" : "string",
+                        "format" : "date-time"
+                      }, {
+                        "type" : "integer"
+                      } ]
+                    }
+                  }
+                }
+              },
+              "${'$'}ref" : "#/definitions/record:Dog",
+              "${'$'}schema" : "http://json-schema.org/draft-04/schema"
+            }""".trimIndent()
+
+            val outputStream = ByteArrayOutputStream()
+            val typeOverride = TypeOverride(
+                isOverridable = { t -> t.name() == InstantType().name() },
+                override = { OneOf(listOf(DateTimeSchema(), IntegerSchema())) }
+            )
+            JsonSchemaGenerator.encode(description, Options(typeOverrides = listOf(typeOverride))).writeTo(PrintStream(outputStream), true)
+
+            Assertions.assertThat(outputStream.toString()).isEqualToIgnoringWhitespace(schemaStr)
+        }
     }
 
     @Nested
@@ -1291,6 +1333,67 @@ internal class JsonSchemaGeneratorTest {
 
             val outputStream = ByteArrayOutputStream()
             JsonSchemaGenerator.encode(description).writeTo(PrintStream(outputStream), true)
+
+            Assertions.assertThat(outputStream.toString()).isEqualToIgnoringWhitespace(schemaStr)
+        }
+
+        @Test
+        fun `model with nullable attribute is not required if option set`() {
+            val description = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") {
+                it.attr(
+                    name = "name",
+                    type = StringType(),
+                    markdownDescription = "The name of the dog",
+                    required = true
+                )
+
+                it.attr(
+                    name = "address",
+                    type = AllowsNull(StringType()),
+                    markdownDescription = "The address of the dog",
+                    required = true
+                )
+            }
+
+            val schemaStr = """
+            {
+              "id" : "com.shoprunner.data.dogs.Dog",
+              "definitions" : {
+                "record:com.shoprunner.data.dogs.Dog" : {
+                  "description" : "It's a dog. Ruff Ruff!",
+                  "type" : "object",
+                  "required" : [ "name" ],
+                  "additionalProperties" : false,
+                  "properties" : {
+                    "name" : {
+                      "description" : "The name of the dog",
+                      "type" : "string",
+                      "maxLength" : 2147483647,
+                      "minLength" : 0
+                    },
+                    "address" : {
+                      "description" : "The address of the dog",
+                      "oneOf" : [
+                        {
+                          "type" : "null"
+                        },
+                        {
+                          "type" : "string",
+                          "maxLength" : 2147483647,
+                          "minLength" : 0
+                        }
+                      ]
+                    }
+                  }
+                }
+              },
+              "${'$'}ref" : "#/definitions/record:com.shoprunner.data.dogs.Dog",
+              "${'$'}schema" : "http://json-schema.org/draft-04/schema"
+
+            }""".trimIndent()
+
+            val outputStream = ByteArrayOutputStream()
+            JsonSchemaGenerator.encode(description, Options(nullableFieldsNotRequired = true)).writeTo(PrintStream(outputStream), true)
 
             Assertions.assertThat(outputStream.toString()).isEqualToIgnoringWhitespace(schemaStr)
         }
