@@ -4,6 +4,7 @@ import com.shoprunner.baleen.AttributeDescription
 import com.shoprunner.baleen.BaleenType
 import com.shoprunner.baleen.DataDescription
 import com.shoprunner.baleen.NoDefault
+import com.shoprunner.baleen.annotation.Alias
 import com.shoprunner.baleen.types.AllowsNull
 import com.shoprunner.baleen.types.BooleanType
 import com.shoprunner.baleen.types.CoercibleType
@@ -20,6 +21,7 @@ import com.shoprunner.baleen.types.OccurrencesType
 import com.shoprunner.baleen.types.StringConstantType
 import com.shoprunner.baleen.types.StringType
 import com.shoprunner.baleen.types.TimestampMillisType
+import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FileSpec
@@ -188,9 +190,26 @@ object DataClassGenerator {
             }
         }
 
+    internal fun ParameterSpec.Builder.addAliasAnnotation(aliases: Array<String>): ParameterSpec.Builder =
+        this.apply {
+            if (aliases.isNotEmpty()) {
+                val aliasAnnotation = AnnotationSpec.builder(Alias::class)
+                aliases.forEach {
+                    aliasAnnotation.addMember(CodeBlock.of("%S", it))
+                }
+
+                addAnnotation(aliasAnnotation.build())
+            }
+        }
+
     internal fun FunSpec.Builder.addAttributeDescription(attr: AttributeDescription, options: Options): FunSpec.Builder {
         val typeName = attr.type.asTypeName(options)
-        return addParameter(ParameterSpec.builder(attr.name, typeName).defaultValue(attr.type, attr.default).build())
+        return addParameter(
+            ParameterSpec.builder(attr.name, typeName)
+                .addAliasAnnotation(attr.aliases)
+                .defaultValue(attr.type, attr.default)
+                .build()
+        )
     }
 
     internal fun TypeSpec.Builder.addDataDescription(dataDescription: DataDescription, options: Options): TypeSpec.Builder {
