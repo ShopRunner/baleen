@@ -7,8 +7,10 @@ import com.shoprunner.baleen.types.DoubleType
 import com.shoprunner.baleen.types.FloatType
 import com.shoprunner.baleen.types.InstantType
 import com.shoprunner.baleen.types.IntType
+import com.shoprunner.baleen.types.IntegerType
 import com.shoprunner.baleen.types.LongType
 import com.shoprunner.baleen.types.MapType
+import com.shoprunner.baleen.types.NumericType
 import com.shoprunner.baleen.types.OccurrencesType
 import com.shoprunner.baleen.types.StringType
 import com.squareup.kotlinpoet.AnnotationSpec
@@ -153,6 +155,10 @@ internal class DataDescriptionBuilder(
             name == "kotlin.Double" -> CodeBlock.of("%T()", DoubleType::class)
             name == "kotlin.Int" -> CodeBlock.of("%T()", IntType::class)
             name == "kotlin.Long" -> CodeBlock.of("%T()", LongType::class)
+            name == "kotlin.Byte" -> CodeBlock.of("%T(min = Byte.MIN_VALUE.toInt().toBigInteger(), max = Byte.MAX_VALUE.toInt().toBigInteger())", IntegerType::class)
+            name == "kotlin.Short" -> CodeBlock.of("%T(min = Short.MIN_VALUE.toInt().toBigInteger(), max = Short.MAX_VALUE.toInt().toBigInteger())", IntegerType::class)
+            name == "java.math.BigInteger" -> CodeBlock.of("%T()", IntegerType::class)
+            name == "java.math.BigDecimal" -> CodeBlock.of("%T()", NumericType::class)
 
             // Time Types
             name == "java.time.Instant" -> CodeBlock.of("%T()", InstantType::class)

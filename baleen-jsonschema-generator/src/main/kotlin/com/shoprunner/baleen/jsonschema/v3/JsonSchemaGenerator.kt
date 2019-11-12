@@ -21,8 +21,10 @@ import com.shoprunner.baleen.types.EnumType
 import com.shoprunner.baleen.types.FloatType
 import com.shoprunner.baleen.types.InstantType
 import com.shoprunner.baleen.types.IntType
+import com.shoprunner.baleen.types.IntegerType
 import com.shoprunner.baleen.types.LongType
 import com.shoprunner.baleen.types.MapType
+import com.shoprunner.baleen.types.NumericType
 import com.shoprunner.baleen.types.OccurrencesType
 import com.shoprunner.baleen.types.StringConstantType
 import com.shoprunner.baleen.types.StringType
@@ -67,9 +69,17 @@ object JsonSchemaGenerator {
                 maximum = baleenType.max.toDouble()
                 minimum = baleenType.min.toDouble()
             }
+            is IntegerType -> IntegerSchema().apply {
+                maximum = baleenType.max?.toDouble()
+                minimum = baleenType.min?.toDouble()
+            }
             is LongType -> IntegerSchema().apply {
                 maximum = baleenType.max.toDouble()
                 minimum = baleenType.min.toDouble()
+            }
+            is NumericType -> NumberSchema().apply {
+                maximum = baleenType.max?.toDouble()
+                minimum = baleenType.min?.toDouble()
             }
             is StringType -> StringSchema().apply {
                 maxLength = baleenType.max

@@ -12,7 +12,9 @@ import com.shoprunner.baleen.types.EnumType
 import com.shoprunner.baleen.types.FloatType
 import com.shoprunner.baleen.types.InstantType
 import com.shoprunner.baleen.types.IntType
+import com.shoprunner.baleen.types.IntegerType
 import com.shoprunner.baleen.types.LongType
+import com.shoprunner.baleen.types.NumericType
 import com.shoprunner.baleen.types.OccurrencesType
 import com.shoprunner.baleen.types.StringType
 import com.shoprunner.baleen.types.TimestampMillisType
@@ -89,12 +91,24 @@ object XsdGenerator {
                     maxInclusive = MaxInclusive(baleenType.max.toBigDecimal()),
                     minInclusive = MinInclusive(baleenType.min.toBigDecimal()))
             ))
+            is IntegerType -> TypeDetails(simpleType = SimpleType(
+                Restriction(
+                    base = "xs:int",
+                    maxInclusive = baleenType.max?.let { MaxInclusive(it.toBigDecimal()) },
+                    minInclusive = baleenType.min?.let { MinInclusive(it.toBigDecimal()) })
+            ))
             is LongType -> TypeDetails(simpleType = SimpleType(
                                 Restriction(
                                     base = "xs:long",
                                     maxInclusive = MaxInclusive(baleenType.max.toBigDecimal()),
                                     minInclusive = MinInclusive(baleenType.min.toBigDecimal()))
                             ))
+            is NumericType -> TypeDetails(simpleType = SimpleType(
+                Restriction(
+                    base = "xs:double",
+                    maxInclusive = baleenType.max?.let { MaxInclusive(it) },
+                    minInclusive = baleenType.min?.let { MinInclusive(it) })
+            ))
             is OccurrencesType -> recursiveTypeMapper(typeMapper, baleenType.memberType).copy(maxOccurs = "unbounded")
             is CoercibleType -> recursiveTypeMapper(typeMapper, baleenType.type)
             is StringType -> TypeDetails(

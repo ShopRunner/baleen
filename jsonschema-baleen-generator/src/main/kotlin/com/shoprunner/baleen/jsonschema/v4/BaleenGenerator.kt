@@ -5,11 +5,11 @@ import com.shoprunner.baleen.Baleen
 import com.shoprunner.baleen.DataDescription
 import com.shoprunner.baleen.types.AllowsNull
 import com.shoprunner.baleen.types.BooleanType
-import com.shoprunner.baleen.types.DoubleType
 import com.shoprunner.baleen.types.EnumType
 import com.shoprunner.baleen.types.InstantType
-import com.shoprunner.baleen.types.LongType
+import com.shoprunner.baleen.types.IntegerType
 import com.shoprunner.baleen.types.MapType
+import com.shoprunner.baleen.types.NumericType
 import com.shoprunner.baleen.types.OccurrencesType
 import com.shoprunner.baleen.types.StringConstantType
 import com.shoprunner.baleen.types.StringType
@@ -146,12 +146,19 @@ object BaleenGenerator {
                         .build()
             is BooleanSchema -> CodeBlock.of("%T()", BooleanType::class)
             is IntegerSchema -> {
-                if ((schema.minimum == null || schema.minimum == Long.MIN_VALUE) && (schema.maximum == null || schema.maximum == Long.MAX_VALUE)) {
-                    CodeBlock.of("%T()", LongType::class)
-                } else {
-                    CodeBlock.of("%T(${schema.minimum ?: "Long.MIN_VALUE"}, ${schema.maximum
-                            ?: "Long.MAX_VALUE"})", LongType::class)
-                }
+                CodeBlock.builder().apply {
+                    add("%T(", IntegerType::class)
+                    if (schema.minimum != null) {
+                        add("min = %L.toBigInteger()", schema.minimum)
+                    }
+                    if (schema.maximum != null) {
+                        if (schema.minimum != null) {
+                            add(", ")
+                        }
+                        add("max = %L.toBigInteger()", schema.maximum)
+                    }
+                    add(")")
+                }.build()
             }
             is MapSchema -> {
                 CodeBlock.builder()
@@ -161,12 +168,25 @@ object BaleenGenerator {
                         .build()
             }
             is NumberSchema -> {
-                if ((schema.minimum == null || schema.minimum == Double.NEGATIVE_INFINITY) && (schema.maximum == null || schema.maximum == Double.POSITIVE_INFINITY)) {
-                    CodeBlock.of("%T()", DoubleType::class)
-                } else {
-                    CodeBlock.of("%T(${schema.minimum ?: "Double.NEGATIVE_INFINITY"}, ${schema.maximum
-                            ?: "Double.POSITIVE_INFINITY"})", DoubleType::class)
-                }
+                CodeBlock.builder().apply {
+                    add("%T(", NumericType::class)
+                    if (schema.minimum != null) {
+                        add("\n")
+                        indent()
+                        add("min = %L.toBigDecimal()", schema.minimum)
+                        if (schema.maximum != null) {
+                            add(",")
+                        }
+                        unindent()
+                    }
+                    if (schema.maximum != null) {
+                        add("\n")
+                        indent()
+                        add("max = %L.toBigDecimal()", schema.maximum)
+                        unindent()
+                    }
+                    add(")")
+                }.build()
             }
             is ObjectReference -> CodeBlock.of("%L", schema.`$ref`.split(":").last())
             is OneOf -> toUnionType(schema.oneOf)

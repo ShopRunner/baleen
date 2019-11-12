@@ -9,7 +9,9 @@ import com.shoprunner.baleen.types.DoubleType
 import com.shoprunner.baleen.types.FloatType
 import com.shoprunner.baleen.types.InstantType
 import com.shoprunner.baleen.types.IntType
+import com.shoprunner.baleen.types.IntegerType
 import com.shoprunner.baleen.types.LongType
+import com.shoprunner.baleen.types.NumericType
 import com.shoprunner.baleen.types.StringType
 import java.time.Instant
 import org.assertj.core.api.Assertions.assertThat
@@ -80,6 +82,58 @@ internal class BasicModelTest {
             .hasNamespace("com.shoprunner.baleen.kotlin.kapt.test")
             .hasAttribute("doubleNumber", DoubleType())
             .hasAttribute("nullableDoubleNumber", AllowsNull(DoubleType()))
+
+        assertThat(model.validate().isValid()).isTrue()
+    }
+
+    @Test
+    fun `test data class with bytes produce valid data descriptions`() {
+        val model = ByteModel(1, null)
+
+        assertBaleen(model.dataDescription())
+            .hasName("ByteModel")
+            .hasNamespace("com.shoprunner.baleen.kotlin.kapt.test")
+            .hasAttribute("byteNumber", IntegerType(min = Byte.MIN_VALUE.toInt().toBigInteger(), max = Byte.MAX_VALUE.toInt().toBigInteger()))
+            .hasAttribute("nullableByteNumber", AllowsNull(IntegerType(min = Byte.MIN_VALUE.toInt().toBigInteger(), max = Byte.MAX_VALUE.toInt().toBigInteger())))
+
+        assertThat(model.validate().isValid()).isTrue()
+    }
+
+    @Test
+    fun `test data class with shorts produce valid data descriptions`() {
+        val model = ShortModel(1, null)
+
+        assertBaleen(model.dataDescription())
+            .hasName("ShortModel")
+            .hasNamespace("com.shoprunner.baleen.kotlin.kapt.test")
+            .hasAttribute("shortNumber", IntegerType(min = Short.MIN_VALUE.toInt().toBigInteger(), max = Short.MAX_VALUE.toInt().toBigInteger()))
+            .hasAttribute("nullableShortNumber", AllowsNull(IntegerType(min = Short.MIN_VALUE.toInt().toBigInteger(), max = Short.MAX_VALUE.toInt().toBigInteger())))
+
+        assertThat(model.validate().isValid()).isTrue()
+    }
+
+    @Test
+    fun `test data class with BigIntegers produce valid data descriptions`() {
+        val model = BigIntegerModel(1.toBigInteger(), null)
+
+        assertBaleen(model.dataDescription())
+            .hasName("BigIntegerModel")
+            .hasNamespace("com.shoprunner.baleen.kotlin.kapt.test")
+            .hasAttribute("bigIntegerNumber", IntegerType())
+            .hasAttribute("nullableBigIntegerNumber", AllowsNull(IntegerType()))
+
+        assertThat(model.validate().isValid()).isTrue()
+    }
+
+    @Test
+    fun `test data class with BigDecimal produce valid data descriptions`() {
+        val model = BigDecimalModel(1.0.toBigDecimal(), null)
+
+        assertBaleen(model.dataDescription())
+            .hasName("BigDecimalModel")
+            .hasNamespace("com.shoprunner.baleen.kotlin.kapt.test")
+            .hasAttribute("bigDecimalNumber", NumericType())
+            .hasAttribute("nullableBigDecimalNumber", AllowsNull(NumericType()))
 
         assertThat(model.validate().isValid()).isTrue()
     }

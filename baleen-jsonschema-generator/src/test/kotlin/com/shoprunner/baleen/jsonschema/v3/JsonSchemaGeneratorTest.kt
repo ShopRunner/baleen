@@ -19,8 +19,10 @@ import com.shoprunner.baleen.types.EnumType
 import com.shoprunner.baleen.types.FloatType
 import com.shoprunner.baleen.types.InstantType
 import com.shoprunner.baleen.types.IntType
+import com.shoprunner.baleen.types.IntegerType
 import com.shoprunner.baleen.types.LongType
 import com.shoprunner.baleen.types.MapType
+import com.shoprunner.baleen.types.NumericType
 import com.shoprunner.baleen.types.OccurrencesType
 import com.shoprunner.baleen.types.StringCoercibleToFloat
 import com.shoprunner.baleen.types.StringConstantType
@@ -87,6 +89,40 @@ internal class JsonSchemaGeneratorTest {
             Assertions.assertThat(schema.isIntegerSchema).isTrue()
             Assertions.assertThat((schema as IntegerSchema).minimum).isEqualTo(Long.MIN_VALUE.toDouble())
             Assertions.assertThat(schema.maximum).isEqualTo(Long.MAX_VALUE.toDouble())
+        }
+
+        @Test
+        @Suppress("USELESS_CAST")
+        fun `getJsonSchema encodes integer type`() {
+            val schema = JsonSchemaGenerator.getJsonSchema(IntegerType())
+            Assertions.assertThat(schema.isIntegerSchema).isTrue()
+            Assertions.assertThat((schema as IntegerSchema).minimum as Double?).isNull()
+            Assertions.assertThat(schema.maximum as Double?).isNull()
+        }
+
+        @Test
+        fun `getJsonSchema encodes integer type with limits`() {
+            val schema = JsonSchemaGenerator.getJsonSchema(IntegerType(min = 0.toBigInteger(), max = 10.toBigInteger()))
+            Assertions.assertThat(schema.isIntegerSchema).isTrue()
+            Assertions.assertThat((schema as IntegerSchema).minimum).isEqualTo(0.0)
+            Assertions.assertThat(schema.maximum).isEqualTo(10.0)
+        }
+
+        @Test
+        @Suppress("USELESS_CAST")
+        fun `getJsonSchema encodes numeric type`() {
+            val schema = JsonSchemaGenerator.getJsonSchema(NumericType())
+            Assertions.assertThat(schema.isNumberSchema).isTrue()
+            Assertions.assertThat((schema as NumberSchema).minimum as Double?).isNull()
+            Assertions.assertThat(schema.maximum as Double?).isNull()
+        }
+
+        @Test
+        fun `getJsonSchema encodes numeric type with limits`() {
+            val schema = JsonSchemaGenerator.getJsonSchema(NumericType(min = 0.toBigDecimal(), max = 10.toBigDecimal()))
+            Assertions.assertThat(schema.isNumberSchema).isTrue()
+            Assertions.assertThat((schema as NumberSchema).minimum).isEqualTo(0.0)
+            Assertions.assertThat(schema.maximum).isEqualTo(10.0)
         }
 
         @Test
