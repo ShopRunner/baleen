@@ -144,7 +144,13 @@ object JsonSchemaGenerator {
         }
     }
 
-    @Deprecated("Use encode with Options")
+    @Deprecated("Use encode with Options",
+        ReplaceWith(
+            "encode(dataDescription, Options(additionalAttributes = withAdditionalAttributes))",
+            "com.shoprunner.baleen.jsonschema.v4.JsonSchemaGenerator.encode",
+            "com.shoprunner.baleen.jsonschema.v4.Options"
+        )
+    )
     fun encode(dataDescription: DataDescription, withAdditionalAttributes: Boolean): RootJsonSchema =
         encode(dataDescription, Options(additionalAttributes = withAdditionalAttributes))
 
@@ -158,7 +164,13 @@ object JsonSchemaGenerator {
         return RootJsonSchema(id, results.second.toSortedMap(), ref, schema)
     }
 
-    @Deprecated("Use encodeAsSelfDescribing with Options")
+    @Deprecated("Use encodeAsSelfDescribing with Options",
+        ReplaceWith(
+            "encodeAsSelfDescribing(dataDescription, version, Options(additionalAttributes = withAdditionalAttributes))",
+            "com.shoprunner.baleen.jsonschema.v4.JsonSchemaGenerator.encodeAsSelfDescribing",
+            "com.shoprunner.baleen.jsonschema.v4.Options"
+        )
+    )
     fun encodeAsSelfDescribing(dataDescription: DataDescription, version: String, withAdditionalAttributes: Boolean): RootJsonSchema =
         encodeAsSelfDescribing(dataDescription, version, Options(additionalAttributes = withAdditionalAttributes))
 
