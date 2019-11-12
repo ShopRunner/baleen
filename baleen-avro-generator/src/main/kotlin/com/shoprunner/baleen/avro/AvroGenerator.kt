@@ -71,7 +71,7 @@ object AvroGenerator {
         }
     }
 
-    fun encode(dataDescription: DataDescription): Schema {
+    fun encode(dataDescription: DataDescription, options: Options = Options()): Schema {
         val fields = dataDescription.attrs.map { attr ->
             if (!attr.required && attr.default == NoDefault) {
                 throw IllegalArgumentException("Optional value without the required default value for ${attr.name}")
