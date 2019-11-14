@@ -1,6 +1,8 @@
 package com.shoprunner.baleen.kapt
 
 import com.shoprunner.baleen.Baleen
+import com.shoprunner.baleen.annotation.Alias
+import com.shoprunner.baleen.annotation.Name
 import com.shoprunner.baleen.types.AllowsNull
 import com.shoprunner.baleen.types.BooleanType
 import com.shoprunner.baleen.types.DoubleType
@@ -102,7 +104,7 @@ internal class DataDescriptionBuilder(
             // name
             add(
                 "name = %S,\n",
-                attrName
+                param.getAnnotation(Name::class.java)?.value ?: attrName
             )
             // type
             add("type = ")
@@ -120,13 +122,13 @@ internal class DataDescriptionBuilder(
                 add("markdownDescription = %S,\n", comment)
             }
             // aliases
-            val aliases = emptyArray<String>()
+            val aliases = param.getAnnotation(Alias::class.java)?.value ?: emptyArray()
             if (aliases.isNotEmpty()) {
                 add(
                     // "%L = %L,\n",
                     // com.shoprunner.baleen.DataDescription::attr.parameters[4].name,
                     "aliases = %L,\n",
-                    aliases.joinToString(", ", prefix = "arrayOf(\"", postfix = "\")")
+                    aliases.joinToString("\", \"", prefix = "arrayOf(\"", postfix = "\")")
                 )
             }
             // required always set from data classes by default
