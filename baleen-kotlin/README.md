@@ -161,6 +161,9 @@ data class ModelWithDefaultValues(
     @DefaultValue(DefaultValueType.BigDecimal, defaultStringValue = "100.01")
     var bigDecimalDefault: BigDecimal = 100.01.toBigDecimal(),
 
+    @DefaultValue(DefaultValueType.Instant, defaultStringValue = "2019-11-19T10:15:30.00Z")
+    var instantDefault: Instant = Instant.parse("2019-11-19T10:15:30.00Z"),
+
     @DefaultValue(DefaultValueType.DataClass, defaultDataClassValue = SubModelWithDefaults::class)
     var classDefault: SubModelWithDefaults = SubModelWithDefaults(),
 

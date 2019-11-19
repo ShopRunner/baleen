@@ -214,7 +214,7 @@ annotation class DefaultValue(
  * Supported Default Value types
  */
 enum class DefaultValueType {
-    Null, Boolean, String, Int, Long, BigInteger, Float, Double, BigDecimal, DataClass, EmptyArray, EmptyList, EmptySet, EmptyMap
+    Null, Boolean, String, Int, Long, BigInteger, Float, Double, BigDecimal, DataClass, Instant, EmptyArray, EmptyList, EmptySet, EmptyMap
 }
 
 /**

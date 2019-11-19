@@ -6,6 +6,7 @@ import com.shoprunner.baleen.types.AllowsNull
 import com.shoprunner.baleen.types.BooleanType
 import com.shoprunner.baleen.types.DoubleType
 import com.shoprunner.baleen.types.FloatType
+import com.shoprunner.baleen.types.InstantType
 import com.shoprunner.baleen.types.IntType
 import com.shoprunner.baleen.types.IntegerType
 import com.shoprunner.baleen.types.LongType
@@ -13,6 +14,7 @@ import com.shoprunner.baleen.types.MapType
 import com.shoprunner.baleen.types.NumericType
 import com.shoprunner.baleen.types.OccurrencesType
 import com.shoprunner.baleen.types.StringType
+import java.time.Instant
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -70,6 +72,11 @@ internal class DefaultValueTest {
                 AttributeDescriptionAssert.assertThat(it)
                     .hasType(NumericType())
                     .hasDefaultValue(100.01.toBigDecimal())
+            }
+            .hasAttribute("instantDefault") {
+                AttributeDescriptionAssert.assertThat(it)
+                    .hasType(InstantType())
+                    .hasDefaultValue(Instant.parse("2019-11-19T10:15:30.00Z"))
             }
             .hasAttribute("classDefault") {
                 AttributeDescriptionAssert.assertThat(it)
