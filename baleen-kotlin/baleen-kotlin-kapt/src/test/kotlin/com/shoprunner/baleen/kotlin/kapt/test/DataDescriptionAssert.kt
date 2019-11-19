@@ -115,6 +115,7 @@ AbstractAssert<AttributeDescriptionAssert, AttributeDescription>(actual, Attribu
                 expectedAlias.toList()
             )
         }
+        return this
     }
 
     fun hasDefaultValue(expectedDefaultValue: Any?): AttributeDescriptionAssert {

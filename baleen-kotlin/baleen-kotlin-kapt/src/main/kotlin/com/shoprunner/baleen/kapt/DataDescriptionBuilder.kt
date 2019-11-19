@@ -2,9 +2,9 @@ package com.shoprunner.baleen.kapt
 
 import com.shoprunner.baleen.Baleen
 import com.shoprunner.baleen.annotation.Alias
-import com.shoprunner.baleen.annotation.Name
 import com.shoprunner.baleen.annotation.DefaultValue
 import com.shoprunner.baleen.annotation.DefaultValueType
+import com.shoprunner.baleen.annotation.Name
 import com.shoprunner.baleen.types.AllowsNull
 import com.shoprunner.baleen.types.BooleanType
 import com.shoprunner.baleen.types.DoubleType

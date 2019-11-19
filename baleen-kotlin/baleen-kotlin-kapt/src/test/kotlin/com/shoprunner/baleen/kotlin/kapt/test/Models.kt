@@ -2,9 +2,9 @@ package com.shoprunner.baleen.kotlin.kapt.test
 
 import com.shoprunner.baleen.annotation.Alias
 import com.shoprunner.baleen.annotation.DataDescription
-import com.shoprunner.baleen.annotation.Name
 import com.shoprunner.baleen.annotation.DefaultValue
 import com.shoprunner.baleen.annotation.DefaultValueType
+import com.shoprunner.baleen.annotation.Name
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.time.Instant
