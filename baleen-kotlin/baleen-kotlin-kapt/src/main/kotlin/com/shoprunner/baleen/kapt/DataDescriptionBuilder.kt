@@ -27,6 +27,7 @@ import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asTypeName
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import java.io.File
+import java.time.Instant
 import javax.annotation.processing.Messager
 import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind
@@ -173,6 +174,7 @@ internal class DataDescriptionBuilder(
                     DefaultValueType.DataClass -> add("default = %T()", toTypeName {
                         defaultValueAnnotation.defaultDataClassValue
                     })
+                    DefaultValueType.Instant -> add("default = %T.parse(%S)", Instant::class, defaultValueAnnotation.defaultStringValue)
                     DefaultValueType.EmptyArray -> add("default = emptyArray<%T>()",
                         toTypeName { defaultValueAnnotation.defaultElementClass }.javaToKotlinType()
                     )

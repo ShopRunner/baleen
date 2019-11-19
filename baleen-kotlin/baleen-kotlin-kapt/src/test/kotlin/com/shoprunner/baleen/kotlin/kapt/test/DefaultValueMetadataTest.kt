@@ -89,6 +89,11 @@ internal class DefaultValueMetadataTest {
                     .hasType(NumericType())
                     .hasDefaultValue(100.01.toBigDecimal())
             }
+            .hasAttribute("instantDefault") {
+                AttributeDescriptionAssert.assertThat(it)
+                    .hasType(InstantType())
+                    .hasDefaultValue(Instant.parse("2019-11-19T10:15:30.00Z"))
+            }
             .hasAttribute("classDefault") {
                 AttributeDescriptionAssert.assertThat(it)
                     .hasType(SubModelWithDefaults().dataDescription())

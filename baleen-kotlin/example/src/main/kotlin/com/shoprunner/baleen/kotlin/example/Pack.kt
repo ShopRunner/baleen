@@ -1,13 +1,12 @@
 package com.shoprunner.baleen.kotlin.example
 
 import com.shoprunner.baleen.annotation.DataDescription
-import com.shoprunner.baleen.annotation.DefaultValue
-import com.shoprunner.baleen.annotation.DefaultValueType
+import com.shoprunner.baleen.annotation.DefaultNull
 
 @DataDescription
 data class Pack(
     val packName: String,
     val dogs: List<Dog>,
-    @DefaultValue(DefaultValueType.Null)
+    @DefaultNull
     val leadDog: Dog? = null
 )
