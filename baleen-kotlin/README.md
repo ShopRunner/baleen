@@ -134,7 +134,7 @@ import com.shoprunner.baleen.annotation.DefaultValueType
 
 @DataDescription
 data class ModelWithDefaultValues(
-    @DefaultValue(DefaultValueType.Null)
+    @DefaultNull // Alias for @DefaultValue(DefaultValueType.Null)
     var nullDefault: String? = null,
 
     @DefaultValue(DefaultValueType.Boolean, defaultBooleanValue = true)

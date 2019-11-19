@@ -2,6 +2,7 @@ package com.shoprunner.baleen.kotlin.kapt.test
 
 import com.shoprunner.baleen.annotation.Alias
 import com.shoprunner.baleen.annotation.DataDescription
+import com.shoprunner.baleen.annotation.DefaultNull
 import com.shoprunner.baleen.annotation.DefaultValue
 import com.shoprunner.baleen.annotation.DefaultValueType
 import com.shoprunner.baleen.annotation.Name
@@ -284,7 +285,7 @@ data class ModelWithAliases(
 /** This model has defaults set */
 @DataDescription
 data class ModelWithDefaultValues(
-    @DefaultValue(DefaultValueType.Null)
+    @DefaultNull
     var nullDefault: String? = null,
 
     @DefaultValue(DefaultValueType.Boolean, defaultBooleanValue = true)
