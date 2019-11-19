@@ -18,13 +18,13 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-internal class DefaultValueTest {
+internal class DefaultValueAnnotationsTest {
     @Test
     fun `test data class with defaults produce valid data descriptions`() {
-        val model = ModelWithDefaultValues(noDefault = "None")
+        val model = ModelWithDefaultValuesWithAnnotations(noDefault = "None")
 
         DataDescriptionAssert.assertThat(model.dataDescription())
-            .hasName("ModelWithDefaultValues")
+            .hasName("ModelWithDefaultValuesWithAnnotations")
             .hasNamespace("com.shoprunner.baleen.kotlin.kapt.test")
             .hasAttribute("nullDefault") {
                 AttributeDescriptionAssert.assertThat(it)
