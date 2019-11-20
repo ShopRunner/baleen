@@ -1,24 +1,32 @@
 package com.shoprunner.baleen.kapt
 
+import com.shoprunner.baleen.annotation.DefaultValue
+import com.shoprunner.baleen.annotation.DefaultValueType
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.MemberName
+import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asClassName
+import com.squareup.kotlinpoet.asTypeName
+import com.squareup.kotlinpoet.metadata.ImmutableKmConstructor
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.declaresDefaultValue
 import com.squareup.kotlinpoet.metadata.isNullable
 import com.squareup.kotlinpoet.metadata.isPrimary
 import com.squareup.kotlinpoet.metadata.toImmutableKmClass
 import java.time.Instant
+import javax.lang.model.element.Element
+import javax.lang.model.element.ElementKind
+import javax.lang.model.element.Name
 import javax.lang.model.element.TypeElement
+import javax.lang.model.element.VariableElement
+import javax.lang.model.type.MirroredTypeException
+import kotlin.reflect.KClass
 import kotlinx.metadata.KmClassifier
 
 internal data class DefaultValueContainer(
     val defaultValueInstance: CodeBlock,
-    val attributes: Map<String, CodeBlock>
+    val attributes: Map<Name, CodeBlock>
 )
-
-@KotlinPoetMetadataPreview
-internal fun DataDescriptionElement.defaultValues(): DefaultValueContainer = this.typeElement.defaultValues()
 
 @KotlinPoetMetadataPreview
 internal fun TypeElement.defaultValues(): DefaultValueContainer {
@@ -34,12 +42,12 @@ internal fun TypeElement.defaultValues(): DefaultValueContainer {
             primaryConstructor.valueParameters.filterNot { it.declaresDefaultValue }.forEachIndexed { i, it ->
                 if (i != 0) add(", ")
                 add("%L = ", it.name)
-                val kmType = it.type
-                val kmClassifier = kmType?.classifier as KmClassifier.Class
-                val className = kmClassifier.name
-                when {
-                    it.type?.isNullable == true -> add("null")
-                    else -> when (className) {
+                if (it.type?.isNullable == true) {
+                    add("null")
+                } else {
+                    val kmClassifier = it.type?.classifier as KmClassifier.Class
+                    val className = kmClassifier.name
+                    when (className) {
                         "kotlin/String" -> add("%S", "IGNORE")
                         "kotlin/Int" -> add("-1")
                         "kotlin/Long" -> add("-1L")
@@ -70,48 +78,75 @@ internal fun TypeElement.defaultValues(): DefaultValueContainer {
         .add(")")
         .build()
 
-    val fieldsWithDefaults = primaryConstructor.valueParameters
-        .filter { it.declaresDefaultValue }
-        .map {
-            val n = this.qualifiedName.toString().split(".")
-            val pkg = n.subList(0, n.size - 1).joinToString(".")
-            val name = n.last()
-            it.name to CodeBlock.of("%M.%L", MemberName(pkg, "${name}Defaults"), it.name) }
+    val fieldsWithDefaults = (this.enclosedElements ?: emptyList<Element>())
+        .filter { it.kind == ElementKind.FIELD }
+        .map { it as VariableElement }
+        .filter { it.declaresDefault(primaryConstructor) }
+        .map { field ->
+            if (field.isAnnotationPresent(DefaultValue::class.java)) {
+                field.simpleName to field.getDefaultValueFromAnnotation()
+            } else {
+                val n = this.qualifiedName.toString().split(".")
+                val pkg = n.subList(0, n.size - 1).joinToString(".")
+                val name = n.last()
+                field.simpleName to CodeBlock.of("%M.%L", MemberName(pkg, "${name}Defaults"), field.simpleName)
+            }
+        }
         .toMap()
 
     return DefaultValueContainer(defaultValInstance, fieldsWithDefaults)
 }
-/*
-if (param.isAnnotationPresent(DefaultValue::class.java)) {
-                val defaultValueAnnotation = param.getAnnotation(DefaultValue::class.java)
-                add(",\n")
-                when (defaultValueAnnotation.type) {
-                    DefaultValueType.Null -> add("default = null")
-                    DefaultValueType.Boolean -> add("default = %L", defaultValueAnnotation.defaultBooleanValue)
-                    DefaultValueType.String -> add("default = %S", defaultValueAnnotation.defaultStringValue)
-                    DefaultValueType.Int -> add("default = %L", defaultValueAnnotation.defaultIntValue)
-                    DefaultValueType.Long -> add("default = %LL", defaultValueAnnotation.defaultLongValue)
-                    DefaultValueType.BigInteger -> add("default = %S.toBigInteger()", defaultValueAnnotation.defaultStringValue)
-                    DefaultValueType.Float -> add("default = %Lf", defaultValueAnnotation.defaultFloatValue)
-                    DefaultValueType.Double -> add("default = %L", defaultValueAnnotation.defaultDoubleValue)
-                    DefaultValueType.BigDecimal -> add("default = %S.toBigDecimal()", defaultValueAnnotation.defaultStringValue)
-                    DefaultValueType.DataClass -> add("default = %T()", toTypeName {
-                        defaultValueAnnotation.defaultDataClassValue
-                    })
-                    DefaultValueType.EmptyArray -> add("default = emptyArray<%T>()",
-                        toTypeName { defaultValueAnnotation.defaultElementClass }.javaToKotlinType()
-                    )
-                    DefaultValueType.EmptyList -> add("default = emptyList<%T>()",
-                        toTypeName { defaultValueAnnotation.defaultElementClass }.javaToKotlinType()
-                    )
-                    DefaultValueType.EmptySet -> add("default = emptySet<%T>()",
-                        toTypeName { defaultValueAnnotation.defaultElementClass }.javaToKotlinType()
-                    )
-                    DefaultValueType.EmptyMap -> add("default = emptyMap<%T, %T>()",
-                        toTypeName { defaultValueAnnotation.defaultKeyClass }.javaToKotlinType(),
-                        toTypeName { defaultValueAnnotation.defaultElementClass }.javaToKotlinType()
-                    )
-                }
-            }
 
- */
+@KotlinPoetMetadataPreview
+fun VariableElement.declaresDefault(primaryConstructor: ImmutableKmConstructor): Boolean {
+    return this.isAnnotationPresent(DefaultValue::class.java) || primaryConstructor
+        .valueParameters
+        .filter { it.name == this.simpleName.toString() }
+        .any { it.declaresDefaultValue }
+}
+
+fun VariableElement.getDefaultValueFromAnnotation(): CodeBlock {
+    val defaultValueAnnotation = this.getAnnotation(DefaultValue::class.java)
+    return when (defaultValueAnnotation.type) {
+        DefaultValueType.Null -> CodeBlock.of("null")
+        DefaultValueType.Boolean -> CodeBlock.of("%L", defaultValueAnnotation.defaultBooleanValue)
+        DefaultValueType.String -> CodeBlock.of("%S", defaultValueAnnotation.defaultStringValue)
+        DefaultValueType.Int -> CodeBlock.of("%L", defaultValueAnnotation.defaultIntValue)
+        DefaultValueType.Long -> CodeBlock.of("%LL", defaultValueAnnotation.defaultLongValue)
+        DefaultValueType.BigInteger -> CodeBlock.of("%S.toBigInteger()", defaultValueAnnotation.defaultStringValue)
+        DefaultValueType.Float -> CodeBlock.of("%Lf", defaultValueAnnotation.defaultFloatValue)
+        DefaultValueType.Double -> CodeBlock.of("%L", defaultValueAnnotation.defaultDoubleValue)
+        DefaultValueType.BigDecimal -> CodeBlock.of("%S.toBigDecimal()", defaultValueAnnotation.defaultStringValue)
+        DefaultValueType.Instant -> CodeBlock.of(
+            "%T.parse(%S)",
+            Instant::class,
+            defaultValueAnnotation.defaultStringValue
+        )
+        DefaultValueType.DataClass -> CodeBlock.of("%T()", toTypeName {
+            defaultValueAnnotation.defaultDataClassValue
+        })
+        DefaultValueType.EmptyArray -> CodeBlock.of(
+            "emptyArray<%T>()",
+            toTypeName { defaultValueAnnotation.defaultElementClass }.javaToKotlinType()
+        )
+        DefaultValueType.EmptyList -> CodeBlock.of(
+            "emptyList<%T>()",
+            toTypeName { defaultValueAnnotation.defaultElementClass }.javaToKotlinType()
+        )
+        DefaultValueType.EmptySet -> CodeBlock.of(
+            "emptySet<%T>()",
+            toTypeName { defaultValueAnnotation.defaultElementClass }.javaToKotlinType()
+        )
+        DefaultValueType.EmptyMap -> CodeBlock.of(
+            "emptyMap<%T, %T>()",
+            toTypeName { defaultValueAnnotation.defaultKeyClass }.javaToKotlinType(),
+            toTypeName { defaultValueAnnotation.defaultElementClass }.javaToKotlinType()
+        )
+    }
+}
+
+private inline fun toTypeName(clazzFun: () -> KClass<*>): TypeName = try {
+    clazzFun().asTypeName()
+} catch (e: MirroredTypeException) {
+    e.typeMirror.asTypeName()
+}

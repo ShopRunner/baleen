@@ -2,8 +2,6 @@ package com.shoprunner.baleen.kapt
 
 import com.shoprunner.baleen.Baleen
 import com.shoprunner.baleen.annotation.Alias
-import com.shoprunner.baleen.annotation.DefaultValue
-import com.shoprunner.baleen.annotation.DefaultValueType
 import com.shoprunner.baleen.annotation.Name
 import com.shoprunner.baleen.types.AllowsNull
 import com.shoprunner.baleen.types.BooleanType
@@ -23,22 +21,18 @@ import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.MemberName
 import com.squareup.kotlinpoet.PropertySpec
-import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asTypeName
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import java.io.File
-import java.time.Instant
 import javax.annotation.processing.Messager
 import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.VariableElement
 import javax.lang.model.type.ArrayType
 import javax.lang.model.type.DeclaredType
-import javax.lang.model.type.MirroredTypeException
 import javax.lang.model.type.TypeMirror
 import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
-import kotlin.reflect.KClass
 
 @KotlinPoetMetadataPreview
 internal class DataDescriptionBuilder(
@@ -158,55 +152,16 @@ internal class DataDescriptionBuilder(
                 true
             )
             // default
-            if (param.isAnnotationPresent(DefaultValue::class.java)) {
-                val defaultValueAnnotation = param.getAnnotation(DefaultValue::class.java)
+            val defaultValue = defaultValueContainer.attributes[param.simpleName]
+            if (defaultValue != null) {
                 add(",\n")
-                when (defaultValueAnnotation.type) {
-                    DefaultValueType.Null -> add("default = null")
-                    DefaultValueType.Boolean -> add("default = %L", defaultValueAnnotation.defaultBooleanValue)
-                    DefaultValueType.String -> add("default = %S", defaultValueAnnotation.defaultStringValue)
-                    DefaultValueType.Int -> add("default = %L", defaultValueAnnotation.defaultIntValue)
-                    DefaultValueType.Long -> add("default = %LL", defaultValueAnnotation.defaultLongValue)
-                    DefaultValueType.BigInteger -> add("default = %S.toBigInteger()", defaultValueAnnotation.defaultStringValue)
-                    DefaultValueType.Float -> add("default = %Lf", defaultValueAnnotation.defaultFloatValue)
-                    DefaultValueType.Double -> add("default = %L", defaultValueAnnotation.defaultDoubleValue)
-                    DefaultValueType.BigDecimal -> add("default = %S.toBigDecimal()", defaultValueAnnotation.defaultStringValue)
-                    DefaultValueType.DataClass -> add("default = %T()", toTypeName {
-                        defaultValueAnnotation.defaultDataClassValue
-                    })
-                    DefaultValueType.Instant -> add("default = %T.parse(%S)", Instant::class, defaultValueAnnotation.defaultStringValue)
-                    DefaultValueType.EmptyArray -> add("default = emptyArray<%T>()",
-                        toTypeName { defaultValueAnnotation.defaultElementClass }.javaToKotlinType()
-                    )
-                    DefaultValueType.EmptyList -> add("default = emptyList<%T>()",
-                        toTypeName { defaultValueAnnotation.defaultElementClass }.javaToKotlinType()
-                    )
-                    DefaultValueType.EmptySet -> add("default = emptySet<%T>()",
-                        toTypeName { defaultValueAnnotation.defaultElementClass }.javaToKotlinType()
-                    )
-                    DefaultValueType.EmptyMap -> add("default = emptyMap<%T, %T>()",
-                        toTypeName { defaultValueAnnotation.defaultKeyClass }.javaToKotlinType(),
-                        toTypeName { defaultValueAnnotation.defaultElementClass }.javaToKotlinType()
-                    )
-                }
-            } else {
-                val defaultValue = defaultValueContainer.attributes[param.simpleName.toString()]
-                if (defaultValue != null) {
-                    add(",\n")
-                    add("default = ")
-                    add(defaultValue)
-                }
+                add("default = ")
+                add(defaultValue)
             }
             add("\n")
             unindent()
             add(")")
         }.build()
-    }
-
-    private inline fun toTypeName(clazzFun: () -> KClass<*>): TypeName = try {
-        clazzFun().asTypeName()
-    } catch (e: MirroredTypeException) {
-        e.typeMirror.asTypeName()
     }
 
     private fun getAttrType(
