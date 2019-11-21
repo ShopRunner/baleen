@@ -278,3 +278,73 @@ data class ModelWithAliases(
     @Alias("another_name1", "another_name2")
     var anotherName: String
 )
+
+/** This model has defaults set */
+@DataDescription
+data class ModelWithDefaultValues(
+    var nullDefault: String? = null,
+
+    var booleanDefault: Boolean = true,
+
+    var stringDefault: String = "default",
+
+    var intDefault: Int = 100,
+
+    var longDefault: Long = 100L,
+
+    var bigIntDefault: BigInteger = 100L.toBigInteger(),
+
+    var floatDefault: Float = 1.1f,
+
+    var doubleDefault: Double = 1.1,
+
+    var bigDecimalDefault: BigDecimal = 100.01.toBigDecimal(),
+
+    var classDefault: SubModelWithDefaults = SubModelWithDefaults(),
+
+    var arrayDefault: Array<Int> = emptyArray(),
+
+    var listDefault: List<Int> = emptyList(),
+
+    var setDefault: Set<Int> = emptySet(),
+
+    var mapDefault: Map<String, Int> = emptyMap(),
+
+    var listOfModelDefault: List<SubModelWithDefaults> = emptyList(),
+
+    var noDefault: String,
+
+    var noDefaultNullable: String?,
+
+    var noDefaultInt: Int,
+
+    var noDefaultLong: Long,
+
+    var noDefaultBigInt: BigInteger,
+
+    var noDefaultFloat: Float,
+
+    var noDefaultDouble: Double,
+
+    var noDefaultBigDecimal: BigDecimal,
+
+    var noDefaultInstant: Instant,
+
+    var noDefaultArray: Array<Int>,
+
+    var noDefaultList: List<Int>,
+
+    var noDefaultSet: Set<Int>,
+
+    var noDefaultMap: Map<String, Int>,
+
+    var noDefaultSubModel: SubModelWithDefaults,
+
+    var noDefaultStringModel: StringModel
+
+)
+
+@DataDescription
+data class SubModelWithDefaults(
+    val str: String = "test"
+)
