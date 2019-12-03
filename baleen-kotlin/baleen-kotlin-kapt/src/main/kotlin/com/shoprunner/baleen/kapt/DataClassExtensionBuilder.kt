@@ -16,6 +16,8 @@ import com.squareup.kotlinpoet.MemberName
 import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.asTypeName
+import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
+import com.squareup.kotlinpoet.metadata.toImmutableKmClass
 import java.io.File
 import java.util.SortedSet
 import javax.annotation.processing.Messager
@@ -34,6 +36,7 @@ internal class DataClassExtensionBuilder(
     private val typeUtils: Types,
     private val messager: Messager
 ) {
+    @KotlinPoetMetadataPreview
     fun generateExtensionFile(
         dataDescriptionElement: DataDescriptionElement,
         allSchemas: Map<String, DataDescriptionElement>
@@ -42,6 +45,7 @@ internal class DataClassExtensionBuilder(
 
         val members = (typeElement.enclosedElements ?: emptyList<Element>())
             .filter { it.kind == ElementKind.FIELD }
+            .filter { m -> typeElement.toImmutableKmClass().properties.any { it.name == m.simpleName.toString() } }
 
         val commonPackagePrefix = allSchemas.values
             .map {
