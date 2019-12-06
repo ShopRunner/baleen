@@ -348,3 +348,10 @@ data class ModelWithDefaultValues(
 data class SubModelWithDefaults(
     val str: String = "test"
 )
+
+@DataDescription
+data class ModelWithCompanionObject(val message: String) {
+    companion object {
+        val message: String = "Hello"
+    }
+}

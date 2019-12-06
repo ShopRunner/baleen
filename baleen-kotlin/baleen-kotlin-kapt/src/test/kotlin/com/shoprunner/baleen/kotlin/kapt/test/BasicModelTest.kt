@@ -163,4 +163,16 @@ internal class BasicModelTest {
 
         assertThat(model.validate().isValid()).isTrue()
     }
+
+    @Test
+    fun `test data class won't serialize companion object`() {
+        val model = ModelWithCompanionObject("hello")
+
+        assertBaleen(model.dataDescription())
+            .hasName("ModelWithCompanionObject")
+            .hasNamespace("com.shoprunner.baleen.kotlin.kapt.test")
+            .hasAttribute("message", StringType())
+
+        assertThat(model.validate().isValid()).isTrue()
+    }
 }

@@ -24,6 +24,7 @@ import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asTypeName
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
+import com.squareup.kotlinpoet.metadata.toImmutableKmClass
 import java.io.File
 import javax.annotation.processing.Messager
 import javax.lang.model.element.Element
@@ -55,6 +56,7 @@ internal class DataDescriptionBuilder(
         val fileName = "${name.capitalize()}Type"
         val members = (typeElement.enclosedElements ?: emptyList<Element>())
             .filter { it.kind == ElementKind.FIELD }
+            .filter { m -> typeElement.toImmutableKmClass().properties.any { it.name == m.simpleName.toString() } }
 
         val defaultValueContainer = typeElement.defaultValues()
 
