@@ -55,7 +55,7 @@ object JsonSchemaGenerator {
     fun getJsonSchema(baleenType: BaleenType): JsonSchema {
         return when (baleenType) {
             is DataDescription -> encodeDescription(baleenType)
-            is CoercibleType -> getJsonSchema(baleenType.type)
+            is CoercibleType<*, *> -> getJsonSchema(baleenType.type)
             is BooleanType -> BooleanSchema()
             is FloatType -> NumberSchema().apply {
                 maximum = baleenType.max.toDouble()

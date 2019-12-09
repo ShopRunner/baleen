@@ -5,7 +5,7 @@ import com.shoprunner.baleen.DataTrace
 import com.shoprunner.baleen.ValidationError
 import com.shoprunner.baleen.ValidationResult
 
-open class LongCoercibleToType<out T : BaleenType>(type: T, private val converter: (Long) -> Any?) : CoercibleType(type) {
+open class LongCoercibleToType<out T : BaleenType>(type: T, private val converter: (Long) -> Any?) : CoercibleType<LongType, T>(type) {
     override fun name() = "long coercible to ${type.name()}"
 
     override fun validate(dataTrace: DataTrace, value: Any?): Sequence<ValidationResult> =
