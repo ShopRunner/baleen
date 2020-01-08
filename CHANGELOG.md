@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.11.0] - 2020-01-08
+
+- Support generating Data Description for Kotlin Data Class
+- NumericType and IntegerType
+
+Dependency Updates
+- rxjava 2.2.15
+- rxkotlin 2.4.0
+- kotlinter 2.2.0
+- dokka 0.10.0
+- kotlinpoet 1.4.4
+- assertj 3.14.0
+- avro 1.9.1
+- opencsv 5.0
+- kotlin 1.3.61
+- Gradle 6.0.1
+
+
 ## [1.10.4] - 2019-07-17
 
 Fix issed where occurences of XML elements containing text weren't being validated (https://github.com/ShopRunner/baleen/pull/51)
