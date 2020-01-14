@@ -1861,4 +1861,3 @@ internal class JsonSchemaGeneratorTest {
         }
     }
 }
-

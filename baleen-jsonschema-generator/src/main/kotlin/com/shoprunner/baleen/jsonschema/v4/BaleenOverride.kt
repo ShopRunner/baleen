@@ -39,7 +39,7 @@ inline fun <reified B : BaleenType> ((B, ObjectContext) -> Pair<JsonSchema, Map<
     val receiver = this
     return object : BaleenOverride {
         override fun matches(baleenType: BaleenType): Boolean {
-            return baleenType is B && (name?.let { baleenType.name() == name} ?: true)
+            return baleenType is B && (name?.let { baleenType.name() == name } ?: true)
         }
 
         override fun invoke(baleenType: BaleenType, context: ObjectContext): Pair<JsonSchema, Map<String, ObjectSchema>> {

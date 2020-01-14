@@ -2,17 +2,17 @@ package com.shoprunner.baleen.jsonschema.v4
 
 import com.shoprunner.baleen.DataDescription
 import com.shoprunner.baleen.jsonschema.v4.BaleenGenerator.parseJsonSchema
+import com.shoprunner.baleen.types.BooleanType
+import com.shoprunner.baleen.types.LongType
+import com.shoprunner.baleen.types.StringCoercibleToBoolean
+import com.shoprunner.baleen.types.StringCoercibleToLong
+import com.squareup.kotlinpoet.CodeBlock
 import java.io.File
 import java.io.StringWriter
 import java.net.URL
 import java.net.URLClassLoader
 import java.net.UnknownHostException
 import java.util.logging.Logger
-import com.shoprunner.baleen.types.BooleanType
-import com.shoprunner.baleen.types.LongType
-import com.shoprunner.baleen.types.StringCoercibleToBoolean
-import com.shoprunner.baleen.types.StringCoercibleToLong
-import com.squareup.kotlinpoet.CodeBlock
 import org.assertj.core.api.Assertions
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
@@ -1714,4 +1714,3 @@ internal class BaleenGeneratorTest {
         }
     }
 }
-

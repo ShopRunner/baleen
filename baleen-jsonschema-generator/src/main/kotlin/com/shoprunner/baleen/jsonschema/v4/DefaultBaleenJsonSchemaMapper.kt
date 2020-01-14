@@ -11,8 +11,10 @@ import com.shoprunner.baleen.types.EnumType
 import com.shoprunner.baleen.types.FloatType
 import com.shoprunner.baleen.types.InstantType
 import com.shoprunner.baleen.types.IntType
+import com.shoprunner.baleen.types.IntegerType
 import com.shoprunner.baleen.types.LongType
 import com.shoprunner.baleen.types.MapType
+import com.shoprunner.baleen.types.NumericType
 import com.shoprunner.baleen.types.OccurrencesType
 import com.shoprunner.baleen.types.StringConstantType
 import com.shoprunner.baleen.types.StringType
@@ -65,17 +67,21 @@ open class DefaultBaleenJsonSchemaMapper : BaleenJsonSchemaMapper {
                 }
             }
             is BooleanType -> BooleanSchema to objectContext
-            is CoercibleType -> getJsonSchema(baleenType.type, objectContext, withAdditionalAttributes)
+            is CoercibleType<*, *> -> getJsonSchema(baleenType.type, objectContext, withAdditionalAttributes)
             is DoubleType -> NumberSchema(
-                    maximum = if (baleenType.max.isFinite()) baleenType.max else null,
-                    minimum = if (baleenType.min.isFinite()) baleenType.min else null
+                maximum = baleenType.max.takeIf { it.isFinite() }?.toBigDecimal(),
+                minimum = baleenType.min.takeIf { it.isFinite() }?.toBigDecimal()
             ) to objectContext
             is IntType -> IntegerSchema(
-                    maximum = baleenType.max.toLong(),
-                    minimum = baleenType.min.toLong()
+                maximum = baleenType.max.toBigInteger(),
+                minimum = baleenType.min.toBigInteger()
+            ) to objectContext
+            is IntegerType -> IntegerSchema(
+                maximum = baleenType.max,
+                minimum = baleenType.min
             ) to objectContext
             is EnumType -> StringSchema(
-                    enum = baleenType.enum
+                enum = baleenType.enum
             ) to objectContext
             is MapType -> {
                 if (baleenType.keyType !is StringType) {
@@ -85,24 +91,28 @@ open class DefaultBaleenJsonSchemaMapper : BaleenJsonSchemaMapper {
                 MapSchema(additionalProperties = subSchema) to subContext
             }
             is FloatType -> NumberSchema(
-                    maximum = if (baleenType.max.isFinite()) baleenType.max.toDouble() else null,
-                    minimum = if (baleenType.min.isFinite()) baleenType.min.toDouble() else null
+                maximum = baleenType.max.takeIf { it.isFinite() }?.toBigDecimal(),
+                minimum = baleenType.min.takeIf { it.isFinite() }?.toBigDecimal()
             ) to objectContext
             is InstantType -> DateTimeSchema() to objectContext
             is LongType -> IntegerSchema(
-                    maximum = baleenType.max,
-                    minimum = baleenType.min
+                maximum = baleenType.max.toBigInteger(),
+                minimum = baleenType.min.toBigInteger()
+            ) to objectContext
+            is NumericType -> NumberSchema(
+                maximum = baleenType.max,
+                minimum = baleenType.min
             ) to objectContext
             is OccurrencesType -> {
                 val (subSchema, subContext) = getJsonSchema(baleenType.memberType, objectContext, withAdditionalAttributes)
                 ArraySchema(items = subSchema) to subContext
             }
             is StringType -> StringSchema(
-                    maxLength = baleenType.max,
-                    minLength = baleenType.min
+                maxLength = baleenType.max,
+                minLength = baleenType.min
             ) to objectContext
             is StringConstantType -> StringSchema(
-                    enum = listOf(baleenType.constant)
+                enum = listOf(baleenType.constant)
             ) to objectContext
             is TimestampMillisType -> DateTimeSchema() to objectContext
             is UnionType -> {
