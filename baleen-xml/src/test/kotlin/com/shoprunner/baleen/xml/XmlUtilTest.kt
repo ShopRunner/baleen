@@ -77,6 +77,27 @@ internal class XmlUtilTest {
             )
     }
 
+    @Test
+    fun `attributeDataValue handles empty text nodes`() {
+        val inputStream = """
+            <pack>
+                <dog></dog>
+            </pack>
+            """.trimIndent().byteInputStream()
+
+        val context = XmlUtil.fromXmlToContext(dataTrace(), inputStream)
+        assertThat(context.data.attributeDataValue("pack", dataTrace()).value).isInstanceOf(Data::class.java)
+        val data = context.data.attributeDataValue("pack", dataTrace()).value as Data
+        assertThat(data.attributeDataValue("dog", dataTrace()))
+            .isEqualTo(
+                DataValue(
+                    value = "",
+                    dataTrace = dataTrace("attribute \"dog\"")
+                        .tag("line", "2")
+                        .tag("column", "10"))
+            )
+    }
+
     @Nested
     inner class MultipleOccurences {
         private val multipleOccurrences = """

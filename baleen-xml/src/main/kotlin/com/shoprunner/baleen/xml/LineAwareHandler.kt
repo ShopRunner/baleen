@@ -92,7 +92,8 @@ internal class LineAwareHandler : DefaultHandler() {
     override fun endElement(uri: String, localName: String, qName: String) {
         when {
             nil -> nil = false
-            textBuffer.trim().isNotEmpty() -> {
+            // There is text in the element
+            textBuffer.isNotBlank() -> {
                 elementStack.pop()
                 val current = elementStack.peek()
                 val old = current.hash[localName]!!
@@ -111,7 +112,18 @@ internal class LineAwareHandler : DefaultHandler() {
                 }
                 textBuffer.clear()
             }
-            else -> elementStack.pop()
+            // Either a complex node or a text node with blank text
+            else -> {
+                elementStack.pop()
+                val current = elementStack.peek()
+                val old = current.hash[localName]!!
+
+                // If no children, then its an empty text node
+                if (old is XmlDataNode && old.hash.isEmpty()) {
+                    current.hash[localName] = XmlDataLeaf(value = textBuffer.trim(), line = old.line, column = old.column)
+                    textBuffer.clear()
+                }
+            }
         }
     }
 
