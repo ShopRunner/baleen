@@ -1,0 +1,4 @@
+dependencies {
+    api project(':baleen')
+    implementation 'org.jetbrains.kotlin:kotlin-reflect'
+}

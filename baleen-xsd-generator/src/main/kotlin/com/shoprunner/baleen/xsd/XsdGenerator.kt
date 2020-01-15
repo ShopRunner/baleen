@@ -4,9 +4,10 @@ import com.shoprunner.baleen.AttributeDescription
 import com.shoprunner.baleen.BaleenType
 import com.shoprunner.baleen.DataDescription
 import com.shoprunner.baleen.NoDefault
-import com.shoprunner.baleen.types.AllowsNull
+import com.shoprunner.baleen.generator.BaseGenerator
+import com.shoprunner.baleen.generator.Options
+import com.shoprunner.baleen.generator.TypeMapper as BaseTypeMapper
 import com.shoprunner.baleen.types.BooleanType
-import com.shoprunner.baleen.types.CoercibleType
 import com.shoprunner.baleen.types.DoubleType
 import com.shoprunner.baleen.types.EnumType
 import com.shoprunner.baleen.types.FloatType
@@ -34,37 +35,19 @@ import java.io.PrintStream
 import javax.xml.bind.JAXBContext
 import javax.xml.bind.Marshaller
 
-object XsdGenerator {
-    private fun getDataDescriptions(attrs: Iterable<AttributeDescription>, descriptions: MutableSet<DataDescription>): Set<DataDescription> {
-        attrs.forEach { attr ->
-            val type = attr.type
-            when (type) {
-                is DataDescription -> {
-                    descriptions.add(type)
-                    getDataDescriptions(type.attrs, descriptions)
-                }
-                is OccurrencesType -> {
-                    val memberType = type.memberType
-                    if (memberType is DataDescription) {
-                        descriptions.add(memberType)
-                        getDataDescriptions(memberType.attrs, descriptions)
-                    }
-                }
-            }
-        }
-
-        return descriptions
-    }
+object XsdGenerator : BaseGenerator<TypeDetails>() {
 
     fun defaultTypeMapper(baleenType: BaleenType): TypeDetails =
-        recursiveTypeMapper({ recursiveTypeMapper(::defaultTypeMapper, it) }, baleenType)
+        super.defaultTypeMapper(baleenType, XsdOptions)
+
+    fun recursiveTypeMapper(typeMapper: TypeMapper, baleenType: BaleenType): TypeDetails =
+        super.recursiveTypeMapper({ b, _ -> typeMapper(b) }, baleenType, XsdOptions)
 
     /**
      * Maps baleen type to type details that are used for XSD.
      */
-    fun recursiveTypeMapper(typeMapper: TypeMapper, baleenType: BaleenType): TypeDetails =
+    override fun defaultTypeMapper(typeMapper: BaseTypeMapper<TypeDetails>, baleenType: BaleenType, options: Options): TypeDetails =
         when (baleenType) {
-            is AllowsNull<*> -> typeMapper(baleenType.type)
             is BooleanType -> TypeDetails("xs:boolean")
             is DataDescription -> TypeDetails(baleenType.name)
             is DoubleType -> TypeDetails(simpleType = SimpleType(
@@ -109,8 +92,7 @@ object XsdGenerator {
                     maxInclusive = baleenType.max?.let { MaxInclusive(it) },
                     minInclusive = baleenType.min?.let { MinInclusive(it) })
             ))
-            is OccurrencesType -> recursiveTypeMapper(typeMapper, baleenType.memberType).copy(maxOccurs = "unbounded")
-            is CoercibleType<*, *> -> recursiveTypeMapper(typeMapper, baleenType.type)
+            is OccurrencesType -> recursiveTypeMapper(typeMapper, baleenType.memberType, options).copy(maxOccurs = "unbounded")
             is StringType -> TypeDetails(
                                 simpleType = SimpleType(
                                         Restriction(
@@ -119,7 +101,7 @@ object XsdGenerator {
                                             minLength = MinLength(baleenType.min))
                                         ))
             is TimestampMillisType -> TypeDetails("xs:dateTime")
-            else -> throw Exception("No mapping is defined for ${baleenType.name()} to XSD")
+            else -> recursiveTypeMapper(typeMapper, baleenType, XsdOptions)
         }
 
     private fun generateType(type: DataDescription, typeMapper: TypeMapper) =
@@ -153,7 +135,7 @@ object XsdGenerator {
         // output pretty printed
         jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true)
 
-        val types = getDataDescriptions(this.attrs, mutableSetOf(this))
+        val types = this.attrs.getDataDescriptions(mutableSetOf(this), XsdOptions)
 
         val complexTypes = types.map { generateType(it, typeMapper) }
 
