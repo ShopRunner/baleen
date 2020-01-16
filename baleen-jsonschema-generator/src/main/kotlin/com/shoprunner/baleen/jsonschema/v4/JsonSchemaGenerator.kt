@@ -149,7 +149,7 @@ object JsonSchemaGenerator : BaseGenerator<JsonSchema>() {
         }
     }
 
-    fun encode(dataDescription: DataDescription, options: JsonSchemaOptions = JsonSchemaOptions(), typeMapper: TypeMapper<JsonSchema> = ::defaultTypeMapper): RootJsonSchema {
+    fun encode(dataDescription: DataDescription, options: JsonSchemaOptions = JsonSchemaOptions(), typeMapper: TypeMapper<JsonSchema> = JsonSchemaGenerator::defaultTypeMapper): RootJsonSchema {
         val id = dataDescription.getId()
         val ref = "#/definitions/record:$id"
         val schema = "http://json-schema.org/draft-04/schema"

@@ -12,6 +12,8 @@ import com.shoprunner.baleen.Baleen
 import com.shoprunner.baleen.BaleenType
 import com.shoprunner.baleen.DataTrace
 import com.shoprunner.baleen.ValidationResult
+import com.shoprunner.baleen.generator.CoercibleHandlerOption
+import com.shoprunner.baleen.generator.Options
 import com.shoprunner.baleen.jsonschema.v3.JsonSchemaGenerator.writeTo
 import com.shoprunner.baleen.types.AllowsNull
 import com.shoprunner.baleen.types.BooleanType
@@ -41,17 +43,33 @@ import org.junit.jupiter.api.TestInstance
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class JsonSchemaGeneratorTest {
 
+    fun JsonSchemaGenerator.getJsonSchema(baleenType: BaleenType, options: JsonSchemaOptions = JsonSchemaOptions()): JsonSchema {
+        return defaultTypeMapper(JsonSchemaGenerator::defaultTypeMapper, baleenType, options)
+    }
+
     @Nested
     inner class Types {
         @Test
         fun `getJsonSchema encodes the resulting coerced type`() {
             val schema = JsonSchemaGenerator.getJsonSchema(StringCoercibleToFloat(FloatType()))
-            Assertions.assertThat(schema.isNumberSchema).isTrue()
+            Assertions.assertThat(schema.isStringSchema).isTrue()
         }
 
         @Test
         fun `getJsonSchema encodes the resulting coerced type and ignores AllowsNull`() {
             val schema = JsonSchemaGenerator.getJsonSchema(AllowsNull(StringCoercibleToFloat(FloatType())))
+            Assertions.assertThat(schema.isStringSchema).isTrue()
+        }
+
+        @Test
+        fun `getJsonSchema encodes the resulting coerced type with coerced handler property set to TO `() {
+            val schema = JsonSchemaGenerator.getJsonSchema(StringCoercibleToFloat(FloatType()), JsonSchemaOptions(coercibleHandlerOption = CoercibleHandlerOption.TO))
+            Assertions.assertThat(schema.isNumberSchema).isTrue()
+        }
+
+        @Test
+        fun `getJsonSchema encodes the resulting coerced type and ignores AllowsNull with coerced handler property set to TO`() {
+            val schema = JsonSchemaGenerator.getJsonSchema(AllowsNull(StringCoercibleToFloat(FloatType())), JsonSchemaOptions(coercibleHandlerOption = CoercibleHandlerOption.TO))
             Assertions.assertThat(schema.isNumberSchema).isTrue()
         }
 
@@ -487,12 +505,11 @@ internal class JsonSchemaGeneratorTest {
                 )
             }
 
-            @Suppress("UNUSED_PARAMETER")
-            fun mapStringCoercibleToBooleanAsStringSchema(b: StringCoercibleToBoolean): JsonSchema {
-                return StringSchema()
-            }
-
-            val stringCoercibleToBooleanOverrride = (::mapStringCoercibleToBooleanAsStringSchema).asBaleenOverride()
+            fun mapStringCoercibleToBooleanAsStringSchema(baleenType: BaleenType, options: Options): JsonSchema =
+                when (baleenType) {
+                    is StringCoercibleToBoolean -> StringSchema()
+                    else -> JsonSchemaGenerator.recursiveTypeMapper(::mapStringCoercibleToBooleanAsStringSchema, baleenType, options)
+                }
 
             val schemaStr = """
                 {
@@ -516,7 +533,8 @@ internal class JsonSchemaGeneratorTest {
             """.trimIndent()
 
             val outputStream = ByteArrayOutputStream()
-            JsonSchemaGenerator.encode(description, mappingOverrides = listOf(stringCoercibleToBooleanOverrride)).writeTo(PrintStream(outputStream), true)
+            JsonSchemaGenerator.encode(description, JsonSchemaOptions(), ::mapStringCoercibleToBooleanAsStringSchema)
+                .writeTo(PrintStream(outputStream), true)
 
             Assertions.assertThat(outputStream.toString()).isEqualToIgnoringWhitespace(schemaStr)
         }
@@ -543,12 +561,11 @@ internal class JsonSchemaGeneratorTest {
                 )
             }
 
-            @Suppress("UNUSED_PARAMETER")
-            fun mapStringCoercibleToBooleanAsStringSchema(b: StringCoercibleToBoolean): JsonSchema {
-                return StringSchema()
-            }
-
-            val stringCoercibleToBooleanOverrride = (::mapStringCoercibleToBooleanAsStringSchema).asBaleenOverride()
+            fun mapStringCoercibleToBooleanAsStringSchema(baleenType: BaleenType, options: Options): JsonSchema =
+                when (baleenType) {
+                    is StringCoercibleToBoolean -> StringSchema()
+                    else -> JsonSchemaGenerator.recursiveTypeMapper(::mapStringCoercibleToBooleanAsStringSchema, baleenType, options)
+                }
 
             val schemaStr = """
                 {
@@ -579,7 +596,8 @@ internal class JsonSchemaGeneratorTest {
             """.trimIndent()
 
             val outputStream = ByteArrayOutputStream()
-            JsonSchemaGenerator.encode(description, mappingOverrides = listOf(stringCoercibleToBooleanOverrride)).writeTo(PrintStream(outputStream), true)
+            JsonSchemaGenerator.encode(description, JsonSchemaOptions(), ::mapStringCoercibleToBooleanAsStringSchema)
+                .writeTo(PrintStream(outputStream), true)
 
             Assertions.assertThat(outputStream.toString()).isEqualToIgnoringWhitespace(schemaStr)
         }

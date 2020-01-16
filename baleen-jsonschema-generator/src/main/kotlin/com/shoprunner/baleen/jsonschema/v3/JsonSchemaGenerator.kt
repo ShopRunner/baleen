@@ -13,6 +13,9 @@ import com.fasterxml.jackson.module.jsonSchema.types.UnionTypeSchema
 import com.fasterxml.jackson.module.jsonSchema.types.ValueTypeSchema
 import com.shoprunner.baleen.BaleenType
 import com.shoprunner.baleen.DataDescription
+import com.shoprunner.baleen.generator.BaseGenerator
+import com.shoprunner.baleen.generator.Options
+import com.shoprunner.baleen.generator.TypeMapper
 import com.shoprunner.baleen.types.AllowsNull
 import com.shoprunner.baleen.types.BooleanType
 import com.shoprunner.baleen.types.CoercibleType
@@ -33,14 +36,14 @@ import com.shoprunner.baleen.types.UnionType
 import java.io.File
 import java.nio.file.Path
 
-object JsonSchemaGenerator {
+object JsonSchemaGenerator : BaseGenerator<JsonSchema>() {
 
-    private fun encodeDescription(dataDescription: DataDescription, mappingOverrides: List<BaleenOverride> = emptyList()): ObjectSchema {
+    fun encodeDescription(dataDescription: DataDescription, typeMapper: TypeMapper<JsonSchema>, options: Options): ObjectSchema {
         return ObjectSchema().apply {
             id = "${dataDescription.nameSpace}.${dataDescription.name}"
             description = dataDescription.markdownDescription
             dataDescription.attrs.forEach {
-                val subTypeSchema = getJsonSchema(it.type, mappingOverrides).apply {
+                val subTypeSchema = typeMapper(it.type, options).apply {
                     description = it.markdownDescription
                 }
                 if (it.required) {
@@ -52,15 +55,14 @@ object JsonSchemaGenerator {
         }
     }
 
-    fun getJsonSchema(baleenType: BaleenType, mappingOverrides: List<BaleenOverride> = emptyList()): JsonSchema {
-        val overrideFun = mappingOverrides.firstOrNull { it.matches(baleenType) }
-        if (overrideFun != null) {
-            return overrideFun(baleenType)
-        }
-
-        return when (baleenType) {
-            is DataDescription -> encodeDescription(baleenType, mappingOverrides)
-            is CoercibleType<*, *> -> getJsonSchema(baleenType.type, mappingOverrides)
+    override fun defaultTypeMapper(
+        typeMapper: TypeMapper<JsonSchema>,
+        baleenType: BaleenType,
+        options: Options
+    ): JsonSchema =
+        when (baleenType) {
+            is DataDescription -> encodeDescription(baleenType, typeMapper, options)
+            is CoercibleType<*, *> -> typeMapper(baleenType.toSubType(options.coercibleHandlerOption), options)
             is BooleanType -> BooleanSchema()
             is FloatType -> NumberSchema().apply {
                 maximum = baleenType.max.toDouble()
@@ -106,14 +108,14 @@ object JsonSchemaGenerator {
             is MapType -> {
                 if (baleenType.keyType !is StringType) throw Exception("Map keys can only be String in RootJsonSchema")
                 ObjectSchema().apply {
-                    additionalProperties = ObjectSchema.SchemaAdditionalProperties(getJsonSchema(baleenType.valueType, mappingOverrides))
+                    additionalProperties = ObjectSchema.SchemaAdditionalProperties(typeMapper(baleenType.valueType, options))
                 }
             }
             is OccurrencesType -> ArraySchema().apply {
-                setItemsSchema(getJsonSchema(baleenType.memberType, mappingOverrides))
+                setItemsSchema(typeMapper(baleenType.memberType, options))
             }
             is UnionType -> {
-                val subTypeSchemas = baleenType.types.map { getJsonSchema(it, mappingOverrides) }.distinct()
+                val subTypeSchemas = baleenType.types.map { typeMapper(it, options) }.distinct()
                 if (subTypeSchemas.size == 1) {
                     subTypeSchemas[0]
                 } else {
@@ -126,13 +128,12 @@ object JsonSchemaGenerator {
                 }
             }
         // V3 Does not support
-            is AllowsNull<*> -> getJsonSchema(baleenType.type, mappingOverrides)
+            is AllowsNull<*> -> typeMapper(baleenType.type, options)
             else -> throw Exception("Unknown type: " + baleenType::class.simpleName)
         }
-    }
 
-    fun encode(dataDescription: DataDescription, mappingOverrides: List<BaleenOverride> = emptyList()): ObjectSchema {
-        return encodeDescription(dataDescription, mappingOverrides).apply {
+    fun encode(dataDescription: DataDescription, options: JsonSchemaOptions = JsonSchemaOptions(), typeMapper: TypeMapper<JsonSchema> = JsonSchemaGenerator::defaultTypeMapper): ObjectSchema {
+        return encodeDescription(dataDescription, typeMapper, options).apply {
             `$schema` = "http://json-schema.org/draft-03/schema"
         }
     }
