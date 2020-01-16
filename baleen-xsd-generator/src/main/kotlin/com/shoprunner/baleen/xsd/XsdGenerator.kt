@@ -7,7 +7,9 @@ import com.shoprunner.baleen.NoDefault
 import com.shoprunner.baleen.generator.BaseGenerator
 import com.shoprunner.baleen.generator.Options
 import com.shoprunner.baleen.generator.TypeMapper as BaseTypeMapper
+import com.shoprunner.baleen.types.AllowsNull
 import com.shoprunner.baleen.types.BooleanType
+import com.shoprunner.baleen.types.CoercibleType
 import com.shoprunner.baleen.types.DoubleType
 import com.shoprunner.baleen.types.EnumType
 import com.shoprunner.baleen.types.FloatType
@@ -41,14 +43,16 @@ object XsdGenerator : BaseGenerator<TypeDetails>() {
         super.defaultTypeMapper(baleenType, XsdOptions)
 
     fun recursiveTypeMapper(typeMapper: TypeMapper, baleenType: BaleenType): TypeDetails =
-        super.recursiveTypeMapper({ b, _ -> typeMapper(b) }, baleenType, XsdOptions)
+        recursiveTypeMapper({ b, _ -> typeMapper(b) }, baleenType, XsdOptions)
 
     /**
      * Maps baleen type to type details that are used for XSD.
      */
     override fun defaultTypeMapper(typeMapper: BaseTypeMapper<TypeDetails>, baleenType: BaleenType, options: Options): TypeDetails =
         when (baleenType) {
+            is AllowsNull<*> -> typeMapper(baleenType.type, options)
             is BooleanType -> TypeDetails("xs:boolean")
+            is CoercibleType<*, *> -> typeMapper(baleenType.toSubType(options.coercibleHandlerOption), options)
             is DataDescription -> TypeDetails(baleenType.name)
             is DoubleType -> TypeDetails(simpleType = SimpleType(
                 Restriction(
@@ -92,7 +96,7 @@ object XsdGenerator : BaseGenerator<TypeDetails>() {
                     maxInclusive = baleenType.max?.let { MaxInclusive(it) },
                     minInclusive = baleenType.min?.let { MinInclusive(it) })
             ))
-            is OccurrencesType -> recursiveTypeMapper(typeMapper, baleenType.memberType, options).copy(maxOccurs = "unbounded")
+            is OccurrencesType -> typeMapper(baleenType.memberType, options).copy(maxOccurs = "unbounded")
             is StringType -> TypeDetails(
                                 simpleType = SimpleType(
                                         Restriction(
@@ -101,7 +105,7 @@ object XsdGenerator : BaseGenerator<TypeDetails>() {
                                             minLength = MinLength(baleenType.min))
                                         ))
             is TimestampMillisType -> TypeDetails("xs:dateTime")
-            else -> recursiveTypeMapper(typeMapper, baleenType, XsdOptions)
+            else -> throw Exception("No mapping is defined for ${baleenType.name()} to XSD")
         }
 
     private fun generateType(type: DataDescription, typeMapper: TypeMapper) =

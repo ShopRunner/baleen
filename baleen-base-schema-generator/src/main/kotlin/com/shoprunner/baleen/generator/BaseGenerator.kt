@@ -54,9 +54,9 @@ abstract class BaseGenerator<TO> {
     }
 
     private fun BaleenType.recursiveGetDataDescriptions(descriptions: Set<DataDescription>, options: Options): Set<DataDescription> =
-        when (this) {
+        descriptions + when (this) {
             is DataDescription ->
-                this.attrs.getDataDescriptions(descriptions, options)
+                this.attrs.getDataDescriptions(descriptions, options) + this
 
             is AllowsNull<*> ->
                 this.type.recursiveGetDataDescriptions(descriptions, options)
@@ -87,22 +87,17 @@ abstract class BaseGenerator<TO> {
     fun Iterable<AttributeDescription>.getDataDescriptions(descriptions: Set<DataDescription>, options: Options): Set<DataDescription> =
         flatMap { it.type.recursiveGetDataDescriptions(descriptions, options) }.toSet()
 
-    fun recursiveTypeMapper(typeMapper: TypeMapper<TO>, baleenType: BaleenType, options: Options): TO =
-        when (baleenType) {
-            is AllowsNull<*> -> typeMapper(baleenType.type, options)
-            is OccurrencesType -> recursiveTypeMapper(typeMapper, baleenType.memberType, options)
-            is CoercibleType<*, *> -> recursiveTypeMapper(typeMapper, baleenType.toSubType(options.coercibleHandlerOption), options)
-            else -> throw Exception("No mapping is defined for ${baleenType.name()} to XSD")
-        }
-
     fun CoercibleType<*, *>.toSubType(coercibleHandlerOption: CoercibleHandlerOption): BaleenType =
         when (coercibleHandlerOption) {
             CoercibleHandlerOption.FROM -> createCoercibleFromType()
             CoercibleHandlerOption.TO -> this.type
         }
 
+    fun recursiveTypeMapper(typeMapper: TypeMapper<TO>, baleenType: BaleenType, options: Options): TO =
+        defaultTypeMapper(typeMapper, baleenType, options)
+
     fun defaultTypeMapper(baleenType: BaleenType, options: Options): TO =
-        defaultTypeMapper({ b, o -> recursiveTypeMapper(::defaultTypeMapper, b, o) }, baleenType, options)
+        recursiveTypeMapper(::defaultTypeMapper, baleenType, options)
 
     abstract fun defaultTypeMapper(typeMapper: TypeMapper<TO>, baleenType: BaleenType, options: Options): TO
 }
