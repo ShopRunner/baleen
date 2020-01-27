@@ -14,15 +14,7 @@ import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.isSubtypeOf
 import kotlin.reflect.full.starProjectedType
 
-enum class CoercibleHandlerOption {
-    FROM, TO
-}
-
-interface Options {
-    val coercibleHandlerOption: CoercibleHandlerOption
-}
-
-abstract class BaseGenerator<TO> {
+abstract class BaseGenerator<TO, OPTIONS : Options> {
     private fun findSuper(toFind: KType, clazz: KClass<*>): KType? {
         val parent = clazz.supertypes.firstOrNull { it.isSubtypeOf(toFind) }
         val projectedType = parent?.classifier?.starProjectedType
@@ -53,7 +45,7 @@ abstract class BaseGenerator<TO> {
         }
     }
 
-    private fun BaleenType.recursiveGetDataDescriptions(descriptions: Set<DataDescription>, options: Options): Set<DataDescription> =
+    private fun BaleenType.recursiveGetDataDescriptions(descriptions: Set<DataDescription>, options: OPTIONS): Set<DataDescription> =
         descriptions + when (this) {
             is DataDescription ->
                 this.attrs.getDataDescriptions(descriptions, options) + this
@@ -84,7 +76,7 @@ abstract class BaseGenerator<TO> {
             else -> emptySet()
         }
 
-    fun Iterable<AttributeDescription>.getDataDescriptions(descriptions: Set<DataDescription>, options: Options): Set<DataDescription> =
+    fun Iterable<AttributeDescription>.getDataDescriptions(descriptions: Set<DataDescription>, options: OPTIONS): Set<DataDescription> =
         flatMap { it.type.recursiveGetDataDescriptions(descriptions, options) }.toSet()
 
     fun CoercibleType<*, *>.toSubType(coercibleHandlerOption: CoercibleHandlerOption): BaleenType =
@@ -93,11 +85,11 @@ abstract class BaseGenerator<TO> {
             CoercibleHandlerOption.TO -> this.type
         }
 
-    fun recursiveTypeMapper(typeMapper: TypeMapper<TO>, baleenType: BaleenType, options: Options): TO =
+    fun recursiveTypeMapper(typeMapper: TypeMapper<TO, OPTIONS>, baleenType: BaleenType, options: OPTIONS): TO =
         defaultTypeMapper(typeMapper, baleenType, options)
 
-    fun defaultTypeMapper(baleenType: BaleenType, options: Options): TO =
+    fun defaultTypeMapper(baleenType: BaleenType, options: OPTIONS): TO =
         recursiveTypeMapper(::defaultTypeMapper, baleenType, options)
 
-    abstract fun defaultTypeMapper(typeMapper: TypeMapper<TO>, baleenType: BaleenType, options: Options): TO
+    abstract fun defaultTypeMapper(typeMapper: TypeMapper<TO, OPTIONS>, baleenType: BaleenType, options: OPTIONS): TO
 }

@@ -6,7 +6,6 @@ import com.shoprunner.baleen.DataDescription
 import com.shoprunner.baleen.DataTrace
 import com.shoprunner.baleen.ValidationResult
 import com.shoprunner.baleen.generator.CoercibleHandlerOption
-import com.shoprunner.baleen.generator.Options
 import com.shoprunner.baleen.jsonschema.v4.JsonSchemaGenerator.recursiveTypeMapper
 import com.shoprunner.baleen.jsonschema.v4.JsonSchemaGenerator.writeTo
 import com.shoprunner.baleen.types.AllowsNull
@@ -1689,7 +1688,7 @@ internal class JsonSchemaGeneratorTest {
                 )
             }
 
-            fun customSpotsMapper(baleenType: BaleenType, options: Options): JsonSchema =
+            fun customSpotsMapper(baleenType: BaleenType, options: JsonSchemaOptions): JsonSchema =
                 when (baleenType) {
                     is StringCoercibleToBoolean -> StringSchema(enum = listOf("true", "false"))
                     else -> JsonSchemaGenerator.recursiveTypeMapper(::customSpotsMapper, baleenType, options)
@@ -1751,7 +1750,7 @@ internal class JsonSchemaGeneratorTest {
                 )
             }
 
-            fun customSpotsMapper(baleenType: BaleenType, options: Options): JsonSchema =
+            fun customSpotsMapper(baleenType: BaleenType, options: JsonSchemaOptions): JsonSchema =
                 when (baleenType) {
                     is StringCoercibleToBoolean -> StringSchema(enum = listOf("true", "false"))
                     else -> JsonSchemaGenerator.recursiveTypeMapper(::customSpotsMapper, baleenType, options)
@@ -1833,7 +1832,7 @@ internal class JsonSchemaGeneratorTest {
                 )
             }
 
-            fun customDogTypeMapper(baleenType: BaleenType, options: Options): JsonSchema =
+            fun customDogTypeMapper(baleenType: BaleenType, options: JsonSchemaOptions): JsonSchema =
                 when {
                     baleenType is DataDescription &&
                             baleenType.name == dogDescription.name

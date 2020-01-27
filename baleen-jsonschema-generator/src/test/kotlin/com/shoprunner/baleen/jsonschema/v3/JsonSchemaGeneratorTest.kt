@@ -13,7 +13,6 @@ import com.shoprunner.baleen.BaleenType
 import com.shoprunner.baleen.DataTrace
 import com.shoprunner.baleen.ValidationResult
 import com.shoprunner.baleen.generator.CoercibleHandlerOption
-import com.shoprunner.baleen.generator.Options
 import com.shoprunner.baleen.jsonschema.v3.JsonSchemaGenerator.writeTo
 import com.shoprunner.baleen.types.AllowsNull
 import com.shoprunner.baleen.types.BooleanType
@@ -505,7 +504,7 @@ internal class JsonSchemaGeneratorTest {
                 )
             }
 
-            fun mapStringCoercibleToBooleanAsStringSchema(baleenType: BaleenType, options: Options): JsonSchema =
+            fun mapStringCoercibleToBooleanAsStringSchema(baleenType: BaleenType, options: JsonSchemaOptions): JsonSchema =
                 when (baleenType) {
                     is StringCoercibleToBoolean -> StringSchema()
                     else -> JsonSchemaGenerator.recursiveTypeMapper(::mapStringCoercibleToBooleanAsStringSchema, baleenType, options)
@@ -561,7 +560,7 @@ internal class JsonSchemaGeneratorTest {
                 )
             }
 
-            fun mapStringCoercibleToBooleanAsStringSchema(baleenType: BaleenType, options: Options): JsonSchema =
+            fun mapStringCoercibleToBooleanAsStringSchema(baleenType: BaleenType, options: JsonSchemaOptions): JsonSchema =
                 when (baleenType) {
                     is StringCoercibleToBoolean -> StringSchema()
                     else -> JsonSchemaGenerator.recursiveTypeMapper(::mapStringCoercibleToBooleanAsStringSchema, baleenType, options)

@@ -6,8 +6,6 @@ import com.shoprunner.baleen.BaleenType
 import com.shoprunner.baleen.DataDescription
 import com.shoprunner.baleen.NoDefault
 import com.shoprunner.baleen.generator.BaseGenerator
-import com.shoprunner.baleen.generator.Options
-import com.shoprunner.baleen.generator.TypeMapper
 import com.shoprunner.baleen.types.AllowsNull
 import com.shoprunner.baleen.types.BooleanType
 import com.shoprunner.baleen.types.CoercibleType
@@ -28,7 +26,7 @@ import com.shoprunner.baleen.types.UnionType
 import java.io.File
 import java.nio.file.Path
 
-object JsonSchemaGenerator : BaseGenerator<JsonSchema>() {
+object JsonSchemaGenerator : BaseGenerator<JsonSchema, JsonSchemaOptions>() {
     private fun DataDescription.getId(): String =
         if (this.nameSpace.isNotBlank()) "${this.nameSpace}.${this.name}" else this.name
 
@@ -43,7 +41,7 @@ object JsonSchemaGenerator : BaseGenerator<JsonSchema>() {
             else -> this
         }
 
-    private fun DataDescription.encodeObjectSchema(typeMapper: TypeMapper<JsonSchema>, options: JsonSchemaOptions): ObjectSchema {
+    private fun DataDescription.encodeObjectSchema(typeMapper: JsonSchemaTypeMapper, options: JsonSchemaOptions): ObjectSchema {
         val dataDescription = this
         val requiredProperties = dataDescription.attrs.filter { it.required }.map { it.name }
         val objectSchema = ObjectSchema(
@@ -70,13 +68,13 @@ object JsonSchemaGenerator : BaseGenerator<JsonSchema>() {
     }
 
     override fun defaultTypeMapper(
-        typeMapper: TypeMapper<JsonSchema>,
+        typeMapper: JsonSchemaTypeMapper,
         baleenType: BaleenType,
-        options: Options
+        options: JsonSchemaOptions
     ): JsonSchema {
         return when (baleenType) {
             is DataDescription ->
-                baleenType.encodeObjectSchema(typeMapper, options as JsonSchemaOptions)
+                baleenType.encodeObjectSchema(typeMapper, options)
             is AllowsNull<*> -> {
                 val subSchema = typeMapper(baleenType.type, options)
                 if (subSchema is OneOf) {
@@ -149,7 +147,7 @@ object JsonSchemaGenerator : BaseGenerator<JsonSchema>() {
         }
     }
 
-    fun encode(dataDescription: DataDescription, options: JsonSchemaOptions = JsonSchemaOptions(), typeMapper: TypeMapper<JsonSchema> = JsonSchemaGenerator::defaultTypeMapper): RootJsonSchema {
+    fun encode(dataDescription: DataDescription, options: JsonSchemaOptions = JsonSchemaOptions(), typeMapper: JsonSchemaTypeMapper = JsonSchemaGenerator::defaultTypeMapper): RootJsonSchema {
         val id = dataDescription.getId()
         val ref = "#/definitions/record:$id"
         val schema = "http://json-schema.org/draft-04/schema"
@@ -163,7 +161,7 @@ object JsonSchemaGenerator : BaseGenerator<JsonSchema>() {
         return RootJsonSchema(id, schemas.toSortedMap(), ref, schema)
     }
 
-    fun encodeAsSelfDescribing(dataDescription: DataDescription, version: String, namespace: String = dataDescription.nameSpace, options: JsonSchemaOptions = JsonSchemaOptions(), typeMapper: TypeMapper<JsonSchema> = ::defaultTypeMapper): RootJsonSchema {
+    fun encodeAsSelfDescribing(dataDescription: DataDescription, version: String, namespace: String = dataDescription.nameSpace, options: JsonSchemaOptions = JsonSchemaOptions(), typeMapper: JsonSchemaTypeMapper = ::defaultTypeMapper): RootJsonSchema {
         val selfDescribingSchema = "http://iglucentral.com/schemas/com.snowplowananalytics.self-desc/schema/jsonschema/1-0-0"
 
         val rootSchema = encode(dataDescription, options, typeMapper)

@@ -5,7 +5,6 @@ import com.shoprunner.baleen.BaleenType
 import com.shoprunner.baleen.DataDescription
 import com.shoprunner.baleen.NoDefault
 import com.shoprunner.baleen.generator.BaseGenerator
-import com.shoprunner.baleen.generator.Options
 import com.shoprunner.baleen.generator.TypeMapper as BaseTypeMapper
 import com.shoprunner.baleen.types.AllowsNull
 import com.shoprunner.baleen.types.BooleanType
@@ -37,7 +36,7 @@ import java.io.PrintStream
 import javax.xml.bind.JAXBContext
 import javax.xml.bind.Marshaller
 
-object XsdGenerator : BaseGenerator<TypeDetails>() {
+object XsdGenerator : BaseGenerator<TypeDetails, XsdOptions>() {
 
     fun defaultTypeMapper(baleenType: BaleenType): TypeDetails =
         super.defaultTypeMapper(baleenType, XsdOptions)
@@ -48,7 +47,7 @@ object XsdGenerator : BaseGenerator<TypeDetails>() {
     /**
      * Maps baleen type to type details that are used for XSD.
      */
-    override fun defaultTypeMapper(typeMapper: BaseTypeMapper<TypeDetails>, baleenType: BaleenType, options: Options): TypeDetails =
+    override fun defaultTypeMapper(typeMapper: BaseTypeMapper<TypeDetails, XsdOptions>, baleenType: BaleenType, options: XsdOptions): TypeDetails =
         when (baleenType) {
             is AllowsNull<*> -> typeMapper(baleenType.type, options)
             is BooleanType -> TypeDetails("xs:boolean")
