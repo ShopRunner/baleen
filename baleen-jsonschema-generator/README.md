@@ -111,40 +111,57 @@ Will output to file `outDir/com/shoprunner/data/dogs/Dog.schema.json` with the f
 
 ## Adding mapping overrides
 
-If the default Baleen to Json Schema mapping does not meet needs, you can use a `BaleenMapper` of your own.
+If the default Baleen to Json Schema mapping does not meet needs, you can use a custom mapping function.
+
+Take the Dog and Pack descriptions:
+```kotlin
+val dogDescription = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") {
+    it.attr(
+            name = "name",
+            type = StringType(),
+            markdownDescription = "The name of the dog"
+    )
+
+    it.attr(
+            name = "hasSpots",
+            type = StringCoercibleToBoolean(BooleanType()),
+            markdownDescription = "Does the dog have spots"
+    )
+}
+
+val packDescription = Baleen.describe("Pack", "com.shoprunner.data.dogs", "It's a pack of Dogs!") {
+    it.attr(
+            name = "name",
+            type = StringType(),
+            markdownDescription = "The name of the pack",
+            required = true
+    )
+
+    it.attr(
+            name = "dogs",
+            type = OccurrencesType(dogDescription),
+            markdownDescription = "The dogs in the pack",
+            required = true
+    )
+}
+
+```
+
+For simple mappings, map the types
 
 ```kotlin
-object MyBaleenMapper: BaleenMapper {
-
-    override fun getJsonSchema(baleenType: BaleenType, objectContext: Map<String, ObjectSchema>, withAdditionalAttributes: Boolean): Pair<JsonSchema, Map<String, ObjectSchema>> {
-        // Do a custom override
+fun customSpotsMapper(baleenType: BaleenType, options: JsonSchemaOptions): JsonSchema =
+    when (baleenType) {
+        is StringCoercibleToBoolean -> StringSchema(enum = listOf("true", "false"))
+        else -> JsonSchemaGenerator.recursiveTypeMapper(::customSpotsMapper, baleenType, options)
     }
-}
 
-val overrideBaleenMapper = OverrideBaleenMapper(listOf(stringCoercibleToBooleanOverride))
-JsonSchemaGenerator.encode(Dog, true, baleenMapper = overrideBaleenMapper)
+val outputStream = ByteArrayOutputStream()
+JsonSchemaGenerator.encode(dogDescription, typeMapper = ::customDogTypeMapper).writeTo(PrintStream(outputStream), true)
+val jsonStr = outputStream.toString()
 ```
 
-Or use the provided `OverrideBaleenMapper` to use point mappings for particular types.
-
-```kotlin
-// create mapping function from String
-fun mapIntTypeAsString(b: IntType): JsonSchema {
-    return StringSchema()
-}
-
-// Use `asBaleenOverride` to cast it into `BaleenOverride` to be used in mapper.
-val intTypeOverride = (::mapIntTypeAsString).asBaleenOverride()
-
-// Create override mapper.
-val overrideBaleenMapper = OverrideBaleenMapper(listOf(stringCoercibleToBooleanOverride))
-
-// Do encoding with the override mapper.
-JsonSchemaGenerator.encode(Dog, true, baleenMapper = overrideBaleenMapper)
-```
-
-This will output a json schema with string instead of integer.
-
+Will output a json string with has_spots overriden.
 ```json
 {
   "id" : "com.shoprunner.data.dogs.Dog",
@@ -152,7 +169,6 @@ This will output a json schema with string instead of integer.
     "record:com.shoprunner.data.dogs.Dog" : {
       "description" : "It's a dog. Ruff Ruff!",
       "type" : "object",
-      "required" : [ "name" ],
       "additionalProperties" : false,
       "properties" : {
         "name" : {
@@ -161,36 +177,75 @@ This will output a json schema with string instead of integer.
           "maxLength" : 2147483647,
           "minLength" : 0
         },
-        "legs" : {
-          "description" : "The number of legs",
-          "default" : null,
-          "oneOf" : [ {
-            "type" : "null"
-          }, {
-            "type" : "string"
-          } ]
+        "hasSpots" : {
+          "description" : "Does the dog have spots",
+          "type" : "string",
+          "enum" : [ "true", "false" ]
         }
       }
     }
   },
-  "$ref" : "#/definitions/record:com.shoprunner.data.dogs.Dog",
-  "$schema" : "http://json-schema.org/draft-04/schema"
+  "${'$'}ref" : "#/definitions/record:com.shoprunner.data.dogs.Dog",
+  "${'$'}schema" : "http://json-schema.org/draft-04/schema"
 }
 ```
 
-For more fine grained control, use `((BaleenType) -> Pair<JsonSchema, ObjectContext>).asBaleenObjectOverrideFor()`.
+Overriding a data description will look like this:
 
 ```kotlin
-// create mapping function from String
-fun mapDogType(dogType: DogType, context: ObjectContext): Pair<JsonSchema, ObjectContext> { ... }
+fun customDogTypeMapper(baleenType: BaleenType, options: JsonSchemaOptions): JsonSchema =
+    when {
+        baleenType is DataDescription && baleenType.name == "Dog" && baleenType.nameSpace == "com.shoprunner.data.dogs.Dog" -> {
+            val id = "com.shoprunner.data.dogs.CustomDog"
+            ObjectSchema(emptyList(), false, mapOf( "my_name" to StringSchema()), id)
+        }
+        else -> recursiveTypeMapper(::customDogTypeMapper, baleenType, options)
+    }
 
-// Use `asBaleenOverrideFor` to cast it into `BaleenOverride` to be used in mapper. Pass in the name of the type when using `DataDescription`
-val dogTypeOverride = (::mapIntTypeAsString).asBaleenOverrideFor("Dog")
+val outputStream = ByteArrayOutputStream()
+JsonSchemaGenerator.encode(packDescription, typeMapper = ::customDogTypeMapper).writeTo(PrintStream(outputStream), true)
+val jsonStr = outputStream.toString()
+```
 
-// Create override mapper.
-val overrideBaleenMapper = OverrideBaleenMapper(listOf(dogTypeOverride))
+This will output a json schema with Dog replaced with "CustomDog".
 
-// Do encoding with the override mapper.
-JsonSchemaGenerator.encode(Dog, true, baleenMapper = overrideBaleenMapper)
-
+```json
+{
+  "id" : "com.shoprunner.data.dogs.Pack",
+  "definitions" : {
+    "record:com.shoprunner.data.dogs.CustomDog" : {
+      "type" : "object",
+      "required" : [ ],
+      "additionalProperties" : false,
+      "properties" : {
+        "my_name" : {
+          "type" : "string"
+        }
+      }
+    },
+    "record:com.shoprunner.data.dogs.Pack" : {
+      "description" : "It's a pack of Dogs!",
+      "type" : "object",
+      "required" : [ "name", "dogs" ],
+      "additionalProperties" : false,
+      "properties" : {
+        "name" : {
+          "description" : "The name of the pack",
+          "type" : "string",
+          "maxLength" : 2147483647,
+          "minLength" : 0
+        },
+        "dogs" : {
+          "description" : "The dogs in the pack",
+          "type" : "array",
+          "items" : {
+            "${'$'}ref" : "#/definitions/record:com.shoprunner.data.dogs.CustomDog"
+          }
+        }
+      }
+    }
+  },
+  "${'$'}ref" : "#/definitions/record:com.shoprunner.data.dogs.Pack",
+  "${'$'}schema" : "http://json-schema.org/draft-04/schema"
+}
 ```
