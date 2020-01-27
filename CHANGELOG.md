@@ -3,6 +3,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.11.2] - 2020-01-27
+- Republished to fix module file java version.
+
 ## [1.11.1] - 2020-01-15
 - Fix parsing XML with empty tags
 - Update rxjava
