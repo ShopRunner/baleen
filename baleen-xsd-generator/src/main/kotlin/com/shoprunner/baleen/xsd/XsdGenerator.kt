@@ -5,7 +5,7 @@ import com.shoprunner.baleen.BaleenType
 import com.shoprunner.baleen.DataDescription
 import com.shoprunner.baleen.NoDefault
 import com.shoprunner.baleen.generator.BaseGenerator
-import com.shoprunner.baleen.generator.TypeMapper as BaseTypeMapper
+import com.shoprunner.baleen.generator.TypeMapper
 import com.shoprunner.baleen.types.AllowsNull
 import com.shoprunner.baleen.types.BooleanType
 import com.shoprunner.baleen.types.CoercibleType
@@ -41,13 +41,13 @@ object XsdGenerator : BaseGenerator<TypeDetails, XsdOptions>() {
     fun defaultTypeMapper(baleenType: BaleenType): TypeDetails =
         super.defaultTypeMapper(baleenType, XsdOptions)
 
-    fun recursiveTypeMapper(typeMapper: TypeMapper, baleenType: BaleenType): TypeDetails =
+    fun recursiveTypeMapper(typeMapper: XsdTypeMapper, baleenType: BaleenType): TypeDetails =
         recursiveTypeMapper({ b, _ -> typeMapper(b) }, baleenType, XsdOptions)
 
     /**
      * Maps baleen type to type details that are used for XSD.
      */
-    override fun defaultTypeMapper(typeMapper: BaseTypeMapper<TypeDetails, XsdOptions>, baleenType: BaleenType, options: XsdOptions): TypeDetails =
+    override fun defaultTypeMapper(typeMapper: TypeMapper<TypeDetails, XsdOptions>, baleenType: BaleenType, options: XsdOptions): TypeDetails =
         when (baleenType) {
             is AllowsNull<*> -> typeMapper(baleenType.type, options)
             is BooleanType -> TypeDetails("xs:boolean")
@@ -107,14 +107,14 @@ object XsdGenerator : BaseGenerator<TypeDetails, XsdOptions>() {
             else -> throw Exception("No mapping is defined for ${baleenType.name()} to XSD")
         }
 
-    private fun generateType(type: DataDescription, typeMapper: TypeMapper) =
+    private fun generateType(type: DataDescription, typeMapper: XsdTypeMapper) =
             ComplexType(
                 name = type.name,
                 annotation = createDocumentationAnnotation(type.markdownDescription),
                 sequence = Sequence(type.attrs.map { generateElement(it, typeMapper) })
             )
 
-    private fun generateElement(attr: AttributeDescription, typeMapper: TypeMapper): Element {
+    private fun generateElement(attr: AttributeDescription, typeMapper: XsdTypeMapper): Element {
         val typeDetails = typeMapper(attr.type)
         return Element(name = attr.name,
             type = typeDetails.type,
@@ -131,7 +131,7 @@ object XsdGenerator : BaseGenerator<TypeDetails, XsdOptions>() {
     /**
      * Creates an XSD from a data description.
      */
-    fun DataDescription.encode(outputStream: PrintStream, typeMapper: TypeMapper = ::defaultTypeMapper) {
+    fun DataDescription.encode(outputStream: PrintStream, typeMapper: XsdTypeMapper = ::defaultTypeMapper) {
         val jaxbContext = JAXBContext.newInstance(Schema::class.java)
         val jaxbMarshaller = jaxbContext.createMarshaller()
 
