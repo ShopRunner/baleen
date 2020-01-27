@@ -36,7 +36,7 @@ import java.io.PrintStream
 import javax.xml.bind.JAXBContext
 import javax.xml.bind.Marshaller
 
-object XsdGenerator : BaseGenerator<TypeDetails, XsdOptions>() {
+object XsdGenerator : BaseGenerator<TypeDetails, XsdOptions> {
 
     fun defaultTypeMapper(baleenType: BaleenType): TypeDetails =
         super.defaultTypeMapper(baleenType, XsdOptions)

@@ -26,7 +26,7 @@ import com.shoprunner.baleen.types.UnionType
 import java.io.File
 import java.nio.file.Path
 
-object JsonSchemaGenerator : BaseGenerator<JsonSchema, JsonSchemaOptions>() {
+object JsonSchemaGenerator : BaseGenerator<JsonSchema, JsonSchemaOptions> {
     private fun DataDescription.getId(): String =
         if (this.nameSpace.isNotBlank()) "${this.nameSpace}.${this.name}" else this.name
 

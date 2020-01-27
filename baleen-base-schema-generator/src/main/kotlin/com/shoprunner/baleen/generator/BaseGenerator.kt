@@ -14,7 +14,7 @@ import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.isSubtypeOf
 import kotlin.reflect.full.starProjectedType
 
-abstract class BaseGenerator<TO, OPTIONS : Options> {
+interface BaseGenerator<TO, OPTIONS : Options> {
     private fun findSuper(toFind: KType, clazz: KClass<*>): KType? {
         val parent = clazz.supertypes.firstOrNull { it.isSubtypeOf(toFind) }
         val projectedType = parent?.classifier?.starProjectedType
@@ -91,5 +91,5 @@ abstract class BaseGenerator<TO, OPTIONS : Options> {
     fun defaultTypeMapper(baleenType: BaleenType, options: OPTIONS): TO =
         recursiveTypeMapper(::defaultTypeMapper, baleenType, options)
 
-    abstract fun defaultTypeMapper(typeMapper: TypeMapper<TO, OPTIONS>, baleenType: BaleenType, options: OPTIONS): TO
+    fun defaultTypeMapper(typeMapper: TypeMapper<TO, OPTIONS>, baleenType: BaleenType, options: OPTIONS): TO
 }

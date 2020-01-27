@@ -34,7 +34,7 @@ import com.shoprunner.baleen.types.UnionType
 import java.io.File
 import java.nio.file.Path
 
-object JsonSchemaGenerator : BaseGenerator<JsonSchema, JsonSchemaOptions>() {
+object JsonSchemaGenerator : BaseGenerator<JsonSchema, JsonSchemaOptions> {
 
     fun encodeDescription(dataDescription: DataDescription, typeMapper: JsonSchemaTypeMapper, options: JsonSchemaOptions): ObjectSchema {
         return ObjectSchema().apply {
