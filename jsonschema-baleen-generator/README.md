@@ -39,13 +39,13 @@ Given a Json Schema, generate a Baleen description.
 
 ```kotlin
 // Generate from a JSON string
-BaleenGenerator.encode(jsonSchemaStr.parseJsonSchema()).writeTo(File("outDir"))
+BaleenGenerator.encode(jsonSchemaStr).writeTo(File("outDir"))
 
 // Generate from a JSON file
-BaleenGenerator.encode(File("Dog.schema.json").parseJsonSchema()).writeTo(File("outDir"))
+BaleenGenerator.encode(File("Dog.schema.json")).writeTo(File("outDir"))
 
 // Generate from a URL
-BaleenGenerator.encode(URL("http://example.com/jsonschema/Dog.schema.json").parseJsonSchema()).writeTo(File("outDir"))
+BaleenGenerator.encode(URL("http://example.com/jsonschema/Dog.schema.json")).writeTo(File("outDir"))
 ```
 
 Will output to file `outDir/com/shoprunner/data/dogs/Dog.kt` with the following description
@@ -69,49 +69,6 @@ val Dog: DataDescription = Baleen.describe("Dog", "com.shoprunner.data.dogs", "I
     it.attr(
         name = "legs",
         type = AllowsNull(IntType()),
-        markdownDescription = "The number of legs",
-        required = false,
-        default = null
-    )
-}
-```
-
-## Adding mapping overrides
-
-If the default Json Schema to Baleen mapping does not meet needs, a function override can be used.
-
-```kotlin
-fun mapIntegerSchemaToStringCoercibleToBoolean(j: IntegerSchema): CodeBlock {
-    return CodeBlock.of("%T(%T())", StringCoercibleToLong::class, LongType::class)
-}
-
-val longTypeOverride = (::mapIntegerSchemaToStringCoercibleToBoolean).asBaleenOverride()
-
-BaleenGenerator.encode(jsonSchemaStr.parseJsonSchema(), listOf(longTypeOverride)).writeTo(File("outDir"))
-```
-
-Will output the following description:
-
-```kotlin
-package com.shoprunner.data.dogs
-
-import com.shoprunner.baleen.Baleen.describe
-import com.shoprunner.baleen.DataDescription
-import com.shoprunner.baleen.types.AllowsNull
-import com.shoprunner.baleen.types.LongType
-import com.shoprunner.baleen.types.StringCoercibleToLong
-import com.shoprunner.baleen.types.StringType
-
-val Dog: DataDescription = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") {
-    it.attr(
-        name = "name",
-        type = StringType(),
-        markdownDescription = "The name of the dog",
-        required = true
-    )
-    it.attr(
-        name = "legs",
-        type = AllowsNull(StringCoercibleToLong(LongType()),
         markdownDescription = "The number of legs",
         required = false,
         default = null
