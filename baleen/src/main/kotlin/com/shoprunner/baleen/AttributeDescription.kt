@@ -29,8 +29,9 @@ class AttributeDescription(
         tests.add(validator)
     }
 
-    fun describe(block: (AttributeDescription) -> Unit) {
+    fun describe(block: (AttributeDescription) -> Unit): AttributeDescription {
         block(this)
+        return this
     }
 
     fun asWarnings(): AttributeDescription {

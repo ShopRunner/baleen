@@ -106,6 +106,41 @@ val productDescription = "Product".describeAs {
 }
 ```
 
+### Warnings
+
+Sometimes you will want an attribute or type to warn instead of error. The `asWarnings()` method will transform the output
+from `ValidationError` to `ValidationWarning` for all nested tests run underneath that attribute/type.
+
+```kotlin
+import com.shoprunner.baleen.Baleen.describeAs
+import com.shoprunner.baleen.ValidationError
+import com.shoprunner.baleen.dataTrace
+import com.shoprunner.baleen.types.StringType
+import com.shoprunner.baleen.types.asWarning()
+
+
+val productDescription = "Product".describeAs {
+
+    // The asWarning() method is on StringType. Min/max are warnings, but required is still an error.
+    "sku".type(StringType(min = 1, max = 500).asWarning(), required = true) 
+
+    // The asWarning() method is on the attribute. Min/max and required are all warnings.
+    "brand_manufacturer".type(StringType(min = 1, max = 500), required = true).asWarning()
+
+    // That asWarning() method is on the attribute. The attribute's custom test will also be turned into a warning.
+    "department".type(StringType(min = 0, max = 100)).describe { attr ->
+
+        attr.test { datatrace, value ->
+            val department = value["department"]
+            if (department != null && !departments.contains(department)) {
+                sequenceOf(ValidationError(dataTrace, "Department ($department) is not a valid value.", value))
+            } else {
+                sequenceOf()
+            }
+        }
+    }.asWarning()
+}
+```
 
 ## Gotchas
 
