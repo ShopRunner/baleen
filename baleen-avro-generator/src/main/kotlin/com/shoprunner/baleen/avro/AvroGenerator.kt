@@ -8,6 +8,7 @@ import com.shoprunner.baleen.types.BooleanType
 import com.shoprunner.baleen.types.CoercibleType
 import com.shoprunner.baleen.types.DoubleType
 import com.shoprunner.baleen.types.EnumType
+import com.shoprunner.baleen.types.ErrorsAreWarnings
 import com.shoprunner.baleen.types.FloatType
 import com.shoprunner.baleen.types.InstantType
 import com.shoprunner.baleen.types.IntType
@@ -42,6 +43,7 @@ object AvroGenerator {
             is StringType -> Schema.create(Schema.Type.STRING)
             is StringConstantType -> Schema.create(Schema.Type.STRING)
             is EnumType -> Schema.createEnum(baleenType.enumName, null, null, baleenType.enum.toList())
+            is ErrorsAreWarnings<*> -> getAvroSchema(baleenType.type)
             is InstantType -> LogicalTypes.timestampMillis().addToSchema(Schema.create(Schema.Type.LONG))
             is TimestampMillisType -> LogicalTypes.timestampMillis().addToSchema(Schema.create(Schema.Type.LONG))
             /* TODO: More Logical Types */

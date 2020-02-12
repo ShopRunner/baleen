@@ -19,6 +19,7 @@ import com.shoprunner.baleen.types.BooleanType
 import com.shoprunner.baleen.types.CoercibleType
 import com.shoprunner.baleen.types.DoubleType
 import com.shoprunner.baleen.types.EnumType
+import com.shoprunner.baleen.types.ErrorsAreWarnings
 import com.shoprunner.baleen.types.FloatType
 import com.shoprunner.baleen.types.InstantType
 import com.shoprunner.baleen.types.IntType
@@ -125,6 +126,7 @@ object JsonSchemaGenerator : BaseGenerator<JsonSchema, JsonSchemaOptions> {
                     }
                 }
             }
+            is ErrorsAreWarnings<*> -> typeMapper(baleenType.type, options)
         // V3 Does not support
             is AllowsNull<*> -> typeMapper(baleenType.type, options)
             else -> throw Exception("Unknown type: " + baleenType::class.simpleName)

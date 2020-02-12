@@ -11,6 +11,7 @@ import com.shoprunner.baleen.types.BooleanType
 import com.shoprunner.baleen.types.CoercibleType
 import com.shoprunner.baleen.types.DoubleType
 import com.shoprunner.baleen.types.EnumType
+import com.shoprunner.baleen.types.ErrorsAreWarnings
 import com.shoprunner.baleen.types.FloatType
 import com.shoprunner.baleen.types.InstantType
 import com.shoprunner.baleen.types.IntType
@@ -143,6 +144,7 @@ object JsonSchemaGenerator : BaseGenerator<JsonSchema, JsonSchemaOptions> {
                     OneOf(subSchemas)
                 }
             }
+            is ErrorsAreWarnings<*> -> typeMapper(baleenType.type, options)
             else -> throw Exception("No mapping is defined for ${baleenType.name()} to JsonSchema")
         }
     }
