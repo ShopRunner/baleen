@@ -10,18 +10,6 @@ class DataDescription(
 
     override fun name() = name
 
-    private fun attrTest(attr: AttributeDescription, type: BaleenType) = fun(dataTrace: DataTrace, data: Data): Sequence<ValidationResult> {
-        return when {
-            data.containsKey(attr.name) -> {
-                val (value, attrDataTrace) = data.attributeDataValue(attr.name, dataTrace)
-                sequenceOf(ValidationInfo(dataTrace, "has attribute \"${attr.name}\"", data)).plus(type.validate(attrDataTrace, value))
-            }
-            attr.default != NoDefault -> sequenceOf(ValidationInfo(dataTrace, "has attribute \"${attr.name}\" defaulted to `${attr.default}` since it wasn't set.", data))
-            attr.required -> sequenceOf(ValidationError(dataTrace, "missing required attribute \"${attr.name}\"", data))
-            else -> sequenceOf(ValidationInfo(dataTrace, "missing attribute \"${attr.name}\"", data))
-        }
-    }
-
     fun attr(
         name: String,
         type: BaleenType,
@@ -32,7 +20,6 @@ class DataDescription(
     ): AttributeDescription {
         val attr = AttributeDescription(this, name, type, markdownDescription, aliases, required, default)
         attrs.add(attr)
-        tests.add(attrTest(attr, type))
         return attr
     }
 
@@ -45,7 +32,6 @@ class DataDescription(
     ): AttributeDescription {
         val attr = AttributeDescription(this@DataDescription, this, type, markdownDescription, aliases, required, default)
         attrs.add(attr)
-        tests.add(attrTest(attr, type))
         return attr
     }
 
@@ -64,11 +50,11 @@ class DataDescription(
             return sequenceOf(ValidationError(dataTrace, "expected to be of type Data but is " + value.javaClass, value))
         }
 
-        return tests.asSequence().flatMap { it(dataTrace, value) }
+        return allTests.asSequence().flatMap { it(dataTrace, value) }
     }
 
     fun validate(ctx: Context): Validation {
-        val results = tests.flatMap { it(ctx.dataTrace, ctx.data).asIterable() }
+        val results = allTests.flatMap { it(ctx.dataTrace, ctx.data).asIterable() }
 
         if (results.none { it is ValidationError }) {
             // TODO should we have ValidationSuccess (it isn't very recursive)
@@ -83,4 +69,7 @@ class DataDescription(
     fun test(validation: Validator) {
         tests.add(validation)
     }
+
+    private val allTests: List<Validator>
+        get() = attrs.flatMap { it.allTests } + tests
 }

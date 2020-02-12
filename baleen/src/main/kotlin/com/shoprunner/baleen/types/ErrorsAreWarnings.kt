@@ -26,7 +26,7 @@ fun <T : BaleenType> T.asWarnings(): ErrorsAreWarnings<T> = ErrorsAreWarnings(th
  * Wraps the Validator function with a Validator function that maps errors into warnings.
  */
 fun Validator.asWarnings(): Validator = { dataTrace, data ->
-    this.invoke(dataTrace, data).asWarnings()
+    this(dataTrace, data).asWarnings()
 }
 
 /**
