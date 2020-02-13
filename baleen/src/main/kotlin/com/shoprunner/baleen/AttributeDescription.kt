@@ -24,9 +24,10 @@ class AttributeDescription(
             }
         }
 
-    fun test(validator: Validator) {
+    fun test(validator: Validator): AttributeDescription {
         // TODO change context
         tests.add(validator)
+        return this
     }
 
     fun describe(block: (AttributeDescription) -> Unit): AttributeDescription {
