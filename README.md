@@ -116,16 +116,16 @@ import com.shoprunner.baleen.Baleen.describeAs
 import com.shoprunner.baleen.ValidationError
 import com.shoprunner.baleen.dataTrace
 import com.shoprunner.baleen.types.StringType
-import com.shoprunner.baleen.types.asWarning()
+import com.shoprunner.baleen.types.asWarnings
 
 
 val productDescription = "Product".describeAs {
 
     // The asWarning() method is on StringType. Min/max are warnings, but required is still an error.
-    "sku".type(StringType(min = 1, max = 500).asWarning(), required = true) 
+    "sku".type(StringType(min = 1, max = 500).asWarnings(), required = true) 
 
     // The asWarning() method is on the attribute. Min/max and required are all warnings.
-    "brand_manufacturer".type(StringType(min = 1, max = 500), required = true).asWarning()
+    "brand_manufacturer".type(StringType(min = 1, max = 500), required = true).asWarnings()
 
     // That asWarning() method is on the attribute. The attribute's custom test will also be turned into a warning.
     "department".type(StringType(min = 0, max = 100)).describe { attr ->
@@ -138,7 +138,7 @@ val productDescription = "Product".describeAs {
                 sequenceOf()
             }
         }
-    }.asWarning()
+    }.asWarnings()
 }
 ```
 
