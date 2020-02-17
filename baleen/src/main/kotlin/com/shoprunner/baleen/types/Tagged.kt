@@ -14,7 +14,7 @@ class Tagged(val type: BaleenType, val tags: Map<String, String>) : BaleenType {
         type.validate(dataTrace.tag(tags), value)
 }
 
-fun BaleenType.tag(key: String, value: String): Tagged = Tagged(this, key to value)
+fun BaleenType.tag(tag: String, value: String): Tagged = Tagged(this, tag to value)
 
 fun BaleenType.tag(vararg tags: Pair<String, String>): Tagged = Tagged(this, *tags)
 

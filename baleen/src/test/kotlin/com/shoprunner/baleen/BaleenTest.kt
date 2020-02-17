@@ -241,4 +241,18 @@ internal class BaleenTest {
         assertThat(dataDesc.validate(dataOf("favorite number" to 42))).isValid()
         assertThat(dataDesc.validate(dataOf("favorite number" to 41))).isNotValid()
     }
+
+    @Test
+    fun `adds tag to attribute`() {
+        val dogDescription = "Dog".describeAs {
+            "name".type(
+                type = AllowsNull(StringType()),
+                required = true
+            ).tag("tag", "value")
+        }
+
+        val data = dataOf("name" to "Fido")
+        assertThat(dogDescription.validate(data)).isValid()
+        assertThat(dogDescription.validate(data).results).contains(ValidationInfo(dataTrace().tag("tag", "value"), "has attribute \"name\"", data))
+    }
 }

@@ -57,10 +57,11 @@ class AttributeDescription(
     }
 
     private fun validate(dataTrace: DataTrace, data: Data): Sequence<ValidationResult> {
+        val taggedDataTrace = dataTrace.tag(tags)
         return when {
             data.containsKey(name) -> {
-                val (value, attrDataTrace) = data.attributeDataValue(name, dataTrace)
-                sequenceOf(ValidationInfo(dataTrace, "has attribute \"${name}\"", data)).plus(
+                val (value, attrDataTrace) = data.attributeDataValue(name, taggedDataTrace)
+                sequenceOf(ValidationInfo(taggedDataTrace, "has attribute \"${name}\"", data)).plus(
                     type.validate(
                         attrDataTrace,
                         value
@@ -69,13 +70,13 @@ class AttributeDescription(
             }
             default != NoDefault -> sequenceOf(
                 ValidationInfo(
-                    dataTrace,
+                    taggedDataTrace,
                     "has attribute \"${name}\" defaulted to `$default` since it wasn't set.",
                     data
                 )
             )
-            required -> sequenceOf(ValidationError(dataTrace, "missing required attribute \"${name}\"", data))
-            else -> sequenceOf(ValidationInfo(dataTrace, "missing attribute \"${name}\"", data))
+            required -> sequenceOf(ValidationError(taggedDataTrace, "missing required attribute \"${name}\"", data))
+            else -> sequenceOf(ValidationInfo(taggedDataTrace, "missing attribute \"${name}\"", data))
         }
     }
 }
