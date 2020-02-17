@@ -12,6 +12,7 @@ class AttributeDescription(
     val default: Any?
 ) {
     private val tests: MutableList<Validator> = mutableListOf()
+    private val tags = mutableMapOf<String, String>()
     private var warn: Boolean = false
 
     internal val allTests: List<Validator>
@@ -37,6 +38,21 @@ class AttributeDescription(
 
     fun asWarnings(): AttributeDescription {
         warn = true
+        return this
+    }
+
+    fun tag(key: String, value: String): AttributeDescription {
+        tags[key] = value
+        return this
+    }
+
+    fun tag(tags: Map<String, String>): AttributeDescription {
+        this.tags.putAll(tags)
+        return this
+    }
+
+    fun tag(vararg tags: Pair<String, String>): AttributeDescription {
+        this.tags.putAll(tags)
         return this
     }
 
