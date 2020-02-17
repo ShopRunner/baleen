@@ -30,6 +30,7 @@ import com.shoprunner.baleen.types.NumericType
 import com.shoprunner.baleen.types.OccurrencesType
 import com.shoprunner.baleen.types.StringConstantType
 import com.shoprunner.baleen.types.StringType
+import com.shoprunner.baleen.types.Tagged
 import com.shoprunner.baleen.types.TimestampMillisType
 import com.shoprunner.baleen.types.UnionType
 import java.io.File
@@ -127,6 +128,7 @@ object JsonSchemaGenerator : BaseGenerator<JsonSchema, JsonSchemaOptions> {
                 }
             }
             is ErrorsAreWarnings<*> -> typeMapper(baleenType.type, options)
+            is Tagged -> typeMapper(baleenType.type, options)
         // V3 Does not support
             is AllowsNull<*> -> typeMapper(baleenType.type, options)
             else -> throw Exception("Unknown type: " + baleenType::class.simpleName)

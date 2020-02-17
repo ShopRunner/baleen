@@ -27,6 +27,7 @@ import com.shoprunner.baleen.types.StringType
 import com.shoprunner.baleen.types.TimestampMillisType
 import com.shoprunner.baleen.types.UnionType
 import com.shoprunner.baleen.types.asWarnings
+import com.shoprunner.baleen.types.tag
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
@@ -1058,6 +1059,41 @@ internal class JsonSchemaGeneratorTest {
                 it.attr(
                     name = "name",
                     type = StringType(min = 1, max = 10).asWarnings()
+                )
+            }
+
+            val schemaStr = """
+            {
+              "id" : "Dog",
+              "definitions" : {
+                "record:Dog" : {
+                  "type" : "object",
+                  "additionalProperties" : false,
+                  "properties" : {
+                    "name" : {
+                      "type" : "string",
+                      "maxLength" : 10,
+                      "minLength" : 1
+                    }
+                  }
+                }
+              },
+              "${'$'}ref" : "#/definitions/record:Dog",
+              "${'$'}schema" : "http://json-schema.org/draft-04/schema"
+            }""".trimIndent()
+
+            val outputStream = ByteArrayOutputStream()
+            JsonSchemaGenerator.encode(description).writeTo(PrintStream(outputStream), true)
+
+            Assertions.assertThat(outputStream.toString()).isEqualToIgnoringWhitespace(schemaStr)
+        }
+
+        @Test
+        fun `getJsonSchema encodes Tagged as string type`() {
+            val description = Baleen.describe("Dog") {
+                it.attr(
+                    name = "name",
+                    type = StringType(min = 1, max = 10).tag("tag" to "value")
                 )
             }
 

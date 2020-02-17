@@ -5,7 +5,7 @@ import com.shoprunner.baleen.DataTrace
 import com.shoprunner.baleen.ValidationResult
 import com.shoprunner.baleen.Validator
 
-class Tagged(val type: BaleenType, val tags: Map<String, String>): BaleenType {
+class Tagged(val type: BaleenType, val tags: Map<String, String>) : BaleenType {
     constructor(type: BaleenType, vararg tags: Pair<String, String>) : this(type, tags.toMap())
 
     override fun name(): String = type.name()
@@ -13,6 +13,8 @@ class Tagged(val type: BaleenType, val tags: Map<String, String>): BaleenType {
     override fun validate(dataTrace: DataTrace, value: Any?): Sequence<ValidationResult> =
         type.validate(dataTrace.tag(tags), value)
 }
+
+fun BaleenType.tag(key: String, value: String): Tagged = Tagged(this, key to value)
 
 fun BaleenType.tag(vararg tags: Pair<String, String>): Tagged = Tagged(this, *tags)
 

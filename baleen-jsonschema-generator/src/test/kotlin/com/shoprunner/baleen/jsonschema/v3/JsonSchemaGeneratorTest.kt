@@ -31,6 +31,7 @@ import com.shoprunner.baleen.types.StringCoercibleToBoolean
 import com.shoprunner.baleen.types.StringCoercibleToFloat
 import com.shoprunner.baleen.types.StringConstantType
 import com.shoprunner.baleen.types.StringType
+import com.shoprunner.baleen.types.Tagged
 import com.shoprunner.baleen.types.TimestampMillisType
 import com.shoprunner.baleen.types.UnionType
 import java.io.ByteArrayOutputStream
@@ -261,6 +262,14 @@ internal class JsonSchemaGeneratorTest {
         @Test
         fun `getJsonSchema encodes ErrorsAsWarnings type as string type`() {
             val schema = JsonSchemaGenerator.getJsonSchema(ErrorsAreWarnings(StringType()))
+            Assertions.assertThat(schema.isStringSchema).isTrue()
+            Assertions.assertThat((schema as StringSchema).minLength).isEqualTo(0)
+            Assertions.assertThat(schema.maxLength).isEqualTo(Int.MAX_VALUE)
+        }
+
+        @Test
+        fun `getJsonSchema encodes Tagged type as string type`() {
+            val schema = JsonSchemaGenerator.getJsonSchema(Tagged(StringType()))
             Assertions.assertThat(schema.isStringSchema).isTrue()
             Assertions.assertThat((schema as StringSchema).minLength).isEqualTo(0)
             Assertions.assertThat(schema.maxLength).isEqualTo(Int.MAX_VALUE)
