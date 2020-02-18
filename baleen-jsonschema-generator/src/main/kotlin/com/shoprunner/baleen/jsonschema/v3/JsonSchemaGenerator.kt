@@ -13,6 +13,7 @@ import com.fasterxml.jackson.module.jsonSchema.types.UnionTypeSchema
 import com.fasterxml.jackson.module.jsonSchema.types.ValueTypeSchema
 import com.shoprunner.baleen.BaleenType
 import com.shoprunner.baleen.DataDescription
+import com.shoprunner.baleen.generator.BaseGenerator
 import com.shoprunner.baleen.types.AllowsNull
 import com.shoprunner.baleen.types.BooleanType
 import com.shoprunner.baleen.types.CoercibleType
@@ -33,14 +34,14 @@ import com.shoprunner.baleen.types.UnionType
 import java.io.File
 import java.nio.file.Path
 
-object JsonSchemaGenerator {
+object JsonSchemaGenerator : BaseGenerator<JsonSchema, JsonSchemaOptions> {
 
-    private fun encodeDescription(dataDescription: DataDescription): ObjectSchema {
+    fun encodeDescription(dataDescription: DataDescription, typeMapper: JsonSchemaTypeMapper, options: JsonSchemaOptions): ObjectSchema {
         return ObjectSchema().apply {
             id = "${dataDescription.nameSpace}.${dataDescription.name}"
             description = dataDescription.markdownDescription
             dataDescription.attrs.forEach {
-                val subTypeSchema = getJsonSchema(it.type).apply {
+                val subTypeSchema = typeMapper(it.type, options).apply {
                     description = it.markdownDescription
                 }
                 if (it.required) {
@@ -52,10 +53,14 @@ object JsonSchemaGenerator {
         }
     }
 
-    fun getJsonSchema(baleenType: BaleenType): JsonSchema {
-        return when (baleenType) {
-            is DataDescription -> encodeDescription(baleenType)
-            is CoercibleType<*, *> -> getJsonSchema(baleenType.type)
+    override fun defaultTypeMapper(
+        typeMapper: JsonSchemaTypeMapper,
+        baleenType: BaleenType,
+        options: JsonSchemaOptions
+    ): JsonSchema =
+        when (baleenType) {
+            is DataDescription -> encodeDescription(baleenType, typeMapper, options)
+            is CoercibleType<*, *> -> typeMapper(baleenType.toSubType(options.coercibleHandlerOption), options)
             is BooleanType -> BooleanSchema()
             is FloatType -> NumberSchema().apply {
                 maximum = baleenType.max.toDouble()
@@ -101,14 +106,14 @@ object JsonSchemaGenerator {
             is MapType -> {
                 if (baleenType.keyType !is StringType) throw Exception("Map keys can only be String in RootJsonSchema")
                 ObjectSchema().apply {
-                    additionalProperties = ObjectSchema.SchemaAdditionalProperties(getJsonSchema(baleenType.valueType))
+                    additionalProperties = ObjectSchema.SchemaAdditionalProperties(typeMapper(baleenType.valueType, options))
                 }
             }
             is OccurrencesType -> ArraySchema().apply {
-                setItemsSchema(getJsonSchema(baleenType.memberType))
+                setItemsSchema(typeMapper(baleenType.memberType, options))
             }
             is UnionType -> {
-                val subTypeSchemas = baleenType.types.map { getJsonSchema(it) }.distinct()
+                val subTypeSchemas = baleenType.types.map { typeMapper(it, options) }.distinct()
                 if (subTypeSchemas.size == 1) {
                     subTypeSchemas[0]
                 } else {
@@ -121,13 +126,12 @@ object JsonSchemaGenerator {
                 }
             }
         // V3 Does not support
-            is AllowsNull<*> -> getJsonSchema(baleenType.type)
+            is AllowsNull<*> -> typeMapper(baleenType.type, options)
             else -> throw Exception("Unknown type: " + baleenType::class.simpleName)
         }
-    }
 
-    fun encode(dataDescription: DataDescription): ObjectSchema {
-        return encodeDescription(dataDescription).apply {
+    fun encode(dataDescription: DataDescription, options: JsonSchemaOptions = JsonSchemaOptions(), typeMapper: JsonSchemaTypeMapper = JsonSchemaGenerator::defaultTypeMapper): ObjectSchema {
+        return encodeDescription(dataDescription, typeMapper, options).apply {
             `$schema` = "http://json-schema.org/draft-03/schema"
         }
     }
@@ -136,9 +140,9 @@ object JsonSchemaGenerator {
         val lastDot = this.id.lastIndexOf('.')
         val namespace = this.id.substring(0, lastDot)
         val name = this.id.substring(lastDot)
-        val packageDir = java.io.File(directory, namespace.replace(".", "/"))
+        val packageDir = File(directory, namespace.replace(".", "/"))
         packageDir.mkdirs()
-        val schemaFile = java.io.File(packageDir, "$name.schema.json")
+        val schemaFile = File(packageDir, "$name.schema.json")
 
         if (prettyPrint) {
             ObjectMapper().writerWithDefaultPrettyPrinter().writeValue(schemaFile, this)

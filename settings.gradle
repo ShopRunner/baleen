@@ -1,5 +1,6 @@
 include 'baleen'
 include 'baleen-avro-generator'
+include 'baleen-base-schema-generator'
 include 'baleen-csv'
 include 'jsonschema-model'
 include 'baleen-jsonschema-generator'

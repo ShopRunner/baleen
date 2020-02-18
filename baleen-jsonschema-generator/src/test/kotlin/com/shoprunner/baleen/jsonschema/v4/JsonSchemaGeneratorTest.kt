@@ -2,8 +2,11 @@ package com.shoprunner.baleen.jsonschema.v4
 
 import com.shoprunner.baleen.Baleen
 import com.shoprunner.baleen.BaleenType
+import com.shoprunner.baleen.DataDescription
 import com.shoprunner.baleen.DataTrace
 import com.shoprunner.baleen.ValidationResult
+import com.shoprunner.baleen.generator.CoercibleHandlerOption
+import com.shoprunner.baleen.jsonschema.v4.JsonSchemaGenerator.recursiveTypeMapper
 import com.shoprunner.baleen.jsonschema.v4.JsonSchemaGenerator.writeTo
 import com.shoprunner.baleen.types.AllowsNull
 import com.shoprunner.baleen.types.BooleanType
@@ -17,6 +20,7 @@ import com.shoprunner.baleen.types.LongType
 import com.shoprunner.baleen.types.MapType
 import com.shoprunner.baleen.types.NumericType
 import com.shoprunner.baleen.types.OccurrencesType
+import com.shoprunner.baleen.types.StringCoercibleToBoolean
 import com.shoprunner.baleen.types.StringCoercibleToFloat
 import com.shoprunner.baleen.types.StringConstantType
 import com.shoprunner.baleen.types.StringType
@@ -36,11 +40,46 @@ internal class JsonSchemaGeneratorTest {
     @Nested
     inner class Types {
         @Test
-        fun `getJsonSchema encodes the resulting coerced type`() {
+        fun `getJsonSchema encodes the resulting coerced type using FROM type by default`() {
             val description = Baleen.describe("Dog") {
                 it.attr(
                         name = "number",
                         type = StringCoercibleToFloat(FloatType())
+                )
+            }
+
+            val schemaStr = """
+            {
+              "id" : "Dog",
+              "definitions" : {
+                "record:Dog" : {
+                  "type" : "object",
+                  "additionalProperties": false,
+                  "properties" : {
+                    "number" : {
+                      "type" : "string",
+                      "maxLength" : 2147483647,
+                      "minLength" : 0
+                    }
+                  }
+                }
+              },
+              "${'$'}ref" : "#/definitions/record:Dog",
+              "${'$'}schema" : "http://json-schema.org/draft-04/schema"
+            }""".trimIndent()
+
+            val outputStream = ByteArrayOutputStream()
+            JsonSchemaGenerator.encode(description).writeTo(PrintStream(outputStream), true)
+
+            Assertions.assertThat(outputStream.toString()).isEqualToIgnoringWhitespace(schemaStr)
+        }
+
+        @Test
+        fun `getJsonSchema encodes the resulting coerced type using TO type by configuration`() {
+            val description = Baleen.describe("Dog") {
+                it.attr(
+                    name = "number",
+                    type = StringCoercibleToFloat(FloatType())
                 )
             }
 
@@ -63,7 +102,8 @@ internal class JsonSchemaGeneratorTest {
             }""".trimIndent()
 
             val outputStream = ByteArrayOutputStream()
-            JsonSchemaGenerator.encode(description).writeTo(PrintStream(outputStream), true)
+            JsonSchemaGenerator.encode(description, options = JsonSchemaOptions(coercibleHandlerOption = CoercibleHandlerOption.TO))
+                .writeTo(PrintStream(outputStream), true)
 
             Assertions.assertThat(outputStream.toString()).isEqualToIgnoringWhitespace(schemaStr)
         }
@@ -91,7 +131,9 @@ internal class JsonSchemaGeneratorTest {
                           "type": "null"
                         },
                         {
-                          "type": "number"
+                          "type" : "string",
+                          "maxLength" : 2147483647,
+                          "minLength" : 0
                         }
                       ]
                     }
@@ -1444,7 +1486,7 @@ internal class JsonSchemaGeneratorTest {
             }""".trimIndent()
 
             val outputStream = ByteArrayOutputStream()
-            JsonSchemaGenerator.encode(packDescription, true).writeTo(PrintStream(outputStream), true)
+            JsonSchemaGenerator.encode(packDescription, JsonSchemaOptions(withAdditionalAttributes = true)).writeTo(PrintStream(outputStream), true)
 
             Assertions.assertThat(outputStream.toString()).isEqualToIgnoringWhitespace(schemaStr)
         }
@@ -1625,6 +1667,234 @@ internal class JsonSchemaGeneratorTest {
             val content = dogFile.readText()
 
             Assertions.assertThat(content).isEqualToIgnoringWhitespace(schemaStr)
+        }
+    }
+
+    @Nested
+    inner class Overrides {
+        @Test
+        fun `add an override when generating schema`() {
+            val description = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") {
+                it.attr(
+                        name = "name",
+                        type = StringType(),
+                        markdownDescription = "The name of the dog"
+                )
+
+                it.attr(
+                        name = "hasSpots",
+                        type = StringCoercibleToBoolean(BooleanType()),
+                        markdownDescription = "Does the dog have spots"
+                )
+            }
+
+            fun customSpotsMapper(baleenType: BaleenType, options: JsonSchemaOptions): JsonSchema =
+                when (baleenType) {
+                    is StringCoercibleToBoolean -> StringSchema(enum = listOf("true", "false"))
+                    else -> JsonSchemaGenerator.recursiveTypeMapper(::customSpotsMapper, baleenType, options)
+                }
+
+            val schemaStr = """
+                {
+                  "id" : "com.shoprunner.data.dogs.Dog",
+                  "definitions" : {
+                    "record:com.shoprunner.data.dogs.Dog" : {
+                      "description" : "It's a dog. Ruff Ruff!",
+                      "type" : "object",
+                      "additionalProperties" : false,
+                      "properties" : {
+                        "name" : {
+                          "description" : "The name of the dog",
+                          "type" : "string",
+                          "maxLength" : 2147483647,
+                          "minLength" : 0
+                        },
+                        "hasSpots" : {
+                          "description" : "Does the dog have spots",
+                          "type" : "string",
+                          "enum" : [ "true", "false" ]
+                        }
+                      }
+                    }
+                  },
+                  "${'$'}ref" : "#/definitions/record:com.shoprunner.data.dogs.Dog",
+                  "${'$'}schema" : "http://json-schema.org/draft-04/schema"
+                }
+            """.trimIndent()
+
+            val outputStream = ByteArrayOutputStream()
+            JsonSchemaGenerator.encode(description, typeMapper = ::customSpotsMapper).writeTo(PrintStream(outputStream), true)
+
+            Assertions.assertThat(outputStream.toString()).isEqualToIgnoringWhitespace(schemaStr)
+        }
+
+        @Test
+        fun `add an override for a nested type when generating schema`() {
+            val description = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") {
+                it.attr(
+                        name = "name",
+                        type = StringType(),
+                        markdownDescription = "The name of the dog"
+                )
+
+                it.attr(
+                        name = "attributes",
+                        type = Baleen.describe("Attributes", "com.shoprunner.data.dogs", "Attributes") { p ->
+                            p.attr(
+                                    name = "hasSpots",
+                                    type = AllowsNull(StringCoercibleToBoolean(BooleanType())),
+                                    markdownDescription = "Does the dog have spots"
+                            )
+                        },
+                        markdownDescription = "Attributes"
+                )
+            }
+
+            fun customSpotsMapper(baleenType: BaleenType, options: JsonSchemaOptions): JsonSchema =
+                when (baleenType) {
+                    is StringCoercibleToBoolean -> StringSchema(enum = listOf("true", "false"))
+                    else -> JsonSchemaGenerator.recursiveTypeMapper(::customSpotsMapper, baleenType, options)
+                }
+
+            val schemaStr = """
+                {
+                  "id" : "com.shoprunner.data.dogs.Dog",
+                  "definitions" : {
+                    "record:com.shoprunner.data.dogs.Attributes" : {
+                      "description" : "Attributes",
+                      "type" : "object",
+                      "additionalProperties" : false,
+                      "properties" : {
+                        "hasSpots" : {
+                          "description" : "Does the dog have spots",
+                          "oneOf" : [ {
+                            "type" : "null"
+                          }, {
+                            "type" : "string",
+                            "enum" : [ "true", "false" ]
+                          } ]
+                        }
+                      }
+                    },
+                    "record:com.shoprunner.data.dogs.Dog" : {
+                      "description" : "It's a dog. Ruff Ruff!",
+                      "type" : "object",
+                      "additionalProperties" : false,
+                      "properties" : {
+                        "name" : {
+                          "description" : "The name of the dog",
+                          "type" : "string",
+                          "maxLength" : 2147483647,
+                          "minLength" : 0
+                        },
+                        "attributes" : {
+                          "description" : "Attributes",
+                          "${'$'}ref" : "#/definitions/record:com.shoprunner.data.dogs.Attributes"
+                        }
+                      }
+                    }
+                  },
+                  "${'$'}ref" : "#/definitions/record:com.shoprunner.data.dogs.Dog",
+                  "${'$'}schema" : "http://json-schema.org/draft-04/schema"
+                }
+            """.trimIndent()
+
+            val outputStream = ByteArrayOutputStream()
+            JsonSchemaGenerator.encode(description, typeMapper = ::customSpotsMapper).writeTo(PrintStream(outputStream), true)
+
+            Assertions.assertThat(outputStream.toString()).isEqualToIgnoringWhitespace(schemaStr)
+        }
+
+        @Test
+        fun `add an override for an data description when generating schema`() {
+            val dogDescription = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") {
+                it.attr(
+                    name = "name",
+                    type = StringType(),
+                    markdownDescription = "The name of the dog",
+                    required = true
+                )
+            }
+
+            val packDescription = Baleen.describe("Pack", "com.shoprunner.data.dogs", "It's a pack of Dogs!") {
+                it.attr(
+                        name = "name",
+                        type = StringType(),
+                        markdownDescription = "The name of the pack",
+                        required = true
+                )
+
+                it.attr(
+                        name = "dogs",
+                        type = OccurrencesType(dogDescription),
+                        markdownDescription = "The dogs in the pack",
+                        required = true
+                )
+            }
+
+            fun customDogTypeMapper(baleenType: BaleenType, options: JsonSchemaOptions): JsonSchema =
+                when {
+                    baleenType is DataDescription &&
+                            baleenType.name == dogDescription.name
+                            && baleenType.nameSpace == dogDescription.nameSpace -> {
+
+                        val id = "com.shoprunner.data.dogs.CustomDog"
+                        ObjectSchema(
+                            emptyList(),
+                            false,
+                            mapOf(
+                                "my_name" to StringSchema()
+                            ),
+                            id
+                        )
+                    }
+                    else -> recursiveTypeMapper(::customDogTypeMapper, baleenType, options)
+                }
+
+            val schemaStr = """
+            {
+              "id" : "com.shoprunner.data.dogs.Pack",
+              "definitions" : {
+                "record:com.shoprunner.data.dogs.CustomDog" : {
+                  "type" : "object",
+                  "required" : [ ],
+                  "additionalProperties" : false,
+                  "properties" : {
+                    "my_name" : {
+                      "type" : "string"
+                    }
+                  }
+                },
+                "record:com.shoprunner.data.dogs.Pack" : {
+                  "description" : "It's a pack of Dogs!",
+                  "type" : "object",
+                  "required" : [ "name", "dogs" ],
+                  "additionalProperties" : false,
+                  "properties" : {
+                    "name" : {
+                      "description" : "The name of the pack",
+                      "type" : "string",
+                      "maxLength" : 2147483647,
+                      "minLength" : 0
+                    },
+                    "dogs" : {
+                      "description" : "The dogs in the pack",
+                      "type" : "array",
+                      "items" : {
+                        "${'$'}ref" : "#/definitions/record:com.shoprunner.data.dogs.CustomDog"
+                      }
+                    }
+                  }
+                }
+              },
+              "${'$'}ref" : "#/definitions/record:com.shoprunner.data.dogs.Pack",
+              "${'$'}schema" : "http://json-schema.org/draft-04/schema"
+            }""".trimIndent()
+
+            val outputStream = ByteArrayOutputStream()
+            JsonSchemaGenerator.encode(packDescription, typeMapper = ::customDogTypeMapper).writeTo(PrintStream(outputStream), true)
+
+            Assertions.assertThat(outputStream.toString()).isEqualTo(schemaStr)
         }
     }
 }

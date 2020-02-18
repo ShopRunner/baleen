@@ -1,6 +1,7 @@
 package com.shoprunner.baleen.jsonschema.v3
 
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonValueFormat
+import com.fasterxml.jackson.module.jsonSchema.JsonSchema
 import com.fasterxml.jackson.module.jsonSchema.types.ArraySchema
 import com.fasterxml.jackson.module.jsonSchema.types.IntegerSchema
 import com.fasterxml.jackson.module.jsonSchema.types.NumberSchema
@@ -11,6 +12,7 @@ import com.shoprunner.baleen.Baleen
 import com.shoprunner.baleen.BaleenType
 import com.shoprunner.baleen.DataTrace
 import com.shoprunner.baleen.ValidationResult
+import com.shoprunner.baleen.generator.CoercibleHandlerOption
 import com.shoprunner.baleen.jsonschema.v3.JsonSchemaGenerator.writeTo
 import com.shoprunner.baleen.types.AllowsNull
 import com.shoprunner.baleen.types.BooleanType
@@ -24,6 +26,7 @@ import com.shoprunner.baleen.types.LongType
 import com.shoprunner.baleen.types.MapType
 import com.shoprunner.baleen.types.NumericType
 import com.shoprunner.baleen.types.OccurrencesType
+import com.shoprunner.baleen.types.StringCoercibleToBoolean
 import com.shoprunner.baleen.types.StringCoercibleToFloat
 import com.shoprunner.baleen.types.StringConstantType
 import com.shoprunner.baleen.types.StringType
@@ -39,17 +42,33 @@ import org.junit.jupiter.api.TestInstance
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class JsonSchemaGeneratorTest {
 
+    fun JsonSchemaGenerator.getJsonSchema(baleenType: BaleenType, options: JsonSchemaOptions = JsonSchemaOptions()): JsonSchema {
+        return defaultTypeMapper(JsonSchemaGenerator::defaultTypeMapper, baleenType, options)
+    }
+
     @Nested
     inner class Types {
         @Test
         fun `getJsonSchema encodes the resulting coerced type`() {
             val schema = JsonSchemaGenerator.getJsonSchema(StringCoercibleToFloat(FloatType()))
-            Assertions.assertThat(schema.isNumberSchema).isTrue()
+            Assertions.assertThat(schema.isStringSchema).isTrue()
         }
 
         @Test
         fun `getJsonSchema encodes the resulting coerced type and ignores AllowsNull`() {
             val schema = JsonSchemaGenerator.getJsonSchema(AllowsNull(StringCoercibleToFloat(FloatType())))
+            Assertions.assertThat(schema.isStringSchema).isTrue()
+        }
+
+        @Test
+        fun `getJsonSchema encodes the resulting coerced type with coerced handler property set to TO `() {
+            val schema = JsonSchemaGenerator.getJsonSchema(StringCoercibleToFloat(FloatType()), JsonSchemaOptions(coercibleHandlerOption = CoercibleHandlerOption.TO))
+            Assertions.assertThat(schema.isNumberSchema).isTrue()
+        }
+
+        @Test
+        fun `getJsonSchema encodes the resulting coerced type and ignores AllowsNull with coerced handler property set to TO`() {
+            val schema = JsonSchemaGenerator.getJsonSchema(AllowsNull(StringCoercibleToFloat(FloatType())), JsonSchemaOptions(coercibleHandlerOption = CoercibleHandlerOption.TO))
             Assertions.assertThat(schema.isNumberSchema).isTrue()
         }
 
@@ -462,6 +481,122 @@ internal class JsonSchemaGeneratorTest {
 
             val outputStream = ByteArrayOutputStream()
             JsonSchemaGenerator.encode(packDescription).writeTo(PrintStream(outputStream), true)
+
+            Assertions.assertThat(outputStream.toString()).isEqualToIgnoringWhitespace(schemaStr)
+        }
+    }
+
+    @Nested
+    inner class Overrides {
+        @Test
+        fun `add an override when generating schema`() {
+            val description = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") {
+                it.attr(
+                        name = "name",
+                        type = StringType(),
+                        markdownDescription = "The name of the dog"
+                )
+
+                it.attr(
+                        name = "hasSpots",
+                        type = StringCoercibleToBoolean(BooleanType()),
+                        markdownDescription = "Does the dog have spots"
+                )
+            }
+
+            fun mapStringCoercibleToBooleanAsStringSchema(baleenType: BaleenType, options: JsonSchemaOptions): JsonSchema =
+                when (baleenType) {
+                    is StringCoercibleToBoolean -> StringSchema()
+                    else -> JsonSchemaGenerator.recursiveTypeMapper(::mapStringCoercibleToBooleanAsStringSchema, baleenType, options)
+                }
+
+            val schemaStr = """
+                {
+                  "type" : "object",
+                  "id" : "com.shoprunner.data.dogs.Dog",
+                  "${'$'}schema" : "http://json-schema.org/draft-03/schema",
+                  "description" : "It's a dog. Ruff Ruff!",
+                  "properties" : {
+                    "name" : {
+                      "type" : "string",
+                      "description" : "The name of the dog",
+                      "maxLength" : 2147483647,
+                      "minLength" : 0
+                    },
+                    "hasSpots" : {
+                      "type" : "string",
+                      "description" : "Does the dog have spots"
+                    }
+                  }
+                }
+            """.trimIndent()
+
+            val outputStream = ByteArrayOutputStream()
+            JsonSchemaGenerator.encode(description, JsonSchemaOptions(), ::mapStringCoercibleToBooleanAsStringSchema)
+                .writeTo(PrintStream(outputStream), true)
+
+            Assertions.assertThat(outputStream.toString()).isEqualToIgnoringWhitespace(schemaStr)
+        }
+
+        @Test
+        fun `add an override for a nested type when generating schema`() {
+            val description = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") {
+                it.attr(
+                        name = "name",
+                        type = StringType(),
+                        markdownDescription = "The name of the dog"
+                )
+
+                it.attr(
+                        name = "attributes",
+                        type = Baleen.describe("Attributes", "com.shoprunner.data.dogs", "Attributes") { p ->
+                            p.attr(
+                                    name = "hasSpots",
+                                    type = AllowsNull(StringCoercibleToBoolean(BooleanType())),
+                                    markdownDescription = "Does the dog have spots"
+                            )
+                        },
+                        markdownDescription = "Attributes"
+                )
+            }
+
+            fun mapStringCoercibleToBooleanAsStringSchema(baleenType: BaleenType, options: JsonSchemaOptions): JsonSchema =
+                when (baleenType) {
+                    is StringCoercibleToBoolean -> StringSchema()
+                    else -> JsonSchemaGenerator.recursiveTypeMapper(::mapStringCoercibleToBooleanAsStringSchema, baleenType, options)
+                }
+
+            val schemaStr = """
+                {
+                  "type" : "object",
+                  "id" : "com.shoprunner.data.dogs.Dog",
+                  "${'$'}schema" : "http://json-schema.org/draft-03/schema",
+                  "description" : "It's a dog. Ruff Ruff!",
+                  "properties" : {
+                    "name" : {
+                      "type" : "string",
+                      "description" : "The name of the dog",
+                      "maxLength" : 2147483647,
+                      "minLength" : 0
+                    },
+                    "attributes" : {
+                      "type" : "object",
+                      "id" : "com.shoprunner.data.dogs.Attributes",
+                      "description" : "Attributes",
+                      "properties" : {
+                        "hasSpots" : {
+                          "type" : "string",
+                          "description" : "Does the dog have spots"
+                        }
+                      }
+                    }
+                  }
+                }
+            """.trimIndent()
+
+            val outputStream = ByteArrayOutputStream()
+            JsonSchemaGenerator.encode(description, JsonSchemaOptions(), ::mapStringCoercibleToBooleanAsStringSchema)
+                .writeTo(PrintStream(outputStream), true)
 
             Assertions.assertThat(outputStream.toString()).isEqualToIgnoringWhitespace(schemaStr)
         }
