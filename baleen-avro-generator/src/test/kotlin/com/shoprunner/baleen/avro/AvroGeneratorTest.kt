@@ -10,6 +10,7 @@ import com.shoprunner.baleen.types.AllowsNull
 import com.shoprunner.baleen.types.BooleanType
 import com.shoprunner.baleen.types.DoubleType
 import com.shoprunner.baleen.types.EnumType
+import com.shoprunner.baleen.types.ErrorsAreWarnings
 import com.shoprunner.baleen.types.FloatType
 import com.shoprunner.baleen.types.InstantType
 import com.shoprunner.baleen.types.IntType
@@ -88,7 +89,7 @@ class AvroGeneratorTest {
         }
 
         @Test
-        fun `getAvroSchema encodes intger type`() {
+        fun `getAvroSchema encodes integer type`() {
             val schema = AvroGenerator.getAvroSchema(IntegerType())
             assertThat(schema.type).isEqualTo(Schema.Type.LONG)
         }
@@ -197,6 +198,12 @@ class AvroGeneratorTest {
             assertThat(schema.types[0].type).isEqualTo(Schema.Type.NULL)
             assertThat(schema.types[1].type).isEqualTo(Schema.Type.INT)
             assertThat(schema.types[2].type).isEqualTo(Schema.Type.LONG)
+        }
+
+        @Test
+        fun `getAvroSchema encodes ErrorsAreWarnings as string type`() {
+            val schema = AvroGenerator.getAvroSchema(ErrorsAreWarnings(StringType()))
+            assertThat(schema.type).isEqualTo(Schema.Type.STRING)
         }
 
         @Test

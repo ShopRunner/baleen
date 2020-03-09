@@ -105,6 +105,32 @@ internal class BaleenTest {
     }
 
     @Nested
+    inner class AttributeAsWarnings {
+
+        private val dogDescription = "Dog".describeAs {
+            "name".type(
+                type = AllowsNull(StringType()),
+                required = true
+            ).asWarnings()
+        }
+
+        @Test
+        fun `passes validation when present`() {
+            val data = dataOf("name" to "Fido")
+            assertThat(dogDescription.validate(data)).isValid()
+            assertThat(dogDescription.validate(data).results).contains(ValidationInfo(dataTrace(), "has attribute \"name\"", data))
+        }
+
+        @Test
+        fun `warns validation when data missing required attribute`() {
+            val data = dataOf<String>()
+            assertThat(dogDescription.validate(data)).isValid()
+            assertThat(dogDescription.validate(data).results).contains(
+                ValidationWarning(dataTrace(), "missing required attribute \"name\"", data))
+        }
+    }
+
+    @Nested
     inner class NestedDesc {
         private val dogDescription = "Dog".describeAs {
             "name".type(

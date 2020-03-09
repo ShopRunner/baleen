@@ -18,6 +18,7 @@ import com.shoprunner.baleen.types.AllowsNull
 import com.shoprunner.baleen.types.BooleanType
 import com.shoprunner.baleen.types.DoubleType
 import com.shoprunner.baleen.types.EnumType
+import com.shoprunner.baleen.types.ErrorsAreWarnings
 import com.shoprunner.baleen.types.FloatType
 import com.shoprunner.baleen.types.InstantType
 import com.shoprunner.baleen.types.IntType
@@ -255,6 +256,14 @@ internal class JsonSchemaGeneratorTest {
             org.junit.jupiter.api.Assertions.assertThrows(Exception::class.java) {
                 JsonSchemaGenerator.getJsonSchema(UnionType(IntType(), dogType))
             }
+        }
+
+        @Test
+        fun `getJsonSchema encodes ErrorsAsWarnings type as string type`() {
+            val schema = JsonSchemaGenerator.getJsonSchema(ErrorsAreWarnings(StringType()))
+            Assertions.assertThat(schema.isStringSchema).isTrue()
+            Assertions.assertThat((schema as StringSchema).minLength).isEqualTo(0)
+            Assertions.assertThat(schema.maxLength).isEqualTo(Int.MAX_VALUE)
         }
 
         @Test
