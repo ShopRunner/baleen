@@ -547,7 +547,7 @@ internal class BaleenPoetTest {
             "numLegs".type(AllowsNull(IntType()), markdownDescription = "The number of legs the Dog has")
         }
 
-        val spec = type.toFileSpec()
+        val spec = type.toFileSpec(name = "DogWithComments")
 
         assertSoftly {
             assertThat(spec).isEqualToIgnoringWhitespace("""
@@ -560,7 +560,7 @@ internal class BaleenPoetTest {
                 /**
                  * This is a Dog
                  */
-                val Dog: DataDescription = describe("Dog", "", "This is a Dog") {
+                val DogWithComments: DataDescription = describe("Dog", "", "This is a Dog") {
                       it.attr(
                         name = "name",
                         type = StringType(min = 0, max = Int.MAX_VALUE),
@@ -585,7 +585,7 @@ internal class BaleenPoetTest {
             "numLegs".type(AllowsNull(IntType()), aliases = arrayOf("nLegs", "numberOfLegs"))
         }
 
-        val spec = type.toFileSpec()
+        val spec = type.toFileSpec(name = "DogWithAliases")
 
         assertSoftly {
             assertThat(spec).isEqualToIgnoringWhitespace("""
@@ -595,16 +595,16 @@ internal class BaleenPoetTest {
                 import com.shoprunner.baleen.types.IntType
                 import com.shoprunner.baleen.types.StringType
                 
-                val Dog: DataDescription = describe("Dog", "", "") {
+                val DogWithAliases: DataDescription = describe("Dog", "", "") {
                       it.attr(
                         name = "name",
                         type = StringType(min = 0, max = Int.MAX_VALUE),
-                        default = "Fido"
+                        aliases = arrayOf("dogName")
                       )
                       it.attr(
                         name = "numLegs",
                         type = AllowsNull(IntType(min = Int.MIN_VALUE, max = Int.MAX_VALUE)),
-                        default = null
+                        aliases = arrayOf("nLegs", "numberOfLegs")
                       )
                 
                     }
@@ -618,29 +618,46 @@ internal class BaleenPoetTest {
         val type = "Dog".describeAs {
             "name".type(StringType(), default = "Fido")
             "numLegs".type(AllowsNull(IntType()), default = null)
+            "owners".type(OccurrencesType(StringType()), default = emptyList<String>())
+            "walkers".type(MapType(StringType(), StringType()), default = emptyMap<String, String>())
         }
 
-        val spec = type.toFileSpec()
+        val spec = type.toFileSpec(name = "DogWithDefaults")
 
         assertSoftly {
             assertThat(spec).isEqualToIgnoringWhitespace("""
-            import com.shoprunner.baleen.Baleen.describe
-            import com.shoprunner.baleen.DataDescription
-            import com.shoprunner.baleen.types.AllowsNull
-            import com.shoprunner.baleen.types.IntType
-            import com.shoprunner.baleen.types.StringType
-            
-            val Dog: DataDescription = describe("Dog", "", "") {
-                  it.attr(
-                    name = "name",
-                    type = StringType(min = 0, max = Int.MAX_VALUE)
-                  )
-                  it.attr(
-                    name = "numLegs",
-                    type = AllowsNull(IntType(min = Int.MIN_VALUE, max = Int.MAX_VALUE))
-                  )
-            
-                }
+                import com.shoprunner.baleen.Baleen.describe
+                import com.shoprunner.baleen.DataDescription
+                import com.shoprunner.baleen.types.AllowsNull
+                import com.shoprunner.baleen.types.IntType
+                import com.shoprunner.baleen.types.MapType
+                import com.shoprunner.baleen.types.OccurrencesType
+                import com.shoprunner.baleen.types.StringType
+                
+                val DogWithDefaults: DataDescription = describe("Dog", "", "") {
+                      it.attr(
+                        name = "name",
+                        type = StringType(min = 0, max = Int.MAX_VALUE),
+                        default = "Fido"
+                      )
+                      it.attr(
+                        name = "numLegs",
+                        type = AllowsNull(IntType(min = Int.MIN_VALUE, max = Int.MAX_VALUE)),
+                        default = null
+                      )
+                      it.attr(
+                        name = "owners",
+                        type = OccurrencesType(StringType(min = 0, max = Int.MAX_VALUE)),
+                        default = emptyList()
+                      )
+                      it.attr(
+                        name = "walkers",
+                        type = MapType(StringType(min = 0, max = Int.MAX_VALUE),StringType(min = 0, max =
+                            Int.MAX_VALUE)),
+                        default = emptyMap()
+                      )
+                
+                    }
             """.trimIndent())
             assertThat(spec).canCompile()
         }
@@ -653,7 +670,7 @@ internal class BaleenPoetTest {
             "numLegs".type(AllowsNull(IntType()), required = true)
         }
 
-        val spec = type.toFileSpec()
+        val spec = type.toFileSpec(name = "DogWithRequiredAttrs")
 
         assertSoftly {
             assertThat(spec).isEqualToIgnoringWhitespace("""
@@ -663,7 +680,7 @@ internal class BaleenPoetTest {
                 import com.shoprunner.baleen.types.IntType
                 import com.shoprunner.baleen.types.StringType
                 
-                val Dog: DataDescription = describe("Dog", "", "") {
+                val DogWithRequiredAttrs: DataDescription = describe("Dog", "", "") {
                       it.attr(
                         name = "name",
                         type = StringType(min = 0, max = Int.MAX_VALUE),

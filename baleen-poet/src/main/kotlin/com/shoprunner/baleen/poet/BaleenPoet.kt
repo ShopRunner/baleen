@@ -142,6 +142,15 @@ fun CodeBlock.Builder.addAttributeDescription(attr: AttributeDescription, typeMa
         add(",\ndefault = ")
         addDefaultValue(attr.type, attr.default)
     }
+    // aliases
+    if (attr.aliases.isNotEmpty()) {
+        add(",\naliases = arrayOf(")
+        attr.aliases.forEachIndexed { i, alias ->
+            if (i > 0) add(", ")
+            add("%S", alias)
+        }
+        add(")")
+    }
     unindent()
     add("\n)\n")
 }
