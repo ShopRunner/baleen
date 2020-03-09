@@ -121,13 +121,13 @@ import com.shoprunner.baleen.types.asWarnings
 
 val productDescription = "Product".describeAs {
 
-    // The asWarning() method is on StringType. Min/max are warnings, but required is still an error.
+    // The asWarnings() method is on StringType. Min/max are warnings, but required is still an error.
     "sku".type(StringType(min = 1, max = 500).asWarnings(), required = true) 
 
-    // The asWarning() method is on the attribute. Min/max and required are all warnings.
+    // The asWarnings() method is on the attribute. Min/max and required are all warnings.
     "brand_manufacturer".type(StringType(min = 1, max = 500), required = true).asWarnings()
 
-    // That asWarning() method is on the attribute. The attribute's custom test will also be turned into a warning.
+    // The asWarnings() method is on the attribute. The attribute's custom test will also be turned into a warning.
     "department".type(StringType(min = 0, max = 100)).describe { attr ->
 
         attr.test { datatrace, value ->
