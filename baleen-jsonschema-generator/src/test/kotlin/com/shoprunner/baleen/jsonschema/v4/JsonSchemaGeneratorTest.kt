@@ -1093,7 +1093,7 @@ internal class JsonSchemaGeneratorTest {
             val description = Baleen.describe("Dog") {
                 it.attr(
                     name = "name",
-                    type = StringType(min = 1, max = 10).tag("tag" to "value")
+                    type = StringType(min = 1, max = 10).tag("tag", "value")
                 )
             }
 
