@@ -1,6 +1,8 @@
 package com.shoprunner.baleen.poet
 
 import com.shoprunner.baleen.Baleen.describeAs
+import com.shoprunner.baleen.BaleenType
+import com.shoprunner.baleen.DataDescription
 import com.shoprunner.baleen.types.AllowsNull
 import com.shoprunner.baleen.types.BooleanType
 import com.shoprunner.baleen.types.DoubleType
@@ -25,6 +27,7 @@ import com.shoprunner.baleen.types.StringConstantType
 import com.shoprunner.baleen.types.StringType
 import com.shoprunner.baleen.types.TimestampMillisType
 import com.shoprunner.baleen.types.UnionType
+import com.squareup.kotlinpoet.CodeBlock
 import java.time.Instant
 import java.time.format.DateTimeFormatter
 import org.assertj.core.api.SoftAssertions.assertSoftly
@@ -840,6 +843,100 @@ internal class BaleenPoetTest {
                 val longCoercibleToInstant: BaleenType = LongCoercibleToInstant(InstantType(before = Instant.MAX,
                     after = Instant.MIN), millis)
             """.trimIndent())
+            assertThat(spec).canCompile()
+        }
+    }
+
+    @Test
+    fun `test overriding default type mapping`() {
+        val type = StringType()
+        fun customOverride(builder: CodeBlock.Builder, baleenType: BaleenType): CodeBlock.Builder =
+            when (baleenType) {
+                is StringType -> builder.add("%T()", IntType::class)
+                else -> defaultTypeMapper(builder, baleenType, ::customOverride)
+            }
+        val spec = type.toFileSpec(name = "StringOverrideToInt", typeMapper = ::customOverride)
+
+        assertSoftly {
+            assertThat(spec).isEqualToIgnoringWhitespace("""
+            import com.shoprunner.baleen.BaleenType
+            import com.shoprunner.baleen.types.IntType
+            
+            val StringOverrideToInt: BaleenType = IntType()
+        """.trimIndent())
+            assertThat(spec).canCompile()
+        }
+    }
+
+    @Test
+    fun `test overriding default type mapping in DataDescription`() {
+        val type = "Dog".describeAs {
+            "name".type(StringType())
+            "numLegs".type(AllowsNull(IntType()))
+        }
+        fun customOverride(builder: CodeBlock.Builder, baleenType: BaleenType): CodeBlock.Builder =
+            when (baleenType) {
+                is StringType -> builder.add("%T()", IntType::class)
+                else -> defaultTypeMapper(builder, baleenType, ::customOverride)
+            }
+        val spec = type.toFileSpec(name = "DogWithStringOverrideToInt", typeMapper = ::customOverride)
+
+        assertSoftly {
+            assertThat(spec).isEqualToIgnoringWhitespace("""
+            import com.shoprunner.baleen.Baleen.describe
+            import com.shoprunner.baleen.DataDescription
+            import com.shoprunner.baleen.types.AllowsNull
+            import com.shoprunner.baleen.types.IntType
+            
+            val DogWithStringOverrideToInt: DataDescription = describe("Dog", "", "") {
+                  it.attr(
+                    name = "name",
+                    type = IntType()
+                  )
+                  it.attr(
+                    name = "numLegs",
+                    type = AllowsNull(IntType(min = Int.MIN_VALUE, max = Int.MAX_VALUE))
+                  )
+            
+                }
+        """.trimIndent())
+            assertThat(spec).canCompile()
+        }
+    }
+
+    @Test
+    fun `test overriding nested DataDescription type mapping in DataDescription`() {
+        val dog = "Dog".describeAs {
+            "name".type(StringType())
+            "numLegs".type(AllowsNull(IntType()))
+        }
+        val pack = "Pack".describeAs {
+            "dogs".type(OccurrencesType(dog))
+        }
+
+        fun customOverride(builder: CodeBlock.Builder, baleenType: BaleenType): CodeBlock.Builder =
+            when {
+                baleenType is DataDescription && baleenType.name == "Dog" -> builder.add("%T()", StringType::class)
+                else -> defaultTypeMapper(builder, baleenType, ::customOverride)
+            }
+        val spec = pack.toFileSpec(name = "PackWithDogOverrideToString", typeMapper = ::customOverride)
+
+        assertSoftly {
+            assertThat(spec).isEqualToIgnoringWhitespace("""
+            import com.shoprunner.baleen.Baleen.describe
+            import com.shoprunner.baleen.DataDescription
+            import com.shoprunner.baleen.types.OccurrencesType
+            import com.shoprunner.baleen.types.StringType
+            
+            val PackWithDogOverrideToString: DataDescription = describe("Pack", "", "") {
+                  it.attr(
+                    name = "dogs",
+                    type = OccurrencesType(StringType())
+                  )
+            
+                }
+
+        """.trimIndent())
             assertThat(spec).canCompile()
         }
     }

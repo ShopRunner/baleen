@@ -29,7 +29,7 @@ import java.time.format.DateTimeFormatter
 
 typealias TypeMapper = (CodeBlock.Builder, BaleenType) -> CodeBlock.Builder
 
-fun recursiveTypeMapper(typeMapper: TypeMapper): TypeMapper {
+internal fun recursiveTypeMapper(typeMapper: TypeMapper): TypeMapper {
     return { codeBlockBuilder, baleenType -> defaultTypeMapper(codeBlockBuilder, baleenType, typeMapper) }
 }
 

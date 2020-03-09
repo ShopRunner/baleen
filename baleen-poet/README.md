@@ -1,6 +1,6 @@
 # Baleen Poet
 
-Baleen Poet is an extension of the awesome Kotlin Poet library that supports writing Kotlin files. This library
+Baleen Poet is an extension of the awesome [KotlinPoet](https://github.com/square/kotlinpoet) library that supports writing Kotlin files. This library
 takes a BaleenType as input and then writes it to the file.  This is especially useful for Baleen generators where an
 external format like Json schema or Avro schemas can be imported to create a Baleen schema.
 
@@ -142,4 +142,22 @@ val Pack: DataDescription = describe("Pack", "com.shoprunner.pack", "") {
       )
 
     }
+```
+
+Types can be overridden using a TypeMapper function. It takes the CodeBlock.Builder and BaleenType and allows for customized
+code for BaleenTypes that need to be overriden or do not have mapping in the default type mapper.
+
+```kotlin
+typealias TypeMapper = (CodeBlock.Builder, BaleenType) -> CodeBlock.Builder
+
+fun customOverride(builder: CodeBlock.Builder, baleenType: BaleenType): CodeBlock.Builder =
+    when {
+        baleenType is StringType -> builder.add("%T()", IntType::class)
+        baleenType is DataDescription && baleenType.name == "Dog" -> builder.add("%T()", StringType::class) 
+        else -> defaultTypeMapper(builder, baleenType, ::customOverride) // Recursive call here
+    }
+
+val spec = type.toFileSpec(typeMapper = ::customOverride)
+spec.writeTo(File("src/"))
+
 ```
