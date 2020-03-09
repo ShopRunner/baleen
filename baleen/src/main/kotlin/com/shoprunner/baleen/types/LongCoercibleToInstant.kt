@@ -2,7 +2,7 @@ package com.shoprunner.baleen.types
 
 import java.time.Instant
 
-class LongCoercibleToInstant(instantType: InstantType, precision: Precision = Precision.millis) :
+class LongCoercibleToInstant(instantType: InstantType, val precision: Precision = Precision.millis) :
         LongCoercibleToType<InstantType>(instantType, {
             when (precision) {
                 Precision.millis -> Instant.ofEpochMilli(it)
