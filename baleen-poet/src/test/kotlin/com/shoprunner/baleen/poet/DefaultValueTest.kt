@@ -88,7 +88,7 @@ internal class DefaultValueTest {
             .addDefaultValue(OccurrencesType(StringType()), emptyList<Any>())
             .build()
 
-        assertThat(codeBlock.toString()).isEqualTo("emptyList()")
+        assertThat(codeBlock.toString()).isEqualTo("emptyList<Any?>()")
     }
 
     @Test
@@ -115,7 +115,7 @@ internal class DefaultValueTest {
             .addDefaultValue(MapType(StringType(), IntType()), emptyMap<String, Int>())
             .build()
 
-        assertThat(codeBlock.toString()).isEqualTo("emptyMap()")
+        assertThat(codeBlock.toString()).isEqualTo("emptyMap<Any?, Any?>()")
     }
 
     @Test

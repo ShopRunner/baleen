@@ -32,7 +32,7 @@ fun CodeBlock.Builder.addDefaultValue(baleenType: BaleenType, defaultValue: Any?
                 is OccurrencesType -> if (defaultValue is Iterable<*>) {
                     val defaultValueList = defaultValue.toList()
                     if (defaultValueList.isEmpty()) {
-                        add("emptyList()")
+                        add("emptyList<Any?>()")
                     } else {
                         add("listOf(")
                         defaultValueList.forEachIndexed { i, v ->
@@ -44,7 +44,7 @@ fun CodeBlock.Builder.addDefaultValue(baleenType: BaleenType, defaultValue: Any?
                 }
                 is MapType -> if (defaultValue is Map<*, *>) {
                     if (defaultValue.isEmpty()) {
-                        add("emptyMap()")
+                        add("emptyMap<Any?, Any?>()")
                     } else {
                         add("mapOf(")
                         defaultValue.toList().forEachIndexed { i, (key, value) ->

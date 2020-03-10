@@ -59,7 +59,7 @@ fun defaultTypeMapper(codeBlockBuilder: CodeBlock.Builder, baleenType: BaleenTyp
         is MapType -> {
             add("%T(", MapType::class)
             typeMapper(this, baleenType.keyType)
-            add(",")
+            add(", ")
             typeMapper(this, baleenType.valueType)
             add(")")
         }

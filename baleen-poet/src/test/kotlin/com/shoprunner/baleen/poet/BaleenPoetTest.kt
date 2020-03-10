@@ -648,13 +648,13 @@ internal class BaleenPoetTest {
                       it.attr(
                         name = "owners",
                         type = OccurrencesType(StringType(min = 0, max = Int.MAX_VALUE)),
-                        default = emptyList()
+                        default = emptyList<Any?>()
                       )
                       it.attr(
                         name = "walkers",
                         type = MapType(StringType(min = 0, max = Int.MAX_VALUE),StringType(min = 0, max =
                             Int.MAX_VALUE)),
-                        default = emptyMap()
+                        default = emptyMap<Any?, Any?>()
                       )
                 
                     }
