@@ -169,7 +169,7 @@ internal class DefaultValueTest {
             .addDefaultValue(EnumType("TestEnum", TestEnum.values()), TestEnum.One)
             .build()
 
-        assertThat(codeBlock.toString()).isEqualTo("\"One\"")
+        assertThat(codeBlock.toString()).isEqualTo("com.shoprunner.baleen.poet.TestEnum.One")
     }
 
     @Test

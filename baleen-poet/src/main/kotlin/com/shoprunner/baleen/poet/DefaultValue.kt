@@ -64,7 +64,7 @@ fun CodeBlock.Builder.addDefaultValue(baleenType: BaleenType, defaultValue: Any?
                         is Long -> add("%LL", defaultValue)
                         is Float -> add("%Lf", defaultValue)
                         is Double -> add("%L", defaultValue)
-                        is Enum<*> -> add("%S", defaultValue.name)
+                        is Enum<*> -> add("%T.%L", defaultValue::class.asClassName(), defaultValue.name)
                         is Instant -> add("%T.parse(%S)", Instant::class, defaultValue.toString())
                         is LocalDateTime -> add("%T.parse(%S)", LocalDateTime::class, defaultValue.toString())
                         else -> add("%T()", defaultValue::class.asClassName())

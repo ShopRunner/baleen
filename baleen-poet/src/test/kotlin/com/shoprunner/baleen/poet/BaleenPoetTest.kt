@@ -620,6 +620,7 @@ internal class BaleenPoetTest {
             "numLegs".type(AllowsNull(IntType()), default = null)
             "owners".type(OccurrencesType(StringType()), default = emptyList<String>())
             "walkers".type(MapType(StringType(), StringType()), default = emptyMap<String, String>())
+            "badge".type(EnumType("Badges", TestEnum.values()), default = TestEnum.One)
         }
 
         val spec = type.toFileSpec(name = "DogWithDefaults")
@@ -628,7 +629,9 @@ internal class BaleenPoetTest {
             assertThat(spec).isEqualToIgnoringWhitespace("""
                 import com.shoprunner.baleen.Baleen.describe
                 import com.shoprunner.baleen.DataDescription
+                import com.shoprunner.baleen.poet.TestEnum
                 import com.shoprunner.baleen.types.AllowsNull
+                import com.shoprunner.baleen.types.EnumType
                 import com.shoprunner.baleen.types.IntType
                 import com.shoprunner.baleen.types.MapType
                 import com.shoprunner.baleen.types.OccurrencesType
@@ -652,11 +655,15 @@ internal class BaleenPoetTest {
                       )
                       it.attr(
                         name = "walkers",
-                        type = MapType(StringType(min = 0, max = Int.MAX_VALUE),StringType(min = 0, max =
+                        type = MapType(StringType(min = 0, max = Int.MAX_VALUE), StringType(min = 0, max =
                             Int.MAX_VALUE)),
                         default = emptyMap<Any?, Any?>()
                       )
-                
+                      it.attr(
+                        name = "badge",
+                        type = EnumType("Badges", listOf("One")),
+                        default = TestEnum.One
+                      )
                     }
             """.trimIndent())
             assertThat(spec).canCompile()
