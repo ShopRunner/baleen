@@ -1,11 +1,20 @@
 package com.shoprunner.baleen.types
 
 import com.shoprunner.baleen.BaleenType
+import com.shoprunner.baleen.Context
 import com.shoprunner.baleen.Data
 import com.shoprunner.baleen.DataTrace
+import com.shoprunner.baleen.Validation
 import com.shoprunner.baleen.ValidationResult
 import com.shoprunner.baleen.Validator
+import com.shoprunner.baleen.dataTrace
 
+/**
+ * BaleenType extension that encapsulates new tags used to markup the other BaleenTypes during the validation output.
+ *
+ * @param type the BaleenType to tag.
+ * @param tags the tags to apply to the ValidationResults.
+ */
 class Tagged(val type: BaleenType, val tags: Map<String, Tagger>) : BaleenType {
     constructor(type: BaleenType, vararg tags: Pair<String, Tagger>) : this(type, tags.toMap())
 
@@ -41,14 +50,22 @@ fun withAttributeValue(attrName: String): Tagger = {
 }
 
 /**
- * Wraps the BaleenType with a
+ * Tags a BaleenType with a tag and value that will appear on the DataTrace on the results.
  */
 fun BaleenType.tag(tag: String, value: String): Tagged =
         Tagged(this, tag to withConstantValue(value))
 
+/**
+ * Tags a BaleenType with a tag and Tagger function that will evaluate on the input data and appear on the DataTrace on
+ * the results.
+ */
 fun BaleenType.tag(tag: String, tagger: Tagger): Tagged =
         Tagged(this, tag to tagger)
 
+/**
+ * Tags a BaleenType with a tags and Tagger functions that will evaluate on the input data and appear on the DataTrace on
+ * the results.
+ */
 fun BaleenType.tag(vararg tags: Pair<String, Tagger>): Tagged =
         Tagged(this, *tags)
 
@@ -70,3 +87,17 @@ fun Validator.tag(tag: String, value: String): Validator =
  */
 fun Validator.tag(tag: String, tagger: Tagger): Validator =
     this.tag(tag to tagger)
+
+/**
+ * Given a context, return the Validation result. Useful when tagging DataDescription and wanting to use same validate method
+ * signature
+ */
+fun Tagged.validate(ctx: Context): Validation {
+    return Validation(ctx, validate(ctx.dataTrace, ctx.data).asIterable())
+}
+
+/**
+ * Given Data, return the Validation result. Useful when tagging DataDescription and wanting to use same validate method
+ * signature
+ */
+fun Tagged.validate(data: Data): Validation = validate(Context(data, dataTrace()))
