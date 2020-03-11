@@ -6,7 +6,11 @@ dependencies {
 }
 
 test {
-    def map = [GEN_CLASSPATH: configurations.testCompileClasspath.files.path.join(":")]
+    def map = [
+            GEN_CLASSPATH: (
+                    configurations.testCompileClasspath.files.path + files(compileTestKotlin.destinationDir)
+            ).join(":")
+    ]
     environment map
 }
 
