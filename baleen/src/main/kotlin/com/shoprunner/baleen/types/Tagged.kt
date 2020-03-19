@@ -76,7 +76,6 @@ fun BaleenType.tag(vararg tags: Pair<String, Tagger>): Tagged =
 fun BaleenType.tag(tags: Map<String, Tagger>): Tagged =
     Tagged(this, tags)
 
-
 /**
  * Wraps the Validator function with a Validator function that add tags to the datatrace
  */
