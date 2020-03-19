@@ -1,6 +1,7 @@
 package com.shoprunner.baleen.types
 
 import com.shoprunner.baleen.Baleen.describeAs
+import com.shoprunner.baleen.Context
 import com.shoprunner.baleen.Data
 import com.shoprunner.baleen.DataTrace
 import com.shoprunner.baleen.SequenceAssert.Companion.assertThat
@@ -79,6 +80,22 @@ internal class TaggedTest {
     }
 
     @Test
+    fun `test Tagged adds multiple tags in a map to BaleenType`() {
+        val type = StringType(min = 2).tag(mapOf(
+            "staticTag" to withConstantValue("value"),
+            "dynamicTag" to withValue()
+        ))
+
+        assertThat(type.validate(dataTrace(), "a")).containsExactly(
+            ValidationError(
+                dataTrace().tag("staticTag" to "value", "dynamicTag" to "a"),
+                "is not at least 2 characters",
+                "a"
+            )
+        )
+    }
+
+    @Test
     fun `test Validator with static tag`() {
         fun customValidator(dataTrace: DataTrace, data: Data): Sequence<ValidationResult> {
             return sequenceOf(ValidationInfo(dataTrace, "Validator was called", null))
@@ -122,6 +139,26 @@ internal class TaggedTest {
             "staticTag" to withConstantValue("value"),
             "dynamicTag" to withAttributeValue("key")
         )
+
+        assertThat(taggedValidator(dataTrace(), dataOf("key" to "attrValue"))).containsExactly(
+            ValidationInfo(
+                dataTrace().tag("staticTag" to "value", "dynamicTag" to "attrValue"),
+                "Validator was called",
+                null
+            )
+        )
+    }
+
+    @Test
+    fun `test Validator with multiple tags in a map`() {
+        fun customValidator(dataTrace: DataTrace, data: Data): Sequence<ValidationResult> {
+            return sequenceOf(ValidationInfo(dataTrace, "Validator was called", null))
+        }
+
+        val taggedValidator = ::customValidator.tag(mapOf(
+            "staticTag" to withConstantValue("value"),
+            "dynamicTag" to withAttributeValue("key")
+        ))
 
         assertThat(taggedValidator(dataTrace(), dataOf("key" to "attrValue"))).containsExactly(
             ValidationInfo(
@@ -265,6 +302,46 @@ internal class TaggedTest {
         assertThat(dogDescription.validate(dataTrace(), data)).containsExactly(
             ValidationInfo(
                 dataTrace().tag("staticTag" to "value", "dynamicTag" to "Fido"),
+                "has attribute \"name\"",
+                data
+            )
+        )
+    }
+
+    @Test
+    fun `test Tagged validation with a Context input`() {
+        val dogDescription = "Dog".describeAs {
+            "name".type(
+                type = AllowsNull(StringType()),
+                required = true
+            )
+        }.tag("tag", "value")
+
+        val data = dataOf("name" to "Fido")
+        val validation = dogDescription.validate(Context(data, dataTrace()))
+        assertThat(validation.results.asSequence()).containsExactly(
+            ValidationInfo(
+                dataTrace().tag("tag", "value"),
+                "has attribute \"name\"",
+                data
+            )
+        )
+    }
+
+    @Test
+    fun `test Tagged validation with a Data input`() {
+        val dogDescription = "Dog".describeAs {
+            "name".type(
+                type = AllowsNull(StringType()),
+                required = true
+            )
+        }.tag("tag", "value")
+
+        val data = dataOf("name" to "Fido")
+        val validation = dogDescription.validate(data)
+        assertThat(validation.results.asSequence()).containsExactly(
+            ValidationInfo(
+                dataTrace().tag("tag", "value"),
                 "has attribute \"name\"",
                 data
             )

@@ -70,9 +70,24 @@ fun BaleenType.tag(vararg tags: Pair<String, Tagger>): Tagged =
         Tagged(this, *tags)
 
 /**
+ * Tags a BaleenType with a map of tags to Tagger functions that will evaluate on the input data and appear on the DataTrace on
+ * the results.
+ */
+fun BaleenType.tag(tags: Map<String, Tagger>): Tagged =
+    Tagged(this, tags)
+
+
+/**
  * Wraps the Validator function with a Validator function that add tags to the datatrace
  */
 fun Validator.tag(vararg tags: Pair<String, Tagger>): Validator = { dataTrace, data ->
+    this(dataTrace.tag(tags.map { (k, v) -> k to v(data) }.toMap()), data)
+}
+
+/**
+ * Wraps the Validator function with a Validator function that add tags to the datatrace
+ */
+fun Validator.tag(tags: Map<String, Tagger>): Validator = { dataTrace, data ->
     this(dataTrace.tag(tags.map { (k, v) -> k to v(data) }.toMap()), data)
 }
 
