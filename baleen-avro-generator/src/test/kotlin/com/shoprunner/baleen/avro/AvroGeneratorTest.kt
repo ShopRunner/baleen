@@ -24,6 +24,7 @@ import com.shoprunner.baleen.types.StringCoercibleToInstant
 import com.shoprunner.baleen.types.StringCoercibleToLong
 import com.shoprunner.baleen.types.StringConstantType
 import com.shoprunner.baleen.types.StringType
+import com.shoprunner.baleen.types.Tagged
 import com.shoprunner.baleen.types.TimestampMillisType
 import com.shoprunner.baleen.types.UnionType
 import java.io.ByteArrayOutputStream
@@ -203,6 +204,12 @@ class AvroGeneratorTest {
         @Test
         fun `getAvroSchema encodes ErrorsAreWarnings as string type`() {
             val schema = AvroGenerator.getAvroSchema(ErrorsAreWarnings(StringType()))
+            assertThat(schema.type).isEqualTo(Schema.Type.STRING)
+        }
+
+        @Test
+        fun `getAvroSchema encodes Tagged as string type`() {
+            val schema = AvroGenerator.getAvroSchema(Tagged(StringType()))
             assertThat(schema.type).isEqualTo(Schema.Type.STRING)
         }
 

@@ -142,6 +142,70 @@ val productDescription = "Product".describeAs {
 }
 ```
 
+### Tagging
+
+A feature of Baleen is to add tags to tests, so that you can more easily identify, annotate, and filter your results.
+There are a couple use-cases tagging becomes useful. For example, you have an identifier, like a sku, that you want each
+test to have so that you can group together failed tests by that identifier. Another use-case is that you have different
+priority levels for your tests that you can set so you can highlight the most important errors.
+
+```kotlin
+val productDescription = "Product".describeAs {
+
+    // The tag() method is on StringType and dynamic tag pulls the value.
+    "sku".type(StringType().tag("priority", "critical").tag("sku", withValue()))
+
+    // The tag() method is on the attribute and the dynamic tag pulls an attribute value from sku.
+    "brand_manufacturer".type(StringType(), required = true)
+        .tag("priority", "low")
+        .tag("sku", withAttributeValue("sku"))
+ 
+    // The tag() method is on the attribute, and a custom tag function is used that returns a String
+    "department".type(StringType(min = 0, max = 100))
+        .tag("priority", "high")
+        .tag("sku", withAttributeValue("sku"))
+        .tag("gender") { d ->
+            when {
+                d is Data && d.containsKey("gender") -> 
+                    when(d["gender"]) {
+                        "male" -> "male"
+                        "mens" -> "male"
+                        "female" -> "female"
+                        "womens" -> "femle"
+                        else -> "other"
+                    }
+                else -> "none"
+            }
+        }
+}
+// Tag is on data description and the dynamic tag pulls attribute value from sku field  from the data
+.tag("sku", withAttributeValue("sku"))
+``` 
+
+Tagging is also done at the data evaluation level.  When writing tests, DataTrace can be updated with tags
+```kotlin
+    "department".type(StringType(min = 0, max = 100)).describe { attr ->
+        attr.test { datatrace, value ->
+            val department = value["department"]
+            if (department != null && !departments.contains(department)) {
+
+                // datatrace has the sku tag added
+                sequenceOf(ValidationError(
+                    dataTrace.tag("sku", value["sku"] ?: "null"), 
+                    "Department ($department) is not a valid value.",
+                     value
+                ))
+
+            } else {
+                sequenceOf()
+            }
+        }
+    }
+``` 
+
+Some Baleen Validation libraries, such as the XML or JSON validators, use tags to add line and column numbers as it 
+parses the original raw data. This will help identify errors in the raw data much more quickly.    
+
 ## Gotchas
 
 - Baleen does not assume that an attribute is not set and an attribute that is set with the value of null are the same thing.

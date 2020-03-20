@@ -21,6 +21,7 @@ import com.shoprunner.baleen.types.NumericType
 import com.shoprunner.baleen.types.OccurrencesType
 import com.shoprunner.baleen.types.StringConstantType
 import com.shoprunner.baleen.types.StringType
+import com.shoprunner.baleen.types.Tagged
 import com.shoprunner.baleen.types.TimestampMillisType
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.ClassName
@@ -86,6 +87,7 @@ object DataClassGenerator {
                 CoercibleHandlerOption.TO -> this.type.asTypeName(options)
             }
             is ErrorsAreWarnings<*> -> this.type.asTypeName(options)
+            is Tagged -> this.type.asTypeName(options)
             else -> throw Exception("Unknown type: " + this::class)
         }
     }

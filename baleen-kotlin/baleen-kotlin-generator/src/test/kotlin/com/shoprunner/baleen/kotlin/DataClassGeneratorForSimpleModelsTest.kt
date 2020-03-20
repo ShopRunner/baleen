@@ -18,6 +18,7 @@ import com.shoprunner.baleen.types.StringConstantType
 import com.shoprunner.baleen.types.StringType
 import com.shoprunner.baleen.types.TimestampMillisType
 import com.shoprunner.baleen.types.asWarnings
+import com.shoprunner.baleen.types.tag
 import java.io.StringWriter
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -63,7 +64,6 @@ internal class DataClassGeneratorForSimpleModelsTest {
         val outputStr = outputStream.toString()
 
         assertThat(dataClassSpecs).hasSize(1)
-        // assertThat(outputStr).isEqualToIgnoringWhitespace(expectedDataClassStr)
         assertThat(outputStr).isEqualTo(expectedDataClassStr)
     }
 
@@ -104,7 +104,6 @@ internal class DataClassGeneratorForSimpleModelsTest {
         val outputStr = outputStream.toString()
 
         assertThat(dataClassSpecs).hasSize(1)
-        // assertThat(outputStr).isEqualToIgnoringWhitespace(expectedDataClassStr)
         assertThat(outputStr).isEqualTo(expectedDataClassStr)
     }
 
@@ -145,7 +144,6 @@ internal class DataClassGeneratorForSimpleModelsTest {
         val outputStr = outputStream.toString()
 
         assertThat(dataClassSpecs).hasSize(1)
-        // assertThat(outputStr).isEqualToIgnoringWhitespace(expectedDataClassStr)
         assertThat(outputStr).isEqualTo(expectedDataClassStr)
     }
 
@@ -186,7 +184,6 @@ internal class DataClassGeneratorForSimpleModelsTest {
         val outputStr = outputStream.toString()
 
         assertThat(dataClassSpecs).hasSize(1)
-        // assertThat(outputStr).isEqualToIgnoringWhitespace(expectedDataClassStr)
         assertThat(outputStr).isEqualTo(expectedDataClassStr)
     }
 
@@ -227,7 +224,6 @@ internal class DataClassGeneratorForSimpleModelsTest {
         val outputStr = outputStream.toString()
 
         assertThat(dataClassSpecs).hasSize(1)
-        // assertThat(outputStr).isEqualToIgnoringWhitespace(expectedDataClassStr)
         assertThat(outputStr).isEqualTo(expectedDataClassStr)
     }
 
@@ -268,7 +264,6 @@ internal class DataClassGeneratorForSimpleModelsTest {
         val outputStr = outputStream.toString()
 
         assertThat(dataClassSpecs).hasSize(1)
-        // assertThat(outputStr).isEqualToIgnoringWhitespace(expectedDataClassStr)
         assertThat(outputStr).isEqualTo(expectedDataClassStr)
     }
 
@@ -309,7 +304,6 @@ internal class DataClassGeneratorForSimpleModelsTest {
         val outputStr = outputStream.toString()
 
         assertThat(dataClassSpecs).hasSize(1)
-        // assertThat(outputStr).isEqualToIgnoringWhitespace(expectedDataClassStr)
         assertThat(outputStr).isEqualTo(expectedDataClassStr)
     }
 
@@ -350,7 +344,6 @@ internal class DataClassGeneratorForSimpleModelsTest {
         val outputStr = outputStream.toString()
 
         assertThat(dataClassSpecs).hasSize(1)
-        // assertThat(outputStr).isEqualToIgnoringWhitespace(expectedDataClassStr)
         assertThat(outputStr).isEqualTo(expectedDataClassStr)
     }
 
@@ -391,7 +384,6 @@ internal class DataClassGeneratorForSimpleModelsTest {
         val outputStr = outputStream.toString()
 
         assertThat(dataClassSpecs).hasSize(1)
-        // assertThat(outputStr).isEqualToIgnoringWhitespace(expectedDataClassStr)
         assertThat(outputStr).isEqualTo(expectedDataClassStr)
     }
 
@@ -432,7 +424,6 @@ internal class DataClassGeneratorForSimpleModelsTest {
         val outputStr = outputStream.toString()
 
         assertThat(dataClassSpecs).hasSize(1)
-        // assertThat(outputStr).isEqualToIgnoringWhitespace(expectedDataClassStr)
         assertThat(outputStr).isEqualTo(expectedDataClassStr)
     }
 
@@ -473,7 +464,6 @@ internal class DataClassGeneratorForSimpleModelsTest {
         val outputStr = outputStream.toString()
 
         assertThat(dataClassSpecs).hasSize(1)
-        // assertThat(outputStr).isEqualToIgnoringWhitespace(expectedDataClassStr)
         assertThat(outputStr).isEqualTo(expectedDataClassStr)
     }
 
@@ -514,7 +504,6 @@ internal class DataClassGeneratorForSimpleModelsTest {
         val outputStr = outputStream.toString()
 
         assertThat(dataClassSpecs).hasSize(1)
-        // assertThat(outputStr).isEqualToIgnoringWhitespace(expectedDataClassStr)
         assertThat(outputStr).isEqualTo(expectedDataClassStr)
     }
 
@@ -556,7 +545,6 @@ internal class DataClassGeneratorForSimpleModelsTest {
         val outputStr = outputStream.toString()
 
         assertThat(dataClassSpecs).hasSize(1)
-        // assertThat(outputStr).isEqualToIgnoringWhitespace(expectedDataClassStr)
         assertThat(outputStr).isEqualTo(expectedDataClassStr)
     }
 
@@ -599,7 +587,6 @@ internal class DataClassGeneratorForSimpleModelsTest {
         val outputStr = outputStream.toString()
 
         assertThat(dataClassSpecs).hasSize(1)
-        // assertThat(outputStr).isEqualToIgnoringWhitespace(expectedDataClassStr)
         assertThat(outputStr).isEqualTo(expectedDataClassStr)
     }
 
@@ -640,7 +627,6 @@ internal class DataClassGeneratorForSimpleModelsTest {
         val outputStr = outputStream.toString()
 
         assertThat(dataClassSpecs).hasSize(1)
-        // assertThat(outputStr).isEqualToIgnoringWhitespace(expectedDataClassStr)
         assertThat(outputStr).isEqualTo(expectedDataClassStr)
     }
 
@@ -681,7 +667,6 @@ internal class DataClassGeneratorForSimpleModelsTest {
         val outputStr = outputStream.toString()
 
         assertThat(dataClassSpecs).hasSize(1)
-        // assertThat(outputStr).isEqualToIgnoringWhitespace(expectedDataClassStr)
         assertThat(outputStr).isEqualTo(expectedDataClassStr)
     }
 
@@ -722,7 +707,6 @@ internal class DataClassGeneratorForSimpleModelsTest {
         val outputStr = outputStream.toString()
 
         assertThat(dataClassSpecs).hasSize(1)
-        // assertThat(outputStr).isEqualToIgnoringWhitespace(expectedDataClassStr)
         assertThat(outputStr).isEqualTo(expectedDataClassStr)
     }
 
@@ -767,7 +751,6 @@ internal class DataClassGeneratorForSimpleModelsTest {
         val outputStr = outputStream.toString()
 
         assertThat(dataClassSpecs).hasSize(1)
-        // assertThat(outputStr).isEqualToIgnoringWhitespace(expectedDataClassStr)
         assertThat(outputStr).isEqualTo(expectedDataClassStr)
     }
 
@@ -809,7 +792,6 @@ internal class DataClassGeneratorForSimpleModelsTest {
         val outputStr = outputStream.toString()
 
         assertThat(dataClassSpecs).hasSize(1)
-        // assertThat(outputStr).isEqualToIgnoringWhitespace(expectedDataClassStr)
         assertThat(outputStr).isEqualTo(expectedDataClassStr)
     }
 
@@ -851,7 +833,6 @@ internal class DataClassGeneratorForSimpleModelsTest {
         val outputStr = outputStream.toString()
 
         assertThat(dataClassSpecs).hasSize(1)
-        // assertThat(outputStr).isEqualToIgnoringWhitespace(expectedDataClassStr)
         assertThat(outputStr).isEqualTo(expectedDataClassStr)
     }
 
@@ -892,7 +873,46 @@ internal class DataClassGeneratorForSimpleModelsTest {
         val outputStr = outputStream.toString()
 
         assertThat(dataClassSpecs).hasSize(1)
-        // assertThat(outputStr).isEqualToIgnoringWhitespace(expectedDataClassStr)
+        assertThat(outputStr).isEqualTo(expectedDataClassStr)
+    }
+
+    @Test
+    fun `test Tagged with StringType`() {
+        val model = "Model".describeAs(
+            nameSpace = "com.shoprunner.baleen.kotlin.test",
+            markdownDescription = "Test Model"
+        ) {
+            "field".type(
+                type = StringType().tag("key", "value"),
+                markdownDescription = "Test field"
+            )
+        }
+
+        val expectedDataClassStr = """
+            package com.shoprunner.baleen.kotlin.test
+
+            import com.shoprunner.baleen.annotation.DataDescription
+            import kotlin.String
+            
+            /**
+             * Test Model
+             */
+            @DataDescription
+            data class Model(
+              /**
+               * Test field
+               */
+              val field: String
+            )
+
+        """.trimIndent()
+
+        val dataClassSpecs = DataClassGenerator.encode(model)
+        val outputStream = StringWriter()
+        dataClassSpecs[model]!!.writeTo(outputStream)
+        val outputStr = outputStream.toString()
+
+        assertThat(dataClassSpecs).hasSize(1)
         assertThat(outputStr).isEqualTo(expectedDataClassStr)
     }
 }

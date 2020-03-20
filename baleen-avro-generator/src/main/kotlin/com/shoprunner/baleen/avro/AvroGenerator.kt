@@ -19,6 +19,7 @@ import com.shoprunner.baleen.types.NumericType
 import com.shoprunner.baleen.types.OccurrencesType
 import com.shoprunner.baleen.types.StringConstantType
 import com.shoprunner.baleen.types.StringType
+import com.shoprunner.baleen.types.Tagged
 import com.shoprunner.baleen.types.TimestampMillisType
 import com.shoprunner.baleen.types.UnionType
 import java.io.File
@@ -45,6 +46,7 @@ object AvroGenerator {
             is EnumType -> Schema.createEnum(baleenType.enumName, null, null, baleenType.enum.toList())
             is ErrorsAreWarnings<*> -> getAvroSchema(baleenType.type)
             is InstantType -> LogicalTypes.timestampMillis().addToSchema(Schema.create(Schema.Type.LONG))
+            is Tagged -> getAvroSchema(baleenType.type)
             is TimestampMillisType -> LogicalTypes.timestampMillis().addToSchema(Schema.create(Schema.Type.LONG))
             /* TODO: More Logical Types */
             is MapType -> {

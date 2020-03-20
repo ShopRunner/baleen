@@ -1,6 +1,8 @@
 package com.shoprunner.baleen
 
+import com.shoprunner.baleen.types.Tagger
 import com.shoprunner.baleen.types.asWarnings
+import com.shoprunner.baleen.types.withConstantValue
 
 class AttributeDescription(
     val dataDescription: DataDescription,
@@ -12,6 +14,7 @@ class AttributeDescription(
     val default: Any?
 ) {
     private val tests: MutableList<Validator> = mutableListOf()
+    private val tags = mutableMapOf<String, Tagger>()
     private var warn: Boolean = false
 
     internal val allTests: List<Validator>
@@ -40,11 +43,32 @@ class AttributeDescription(
         return this
     }
 
+    fun tag(key: String, value: String): AttributeDescription {
+        tags[key] = withConstantValue(value)
+        return this
+    }
+
+    fun tag(key: String, value: Tagger): AttributeDescription {
+        tags[key] = value
+        return this
+    }
+
+    fun tag(tags: Map<String, String>): AttributeDescription {
+        this.tags.putAll(tags.mapValues { withConstantValue(it.value) })
+        return this
+    }
+
+    fun tag(vararg tags: Pair<String, Tagger>): AttributeDescription {
+        this.tags.putAll(tags)
+        return this
+    }
+
     private fun validate(dataTrace: DataTrace, data: Data): Sequence<ValidationResult> {
+        val taggedDataTrace = dataTrace.tag(tags.mapValues { it.value(data) })
         return when {
             data.containsKey(name) -> {
-                val (value, attrDataTrace) = data.attributeDataValue(name, dataTrace)
-                sequenceOf(ValidationInfo(dataTrace, "has attribute \"${name}\"", data)).plus(
+                val (value, attrDataTrace) = data.attributeDataValue(name, taggedDataTrace)
+                sequenceOf(ValidationInfo(taggedDataTrace, "has attribute \"${name}\"", data)).plus(
                     type.validate(
                         attrDataTrace,
                         value
@@ -53,13 +77,13 @@ class AttributeDescription(
             }
             default != NoDefault -> sequenceOf(
                 ValidationInfo(
-                    dataTrace,
+                    taggedDataTrace,
                     "has attribute \"${name}\" defaulted to `$default` since it wasn't set.",
                     data
                 )
             )
-            required -> sequenceOf(ValidationError(dataTrace, "missing required attribute \"${name}\"", data))
-            else -> sequenceOf(ValidationInfo(dataTrace, "missing attribute \"${name}\"", data))
+            required -> sequenceOf(ValidationError(taggedDataTrace, "missing required attribute \"${name}\"", data))
+            else -> sequenceOf(ValidationInfo(taggedDataTrace, "missing attribute \"${name}\"", data))
         }
     }
 }
