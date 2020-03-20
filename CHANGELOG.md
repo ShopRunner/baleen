@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.12.0] - 2020-03-20
+- Support ability to override errors into warnings
+- Support adding tags to baleen types. Tags can be static strings or dynamic.
+- Support overriding types during Json-Schema generations from Baleen.
+- Created Base Baleen to X Generator to make Baleen to X generation easier. Used by baleen-jsonschema-generator.
+
+Dependency Updates
+- assertj-core 3.15.0
+- avro 1.9.2
+- dokka 0.10.1
+- gradle 6.2.2
+- junit 5.6
+- kotlin 1.3.70
+- kotlinter 2.3.1
+- opencsv 5.1
+- rxjava 2.2.19
+
 ## [1.11.2] - 2020-01-27
 - Republished to fix module file java version.
 
