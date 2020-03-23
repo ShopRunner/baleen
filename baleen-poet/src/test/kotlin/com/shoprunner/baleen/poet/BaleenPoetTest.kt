@@ -741,6 +741,81 @@ internal class BaleenPoetTest {
     }
 
     @Test
+    fun `test write data description with attribute asWarnings`() {
+        val type = "Dog".describeAs {
+            "name".type(StringType()).asWarnings()
+            "numLegs".type(AllowsNull(IntType()))
+        }
+
+        val spec = type.toFileSpec(name = "DogsWithAttributeWarnings")
+
+        assertSoftly {
+            assertThat(spec).isEqualToIgnoringWhitespace("""
+            import com.shoprunner.baleen.Baleen.describe
+            import com.shoprunner.baleen.DataDescription
+            import com.shoprunner.baleen.types.AllowsNull
+            import com.shoprunner.baleen.types.IntType
+            import com.shoprunner.baleen.types.StringType
+            
+            val DogsWithAttributeWarnings: DataDescription = describe("Dog", "", "") {
+                  it.attr(
+                    name = "name",
+                    type = StringType(min = 0, max = Int.MAX_VALUE)
+                  ).asWarnings()
+                  it.attr(
+                    name = "numLegs",
+                    type = AllowsNull(IntType(min = Int.MIN_VALUE, max = Int.MAX_VALUE))
+                  )
+            
+                }
+            """.trimIndent())
+            assertThat(spec).canCompile()
+        }
+    }
+
+    @Test
+    fun `test write data description with attribute tags`() {
+        val type = "Dog".describeAs {
+            "name".type(StringType())
+            "numLegs".type(AllowsNull(IntType()))
+                .tag("constantTag" to withConstantValue("value"))
+                .tag("valueTag" to withValue())
+                .tag("attributeTag" to withAttributeValue("attr"))
+                .tag("customTag" to { _ -> "custom" })
+        }
+
+        val spec = type.toFileSpec(name = "DogsWithAttributeTags")
+
+        assertSoftly {
+            assertThat(spec).isEqualToIgnoringWhitespace("""
+            import com.shoprunner.baleen.Baleen.describe
+            import com.shoprunner.baleen.DataDescription
+            import com.shoprunner.baleen.types.AllowsNull
+            import com.shoprunner.baleen.types.IntType
+            import com.shoprunner.baleen.types.StringType
+            import com.shoprunner.baleen.types.withAttributeValue
+            import com.shoprunner.baleen.types.withConstantValue
+            import com.shoprunner.baleen.types.withValue
+            
+            val DogsWithAttributeTags: DataDescription = describe("Dog", "", "") {
+                  it.attr(
+                    name = "name",
+                    type = StringType(min = 0, max = Int.MAX_VALUE)
+                  )
+                  it.attr(
+                    name = "numLegs",
+                    type = AllowsNull(IntType(min = Int.MIN_VALUE, max = Int.MAX_VALUE))
+                  )
+                  .tag("constantTag" to withConstantValue("value"))
+                  .tag("valueTag" to withValue())
+                  .tag("attributeTag" to withAttributeValue("attr"))
+                }
+            """.trimIndent())
+            assertThat(spec).canCompile()
+        }
+    }
+
+    @Test
     fun `test write nested data description`() {
         val dog = "NestedDog".describeAs {
             "name".type(StringType())

@@ -5,6 +5,9 @@ import com.shoprunner.baleen.Baleen
 import com.shoprunner.baleen.BaleenType
 import com.shoprunner.baleen.DataDescription
 import com.shoprunner.baleen.NoDefault
+import com.shoprunner.baleen.types.WithAttributeValue
+import com.shoprunner.baleen.types.WithConstantValue
+import com.shoprunner.baleen.types.WithValue
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.KModifier
@@ -152,7 +155,39 @@ fun CodeBlock.Builder.addAttributeDescription(attr: AttributeDescription, typeMa
         add(")")
     }
     unindent()
-    add("\n)\n")
+
+    add("\n)")
+
+    if (attr.isWarning) {
+        indent()
+        add("\n.asWarnings()\n")
+        unindent()
+    }
+    attr.allTags
+        .filter { (_, tagger) ->
+            tagger is WithConstantValue || tagger is WithValue || tagger is WithAttributeValue
+        }
+        .forEach { (tag, tagger) ->
+            indent()
+            add("\n.tag(%S to ", tag)
+            when (tagger) {
+                is WithConstantValue -> add(
+                    "%M(%S)",
+                    MemberName("com.shoprunner.baleen.types", "withConstantValue"),
+                    tagger.value
+                )
+                is WithValue -> add("%M()", MemberName("com.shoprunner.baleen.types", "withValue"))
+                is WithAttributeValue -> add(
+                    "%M(%S)",
+                    MemberName("com.shoprunner.baleen.types", "withAttributeValue"),
+                    tagger.attrName
+                )
+            }
+            add(")")
+            unindent()
+        }
+
+    add("\n")
 }
 
 /**
