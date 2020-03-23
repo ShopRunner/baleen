@@ -20,7 +20,11 @@ import com.shoprunner.baleen.types.StringCoercibleToInstant
 import com.shoprunner.baleen.types.StringCoercibleToTimestamp
 import com.shoprunner.baleen.types.StringConstantType
 import com.shoprunner.baleen.types.StringType
+import com.shoprunner.baleen.types.Tagged
 import com.shoprunner.baleen.types.UnionType
+import com.shoprunner.baleen.types.WithAttributeValue
+import com.shoprunner.baleen.types.WithConstantValue
+import com.shoprunner.baleen.types.WithValue
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.MemberName
 import com.squareup.kotlinpoet.asClassName
@@ -173,6 +177,25 @@ fun defaultTypeMapper(codeBlockBuilder: CodeBlock.Builder, baleenType: BaleenTyp
                 baleenType.min,
                 baleenType.max.takeIf { it < Int.MAX_VALUE } ?: "Int.MAX_VALUE"
             )
+        }
+        is Tagged -> {
+            add("%T(", Tagged::class)
+            typeMapper(this, baleenType.type)
+            add(", mapOf(")
+            baleenType.tags.entries
+                .filter { (_, v) ->
+                    v is WithConstantValue || v is WithValue || v is WithAttributeValue
+                }
+                .forEachIndexed { i, (k, v) ->
+                    if (i > 0) add(", ")
+                    add("%S to ", k)
+                    when (v) {
+                        is WithConstantValue -> add("%M(%S)", MemberName("com.shoprunner.baleen.types", "withConstantValue"), v.value)
+                        is WithValue -> add("%M()", MemberName("com.shoprunner.baleen.types", "withValue"))
+                        is WithAttributeValue -> add("%M(%S)", MemberName("com.shoprunner.baleen.types", "withAttributeValue"), v.attrName)
+                    }
+                }
+            add("))")
         }
 
         // Coercible types

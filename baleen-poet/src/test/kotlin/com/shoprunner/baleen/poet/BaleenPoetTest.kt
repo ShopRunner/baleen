@@ -25,8 +25,12 @@ import com.shoprunner.baleen.types.StringCoercibleToOccurrencesType
 import com.shoprunner.baleen.types.StringCoercibleToTimestamp
 import com.shoprunner.baleen.types.StringConstantType
 import com.shoprunner.baleen.types.StringType
+import com.shoprunner.baleen.types.Tagged
 import com.shoprunner.baleen.types.TimestampMillisType
 import com.shoprunner.baleen.types.UnionType
+import com.shoprunner.baleen.types.withAttributeValue
+import com.shoprunner.baleen.types.withConstantValue
+import com.shoprunner.baleen.types.withValue
 import com.squareup.kotlinpoet.CodeBlock
 import java.time.Instant
 import java.time.format.DateTimeFormatter
@@ -408,6 +412,37 @@ internal class BaleenPoetTest {
                 import com.shoprunner.baleen.types.ErrorsAreWarnings
 
                 val ErrorsAreWarnings: BaleenType = ErrorsAreWarnings(BooleanType())
+            """.trimIndent())
+            assertThat(spec).canCompile()
+        }
+    }
+
+    @Test
+    fun `test write Tagged`() {
+        val type = Tagged(BooleanType(),
+            "constantTag" to withConstantValue("value"),
+            "valueTag" to withValue(),
+            "attributeTag" to withAttributeValue("attr"),
+            "customTag" to { _ -> "custom" }
+        )
+        val spec = type.toFileSpec(name = "Tagged")
+
+        assertSoftly {
+            assertThat(spec).isEqualToIgnoringWhitespace("""
+                import com.shoprunner.baleen.BaleenType
+                import com.shoprunner.baleen.types.BooleanType
+                import com.shoprunner.baleen.types.Tagged
+                import com.shoprunner.baleen.types.withAttributeValue
+                import com.shoprunner.baleen.types.withConstantValue
+                import com.shoprunner.baleen.types.withValue
+
+                val Tagged: BaleenType = Tagged(BooleanType(), 
+                    mapOf(
+                        "constantTag" to withConstantValue("value"),
+                        "valueTag" to withValue(),
+                        "attributeTag" to withAttributeValue("attr")
+                    )
+                )
             """.trimIndent())
             assertThat(spec).canCompile()
         }
