@@ -1,7 +1,7 @@
 dependencies {
     api project(':baleen')
     api 'com.fasterxml.jackson.core:jackson-core:2.9.6'
-    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.9.8'
+    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.11.0'
 }
 
 compileTestKotlin {
