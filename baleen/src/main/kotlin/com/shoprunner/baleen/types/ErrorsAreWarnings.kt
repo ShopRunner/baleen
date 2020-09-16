@@ -14,7 +14,7 @@ class ErrorsAreWarnings<out T : BaleenType>(val type: T) : BaleenType {
     override fun name(): String = type.name()
 
     override fun validate(dataTrace: DataTrace, value: Any?): Sequence<ValidationResult> =
-            type.validate(dataTrace, value).asWarnings()
+        type.validate(dataTrace, value).asWarnings()
 }
 
 /**

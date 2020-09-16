@@ -1,9 +1,9 @@
 package com.shoprunner.baleen.kapt
 
+import org.jetbrains.annotations.NotNull
 import javax.lang.model.element.Element
 import javax.lang.model.type.PrimitiveType
 import javax.lang.model.type.TypeMirror
-import org.jetbrains.annotations.NotNull
 
 fun <A : Annotation> Element.isAnnotationPresent(annotationType: Class<A>): Boolean =
     this.getAnnotation(annotationType) != null

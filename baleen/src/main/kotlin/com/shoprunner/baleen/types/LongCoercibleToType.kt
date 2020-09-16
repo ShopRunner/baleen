@@ -9,16 +9,16 @@ open class LongCoercibleToType<out T : BaleenType>(type: T, private val converte
     override fun name() = "long coercible to ${type.name()}"
 
     override fun validate(dataTrace: DataTrace, value: Any?): Sequence<ValidationResult> =
-            when (value) {
-                null -> type.validate(dataTrace, value)
-                !is Long -> sequenceOf(ValidationError(dataTrace, "is not a long", value))
-                else -> {
-                    val newType = converter(value)
-                    if (newType == null) {
-                        sequenceOf(ValidationError(dataTrace, "could not be parsed to ${type.name()}.", value))
-                    } else {
-                        type.validate(dataTrace, newType)
-                    }
+        when (value) {
+            null -> type.validate(dataTrace, value)
+            !is Long -> sequenceOf(ValidationError(dataTrace, "is not a long", value))
+            else -> {
+                val newType = converter(value)
+                if (newType == null) {
+                    sequenceOf(ValidationError(dataTrace, "could not be parsed to ${type.name()}.", value))
+                } else {
+                    type.validate(dataTrace, newType)
                 }
             }
+        }
 }

@@ -4,17 +4,17 @@ import com.shoprunner.baleen.Baleen.describeAs
 import com.shoprunner.baleen.kotlin.DataClassGenerator.writeDataClassesTo
 import com.shoprunner.baleen.types.AllowsNull
 import com.shoprunner.baleen.types.StringType
-import java.io.File
-import java.net.URLClassLoader
-import java.util.logging.Logger
 import org.assertj.core.api.Assertions
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.Services
 import org.junit.jupiter.api.Test
+import java.io.File
+import java.net.URLClassLoader
+import java.util.logging.Logger
 
 class DataClassGeneratorWriteAndCompileTest {
     inner class LogMessageCollector : MessageCollector {
@@ -24,7 +24,7 @@ class DataClassGeneratorWriteAndCompileTest {
 
         override fun hasErrors() = false
 
-        override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation?) {
+        override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
             when (severity) {
                 CompilerMessageSeverity.ERROR -> logger.severe("$message : $location")
                 CompilerMessageSeverity.EXCEPTION -> logger.severe("$message : $location")

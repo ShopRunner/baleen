@@ -221,12 +221,13 @@ object DataClassGenerator {
             .addAnnotation(com.shoprunner.baleen.annotation.DataDescription::class)
             .addKdoc(dataDescription.markdownDescription)
             .addModifiers(KModifier.DATA)
-            .primaryConstructor(FunSpec.constructorBuilder()
-                .apply {
-                    dataDescription.attrs.forEach {
-                        addAttributeDescription(it, options)
-                    }
-                }.build()
+            .primaryConstructor(
+                FunSpec.constructorBuilder()
+                    .apply {
+                        dataDescription.attrs.forEach {
+                            addAttributeDescription(it, options)
+                        }
+                    }.build()
             )
             .apply {
                 dataDescription.attrs.forEach {

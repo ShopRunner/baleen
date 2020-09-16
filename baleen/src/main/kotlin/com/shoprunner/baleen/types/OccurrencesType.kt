@@ -10,13 +10,14 @@ class OccurrencesType(val memberType: BaleenType) : BaleenType {
     override fun name() = "multiple occurrences of ${memberType.name()}"
 
     override fun validate(dataTrace: DataTrace, value: Any?): Sequence<ValidationResult> =
-            when (value) {
-                null -> sequenceOf(ValidationError(dataTrace, "is null", value))
-                is Iterable<*> -> value.asSequence().withIndex().flatMap { (index, data) ->
+        when (value) {
+            null -> sequenceOf(ValidationError(dataTrace, "is null", value))
+            is Iterable<*> ->
+                value.asSequence().withIndex().flatMap { (index, data) ->
                     memberType.validate(dataTrace.plus("index $index"), data)
                 }
-                else -> {
-                    memberType.validate(dataTrace.plus("index 0"), value)
-                }
+            else -> {
+                memberType.validate(dataTrace.plus("index 0"), value)
             }
+        }
 }

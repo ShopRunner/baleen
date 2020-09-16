@@ -31,10 +31,13 @@ internal class BaseGeneratorTest {
     val packType = "Pack".describeAs {
         attr("leader", dogType)
         attr("dogs", OccurrencesType(dogType))
-        attr("ensignas", UnionType(
-            StringCoercibleToOccurrencesType(OccurrencesType(StringType())),
-            OccurrencesType(StringType())
-        ))
+        attr(
+            "ensignas",
+            UnionType(
+                StringCoercibleToOccurrencesType(OccurrencesType(StringType())),
+                OccurrencesType(StringType())
+            )
+        )
     }
 
     @Test
@@ -64,9 +67,9 @@ internal class BaseGeneratorTest {
     @Test
     fun `test #defaultTypeMapper maps all defaults`() {
         val expected = "Pack(" +
-                "leader=Dog(name=string, numLegs=AllowsNull(int), relatives=AllowsNull(Map(string, string))), " +
-                "dogs=Occurrences(Dog(name=string, numLegs=AllowsNull(int), relatives=AllowsNull(Map(string, string)))), " +
-                "ensignas=Union(CoercibleFrom(string), Occurrences(string)))"
+            "leader=Dog(name=string, numLegs=AllowsNull(int), relatives=AllowsNull(Map(string, string))), " +
+            "dogs=Occurrences(Dog(name=string, numLegs=AllowsNull(int), relatives=AllowsNull(Map(string, string)))), " +
+            "ensignas=Union(CoercibleFrom(string), Occurrences(string)))"
         val output = StringGenerator.defaultTypeMapper(packType, StringOptions())
         assertEquals(expected, output)
     }
@@ -77,12 +80,12 @@ internal class BaseGeneratorTest {
             when (baleenType) {
                 is StringCoercibleToOccurrencesType -> "CustomOverride"
                 else -> StringGenerator.recursiveTypeMapper(::customMapper, baleenType, options)
-        }
+            }
 
         val expected = "Pack(" +
-                "leader=Dog(name=string, numLegs=AllowsNull(int), relatives=AllowsNull(Map(string, string))), " +
-                "dogs=Occurrences(Dog(name=string, numLegs=AllowsNull(int), relatives=AllowsNull(Map(string, string)))), " +
-                "ensignas=Union(CustomOverride, Occurrences(string)))"
+            "leader=Dog(name=string, numLegs=AllowsNull(int), relatives=AllowsNull(Map(string, string))), " +
+            "dogs=Occurrences(Dog(name=string, numLegs=AllowsNull(int), relatives=AllowsNull(Map(string, string)))), " +
+            "ensignas=Union(CustomOverride, Occurrences(string)))"
         val output = customMapper(packType, StringOptions())
         assertEquals(expected, output)
     }

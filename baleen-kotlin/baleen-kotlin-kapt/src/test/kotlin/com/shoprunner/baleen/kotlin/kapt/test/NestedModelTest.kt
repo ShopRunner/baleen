@@ -100,19 +100,22 @@ internal class NestedModelTest {
         DataDescriptionAssert.assertBaleen(model.dataDescription())
             .hasName("MapNestedModel")
             .hasNamespace("com.shoprunner.baleen.kotlin.kapt.test")
-            .hasAttribute("mapNestedKeys",
+            .hasAttribute(
+                "mapNestedKeys",
                 MapType(
                     nestedModel.dataDescription(),
                     StringType()
                 )
             )
-            .hasAttribute("mapNestedValues",
+            .hasAttribute(
+                "mapNestedValues",
                 MapType(
                     StringType(),
                     nestedModel.dataDescription()
                 )
             )
-            .hasAttribute("nullableMapNestedKeys",
+            .hasAttribute(
+                "nullableMapNestedKeys",
                 AllowsNull(
                     MapType(
                         nestedModel.dataDescription(),
@@ -120,7 +123,8 @@ internal class NestedModelTest {
                     )
                 )
             )
-            .hasAttribute("nullableMapNestedValues",
+            .hasAttribute(
+                "nullableMapNestedValues",
                 AllowsNull(
                     MapType(
                         IntType(),

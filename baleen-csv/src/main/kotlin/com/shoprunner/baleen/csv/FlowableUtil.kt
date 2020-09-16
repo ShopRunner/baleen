@@ -44,7 +44,8 @@ object FlowableUtil {
                         .withSeparator(delimiter)
                         .withQuoteChar(quote)
                         .withEscapeChar(escape)
-                        .build())
+                        .build()
+                )
                 .build()
         }
 
@@ -66,7 +67,8 @@ object FlowableUtil {
                 data = data,
                 dataTrace = (trace + "line $lineNumber")
                     .tag("row", rowNumber.toString())
-                    .tag("line", lineNumber.toString()))
+                    .tag("line", lineNumber.toString())
+            )
         }
     }
 }

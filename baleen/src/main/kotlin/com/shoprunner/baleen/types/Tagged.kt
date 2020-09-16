@@ -53,21 +53,21 @@ fun withAttributeValue(attrName: String): Tagger = {
  * Tags a BaleenType with a tag and value that will appear on the DataTrace on the results.
  */
 fun BaleenType.tag(tag: String, value: String): Tagged =
-        Tagged(this, tag to withConstantValue(value))
+    Tagged(this, tag to withConstantValue(value))
 
 /**
  * Tags a BaleenType with a tag and Tagger function that will evaluate on the input data and appear on the DataTrace on
  * the results.
  */
 fun BaleenType.tag(tag: String, tagger: Tagger): Tagged =
-        Tagged(this, tag to tagger)
+    Tagged(this, tag to tagger)
 
 /**
  * Tags a BaleenType with a tags and Tagger functions that will evaluate on the input data and appear on the DataTrace on
  * the results.
  */
 fun BaleenType.tag(vararg tags: Pair<String, Tagger>): Tagged =
-        Tagged(this, *tags)
+    Tagged(this, *tags)
 
 /**
  * Tags a BaleenType with a map of tags to Tagger functions that will evaluate on the input data and appear on the DataTrace on

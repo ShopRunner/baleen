@@ -9,8 +9,8 @@ class StringConstantType(val constant: String) : BaleenType {
     override fun name() = "string constant"
 
     override fun validate(dataTrace: DataTrace, value: Any?): Sequence<ValidationResult> =
-            when (constant) {
-                value -> emptySequence()
-                else -> sequenceOf(ValidationError(dataTrace, "value is not '$constant'", value))
-            }
+        when (constant) {
+            value -> emptySequence()
+            else -> sequenceOf(ValidationError(dataTrace, "value is not '$constant'", value))
+        }
 }

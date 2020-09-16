@@ -2,22 +2,22 @@ package com.shoprunner.baleen.jsonschema.v4
 
 import com.shoprunner.baleen.DataDescription
 import com.shoprunner.baleen.jsonschema.v4.BaleenGenerator.parseJsonSchema
-import java.io.File
-import java.io.StringWriter
-import java.net.URL
-import java.net.URLClassLoader
-import java.net.UnknownHostException
-import java.util.logging.Logger
 import org.assertj.core.api.Assertions
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.Services
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import java.io.File
+import java.io.StringWriter
+import java.net.URL
+import java.net.URLClassLoader
+import java.net.UnknownHostException
+import java.util.logging.Logger
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class BaleenGeneratorTest {
@@ -46,11 +46,14 @@ internal class BaleenGeneratorTest {
 
         @Test
         fun `#getNamepaceAndName parses name and namespace from "self"`() {
-            val schema = RootJsonSchema(null, emptyMap(), "", "", SelfDescribing(
+            val schema = RootJsonSchema(
+                null, emptyMap(), "", "",
+                SelfDescribing(
                     "com.shoprunner.data",
                     "Dog",
                     "0-0-0"
-            ))
+                )
+            )
 
             val (namespace, name) = BaleenGenerator.getNamespaceAndName(schema)
 
@@ -125,16 +128,17 @@ internal class BaleenGeneratorTest {
               },
               "${'$'}ref" : "#/definitions/record:com.shopunner.data.Dog",
               "${'$'}schema" : "http://json-schema.org/draft-04/schema"
-            }""".trimIndent()
+            }
+            """.trimIndent()
 
             val descriptionStr = """
-                package com.shopunner.data
+                package com.shopunner.`data`
 
                 import com.shoprunner.baleen.Baleen.describe
                 import com.shoprunner.baleen.DataDescription
                 import com.shoprunner.baleen.types.BooleanType
 
-                val Dog: DataDescription = describe("Dog", "com.shopunner.data", "") {
+                public val Dog: DataDescription = describe("Dog", "com.shopunner.data", "") {
                     it.attr(
                             name = "hasLegs",
                             type = BooleanType()
@@ -170,22 +174,22 @@ internal class BaleenGeneratorTest {
               },
               "${'$'}ref" : "#/definitions/record:com.shopunner.data.Dog",
               "${'$'}schema" : "http://json-schema.org/draft-04/schema"
-            }""".trimIndent()
+            }
+            """.trimIndent()
 
             val descriptionStr = """
-                package com.shopunner.data
+                package com.shopunner.`data`
 
                 import com.shoprunner.baleen.Baleen.describe
                 import com.shoprunner.baleen.DataDescription
                 import com.shoprunner.baleen.types.BooleanType
 
-                val Dog: DataDescription = describe("Dog", "com.shopunner.data", "") {
-                    it.attr(
-                            name = "hasLegs",
-                            type = BooleanType(),
-                            default = true
-                    )
-                }
+                public val Dog: DataDescription = describe("Dog", "com.shopunner.data", "") {
+                      it.attr(
+                        name = "hasLegs",
+                        type = BooleanType(),
+                        default = true)
+                    }
             """.trimIndent()
 
             val outputStream = StringWriter()
@@ -215,14 +219,15 @@ internal class BaleenGeneratorTest {
               },
               "${'$'}ref" : "#/definitions/record:Dog",
               "${'$'}schema" : "http://json-schema.org/draft-04/schema"
-            }""".trimIndent()
+            }
+            """.trimIndent()
 
             val descriptionStr = """
                 import com.shoprunner.baleen.Baleen.describe
                 import com.shoprunner.baleen.DataDescription
                 import com.shoprunner.baleen.types.NumericType
 
-                val Dog: DataDescription = describe("Dog", "", "") {
+                public val Dog: DataDescription = describe("Dog", "", "") {
                     it.attr(
                             name = "number",
                             type = NumericType()
@@ -259,14 +264,15 @@ internal class BaleenGeneratorTest {
               },
               "${'$'}ref" : "#/definitions/record:Dog",
               "${'$'}schema" : "http://json-schema.org/draft-04/schema"
-            }""".trimIndent()
+            }
+            """.trimIndent()
 
             val descriptionStr = """
                 import com.shoprunner.baleen.Baleen.describe
                 import com.shoprunner.baleen.DataDescription
                 import com.shoprunner.baleen.types.NumericType
 
-                val Dog: DataDescription = describe("Dog", "", "") {
+                public val Dog: DataDescription = describe("Dog", "", "") {
                     it.attr(
                             name = "number",
                             type = NumericType(min = 0.toBigDecimal(), max = 100.toBigDecimal())
@@ -302,14 +308,15 @@ internal class BaleenGeneratorTest {
               },
               "${'$'}ref" : "#/definitions/record:Dog",
               "${'$'}schema" : "http://json-schema.org/draft-04/schema"
-            }""".trimIndent()
+            }
+            """.trimIndent()
 
             val descriptionStr = """
                 import com.shoprunner.baleen.Baleen.describe
                 import com.shoprunner.baleen.DataDescription
                 import com.shoprunner.baleen.types.NumericType
 
-                val Dog: DataDescription = describe("Dog", "", "") {
+                public val Dog: DataDescription = describe("Dog", "", "") {
                     it.attr(
                             name = "number",
                             type = NumericType(),
@@ -345,14 +352,15 @@ internal class BaleenGeneratorTest {
               },
               "${'$'}ref" : "#/definitions/record:Dog",
               "${'$'}schema" : "http://json-schema.org/draft-04/schema"
-            }""".trimIndent()
+            }
+            """.trimIndent()
 
             val descriptionStr = """
                 import com.shoprunner.baleen.Baleen.describe
                 import com.shoprunner.baleen.DataDescription
                 import com.shoprunner.baleen.types.IntegerType
 
-                val Dog: DataDescription = describe("Dog", "", "") {
+                public val Dog: DataDescription = describe("Dog", "", "") {
                     it.attr(
                             name = "numLegs",
                             type = IntegerType()
@@ -389,14 +397,15 @@ internal class BaleenGeneratorTest {
               },
               "${'$'}ref" : "#/definitions/record:Dog",
               "${'$'}schema" : "http://json-schema.org/draft-04/schema"
-            }""".trimIndent()
+            }
+            """.trimIndent()
 
             val descriptionStr = """
                 import com.shoprunner.baleen.Baleen.describe
                 import com.shoprunner.baleen.DataDescription
                 import com.shoprunner.baleen.types.IntegerType
 
-                val Dog: DataDescription = describe("Dog", "", "") {
+                public val Dog: DataDescription = describe("Dog", "", "") {
                     it.attr(
                             name = "numLegs",
                             type = IntegerType(min = 0.toBigInteger(), max = 100.toBigInteger())
@@ -432,14 +441,15 @@ internal class BaleenGeneratorTest {
               },
               "${'$'}ref" : "#/definitions/record:Dog",
               "${'$'}schema" : "http://json-schema.org/draft-04/schema"
-            }""".trimIndent()
+            }
+            """.trimIndent()
 
             val descriptionStr = """
                 import com.shoprunner.baleen.Baleen.describe
                 import com.shoprunner.baleen.DataDescription
                 import com.shoprunner.baleen.types.IntegerType
 
-                val Dog: DataDescription = describe("Dog", "", "") {
+                public val Dog: DataDescription = describe("Dog", "", "") {
                     it.attr(
                             name = "numLegs",
                             type = IntegerType(),
@@ -475,14 +485,15 @@ internal class BaleenGeneratorTest {
               },
               "${'$'}ref" : "#/definitions/record:Dog",
               "${'$'}schema" : "http://json-schema.org/draft-04/schema"
-            }""".trimIndent()
+            }
+            """.trimIndent()
 
             val descriptionStr = """
                 import com.shoprunner.baleen.Baleen.describe
                 import com.shoprunner.baleen.DataDescription
                 import com.shoprunner.baleen.types.StringType
 
-                val Dog: DataDescription = describe("Dog", "", "") {
+                public val Dog: DataDescription = describe("Dog", "", "") {
                     it.attr(
                             name = "name",
                             type = StringType()
@@ -518,14 +529,15 @@ internal class BaleenGeneratorTest {
               },
               "${'$'}ref" : "#/definitions/record:Dog",
               "${'$'}schema" : "http://json-schema.org/draft-04/schema"
-            }""".trimIndent()
+            }
+            """.trimIndent()
 
             val descriptionStr = """
                 import com.shoprunner.baleen.Baleen.describe
                 import com.shoprunner.baleen.DataDescription
                 import com.shoprunner.baleen.types.StringType
 
-                val Dog: DataDescription = describe("Dog", "", "") {
+                public val Dog: DataDescription = describe("Dog", "", "") {
                     it.attr(
                             name = "name",
                             type = StringType(),
@@ -563,14 +575,15 @@ internal class BaleenGeneratorTest {
               },
               "${'$'}ref" : "#/definitions/record:Dog",
               "${'$'}schema" : "http://json-schema.org/draft-04/schema"
-            }""".trimIndent()
+            }
+            """.trimIndent()
 
             val descriptionStr = """
                 import com.shoprunner.baleen.Baleen.describe
                 import com.shoprunner.baleen.DataDescription
                 import com.shoprunner.baleen.types.StringType
 
-                val Dog: DataDescription = describe("Dog", "", "") {
+                public val Dog: DataDescription = describe("Dog", "", "") {
                     it.attr(
                             name = "name",
                             type = StringType(5, 20)
@@ -606,14 +619,15 @@ internal class BaleenGeneratorTest {
               },
               "${'$'}ref" : "#/definitions/record:Dog",
               "${'$'}schema" : "http://json-schema.org/draft-04/schema"
-            }""".trimIndent()
+            }
+            """.trimIndent()
 
             val descriptionStr = """
                 import com.shoprunner.baleen.Baleen.describe
                 import com.shoprunner.baleen.DataDescription
                 import com.shoprunner.baleen.types.EnumType
 
-                val Dog: DataDescription = describe("Dog", "", "") {
+                public val Dog: DataDescription = describe("Dog", "", "") {
                     it.attr(
                             name = "color",
                             type = EnumType("EnumBBW", listOf("black", "brown", "white"))
@@ -649,14 +663,15 @@ internal class BaleenGeneratorTest {
               },
               "${'$'}ref" : "#/definitions/record:Dog",
               "${'$'}schema" : "http://json-schema.org/draft-04/schema"
-            }""".trimIndent()
+            }
+            """.trimIndent()
 
             val descriptionStr = """
                 import com.shoprunner.baleen.Baleen.describe
                 import com.shoprunner.baleen.DataDescription
                 import com.shoprunner.baleen.types.StringConstantType
 
-                val Dog: DataDescription = describe("Dog", "", "") {
+                public val Dog: DataDescription = describe("Dog", "", "") {
                     it.attr(
                             name = "name",
                             type = StringConstantType("Fido")
@@ -692,14 +707,15 @@ internal class BaleenGeneratorTest {
               },
               "${'$'}ref" : "#/definitions/record:Dog",
               "${'$'}schema" : "http://json-schema.org/draft-04/schema"
-            }""".trimIndent()
+            }
+            """.trimIndent()
 
             val descriptionStr = """
                 import com.shoprunner.baleen.Baleen.describe
                 import com.shoprunner.baleen.DataDescription
                 import com.shoprunner.baleen.types.InstantType
 
-                val Dog: DataDescription = describe("Dog", "", "") {
+                public val Dog: DataDescription = describe("Dog", "", "") {
                     it.attr(
                             name = "birthday",
                             type = InstantType()
@@ -735,14 +751,15 @@ internal class BaleenGeneratorTest {
               },
               "${'$'}ref" : "#/definitions/record:Dog",
               "${'$'}schema" : "http://json-schema.org/draft-04/schema"
-            }""".trimIndent()
+            }
+            """.trimIndent()
 
             val descriptionStr = """
                 import com.shoprunner.baleen.Baleen.describe
                 import com.shoprunner.baleen.DataDescription
                 import com.shoprunner.baleen.types.StringType
 
-                val Dog: DataDescription = describe("Dog", "", "") {
+                public val Dog: DataDescription = describe("Dog", "", "") {
                     it.attr(
                             name = "email",
                             type = StringType()
@@ -782,7 +799,8 @@ internal class BaleenGeneratorTest {
               },
               "${'$'}ref" : "#/definitions/record:Dog",
               "${'$'}schema" : "http://json-schema.org/draft-04/schema"
-            }""".trimIndent()
+            }
+            """.trimIndent()
 
             val descriptionStr = """
                 import com.shoprunner.baleen.Baleen.describe
@@ -790,7 +808,7 @@ internal class BaleenGeneratorTest {
                 import com.shoprunner.baleen.types.OccurrencesType
                 import com.shoprunner.baleen.types.StringType
 
-                val Dog: DataDescription = describe("Dog", "", "") {
+                public val Dog: DataDescription = describe("Dog", "", "") {
                     it.attr(
                             name = "favorite_items",
                             type = OccurrencesType(StringType())
@@ -830,7 +848,8 @@ internal class BaleenGeneratorTest {
               },
               "${'$'}ref" : "#/definitions/record:Dog",
               "${'$'}schema" : "http://json-schema.org/draft-04/schema"
-            }""".trimIndent()
+            }
+            """.trimIndent()
 
             val descriptionStr = """
                 import com.shoprunner.baleen.Baleen.describe
@@ -838,7 +857,7 @@ internal class BaleenGeneratorTest {
                 import com.shoprunner.baleen.types.MapType
                 import com.shoprunner.baleen.types.StringType
 
-                val Dog: DataDescription = describe("Dog", "", "") {
+                public val Dog: DataDescription = describe("Dog", "", "") {
                     it.attr(
                             name = "favorite_items",
                             type = MapType(StringType(), StringType())
@@ -880,7 +899,8 @@ internal class BaleenGeneratorTest {
               },
               "${'$'}ref" : "#/definitions/record:Dog",
               "${'$'}schema" : "http://json-schema.org/draft-04/schema"
-            }""".trimIndent()
+            }
+            """.trimIndent()
 
             val descriptionStr = """
                 import com.shoprunner.baleen.Baleen.describe
@@ -889,7 +909,7 @@ internal class BaleenGeneratorTest {
                 import com.shoprunner.baleen.types.StringType
                 import com.shoprunner.baleen.types.UnionType
 
-                val Dog: DataDescription = describe("Dog", "", "") {
+                public val Dog: DataDescription = describe("Dog", "", "") {
                     it.attr(
                             name = "num_legs",
                             type = UnionType(StringType(), IntegerType())
@@ -931,7 +951,8 @@ internal class BaleenGeneratorTest {
               },
               "${'$'}ref" : "#/definitions/record:Dog",
               "${'$'}schema" : "http://json-schema.org/draft-04/schema"
-            }""".trimIndent()
+            }
+            """.trimIndent()
 
             val descriptionStr = """
                 import com.shoprunner.baleen.Baleen.describe
@@ -940,7 +961,7 @@ internal class BaleenGeneratorTest {
                 import com.shoprunner.baleen.types.StringType
                 import com.shoprunner.baleen.types.UnionType
 
-                val Dog: DataDescription = describe("Dog", "", "") {
+                public val Dog: DataDescription = describe("Dog", "", "") {
                     it.attr(
                             name = "num_legs",
                             type = UnionType(StringType(), IntegerType())
@@ -982,12 +1003,13 @@ internal class BaleenGeneratorTest {
               },
               "${'$'}ref" : "#/definitions/record:Dog",
               "${'$'}schema" : "http://json-schema.org/draft-04/schema"
-            }""".trimIndent()
+            }
+            """.trimIndent()
 
             Assertions
-                    .assertThatThrownBy { BaleenGenerator.encode(schemaStr.parseJsonSchema()) }
-                    .isInstanceOf(IllegalArgumentException::class.java)
-                    .hasMessageContaining("json type AllOf not supported")
+                .assertThatThrownBy { BaleenGenerator.encode(schemaStr.parseJsonSchema()) }
+                .isInstanceOf(IllegalArgumentException::class.java)
+                .hasMessageContaining("json type AllOf not supported")
         }
 
         @Test
@@ -1010,12 +1032,13 @@ internal class BaleenGeneratorTest {
               },
               "${'$'}ref" : "#/definitions/record:Dog",
               "${'$'}schema" : "http://json-schema.org/draft-04/schema"
-            }""".trimIndent()
+            }
+            """.trimIndent()
 
             Assertions
-                    .assertThatThrownBy { BaleenGenerator.encode(schemaStr.parseJsonSchema()) }
-                    .isInstanceOf(IllegalArgumentException::class.java)
-                    .hasMessageContaining("json type Not not supported")
+                .assertThatThrownBy { BaleenGenerator.encode(schemaStr.parseJsonSchema()) }
+                .isInstanceOf(IllegalArgumentException::class.java)
+                .hasMessageContaining("json type Not not supported")
         }
 
         @Test
@@ -1045,7 +1068,8 @@ internal class BaleenGeneratorTest {
               },
               "${'$'}ref" : "#/definitions/record:Dog",
               "${'$'}schema" : "http://json-schema.org/draft-04/schema"
-            }""".trimIndent()
+            }
+            """.trimIndent()
 
             val descriptionStr = """
                 import com.shoprunner.baleen.Baleen.describe
@@ -1053,7 +1077,7 @@ internal class BaleenGeneratorTest {
                 import com.shoprunner.baleen.types.IntegerType
                 import com.shoprunner.baleen.types.UnionType
 
-                val Dog: DataDescription = describe("Dog", "", "") {
+                public val Dog: DataDescription = describe("Dog", "", "") {
                     it.attr(
                             name = "num_legs",
                             type = UnionType(
@@ -1105,7 +1129,8 @@ internal class BaleenGeneratorTest {
               },
               "${'$'}ref" : "#/definitions/record:Dog",
               "${'$'}schema" : "http://json-schema.org/draft-04/schema"
-            }""".trimIndent()
+            }
+            """.trimIndent()
 
             val descriptionStr = """
                 import com.shoprunner.baleen.Baleen.describe
@@ -1113,7 +1138,7 @@ internal class BaleenGeneratorTest {
                 import com.shoprunner.baleen.types.IntegerType
                 import com.shoprunner.baleen.types.UnionType
 
-                val Dog: DataDescription = describe("Dog", "", "") {
+                public val Dog: DataDescription = describe("Dog", "", "") {
                     it.attr(
                         name = "num_legs",
                         type = UnionType(
@@ -1161,14 +1186,15 @@ internal class BaleenGeneratorTest {
               },
               "${'$'}ref" : "#/definitions/record:Dog",
               "${'$'}schema" : "http://json-schema.org/draft-04/schema"
-            }""".trimIndent()
+            }
+            """.trimIndent()
 
             val descriptionStr = """
                 import com.shoprunner.baleen.Baleen.describe
                 import com.shoprunner.baleen.DataDescription
                 import com.shoprunner.baleen.types.IntegerType
 
-                val Dog: DataDescription = describe("Dog", "", "") {
+                public val Dog: DataDescription = describe("Dog", "", "") {
                     it.attr(
                             name = "num_legs",
                             type = IntegerType()
@@ -1210,7 +1236,8 @@ internal class BaleenGeneratorTest {
               },
               "${'$'}ref" : "#/definitions/record:Dog",
               "${'$'}schema" : "http://json-schema.org/draft-04/schema"
-            }""".trimIndent()
+            }
+            """.trimIndent()
 
             val descriptionStr = """
                 import com.shoprunner.baleen.Baleen.describe
@@ -1218,7 +1245,7 @@ internal class BaleenGeneratorTest {
                 import com.shoprunner.baleen.types.AllowsNull
                 import com.shoprunner.baleen.types.IntegerType
 
-                val Dog: DataDescription = describe("Dog", "", "") {
+                public val Dog: DataDescription = describe("Dog", "", "") {
                     it.attr(
                             name = "num_legs",
                             type = AllowsNull(IntegerType())
@@ -1261,7 +1288,8 @@ internal class BaleenGeneratorTest {
               },
               "${'$'}ref" : "#/definitions/record:Dog",
               "${'$'}schema" : "http://json-schema.org/draft-04/schema"
-            }""".trimIndent()
+            }
+            """.trimIndent()
 
             val descriptionStr = """
                 import com.shoprunner.baleen.Baleen.describe
@@ -1269,7 +1297,7 @@ internal class BaleenGeneratorTest {
                 import com.shoprunner.baleen.types.AllowsNull
                 import com.shoprunner.baleen.types.IntegerType
 
-                val Dog: DataDescription = describe("Dog", "", "") {
+                public val Dog: DataDescription = describe("Dog", "", "") {
                     it.attr(
                             name = "num_legs",
                             type = AllowsNull(IntegerType()),
@@ -1337,13 +1365,13 @@ internal class BaleenGeneratorTest {
                   }
                 }
               },
-              "${'$'}ref" : "#/definitions/record:com.shoprunner.data.dogs.Pack",
+              "${'$'}ref" : "#/definitions/record:com.shoprunner.`data`.dogs.Pack",
               "${'$'}schema" : "http://json-schema.org/draft-04/schema"
             }
             """.trimIndent()
 
             val dogDescriptionStr = """
-                package com.shoprunner.data.dogs
+                package com.shoprunner.`data`.dogs
 
                 import com.shoprunner.baleen.Baleen.describe
                 import com.shoprunner.baleen.DataDescription
@@ -1352,7 +1380,7 @@ internal class BaleenGeneratorTest {
 
                 /**
                  * It's a dog. Ruff Ruff! */
-                val Dog: DataDescription = describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") {
+                public val Dog: DataDescription = describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") {
                     it.attr(
                             name = "name",
                             type = StringType(),
@@ -1369,7 +1397,7 @@ internal class BaleenGeneratorTest {
             """.trimIndent()
 
             val packDescriptionStr = """
-                package com.shoprunner.data.dogs
+                package com.shoprunner.`data`.dogs
 
                 import com.shoprunner.baleen.Baleen.describe
                 import com.shoprunner.baleen.DataDescription
@@ -1378,7 +1406,7 @@ internal class BaleenGeneratorTest {
 
                 /**
                  * It's a pack of Dogs! */
-                val Pack: DataDescription = describe("Pack", "com.shoprunner.data.dogs", "It's a pack of Dogs!") {
+                public val Pack: DataDescription = describe("Pack", "com.shoprunner.data.dogs", "It's a pack of Dogs!") {
                     it.attr(
                         name = "name",
                         type = StringType(),
@@ -1468,7 +1496,7 @@ internal class BaleenGeneratorTest {
 
             override fun hasErrors() = false
 
-            override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation?) {
+            override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
                 when (severity) {
                     CompilerMessageSeverity.ERROR -> logger.severe("$message : $location")
                     CompilerMessageSeverity.EXCEPTION -> logger.severe("$message : $location")

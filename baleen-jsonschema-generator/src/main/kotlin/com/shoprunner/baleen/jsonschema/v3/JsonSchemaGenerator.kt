@@ -104,7 +104,7 @@ object JsonSchemaGenerator : BaseGenerator<JsonSchema, JsonSchemaOptions> {
             is TimestampMillisType -> StringSchema().apply {
                 format = JsonValueFormat.DATE_TIME
             }
-        /* TODO: More Logical Types */
+            /* TODO: More Logical Types */
             is MapType -> {
                 if (baleenType.keyType !is StringType) throw Exception("Map keys can only be String in RootJsonSchema")
                 ObjectSchema().apply {
@@ -129,7 +129,7 @@ object JsonSchemaGenerator : BaseGenerator<JsonSchema, JsonSchemaOptions> {
             }
             is ErrorsAreWarnings<*> -> typeMapper(baleenType.type, options)
             is Tagged -> typeMapper(baleenType.type, options)
-        // V3 Does not support
+            // V3 Does not support
             is AllowsNull<*> -> typeMapper(baleenType.type, options)
             else -> throw Exception("Unknown type: " + baleenType::class.simpleName)
         }
