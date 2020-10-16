@@ -81,31 +81,33 @@ internal class DataDescriptionBuilder(
                     name = "${name.capitalize()}Type",
                     type = com.shoprunner.baleen.DataDescription::class
                 ).addKdoc("%L", "${typeElement.annotationMirrors} $typeElement}")
-                .initializer(CodeBlock.builder().apply {
-                    add(
-                        "%T.%L(%S, %S",
-                        Baleen::class,
-                        Baleen::describe.name,
-                        name,
-                        packageName
-                    )
-                    val comment = elementUtils.getDocComment(typeElement)?.trim()
-                    if (comment != null) {
-                        add(", markdownDescription = %S", comment)
-                    }
-                    beginControlFlow(")")
+                    .initializer(
+                        CodeBlock.builder().apply {
+                            add(
+                                "%T.%L(%S, %S",
+                                Baleen::class,
+                                Baleen::describe.name,
+                                name,
+                                packageName
+                            )
+                            val comment = elementUtils.getDocComment(typeElement)?.trim()
+                            if (comment != null) {
+                                add(", markdownDescription = %S", comment)
+                            }
+                            beginControlFlow(")")
 
-                    members.forEach {
-                        add(generateAttributes(it as VariableElement, allSchemas, defaultValueContainer))
-                        add("\n\n")
-                    }
-                    extraTests.forEach {
-                        add(extraTestBuilder.addExtraTest(it, typeElement))
-                        add("\n\n")
-                    }
-                    endControlFlow()
-                    }.build())
-                .build()
+                            members.forEach {
+                                add(generateAttributes(it as VariableElement, allSchemas, defaultValueContainer))
+                                add("\n\n")
+                            }
+                            extraTests.forEach {
+                                add(extraTestBuilder.addExtraTest(it, typeElement))
+                                add("\n\n")
+                            }
+                            endControlFlow()
+                        }.build()
+                    )
+                    .build()
             )
             .build()
             .writeTo(File(kaptKotlinGeneratedDir))

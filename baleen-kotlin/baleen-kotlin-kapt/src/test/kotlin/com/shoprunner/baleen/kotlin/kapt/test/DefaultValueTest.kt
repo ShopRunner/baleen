@@ -14,10 +14,10 @@ import com.shoprunner.baleen.types.MapType
 import com.shoprunner.baleen.types.NumericType
 import com.shoprunner.baleen.types.OccurrencesType
 import com.shoprunner.baleen.types.StringType
-import java.time.Instant
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import java.time.Instant
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class DefaultValueTest {

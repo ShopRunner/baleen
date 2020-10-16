@@ -8,10 +8,13 @@ class StringCoercibleToInstant(
     instantType: InstantType,
     dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ISO_INSTANT
 ) :
-        StringCoercibleToType<InstantType>(instantType, {
+    StringCoercibleToType<InstantType>(
+        instantType,
+        {
             try {
                 dateTimeFormatter.parse(it, Instant::from)
             } catch (ex: DateTimeParseException) {
                 null
             }
-        })
+        }
+    )

@@ -8,10 +8,13 @@ class StringCoercibleToTimestamp(
     timestampType: TimestampMillisType,
     dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
 ) :
-        StringCoercibleToType<TimestampMillisType>(timestampType, {
+    StringCoercibleToType<TimestampMillisType>(
+        timestampType,
+        {
             try {
                 LocalDateTime.parse(it, dateTimeFormatter)
             } catch (ex: DateTimeParseException) {
                 null
             }
-        })
+        }
+    )

@@ -34,12 +34,12 @@ import com.shoprunner.baleen.types.StringType
 import com.shoprunner.baleen.types.Tagged
 import com.shoprunner.baleen.types.TimestampMillisType
 import com.shoprunner.baleen.types.UnionType
-import java.io.ByteArrayOutputStream
-import java.io.PrintStream
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import java.io.ByteArrayOutputStream
+import java.io.PrintStream
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class JsonSchemaGeneratorTest {
@@ -247,10 +247,10 @@ internal class JsonSchemaGeneratorTest {
         fun `getJsonSchema fails union type with complex objact`() {
             val dogType = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") { p ->
                 p.attr(
-                        name = "name",
-                        type = StringType(),
-                        markdownDescription = "The name of the dog",
-                        required = true
+                    name = "name",
+                    type = StringType(),
+                    markdownDescription = "The name of the dog",
+                    required = true
                 )
             }
 
@@ -295,10 +295,10 @@ internal class JsonSchemaGeneratorTest {
         fun `model with single attribute`() {
             val description = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") { p ->
                 p.attr(
-                        name = "name",
-                        type = StringType(),
-                        markdownDescription = "The name of the dog",
-                        required = true
+                    name = "name",
+                    type = StringType(),
+                    markdownDescription = "The name of the dog",
+                    required = true
                 )
             }
 
@@ -317,7 +317,8 @@ internal class JsonSchemaGeneratorTest {
                   "minLength" : 0
                 }
               }
-            }""".trimIndent()
+            }
+            """.trimIndent()
 
             val outputStream = ByteArrayOutputStream()
             JsonSchemaGenerator.encode(description).writeTo(PrintStream(outputStream), true)
@@ -329,15 +330,15 @@ internal class JsonSchemaGeneratorTest {
         fun `model with multiple attribute`() {
             val description = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") { p ->
                 p.attr(
-                        name = "name",
-                        type = StringType(),
-                        markdownDescription = "The name of the dog"
+                    name = "name",
+                    type = StringType(),
+                    markdownDescription = "The name of the dog"
                 )
 
                 p.attr(
-                        name = "legs",
-                        type = IntType(),
-                        markdownDescription = "The number of legs the dog has"
+                    name = "legs",
+                    type = IntType(),
+                    markdownDescription = "The number of legs the dog has"
                 )
             }
 
@@ -361,7 +362,8 @@ internal class JsonSchemaGeneratorTest {
                   "minimum" : -2.147483648E9
                 }
               }
-            }""".trimIndent()
+            }
+            """.trimIndent()
 
             val outputStream = ByteArrayOutputStream()
             JsonSchemaGenerator.encode(description).writeTo(PrintStream(outputStream), true)
@@ -373,10 +375,10 @@ internal class JsonSchemaGeneratorTest {
         fun `model with optional attribute`() {
             val description = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") { p ->
                 p.attr(
-                        name = "name",
-                        type = StringType(),
-                        markdownDescription = "The name of the dog",
-                        required = false
+                    name = "name",
+                    type = StringType(),
+                    markdownDescription = "The name of the dog",
+                    required = false
                 )
             }
 
@@ -394,7 +396,8 @@ internal class JsonSchemaGeneratorTest {
                   "minLength" : 0
                 }
               }
-            }""".trimIndent()
+            }
+            """.trimIndent()
 
             val outputStream = ByteArrayOutputStream()
             JsonSchemaGenerator.encode(description).writeTo(PrintStream(outputStream), true)
@@ -406,9 +409,9 @@ internal class JsonSchemaGeneratorTest {
         fun `model with nullable attribute`() {
             val description = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") { p ->
                 p.attr(
-                        name = "name",
-                        type = AllowsNull(StringType()),
-                        markdownDescription = "The name of the dog"
+                    name = "name",
+                    type = AllowsNull(StringType()),
+                    markdownDescription = "The name of the dog"
                 )
             }
 
@@ -426,7 +429,8 @@ internal class JsonSchemaGeneratorTest {
                   "minLength" : 0
                 }
               }
-            }""".trimIndent()
+            }
+            """.trimIndent()
 
             val outputStream = ByteArrayOutputStream()
             JsonSchemaGenerator.encode(description).writeTo(PrintStream(outputStream), true)
@@ -438,26 +442,26 @@ internal class JsonSchemaGeneratorTest {
         fun `nested model`() {
             val dogDescription = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") { p ->
                 p.attr(
-                        name = "name",
-                        type = StringType(),
-                        markdownDescription = "The name of the dog",
-                        required = true
+                    name = "name",
+                    type = StringType(),
+                    markdownDescription = "The name of the dog",
+                    required = true
                 )
             }
 
             val packDescription = Baleen.describe("Pack", "com.shoprunner.data.dogs", "It's a pack of Dogs!") { p ->
                 p.attr(
-                        name = "name",
-                        type = StringType(),
-                        markdownDescription = "The name of the pack",
-                        required = true
+                    name = "name",
+                    type = StringType(),
+                    markdownDescription = "The name of the pack",
+                    required = true
                 )
 
                 p.attr(
-                        name = "dogs",
-                        type = OccurrencesType(dogDescription),
-                        markdownDescription = "The dogs in the pack",
-                        required = true
+                    name = "dogs",
+                    type = OccurrencesType(dogDescription),
+                    markdownDescription = "The dogs in the pack",
+                    required = true
                 )
             }
 
@@ -495,7 +499,8 @@ internal class JsonSchemaGeneratorTest {
                   }
                 }
               }
-            }""".trimIndent()
+            }
+            """.trimIndent()
 
             val outputStream = ByteArrayOutputStream()
             JsonSchemaGenerator.encode(packDescription).writeTo(PrintStream(outputStream), true)
@@ -510,15 +515,15 @@ internal class JsonSchemaGeneratorTest {
         fun `add an override when generating schema`() {
             val description = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") {
                 it.attr(
-                        name = "name",
-                        type = StringType(),
-                        markdownDescription = "The name of the dog"
+                    name = "name",
+                    type = StringType(),
+                    markdownDescription = "The name of the dog"
                 )
 
                 it.attr(
-                        name = "hasSpots",
-                        type = StringCoercibleToBoolean(BooleanType()),
-                        markdownDescription = "Does the dog have spots"
+                    name = "hasSpots",
+                    type = StringCoercibleToBoolean(BooleanType()),
+                    markdownDescription = "Does the dog have spots"
                 )
             }
 
@@ -560,21 +565,21 @@ internal class JsonSchemaGeneratorTest {
         fun `add an override for a nested type when generating schema`() {
             val description = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") {
                 it.attr(
-                        name = "name",
-                        type = StringType(),
-                        markdownDescription = "The name of the dog"
+                    name = "name",
+                    type = StringType(),
+                    markdownDescription = "The name of the dog"
                 )
 
                 it.attr(
-                        name = "attributes",
-                        type = Baleen.describe("Attributes", "com.shoprunner.data.dogs", "Attributes") { p ->
-                            p.attr(
-                                    name = "hasSpots",
-                                    type = AllowsNull(StringCoercibleToBoolean(BooleanType())),
-                                    markdownDescription = "Does the dog have spots"
-                            )
-                        },
-                        markdownDescription = "Attributes"
+                    name = "attributes",
+                    type = Baleen.describe("Attributes", "com.shoprunner.data.dogs", "Attributes") { p ->
+                        p.attr(
+                            name = "hasSpots",
+                            type = AllowsNull(StringCoercibleToBoolean(BooleanType())),
+                            markdownDescription = "Does the dog have spots"
+                        )
+                    },
+                    markdownDescription = "Attributes"
                 )
             }
 

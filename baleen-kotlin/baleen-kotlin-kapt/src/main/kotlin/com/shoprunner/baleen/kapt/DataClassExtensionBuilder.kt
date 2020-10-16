@@ -18,6 +18,7 @@ import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.asTypeName
 import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.toImmutableKmClass
+import org.jetbrains.annotations.NotNull
 import java.io.File
 import java.util.SortedSet
 import javax.annotation.processing.Messager
@@ -28,7 +29,6 @@ import javax.lang.model.type.ArrayType
 import javax.lang.model.type.DeclaredType
 import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
-import org.jetbrains.annotations.NotNull
 
 internal class DataClassExtensionBuilder(
     private val kaptKotlinGeneratedDir: String,
@@ -121,64 +121,67 @@ internal class DataClassExtensionBuilder(
             .addModifiers(KModifier.INTERNAL)
             .receiver(typeElement.asClassName())
             .returns(HashData::class)
-            .addCode(CodeBlock.builder().apply {
-                add("return %T(mapOf(\n", HashData::class.java)
-                indent()
-                add(members
-                    .mapIndexed { i, m ->
-                        val memberType = m.asType()
-                        CodeBlock.builder().apply {
-                            if (i != 0) {
-                                add(",\n")
-                            }
-                            add("%S to ${m.simpleName}", m.simpleName)
-                            val opt = if (!m.isAnnotationPresent(NotNull::class.java)) "?" else ""
-                            when {
-                                // Occurences Types
-                                memberType is ArrayType && allSchemas.containsKey(memberType.componentType.toString()) ->
-                                    add(
-                                        "$opt.map{ it.%M() }$opt.toList()",
-                                        MemberName("com.shoprunner.baleen.kotlin", "asHashData")
-                                    )
-
-                                memberType is ArrayType ->
-                                    add("$opt.toList()")
-
-                                // Iterable
-                                memberType is DeclaredType && isIterable(typeUtils, elementUtils, memberType)
-                                        && allSchemas.containsKey(memberType.componentTypes()?.first()?.canonicalName) ->
-                                    add(
-                                        "$opt.map { it.%M() }",
-                                        MemberName("com.shoprunner.baleen.kotlin", "asHashData")
-                                    )
-
-                                memberType is DeclaredType && isMap(typeUtils, elementUtils, memberType) -> {
-                                    add("$opt.map{ (k, v) -> ")
-                                    val componentTypes = memberType.componentTypes()
-                                    if (allSchemas.containsKey(componentTypes?.first()?.canonicalName)) {
-                                        add("k.%M()", MemberName("com.shoprunner.baleen.kotlin", "asHashData"))
-                                    } else {
-                                        add("k")
+            .addCode(
+                CodeBlock.builder().apply {
+                    add("return %T(mapOf(\n", HashData::class.java)
+                    indent()
+                    add(
+                        members
+                            .mapIndexed { i, m ->
+                                val memberType = m.asType()
+                                CodeBlock.builder().apply {
+                                    if (i != 0) {
+                                        add(",\n")
                                     }
-                                    add(" to ")
-                                    if (allSchemas.containsKey(componentTypes?.get(1)?.canonicalName)) {
-                                        add("v.%M()", MemberName("com.shoprunner.baleen.kotlin", "asHashData"))
-                                    } else {
-                                        add("v")
-                                    }
-                                    add(" }$opt.toMap()")
-                                }
+                                    add("%S to ${m.simpleName}", m.simpleName)
+                                    val opt = if (!m.isAnnotationPresent(NotNull::class.java)) "?" else ""
+                                    when {
+                                        // Occurences Types
+                                        memberType is ArrayType && allSchemas.containsKey(memberType.componentType.toString()) ->
+                                            add(
+                                                "$opt.map{ it.%M() }$opt.toList()",
+                                                MemberName("com.shoprunner.baleen.kotlin", "asHashData")
+                                            )
 
-                                allSchemas.containsKey(memberType.toString()) -> add("$opt.asHashData()")
+                                        memberType is ArrayType ->
+                                            add("$opt.toList()")
+
+                                        // Iterable
+                                        memberType is DeclaredType && isIterable(typeUtils, elementUtils, memberType)
+                                            && allSchemas.containsKey(memberType.componentTypes()?.first()?.canonicalName) ->
+                                            add(
+                                                "$opt.map { it.%M() }",
+                                                MemberName("com.shoprunner.baleen.kotlin", "asHashData")
+                                            )
+
+                                        memberType is DeclaredType && isMap(typeUtils, elementUtils, memberType) -> {
+                                            add("$opt.map{ (k, v) -> ")
+                                            val componentTypes = memberType.componentTypes()
+                                            if (allSchemas.containsKey(componentTypes?.first()?.canonicalName)) {
+                                                add("k.%M()", MemberName("com.shoprunner.baleen.kotlin", "asHashData"))
+                                            } else {
+                                                add("k")
+                                            }
+                                            add(" to ")
+                                            if (allSchemas.containsKey(componentTypes?.get(1)?.canonicalName)) {
+                                                add("v.%M()", MemberName("com.shoprunner.baleen.kotlin", "asHashData"))
+                                            } else {
+                                                add("v")
+                                            }
+                                            add(" }$opt.toMap()")
+                                        }
+
+                                        allSchemas.containsKey(memberType.toString()) -> add("$opt.asHashData()")
+                                    }
+                                }.build()
                             }
-                        }.build()
-                    }
-                    .fold(CodeBlock.builder()) { builder, code -> builder.add(code) }
-                    .build()
-                )
-                unindent()
-                add("\n))\n")
-            }.build())
+                            .fold(CodeBlock.builder()) { builder, code -> builder.add(code) }
+                            .build()
+                    )
+                    unindent()
+                    add("\n))\n")
+                }.build()
+            )
             .build()
     }
 
@@ -191,24 +194,27 @@ internal class DataClassExtensionBuilder(
             .addModifiers(KModifier.INTERNAL)
             .addParameter(ParameterSpec.builder("data", Data::class).build())
             .returns(typeElement.asClassName())
-            .addCode(CodeBlock.builder().apply {
-                add("return %T(\n", typeElement.asClassName())
-                indent()
-                add(members
-                    .mapIndexed { i, m ->
-                        CodeBlock.builder().apply {
-                            if (i != 0) {
-                                add(",\n")
+            .addCode(
+                CodeBlock.builder().apply {
+                    add("return %T(\n", typeElement.asClassName())
+                    indent()
+                    add(
+                        members
+                            .mapIndexed { i, m ->
+                                CodeBlock.builder().apply {
+                                    if (i != 0) {
+                                        add(",\n")
+                                    }
+                                    add(generateAsDataClassMember(m, allSchemas))
+                                }.build()
                             }
-                            add(generateAsDataClassMember(m, allSchemas))
-                        }.build()
-                    }
-                    .fold(CodeBlock.builder()) { builder, code -> builder.add(code) }
-                    .build()
-                )
-                unindent()
-                add("\n)\n")
-            }.build())
+                            .fold(CodeBlock.builder()) { builder, code -> builder.add(code) }
+                            .build()
+                    )
+                    unindent()
+                    add("\n)\n")
+                }.build()
+            )
             .build()
     }
 

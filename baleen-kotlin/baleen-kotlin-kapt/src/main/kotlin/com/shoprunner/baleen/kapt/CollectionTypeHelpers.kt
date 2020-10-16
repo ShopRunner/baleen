@@ -17,24 +17,24 @@ fun isIterable(typeUtils: Types, elementUtils: Elements, memberType: TypeMirror?
 
 fun isMap(typeUtils: Types, elementUtils: Elements, memberType: TypeMirror?): Boolean {
     return memberType is DeclaredType && (
+        typeUtils.isSubtype(
+            memberType,
+            typeUtils.getDeclaredType(
+                elementUtils.getTypeElement(Map::class.java.canonicalName),
+                typeUtils.getWildcardType(null, null),
+                typeUtils.getWildcardType(null, null)
+            )
+
+        ) ||
             typeUtils.isSubtype(
                 memberType,
                 typeUtils.getDeclaredType(
-                    elementUtils.getTypeElement(Map::class.java.canonicalName),
+                    elementUtils.getTypeElement(java.util.Map::class.java.canonicalName),
                     typeUtils.getWildcardType(null, null),
                     typeUtils.getWildcardType(null, null)
                 )
 
-            ) ||
-                    typeUtils.isSubtype(
-                        memberType,
-                        typeUtils.getDeclaredType(
-                            elementUtils.getTypeElement(java.util.Map::class.java.canonicalName),
-                            typeUtils.getWildcardType(null, null),
-                            typeUtils.getWildcardType(null, null)
-                        )
-
-                    )
-
             )
+
+        )
 }

@@ -171,15 +171,16 @@ object JsonSchemaGenerator : BaseGenerator<JsonSchema, JsonSchemaOptions> {
         val rootSchema = encode(dataDescription, options, typeMapper)
 
         return RootJsonSchema(
-                rootSchema.id,
-                rootSchema.definitions,
-                rootSchema.`$ref`,
-                selfDescribingSchema,
-                SelfDescribing(
-                        namespace,
-                        dataDescription.name,
-                        version
-                ))
+            rootSchema.id,
+            rootSchema.definitions,
+            rootSchema.`$ref`,
+            selfDescribingSchema,
+            SelfDescribing(
+                namespace,
+                dataDescription.name,
+                version
+            )
+        )
     }
 
     fun RootJsonSchema.writeTo(directory: File, prettyPrint: Boolean = false): File {
@@ -195,13 +196,13 @@ object JsonSchemaGenerator : BaseGenerator<JsonSchema, JsonSchemaOptions> {
 
         if (prettyPrint) {
             ObjectMapper()
-                    .setSerializationInclusion(JsonInclude.Include.NON_NULL)
-                    .writerWithDefaultPrettyPrinter()
-                    .writeValue(schemaFile, this)
+                .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+                .writerWithDefaultPrettyPrinter()
+                .writeValue(schemaFile, this)
         } else {
             ObjectMapper()
-                    .setSerializationInclusion(JsonInclude.Include.NON_NULL)
-                    .writeValue(schemaFile, this)
+                .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+                .writeValue(schemaFile, this)
         }
         return directory
     }
@@ -212,14 +213,18 @@ object JsonSchemaGenerator : BaseGenerator<JsonSchema, JsonSchemaOptions> {
 
     fun RootJsonSchema.writeTo(out: Appendable, prettyPrint: Boolean = false): Appendable {
         if (prettyPrint) {
-            out.append(ObjectMapper()
+            out.append(
+                ObjectMapper()
                     .setSerializationInclusion(JsonInclude.Include.NON_NULL)
                     .writerWithDefaultPrettyPrinter()
-                    .writeValueAsString(this))
+                    .writeValueAsString(this)
+            )
         } else {
-            out.append(ObjectMapper()
+            out.append(
+                ObjectMapper()
                     .setSerializationInclusion(JsonInclude.Include.NON_NULL)
-                    .writeValueAsString(this))
+                    .writeValueAsString(this)
+            )
         }
         return out
     }

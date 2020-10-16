@@ -126,19 +126,22 @@ class DataDescriptionProcessor : AbstractProcessor() {
 
     // Function with a two parameters: testFun(dog: Dog, dataTrace: DataTrace)
     private fun isValidDataTestFunction(func: ExecutableElement): Boolean {
-        return (func.parameters?.size == 2 &&
+        return (
+            func.parameters?.size == 2 &&
                 func.parameters?.first()?.asType()?.kind == TypeKind.DECLARED &&
                 typeUtils.isSameType(
                     func.parameters[1]?.asType(),
                     elementUtils.getTypeElement(DataTrace::class.java.canonicalName).asType()
-        ))
+                )
+            )
     }
 
     private fun ExecutableElement.isExtension(): Boolean = this.getAnnotation(DataTest::class.java).isExtension
 
     private fun returnValidationResultIterable(func: ExecutableElement): Boolean =
         func.returnType is DeclaredType &&
-                (typeUtils.isSubtype(
+            (
+                typeUtils.isSubtype(
                     func.returnType,
                     typeUtils.getDeclaredType(
                         elementUtils.getTypeElement(Iterable::class.java.canonicalName),
@@ -150,7 +153,8 @@ class DataDescriptionProcessor : AbstractProcessor() {
                         elementUtils.getTypeElement(Sequence::class.java.canonicalName),
                         typeUtils.getWildcardType(null, elementUtils.getTypeElement(ValidationResult::class.java.canonicalName).asType())
                     )
-                ))
+                )
+                )
 
     override fun getSupportedAnnotationTypes(): MutableSet<String> {
         return mutableSetOf(DataDescription::class.java.canonicalName, DataTest::class.java.canonicalName)

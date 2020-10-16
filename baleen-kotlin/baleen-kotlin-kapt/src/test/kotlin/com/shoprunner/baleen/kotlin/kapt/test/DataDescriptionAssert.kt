@@ -53,7 +53,8 @@ class DataDescriptionAssert(actual: com.shoprunner.baleen.DataDescription) :
         if (matchingAttr == null) {
             failWithMessage(
                 "Cannot find attribute with name $expectedAttributeName. All attributes: %s",
-                allAttributes.map { it.name to it.type.name() })
+                allAttributes.map { it.name to it.type.name() }
+            )
         } else {
             furtherAssertions(matchingAttr)
         }
@@ -75,7 +76,7 @@ class DataDescriptionAssert(actual: com.shoprunner.baleen.DataDescription) :
 }
 
 class AttributeDescriptionAssert(actual: AttributeDescription) :
-AbstractAssert<AttributeDescriptionAssert, AttributeDescription>(actual, AttributeDescriptionAssert::class.java) {
+    AbstractAssert<AttributeDescriptionAssert, AttributeDescription>(actual, AttributeDescriptionAssert::class.java) {
 
     companion object {
         @JvmStatic
