@@ -170,7 +170,7 @@ internal class JsonUtilTest {
             val e = assertThrows<JsonParseException> {
                 JsonUtil.validate(StringType(), DataTrace("string"), json.byteInputStream())
             }
-            assertThat(e.originalMessage).isEqualTo("Unrecognized token 'bad': was expecting ('true', 'false' or 'null')")
+            assertThat(e.originalMessage).isEqualTo("Unrecognized token 'bad': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')")
             assertThat(e.location.lineNr).isEqualTo(1)
             assertThat(e.location.columnNr).isEqualTo(5)
         }
@@ -202,7 +202,7 @@ internal class JsonUtilTest {
             assertThat(validation.errors()).contains(
                 ValidationError(
                     DataTrace("dog")
-                        .tag("line", "1").tag("column", "5"),
+                        .tag("line", "1").tag("column", "3"),
                     "is less than 0",
                     -1.toBigInteger()
                 )
@@ -378,7 +378,7 @@ internal class JsonUtilTest {
             val e = assertThrows<JsonParseException> {
                 JsonUtil.validateRootJsonArray(StringType(), DataTrace("string"), json.byteInputStream())
             }
-            assertThat(e.originalMessage).isEqualTo("Unrecognized token 'bad': was expecting ('true', 'false' or 'null')")
+            assertThat(e.originalMessage).isEqualTo("Unrecognized token 'bad': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')")
             assertThat(e.location.lineNr).isEqualTo(1)
             assertThat(e.location.columnNr).isEqualTo(5)
         }
@@ -504,7 +504,7 @@ internal class JsonUtilTest {
             val e = assertThrows<JsonParseException> {
                 JsonUtil.validateJsonStream(StringType(), DataTrace("string"), json.byteInputStream()).eval()
             }
-            assertThat(e.originalMessage).isEqualTo("Unrecognized token 'bad': was expecting ('true', 'false' or 'null')")
+            assertThat(e.originalMessage).isEqualTo("Unrecognized token 'bad': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')")
             assertThat(e.location.lineNr).isEqualTo(1)
             assertThat(e.location.columnNr).isEqualTo(5)
         }

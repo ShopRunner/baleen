@@ -73,6 +73,9 @@ model {
     }
 }
 
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
 
 def customizePom(pom) {
     pom.withXml {
