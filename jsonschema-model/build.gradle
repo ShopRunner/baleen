@@ -1,3 +1,7 @@
+plugins {
+    id("baleen.project-conventions")
+}
+
 dependencies {
     api project(':baleen')
     api 'com.fasterxml.jackson.core:jackson-core:2.9.9'
