@@ -43,7 +43,7 @@ val dogDescription = "Dog".describeAs {
     }
 }
 
-fun main(args: Array<String>) {
+fun main() {
 
     val dogFeed = FlowableUtil.fromCsvWithHeader(
         dataTrace = dataTrace("file example.csv"),
