@@ -1,6 +1,6 @@
 package com.shoprunner.baleen.xsd.xml
 
-import javax.xml.bind.annotation.XmlElement
+import jakarta.xml.bind.annotation.XmlElement
 
 data class Sequence(
 

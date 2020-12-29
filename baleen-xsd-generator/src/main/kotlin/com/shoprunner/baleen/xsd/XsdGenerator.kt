@@ -32,9 +32,9 @@ import com.shoprunner.baleen.xsd.xml.Restriction
 import com.shoprunner.baleen.xsd.xml.Schema
 import com.shoprunner.baleen.xsd.xml.Sequence
 import com.shoprunner.baleen.xsd.xml.SimpleType
+import jakarta.xml.bind.JAXBContext
+import jakarta.xml.bind.Marshaller
 import java.io.PrintStream
-import javax.xml.bind.JAXBContext
-import javax.xml.bind.Marshaller
 
 object XsdGenerator : BaseGenerator<TypeDetails, XsdOptions> {
 
