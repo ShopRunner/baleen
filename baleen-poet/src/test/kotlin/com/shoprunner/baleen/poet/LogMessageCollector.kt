@@ -1,7 +1,7 @@
 package com.shoprunner.baleen.poet
 
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import java.util.logging.Logger
 
@@ -12,7 +12,11 @@ internal object LogMessageCollector : MessageCollector {
 
     override fun hasErrors() = false
 
-    override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation?) {
+    override fun report(
+        severity: CompilerMessageSeverity,
+        message: String,
+        location: CompilerMessageSourceLocation?
+    ) {
         when (severity) {
             CompilerMessageSeverity.ERROR -> logger.severe("$message : $location")
             CompilerMessageSeverity.EXCEPTION -> logger.severe("$message : $location")
