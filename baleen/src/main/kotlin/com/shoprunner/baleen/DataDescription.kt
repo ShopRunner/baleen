@@ -16,9 +16,32 @@ class DataDescription(
         markdownDescription: String = "",
         aliases: Array<String> = arrayOf(),
         required: Boolean = false,
-        default: Any? = NoDefault
+        default: Any? = NoDefault,
     ): AttributeDescription {
         val attr = AttributeDescription(this, name, type, markdownDescription, aliases, required, default)
+        attrs.add(attr)
+        return attr
+    }
+
+    /**
+     * Create an attribute with a nested data description.  The nested data description will have the
+     * same name as the attribute but capitalized.
+     */
+    fun attr(
+        name: String,
+        markdownDescription: String = "",
+        aliases: Array<String> = arrayOf(),
+        required: Boolean = false,
+        default: Any? = NoDefault,
+        description: DataDescription.() -> Unit = {},
+    ): AttributeDescription {
+        val dd = DataDescription(
+            name = name.capitalize(),
+            markdownDescription = markdownDescription
+        )
+        dd.apply(description)
+
+        val attr = AttributeDescription(this, name, dd, markdownDescription, aliases, required, default)
         attrs.add(attr)
         return attr
     }
@@ -28,9 +51,31 @@ class DataDescription(
         markdownDescription: String = "",
         aliases: Array<String> = arrayOf(),
         required: Boolean = false,
-        default: Any? = NoDefault
+        default: Any? = NoDefault,
     ): AttributeDescription {
         val attr = AttributeDescription(this@DataDescription, this, type, markdownDescription, aliases, required, default)
+        attrs.add(attr)
+        return attr
+    }
+
+    /**
+     * Create an attribute with a nested data description.  The nested data description will have the
+     * same name as the attribute but capitalized.
+     */
+    fun String.type(
+        markdownDescription: String = "",
+        aliases: Array<String> = arrayOf(),
+        required: Boolean = false,
+        default: Any? = NoDefault,
+        description: DataDescription.() -> Unit = {},
+    ): AttributeDescription {
+        val dd = DataDescription(
+            name = this.capitalize(),
+            markdownDescription = markdownDescription
+        )
+        dd.apply(description)
+
+        val attr = AttributeDescription(this@DataDescription, this, dd, markdownDescription, aliases, required, default)
         attrs.add(attr)
         return attr
     }
