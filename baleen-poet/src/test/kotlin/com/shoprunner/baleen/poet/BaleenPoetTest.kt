@@ -53,7 +53,7 @@ internal class BaleenPoetTest {
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.BooleanType
                 
-                public valboolean: BaleenType = BooleanType()
+                public val boolean: BaleenType = BooleanType()
                 """.trimIndent()
             )
             assertThat(spec).canCompile()
@@ -71,7 +71,7 @@ internal class BaleenPoetTest {
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.DoubleType
                 
-                public valdouble: BaleenType = DoubleType(min = Double.NEGATIVE_INFINITY, max = Double.POSITIVE_INFINITY)
+                public val double: BaleenType = DoubleType(min = Double.NEGATIVE_INFINITY, max = Double.POSITIVE_INFINITY)
                 """.trimIndent()
             )
             assertThat(spec).canCompile()
@@ -89,7 +89,7 @@ internal class BaleenPoetTest {
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.DoubleType
                 
-                public valDoubleMaxMin: BaleenType = DoubleType(min = 0.0, max = 10.0)
+                public val DoubleMaxMin: BaleenType = DoubleType(min = 0.0, max = 10.0)
                 """.trimIndent()
             )
             assertThat(spec).canCompile()
@@ -107,7 +107,7 @@ internal class BaleenPoetTest {
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.FloatType
                 
-                public valfloat: BaleenType = FloatType(min = Float.NEGATIVE_INFINITY, max = Float.POSITIVE_INFINITY)
+                public val float: BaleenType = FloatType(min = Float.NEGATIVE_INFINITY, max = Float.POSITIVE_INFINITY)
                 """.trimIndent()
             )
             assertThat(spec).canCompile()
@@ -125,7 +125,7 @@ internal class BaleenPoetTest {
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.FloatType
                 
-                public valFloatMaxMin: BaleenType = FloatType(min = 0.0f, max = 10.0f)
+                public val FloatMaxMin: BaleenType = FloatType(min = 0.0f, max = 10.0f)
                 """.trimIndent()
             )
             assertThat(spec).canCompile()
@@ -143,7 +143,7 @@ internal class BaleenPoetTest {
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.IntType
                 
-                public valint: BaleenType = IntType(min = Int.MIN_VALUE, max = Int.MAX_VALUE)
+                public val int: BaleenType = IntType(min = Int.MIN_VALUE, max = Int.MAX_VALUE)
                 """.trimIndent()
             )
             assertThat(spec).canCompile()
@@ -161,7 +161,7 @@ internal class BaleenPoetTest {
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.IntType
                 
-                public valIntMaxMin: BaleenType = IntType(min = 0, max = 10)
+                public val IntMaxMin: BaleenType = IntType(min = 0, max = 10)
                 """.trimIndent()
             )
             assertThat(spec).canCompile()
@@ -179,7 +179,7 @@ internal class BaleenPoetTest {
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.LongType
                 
-                public vallong: BaleenType = LongType(min = Long.MIN_VALUE, max = Long.MAX_VALUE)
+                public val long: BaleenType = LongType(min = Long.MIN_VALUE, max = Long.MAX_VALUE)
                 """.trimIndent()
             )
             assertThat(spec).canCompile()
@@ -197,7 +197,7 @@ internal class BaleenPoetTest {
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.LongType
                 
-                public valLongMaxMin: BaleenType = LongType(min = 0L, max = 10L)
+                public val LongMaxMin: BaleenType = LongType(min = 0L, max = 10L)
                 """.trimIndent()
             )
             assertThat(spec).canCompile()
@@ -215,7 +215,7 @@ internal class BaleenPoetTest {
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.IntegerType
                 
-                public valinteger: BaleenType = IntegerType(min = null, max = null)
+                public val integer: BaleenType = IntegerType(min = null, max = null)
                 """.trimIndent()
             )
             assertThat(spec).canCompile()
@@ -233,7 +233,7 @@ internal class BaleenPoetTest {
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.IntegerType
                 
-                public valIntegerMaxMin: BaleenType = IntegerType(min = "0".toBigInteger(), max = "10".toBigInteger())
+                public val IntegerMaxMin: BaleenType = IntegerType(min = "0".toBigInteger(), max = "10".toBigInteger())
                 """.trimIndent()
             )
             assertThat(spec).canCompile()
@@ -251,7 +251,7 @@ internal class BaleenPoetTest {
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.NumericType
                 
-                public valnumber: BaleenType = NumericType(min = null, max = null)
+                public val number: BaleenType = NumericType(min = null, max = null)
                 """.trimIndent()
             )
             assertThat(spec).canCompile()
@@ -269,7 +269,7 @@ internal class BaleenPoetTest {
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.NumericType
                 
-                public valNumberMaxMin: BaleenType = NumericType(min = "0".toBigDecimal(), max = "10".toBigDecimal())
+                public val NumberMaxMin: BaleenType = NumericType(min = "0".toBigDecimal(), max = "10".toBigDecimal())
                 """.trimIndent()
             )
             assertThat(spec).canCompile()
@@ -305,7 +305,7 @@ internal class BaleenPoetTest {
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.StringConstantType
                 
-                public valstringConstant: BaleenType = StringConstantType("Hello World")
+                public val stringConstant: BaleenType = StringConstantType("Hello World")
                 """.trimIndent()
             )
             assertThat(spec).canCompile()
@@ -323,7 +323,7 @@ internal class BaleenPoetTest {
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.StringType
                 
-                public valstring: BaleenType = StringType(min = 0, max = Int.MAX_VALUE)
+                public val string: BaleenType = StringType(min = 0, max = Int.MAX_VALUE)
                 """.trimIndent()
             )
             assertThat(spec).canCompile()
@@ -341,7 +341,7 @@ internal class BaleenPoetTest {
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.StringType
                 
-                public valStringMaxMin: BaleenType = StringType(min = 10, max = 20)
+                public val StringMaxMin: BaleenType = StringType(min = 10, max = 20)
                 """.trimIndent()
             )
             assertThat(spec).canCompile()
@@ -360,7 +360,7 @@ internal class BaleenPoetTest {
                 import com.shoprunner.baleen.types.InstantType
                 import java.time.Instant
                 
-                public valinstant: BaleenType = InstantType(before = Instant.MAX, after = Instant.MIN)
+                public val instant: BaleenType = InstantType(before = Instant.MAX, after = Instant.MIN)
                 """.trimIndent()
             )
             assertThat(spec).canCompile()
@@ -379,7 +379,7 @@ internal class BaleenPoetTest {
                 import com.shoprunner.baleen.types.InstantType
                 import java.time.Instant
                 
-                public valInstantBeforeAfter: BaleenType = InstantType(before = Instant.parse("2020-02-02T02:02:02Z"), 
+                public val InstantBeforeAfter: BaleenType = InstantType(before = Instant.parse("2020-02-02T02:02:02Z"), 
                                                                  after = Instant.parse("2001-01-01T01:01:01Z"))
                 """.trimIndent()
             )
@@ -398,7 +398,7 @@ internal class BaleenPoetTest {
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.TimestampMillisType
                 
-                public valtimestampMillis: BaleenType = TimestampMillisType()
+                public val timestampMillis: BaleenType = TimestampMillisType()
                 """.trimIndent()
             )
             assertThat(spec).canCompile()
@@ -418,7 +418,7 @@ internal class BaleenPoetTest {
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.StringType
                 
-                public valMyString: BaleenType = StringType(min = 0, max = Int.MAX_VALUE)
+                public val MyString: BaleenType = StringType(min = 0, max = Int.MAX_VALUE)
                 """.trimIndent()
             )
             assertThat(spec).canCompile()
@@ -437,7 +437,7 @@ internal class BaleenPoetTest {
                 import com.shoprunner.baleen.types.AllowsNull
                 import com.shoprunner.baleen.types.BooleanType
                 
-                public valnullOrBoolean: BaleenType = AllowsNull(BooleanType())
+                public val nullOrBoolean: BaleenType = AllowsNull(BooleanType())
                 """.trimIndent()
             )
             assertThat(spec).canCompile()
@@ -456,7 +456,7 @@ internal class BaleenPoetTest {
                 import com.shoprunner.baleen.types.BooleanType
                 import com.shoprunner.baleen.types.ErrorsAreWarnings
 
-                public valErrorsAreWarnings: BaleenType = ErrorsAreWarnings(BooleanType())
+                public val ErrorsAreWarnings: BaleenType = ErrorsAreWarnings(BooleanType())
                 """.trimIndent()
             )
             assertThat(spec).canCompile()
@@ -484,7 +484,7 @@ internal class BaleenPoetTest {
                 import com.shoprunner.baleen.types.withConstantValue
                 import com.shoprunner.baleen.types.withValue
 
-                public valTagged: BaleenType = Tagged(BooleanType(), 
+                public val Tagged: BaleenType = Tagged(BooleanType(), 
                     mapOf(
                         "constantTag" to withConstantValue("value"),
                         "valueTag" to withValue(),
@@ -509,7 +509,7 @@ internal class BaleenPoetTest {
                 import com.shoprunner.baleen.types.OccurrencesType
                 import com.shoprunner.baleen.types.StringType
                 
-                public valmultipleOccurrencesOfString: BaleenType = OccurrencesType(StringType(min = 0, max = Int.MAX_VALUE))
+                public val multipleOccurrencesOfString: BaleenType = OccurrencesType(StringType(min = 0, max = Int.MAX_VALUE))
                 """.trimIndent()
             )
             assertThat(spec).canCompile()
@@ -529,7 +529,7 @@ internal class BaleenPoetTest {
                 import com.shoprunner.baleen.types.MapType
                 import com.shoprunner.baleen.types.StringType
                 
-                public valmapOfOccurrencesOfStringToInt: BaleenType = MapType(
+                public val mapOfOccurrencesOfStringToInt: BaleenType = MapType(
                     StringType(min = 0, max = Int.MAX_VALUE), 
                     IntType(min = Int.MIN_VALUE, max = Int.MAX_VALUE)
                 )
@@ -552,7 +552,7 @@ internal class BaleenPoetTest {
                 import com.shoprunner.baleen.types.StringType
                 import com.shoprunner.baleen.types.UnionType
                 
-                public valunionOfStringInt: BaleenType = UnionType(
+                public val unionOfStringInt: BaleenType = UnionType(
                     StringType(min = 0, max = Int.MAX_VALUE), 
                     IntType(min = Int.MIN_VALUE, max = Int.MAX_VALUE)
                 )
@@ -580,7 +580,7 @@ internal class BaleenPoetTest {
             import com.shoprunner.baleen.types.IntType
             import com.shoprunner.baleen.types.StringType
             
-            public valDog: DataDescription = describe("Dog", "", "") {
+            public val Dog: DataDescription = describe("Dog", "", "") {
                   it.attr(
                     name = "name",
                     type = StringType(min = 0, max = Int.MAX_VALUE)
@@ -617,7 +617,7 @@ internal class BaleenPoetTest {
             import com.shoprunner.baleen.types.IntType
             import com.shoprunner.baleen.types.StringType
             
-            public valDog: DataDescription = describe("Dog", "com.shoprunner.baleen.poet.test", "") {
+            public val Dog: DataDescription = describe("Dog", "com.shoprunner.baleen.poet.test", "") {
                   it.attr(
                     name = "name",
                     type = StringType(min = 0, max = Int.MAX_VALUE)
@@ -655,7 +655,7 @@ internal class BaleenPoetTest {
                 /**
                  * This is a Dog
                  */
-                public valDogWithComments: DataDescription = describe("Dog", "", "This is a Dog") {
+                public val DogWithComments: DataDescription = describe("Dog", "", "This is a Dog") {
                       it.attr(
                         name = "name",
                         type = StringType(min = 0, max = Int.MAX_VALUE),
@@ -692,7 +692,7 @@ internal class BaleenPoetTest {
                 import com.shoprunner.baleen.types.IntType
                 import com.shoprunner.baleen.types.StringType
                 
-                public valDogWithAliases: DataDescription = describe("Dog", "", "") {
+                public val DogWithAliases: DataDescription = describe("Dog", "", "") {
                       it.attr(
                         name = "name",
                         type = StringType(min = 0, max = Int.MAX_VALUE),
@@ -736,7 +736,7 @@ internal class BaleenPoetTest {
                 import com.shoprunner.baleen.types.OccurrencesType
                 import com.shoprunner.baleen.types.StringType
                 
-                public valDogWithDefaults: DataDescription = describe("Dog", "", "") {
+                public val DogWithDefaults: DataDescription = describe("Dog", "", "") {
                       it.attr(
                         name = "name",
                         type = StringType(min = 0, max = Int.MAX_VALUE),
@@ -788,7 +788,7 @@ internal class BaleenPoetTest {
                 import com.shoprunner.baleen.types.IntType
                 import com.shoprunner.baleen.types.StringType
                 
-                public valDogWithRequiredAttrs: DataDescription = describe("Dog", "", "") {
+                public val DogWithRequiredAttrs: DataDescription = describe("Dog", "", "") {
                       it.attr(
                         name = "name",
                         type = StringType(min = 0, max = Int.MAX_VALUE),
@@ -825,7 +825,7 @@ internal class BaleenPoetTest {
             import com.shoprunner.baleen.types.IntType
             import com.shoprunner.baleen.types.StringType
             
-            public valDogsWithAttributeWarnings: DataDescription = describe("Dog", "", "") {
+            public val DogsWithAttributeWarnings: DataDescription = describe("Dog", "", "") {
                   it.attr(
                     name = "name",
                     type = StringType(min = 0, max = Int.MAX_VALUE)
@@ -867,7 +867,7 @@ internal class BaleenPoetTest {
             import com.shoprunner.baleen.types.withConstantValue
             import com.shoprunner.baleen.types.withValue
             
-            public valDogsWithAttributeTags: DataDescription = describe("Dog", "", "") {
+            public val DogsWithAttributeTags: DataDescription = describe("Dog", "", "") {
                   it.attr(
                     name = "name",
                     type = StringType(min = 0, max = Int.MAX_VALUE)
@@ -906,7 +906,7 @@ internal class BaleenPoetTest {
             import com.shoprunner.baleen.types.IntType
             import com.shoprunner.baleen.types.StringType
             
-            public valNestedDog: DataDescription = describe("NestedDog", "", "") {
+            public val NestedDog: DataDescription = describe("NestedDog", "", "") {
                   it.attr(
                     name = "name",
                     type = StringType(min = 0, max = Int.MAX_VALUE)
@@ -965,7 +965,7 @@ internal class BaleenPoetTest {
             import com.shoprunner.baleen.types.IntType
             import com.shoprunner.baleen.types.StringType
             
-            public valNestedDog: DataDescription = describe("NestedDog", "com.shoprunner.dogs", "") {
+            public val NestedDog: DataDescription = describe("NestedDog", "com.shoprunner.dogs", "") {
                   it.attr(
                     name = "name",
                     type = StringType(min = 0, max = Int.MAX_VALUE)
@@ -986,7 +986,7 @@ internal class BaleenPoetTest {
             import com.shoprunner.baleen.types.OccurrencesType
             import com.shoprunner.dogs.NestedDog
             
-            public valPack: DataDescription = describe("Pack", "com.shoprunner.pack", "") {
+            public val Pack: DataDescription = describe("Pack", "com.shoprunner.pack", "") {
                   it.attr(
                     name = "dogs",
                     type = OccurrencesType(NestedDog)
@@ -1017,7 +1017,7 @@ internal class BaleenPoetTest {
                 import com.shoprunner.baleen.types.BooleanType
                 import com.shoprunner.baleen.types.StringCoercibleToBoolean
                 
-                public valstringCoercibleToBoolean: BaleenType = StringCoercibleToBoolean(BooleanType())
+                public val stringCoercibleToBoolean: BaleenType = StringCoercibleToBoolean(BooleanType())
 
                 """.trimIndent()
             )
@@ -1037,7 +1037,7 @@ internal class BaleenPoetTest {
                 import com.shoprunner.baleen.types.FloatType
                 import com.shoprunner.baleen.types.StringCoercibleToFloat
                 
-                public valstringCoercibleToFloat: BaleenType = StringCoercibleToFloat(FloatType(min = 0.0f, max = 1.0f))
+                public val stringCoercibleToFloat: BaleenType = StringCoercibleToFloat(FloatType(min = 0.0f, max = 1.0f))
 
                 """.trimIndent()
             )
@@ -1079,7 +1079,7 @@ internal class BaleenPoetTest {
                 import java.time.Instant
                 import java.time.format.DateTimeFormatter.ISO_INSTANT
                 
-                public valstringCoercibleToInstant: BaleenType =
+                public val stringCoercibleToInstant: BaleenType =
                     StringCoercibleToInstant(InstantType(before = Instant.MAX, after = Instant.MIN), ISO_INSTANT)
                 """.trimIndent()
             )
@@ -1101,7 +1101,7 @@ internal class BaleenPoetTest {
                 import java.time.Instant
                 import java.time.format.DateTimeFormatter.ofPattern
                 
-                public valStringCoercibleToInstantDifferentPattern: BaleenType =
+                public val StringCoercibleToInstantDifferentPattern: BaleenType =
                     StringCoercibleToInstant(InstantType(before = Instant.MAX, after = Instant.MIN),
                         ofPattern("YYYY/mm/DD/hh/MM/ss/Z"))
                 """.trimIndent()
@@ -1130,7 +1130,7 @@ internal class BaleenPoetTest {
                 import com.shoprunner.baleen.types.TimestampMillisType
                 import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME
                 
-                public valstringCoercibleToTimestampMillis: BaleenType =
+                public val stringCoercibleToTimestampMillis: BaleenType =
                     StringCoercibleToTimestamp(TimestampMillisType(), ISO_LOCAL_DATE_TIME)
 
                 """.trimIndent()
@@ -1152,7 +1152,7 @@ internal class BaleenPoetTest {
                     import com.shoprunner.baleen.types.TimestampMillisType
                     import java.time.format.DateTimeFormatter.ofPattern
                     
-                    public valStringCoercibleToTimestampDifferentPattern: BaleenType =
+                    public val StringCoercibleToTimestampDifferentPattern: BaleenType =
                         StringCoercibleToTimestamp(
                             TimestampMillisType(),
                             ofPattern("yyyy/MM/dd/hh/mm/ss")
@@ -1182,7 +1182,7 @@ internal class BaleenPoetTest {
                 import com.shoprunner.baleen.types.StringCoercibleToOccurrencesType
                 import com.shoprunner.baleen.types.StringType
                 
-                public valstringCoercibleToMultipleOccurrencesOfString: BaleenType =
+                public val stringCoercibleToMultipleOccurrencesOfString: BaleenType =
                     StringCoercibleToOccurrencesType(OccurrencesType(StringType(min = 0, max = Int.MAX_VALUE)))
                 """.trimIndent()
             )
@@ -1204,7 +1204,7 @@ internal class BaleenPoetTest {
                 import com.shoprunner.baleen.types.LongCoercibleToInstant.Precision.millis
                 import java.time.Instant
                 
-                public vallongCoercibleToInstant: BaleenType = LongCoercibleToInstant(InstantType(before = Instant.MAX,
+                public val longCoercibleToInstant: BaleenType = LongCoercibleToInstant(InstantType(before = Instant.MAX,
                     after = Instant.MIN), millis)
                 """.trimIndent()
             )
@@ -1228,7 +1228,7 @@ internal class BaleenPoetTest {
             import com.shoprunner.baleen.BaleenType
             import com.shoprunner.baleen.types.IntType
             
-            public valStringOverrideToInt: BaleenType = IntType()
+            public val StringOverrideToInt: BaleenType = IntType()
                 """.trimIndent()
             )
             assertThat(spec).canCompile()
@@ -1256,7 +1256,7 @@ internal class BaleenPoetTest {
             import com.shoprunner.baleen.types.AllowsNull
             import com.shoprunner.baleen.types.IntType
             
-            public valDogWithStringOverrideToInt: DataDescription = describe("Dog", "", "") {
+            public val DogWithStringOverrideToInt: DataDescription = describe("Dog", "", "") {
                   it.attr(
                     name = "name",
                     type = IntType()
@@ -1298,7 +1298,7 @@ internal class BaleenPoetTest {
             import com.shoprunner.baleen.types.OccurrencesType
             import com.shoprunner.baleen.types.StringType
             
-            public valPackWithDogOverrideToString: DataDescription = describe("Pack", "", "") {
+            public val PackWithDogOverrideToString: DataDescription = describe("Pack", "", "") {
                   it.attr(
                     name = "dogs",
                     type = OccurrencesType(StringType())
