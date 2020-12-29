@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.13.0] - 2020-12-29
+- Switch build to java 11 (LTS)
+
+Dependency Updates
+- avro 1.10.1
+- assertj-core 3.18.1
+- jackson 2.12.0
+- jaxb 3.0
+- junit 5.7.0
+- kotlin 1.4.21
+- kotlinpoet 1.7.2
+- opencsv 5.2
+- autoservice 1.0-rc7
+- rxjava 2.2.20
+- kotlinter 3.3.0
+- dokka
+
 ## [1.12.0] - 2020-03-20
 - Support ability to override errors into warnings
 - Support adding tags to baleen types. Tags can be static strings or dynamic.
