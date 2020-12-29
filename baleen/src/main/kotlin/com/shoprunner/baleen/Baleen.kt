@@ -8,9 +8,10 @@ object Baleen {
         description: (DataDescription) -> Unit = {}
     ): DataDescription {
         val dd = DataDescription(
-                name = name,
-                nameSpace = nameSpace,
-                markdownDescription = markdownDescription)
+            name = name,
+            nameSpace = nameSpace,
+            markdownDescription = markdownDescription
+        )
         description(dd)
         return dd
     }
@@ -23,7 +24,8 @@ object Baleen {
         val dd = DataDescription(
             name = this,
             nameSpace = nameSpace,
-            markdownDescription = markdownDescription)
+            markdownDescription = markdownDescription
+        )
         dd.apply(description)
         return dd
     }

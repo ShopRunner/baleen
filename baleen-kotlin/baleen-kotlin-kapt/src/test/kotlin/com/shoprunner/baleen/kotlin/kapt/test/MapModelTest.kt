@@ -20,13 +20,15 @@ internal class MapModelTest {
         DataDescriptionAssert.assertBaleen(model.dataDescription())
             .hasName("MapStringIntModel")
             .hasNamespace("com.shoprunner.baleen.kotlin.kapt.test")
-            .hasAttribute("map",
+            .hasAttribute(
+                "map",
                 MapType(
                     StringType(),
                     IntType()
                 )
             )
-            .hasAttribute("nullableMap",
+            .hasAttribute(
+                "nullableMap",
                 AllowsNull(
                     MapType(
                         StringType(),

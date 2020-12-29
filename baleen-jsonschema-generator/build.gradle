@@ -1,7 +1,12 @@
+plugins {
+    id("baleen.project-conventions")
+    id("baleen.jackson-conventions")
+}
+
 dependencies {
-    api project(':baleen')
-    implementation project(':baleen-base-schema-generator')
-    implementation project(':jsonschema-model')
-    implementation 'com.fasterxml.jackson.module:jackson-module-jsonSchema:2.9.9'
-    implementation 'org.jetbrains.kotlin:kotlin-reflect'
+    api project(":baleen")
+    implementation project(":baleen-base-schema-generator")
+    implementation project(":jsonschema-model")
+    implementation "com.fasterxml.jackson.module:jackson-module-jsonSchema:$jacksonVersion"
+    implementation "org.jetbrains.kotlin:kotlin-reflect"
 }

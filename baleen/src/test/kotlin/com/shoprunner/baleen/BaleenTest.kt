@@ -25,18 +25,18 @@ internal class BaleenTest {
         @Test
         fun `context matches the data`() {
             assertThat(dataDesc.validate(dataOf<String>()).context)
-                    .isEqualTo(Context(dataOf<String>(), dataTrace()))
+                .isEqualTo(Context(dataOf<String>(), dataTrace()))
 
             assertThat(dataDesc.validate(dataOf("name" to "Fido")).context)
-                    .isEqualTo(Context(dataOf("name" to "Fido"), dataTrace()))
+                .isEqualTo(Context(dataOf("name" to "Fido"), dataTrace()))
         }
 
         @Test
         fun `results in success`() {
             assertThat(dataDesc.validate(dataOf<String>()).results)
-                    .isEqualTo(listOf(ValidationSuccess(dataTrace(), dataOf<String>())))
+                .isEqualTo(listOf(ValidationSuccess(dataTrace(), dataOf<String>())))
             assertThat(dataDesc.validate(dataOf("name" to "Fido")).results)
-                    .isEqualTo(listOf(ValidationSuccess(dataTrace(), dataOf("name" to "Fido"))))
+                .isEqualTo(listOf(ValidationSuccess(dataTrace(), dataOf("name" to "Fido"))))
         }
     }
 
@@ -46,7 +46,8 @@ internal class BaleenTest {
         private val dogDescription = "Dog".describeAs {
             "name".type(
                 type = AllowsNull(StringType()),
-                required = true)
+                required = true
+            )
         }
 
         @Test
@@ -61,7 +62,8 @@ internal class BaleenTest {
             val data = dataOf<String>()
             assertThat(dogDescription.validate(data)).isNotValid()
             assertThat(dogDescription.validate(data).results).contains(
-                    ValidationError(dataTrace(), "missing required attribute \"name\"", data))
+                ValidationError(dataTrace(), "missing required attribute \"name\"", data)
+            )
         }
 
         @Test
@@ -77,9 +79,10 @@ internal class BaleenTest {
 
         private val dogDescription = "Dog".describeAs {
             "name".type(
-                    type = AllowsNull(StringType()),
-                    required = true,
-                    default = "Fido")
+                type = AllowsNull(StringType()),
+                required = true,
+                default = "Fido"
+            )
         }
 
         @Test
@@ -126,7 +129,8 @@ internal class BaleenTest {
             val data = dataOf<String>()
             assertThat(dogDescription.validate(data)).isValid()
             assertThat(dogDescription.validate(data).results).contains(
-                ValidationWarning(dataTrace(), "missing required attribute \"name\"", data))
+                ValidationWarning(dataTrace(), "missing required attribute \"name\"", data)
+            )
         }
     }
 
@@ -134,51 +138,56 @@ internal class BaleenTest {
     inner class NestedDesc {
         private val dogDescription = "Dog".describeAs {
             "name".type(
-                    type = StringType(),
-                    required = true)
+                type = StringType(),
+                required = true
+            )
         }
 
         private val packWithAlpha = "Pack".describeAs {
             "alpha".type(
-                    type = dogDescription,
-                    required = true)
+                type = dogDescription,
+                required = true
+            )
         }
 
         private val packOptionalAlpha = "Pack".describeAs {
             "alpha".type(
-                    type = dogDescription,
-                    required = false)
+                type = dogDescription,
+                required = false
+            )
         }
 
         @Test
         fun `validates when present`() {
             val dogData = dataOf("name" to "Fido")
             val packData = dataOf(
-                    "alpha" to dogData)
+                "alpha" to dogData
+            )
             assertThat(packWithAlpha.validate(packData)).isValid()
             assertThat(packWithAlpha.validate(packData).results)
-                    .contains(ValidationInfo(dataTrace(), "has attribute \"alpha\"", packData))
-                    .contains(ValidationInfo(dataTrace("attribute \"alpha\""), "has attribute \"name\"", dogData))
+                .contains(ValidationInfo(dataTrace(), "has attribute \"alpha\"", packData))
+                .contains(ValidationInfo(dataTrace("attribute \"alpha\""), "has attribute \"name\"", dogData))
 
             assertThat(packOptionalAlpha.validate(packData)).isValid()
             assertThat(packOptionalAlpha.validate(packData).results)
-                    .contains(ValidationInfo(dataTrace(), "has attribute \"alpha\"", packData))
-                    .contains(ValidationInfo(dataTrace("attribute \"alpha\""), "has attribute \"name\"", dogData))
+                .contains(ValidationInfo(dataTrace(), "has attribute \"alpha\"", packData))
+                .contains(ValidationInfo(dataTrace("attribute \"alpha\""), "has attribute \"name\"", dogData))
         }
 
         @Test
         fun `child not the right type`() {
             val data = dataOf(
-                    "alpha" to "Fido")
+                "alpha" to "Fido"
+            )
             assertThat(packWithAlpha.validate(data)).isNotValid()
             assertThat(packWithAlpha.validate(data).results)
-                    .contains(ValidationInfo(dataTrace(), "has attribute \"alpha\"", data))
-                    .contains(ValidationError(dataTrace("attribute \"alpha\""), "expected to be of type Data but is class java.lang.String", "Fido"))
+                .contains(ValidationInfo(dataTrace(), "has attribute \"alpha\"", data))
+                .contains(ValidationError(dataTrace("attribute \"alpha\""), "expected to be of type Data but is class java.lang.String", "Fido"))
 
             assertThat(packOptionalAlpha.validate(data)).isNotValid()
             assertThat(packOptionalAlpha.validate(data).results)
-                    .contains(ValidationInfo(dataTrace(), "has attribute \"alpha\"", data))
-                    .contains(ValidationError(dataTrace("attribute \"alpha\""), "expected to be of type Data but is class java.lang.String", "Fido"))
+                .contains(ValidationInfo(dataTrace(), "has attribute \"alpha\"", data))
+                .contains(ValidationError(dataTrace("attribute \"alpha\""), "expected to be of type Data but is class java.lang.String", "Fido"))
         }
 
         @Test
@@ -186,7 +195,7 @@ internal class BaleenTest {
             val data = dataOf<String>()
             assertThat(packWithAlpha.validate(data)).isNotValid()
             assertThat(packWithAlpha.validate(data).results)
-                    .contains(ValidationError(dataTrace(), "missing required attribute \"alpha\"", data))
+                .contains(ValidationError(dataTrace(), "missing required attribute \"alpha\"", data))
 
             assertThat(packOptionalAlpha.validate(data)).isValid()
         }
@@ -202,7 +211,8 @@ internal class BaleenTest {
         @Test
         fun `fails at child when child not valid`() {
             val data = dataOf(
-                    "alpha" to dataOf<String>())
+                "alpha" to dataOf<String>()
+            )
             assertThat(packWithAlpha.validate(data)).isNotValid()
             assertThat(packOptionalAlpha.validate(data)).isNotValid()
             // TODO data trace
@@ -219,11 +229,14 @@ internal class BaleenTest {
         assertThat(dataDesc.validate(dataOf("name" to "Fido"))).isValid()
 
         assertThat(dataDesc.validate(dataOf<String>()).results)
-                .isEqualTo(listOf(ValidationSuccess(dataTrace(), dataOf<String>())))
+            .isEqualTo(listOf(ValidationSuccess(dataTrace(), dataOf<String>())))
         assertThat(dataDesc.validate(dataOf("name" to "Fido")).results)
-                .isEqualTo(listOf(
-                        ValidationWarning(dataTrace(), "extra attribute \"name\"", dataOf("name" to "Fido")),
-                        ValidationSuccess(dataTrace(), dataOf("name" to "Fido"))))
+            .isEqualTo(
+                listOf(
+                    ValidationWarning(dataTrace(), "extra attribute \"name\"", dataOf("name" to "Fido")),
+                    ValidationSuccess(dataTrace(), dataOf("name" to "Fido"))
+                )
+            )
     }
 
     @Test

@@ -22,11 +22,11 @@ import com.shoprunner.baleen.types.StringType
 import com.shoprunner.baleen.types.Tagged
 import com.shoprunner.baleen.types.TimestampMillisType
 import com.shoprunner.baleen.types.UnionType
-import java.io.File
-import java.nio.file.Path
 import org.apache.avro.JsonProperties
 import org.apache.avro.LogicalTypes
 import org.apache.avro.Schema
+import java.io.File
+import java.nio.file.Path
 
 object AvroGenerator {
 
@@ -82,8 +82,8 @@ object AvroGenerator {
             }
 
             val avroSchema =
-                    if (!attr.required && attr.default == null) getAvroSchema(AllowsNull(attr.type))
-                    else getAvroSchema(attr.type)
+                if (!attr.required && attr.default == null) getAvroSchema(AllowsNull(attr.type))
+                else getAvroSchema(attr.type)
 
             val defaultValue = when (attr.default) {
                 NoDefault -> null
@@ -97,9 +97,11 @@ object AvroGenerator {
             field
         }
 
-        return Schema.createRecord(dataDescription.name,
-                dataDescription.markdownDescription.trim(),
-                dataDescription.nameSpace, false, fields)
+        return Schema.createRecord(
+            dataDescription.name,
+            dataDescription.markdownDescription.trim(),
+            dataDescription.nameSpace, false, fields
+        )
     }
 
     fun Schema.writeTo(directory: File): File {

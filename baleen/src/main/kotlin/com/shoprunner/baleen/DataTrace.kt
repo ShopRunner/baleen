@@ -16,22 +16,26 @@ class DataTrace private constructor(
     operator fun plus(dataLocation: String) =
         DataTrace(
             stack = this.stack.plus(dataLocation),
-            tags = this.tags)
+            tags = this.tags
+        )
 
     fun tag(key: String, value: String): DataTrace =
         DataTrace(
             stack = this.stack,
-            tags = this.tags.plus(key to value))
+            tags = this.tags.plus(key to value)
+        )
 
     fun tag(tags: Map<String, String>): DataTrace =
         DataTrace(
             stack = this.stack,
-            tags = this.tags + tags)
+            tags = this.tags + tags
+        )
 
     fun tag(vararg tags: Pair<String, String>): DataTrace =
         DataTrace(
             stack = this.stack,
-            tags = this.tags + tags)
+            tags = this.tags + tags
+        )
 
     /**
      * Exposes the data trace as a list with the top level first

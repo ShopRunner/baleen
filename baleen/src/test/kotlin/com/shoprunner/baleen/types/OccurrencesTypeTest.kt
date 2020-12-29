@@ -13,7 +13,8 @@ internal class OccurrencesTypeTest {
     fun `fails on null object`() {
         val type = OccurrencesType(StringConstantType("foo"))
         assertThat(type.validate(dataTrace(), null)).containsExactly(
-                ValidationError(dataTrace(), "is null", null))
+            ValidationError(dataTrace(), "is null", null)
+        )
     }
 
     @Test
@@ -32,21 +33,24 @@ internal class OccurrencesTypeTest {
     fun `fails if single occurrence fails`() {
         val type = OccurrencesType(StringConstantType("foo"))
         assertThat(type.validate(dataTrace(), "bar")).containsExactly(
-                ValidationError(dataTrace("index 0"), "value is not 'foo'", "bar"))
+            ValidationError(dataTrace("index 0"), "value is not 'foo'", "bar")
+        )
     }
 
     @Test
     fun `fails if last occurrence fails`() {
         val type = OccurrencesType(StringConstantType("foo"))
         assertThat(type.validate(dataTrace(), listOf("foo", "bar"))).containsExactly(
-                ValidationError(dataTrace("index 1"), "value is not 'foo'", "bar"))
+            ValidationError(dataTrace("index 1"), "value is not 'foo'", "bar")
+        )
     }
 
     @Test
     fun `captures all failures`() {
         val type = OccurrencesType(StringConstantType("foo"))
         assertThat(type.validate(dataTrace(), listOf("foo0", "foo1"))).containsExactly(
-                ValidationError(dataTrace("index 0"), "value is not 'foo'", "foo0"),
-                        ValidationError(dataTrace("index 1"), "value is not 'foo'", "foo1"))
+            ValidationError(dataTrace("index 0"), "value is not 'foo'", "foo0"),
+            ValidationError(dataTrace("index 1"), "value is not 'foo'", "foo1")
+        )
     }
 }

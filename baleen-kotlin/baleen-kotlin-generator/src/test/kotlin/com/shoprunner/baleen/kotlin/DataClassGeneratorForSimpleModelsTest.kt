@@ -19,10 +19,10 @@ import com.shoprunner.baleen.types.StringType
 import com.shoprunner.baleen.types.TimestampMillisType
 import com.shoprunner.baleen.types.asWarnings
 import com.shoprunner.baleen.types.tag
-import java.io.StringWriter
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import java.io.StringWriter
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class DataClassGeneratorForSimpleModelsTest {
@@ -33,7 +33,7 @@ internal class DataClassGeneratorForSimpleModelsTest {
             nameSpace = "com.shoprunner.baleen.kotlin.test",
             markdownDescription = "Test Model"
         ) {
-            "field".type(
+            "field1".type(
                 type = StringType(),
                 markdownDescription = "Test field"
             )
@@ -42,18 +42,18 @@ internal class DataClassGeneratorForSimpleModelsTest {
         val expectedDataClassStr = """
             package com.shoprunner.baleen.kotlin.test
 
-            import com.shoprunner.baleen.annotation.DataDescription
+            import com.shoprunner.baleen.`annotation`.DataDescription
             import kotlin.String
             
             /**
              * Test Model
              */
             @DataDescription
-            data class Model(
+            public data class Model(
               /**
                * Test field
                */
-              val field: String
+              public val field1: String
             )
 
         """.trimIndent()
@@ -73,7 +73,7 @@ internal class DataClassGeneratorForSimpleModelsTest {
             nameSpace = "com.shoprunner.baleen.kotlin.test",
             markdownDescription = "Test Model"
         ) {
-            "field".type(
+            "field1".type(
                 type = BooleanType(),
                 markdownDescription = "Test field"
             )
@@ -82,18 +82,18 @@ internal class DataClassGeneratorForSimpleModelsTest {
         val expectedDataClassStr = """
             package com.shoprunner.baleen.kotlin.test
 
-            import com.shoprunner.baleen.annotation.DataDescription
+            import com.shoprunner.baleen.`annotation`.DataDescription
             import kotlin.Boolean
             
             /**
              * Test Model
              */
             @DataDescription
-            data class Model(
+            public data class Model(
               /**
                * Test field
                */
-              val field: Boolean
+              public val field1: Boolean
             )
 
         """.trimIndent()
@@ -113,7 +113,7 @@ internal class DataClassGeneratorForSimpleModelsTest {
             nameSpace = "com.shoprunner.baleen.kotlin.test",
             markdownDescription = "Test Model"
         ) {
-            "field".type(
+            "field1".type(
                 type = IntType(),
                 markdownDescription = "Test field"
             )
@@ -122,18 +122,18 @@ internal class DataClassGeneratorForSimpleModelsTest {
         val expectedDataClassStr = """
             package com.shoprunner.baleen.kotlin.test
 
-            import com.shoprunner.baleen.annotation.DataDescription
+            import com.shoprunner.baleen.`annotation`.DataDescription
             import kotlin.Int
             
             /**
              * Test Model
              */
             @DataDescription
-            data class Model(
+            public data class Model(
               /**
                * Test field
                */
-              val field: Int
+              public val field1: Int
             )
 
         """.trimIndent()
@@ -153,7 +153,7 @@ internal class DataClassGeneratorForSimpleModelsTest {
             nameSpace = "com.shoprunner.baleen.kotlin.test",
             markdownDescription = "Test Model"
         ) {
-            "field".type(
+            "field1".type(
                 type = IntegerType(),
                 markdownDescription = "Test field"
             )
@@ -162,18 +162,18 @@ internal class DataClassGeneratorForSimpleModelsTest {
         val expectedDataClassStr = """
             package com.shoprunner.baleen.kotlin.test
 
-            import com.shoprunner.baleen.annotation.DataDescription
+            import com.shoprunner.baleen.`annotation`.DataDescription
             import java.math.BigInteger
             
             /**
              * Test Model
              */
             @DataDescription
-            data class Model(
+            public data class Model(
               /**
                * Test field
                */
-              val field: BigInteger
+              public val field1: BigInteger
             )
 
         """.trimIndent()
@@ -193,7 +193,7 @@ internal class DataClassGeneratorForSimpleModelsTest {
             nameSpace = "com.shoprunner.baleen.kotlin.test",
             markdownDescription = "Test Model"
         ) {
-            "field".type(
+            "field1".type(
                 type = LongType(),
                 markdownDescription = "Test field"
             )
@@ -202,18 +202,18 @@ internal class DataClassGeneratorForSimpleModelsTest {
         val expectedDataClassStr = """
             package com.shoprunner.baleen.kotlin.test
 
-            import com.shoprunner.baleen.annotation.DataDescription
+            import com.shoprunner.baleen.`annotation`.DataDescription
             import kotlin.Long
             
             /**
              * Test Model
              */
             @DataDescription
-            data class Model(
+            public data class Model(
               /**
                * Test field
                */
-              val field: Long
+              public val field1: Long
             )
 
         """.trimIndent()
@@ -233,7 +233,7 @@ internal class DataClassGeneratorForSimpleModelsTest {
             nameSpace = "com.shoprunner.baleen.kotlin.test",
             markdownDescription = "Test Model"
         ) {
-            "field".type(
+            "field1".type(
                 type = FloatType(),
                 markdownDescription = "Test field"
             )
@@ -242,18 +242,18 @@ internal class DataClassGeneratorForSimpleModelsTest {
         val expectedDataClassStr = """
             package com.shoprunner.baleen.kotlin.test
 
-            import com.shoprunner.baleen.annotation.DataDescription
+            import com.shoprunner.baleen.`annotation`.DataDescription
             import kotlin.Float
             
             /**
              * Test Model
              */
             @DataDescription
-            data class Model(
+            public data class Model(
               /**
                * Test field
                */
-              val field: Float
+              public val field1: Float
             )
 
         """.trimIndent()
@@ -273,7 +273,7 @@ internal class DataClassGeneratorForSimpleModelsTest {
             nameSpace = "com.shoprunner.baleen.kotlin.test",
             markdownDescription = "Test Model"
         ) {
-            "field".type(
+            "field1".type(
                 type = DoubleType(),
                 markdownDescription = "Test field"
             )
@@ -282,18 +282,18 @@ internal class DataClassGeneratorForSimpleModelsTest {
         val expectedDataClassStr = """
             package com.shoprunner.baleen.kotlin.test
 
-            import com.shoprunner.baleen.annotation.DataDescription
+            import com.shoprunner.baleen.`annotation`.DataDescription
             import kotlin.Double
             
             /**
              * Test Model
              */
             @DataDescription
-            data class Model(
+            public data class Model(
               /**
                * Test field
                */
-              val field: Double
+              public val field1: Double
             )
 
         """.trimIndent()
@@ -313,7 +313,7 @@ internal class DataClassGeneratorForSimpleModelsTest {
             nameSpace = "com.shoprunner.baleen.kotlin.test",
             markdownDescription = "Test Model"
         ) {
-            "field".type(
+            "field1".type(
                 type = NumericType(),
                 markdownDescription = "Test field"
             )
@@ -322,18 +322,18 @@ internal class DataClassGeneratorForSimpleModelsTest {
         val expectedDataClassStr = """
             package com.shoprunner.baleen.kotlin.test
 
-            import com.shoprunner.baleen.annotation.DataDescription
+            import com.shoprunner.baleen.`annotation`.DataDescription
             import java.math.BigDecimal
             
             /**
              * Test Model
              */
             @DataDescription
-            data class Model(
+            public data class Model(
               /**
                * Test field
                */
-              val field: BigDecimal
+              public val field1: BigDecimal
             )
 
         """.trimIndent()
@@ -353,7 +353,7 @@ internal class DataClassGeneratorForSimpleModelsTest {
             nameSpace = "com.shoprunner.baleen.kotlin.test",
             markdownDescription = "Test Model"
         ) {
-            "field".type(
+            "field1".type(
                 type = EnumType("myEnum", "Val1", "Val2"),
                 markdownDescription = "Test field"
             )
@@ -362,18 +362,18 @@ internal class DataClassGeneratorForSimpleModelsTest {
         val expectedDataClassStr = """
             package com.shoprunner.baleen.kotlin.test
 
-            import com.shoprunner.baleen.annotation.DataDescription
+            import com.shoprunner.baleen.`annotation`.DataDescription
             import kotlin.String
             
             /**
              * Test Model
              */
             @DataDescription
-            data class Model(
+            public data class Model(
               /**
                * Test field
                */
-              val field: String
+              public val field1: String
             )
 
         """.trimIndent()
@@ -393,7 +393,7 @@ internal class DataClassGeneratorForSimpleModelsTest {
             nameSpace = "com.shoprunner.baleen.kotlin.test",
             markdownDescription = "Test Model"
         ) {
-            "field".type(
+            "field1".type(
                 type = InstantType(),
                 markdownDescription = "Test field"
             )
@@ -402,18 +402,18 @@ internal class DataClassGeneratorForSimpleModelsTest {
         val expectedDataClassStr = """
             package com.shoprunner.baleen.kotlin.test
 
-            import com.shoprunner.baleen.annotation.DataDescription
+            import com.shoprunner.baleen.`annotation`.DataDescription
             import java.time.Instant
             
             /**
              * Test Model
              */
             @DataDescription
-            data class Model(
+            public data class Model(
               /**
                * Test field
                */
-              val field: Instant
+              public val field1: Instant
             )
 
         """.trimIndent()
@@ -433,7 +433,7 @@ internal class DataClassGeneratorForSimpleModelsTest {
             nameSpace = "com.shoprunner.baleen.kotlin.test",
             markdownDescription = "Test Model"
         ) {
-            "field".type(
+            "field1".type(
                 type = TimestampMillisType(),
                 markdownDescription = "Test field"
             )
@@ -442,18 +442,18 @@ internal class DataClassGeneratorForSimpleModelsTest {
         val expectedDataClassStr = """
             package com.shoprunner.baleen.kotlin.test
 
-            import com.shoprunner.baleen.annotation.DataDescription
+            import com.shoprunner.baleen.`annotation`.DataDescription
             import java.time.LocalDateTime
             
             /**
              * Test Model
              */
             @DataDescription
-            data class Model(
+            public data class Model(
               /**
                * Test field
                */
-              val field: LocalDateTime
+              public val field1: LocalDateTime
             )
 
         """.trimIndent()
@@ -473,7 +473,7 @@ internal class DataClassGeneratorForSimpleModelsTest {
             nameSpace = "com.shoprunner.baleen.kotlin.test",
             markdownDescription = "Test Model"
         ) {
-            "field".type(
+            "field1".type(
                 type = StringConstantType("Constant"),
                 markdownDescription = "Test field"
             )
@@ -482,18 +482,18 @@ internal class DataClassGeneratorForSimpleModelsTest {
         val expectedDataClassStr = """
             package com.shoprunner.baleen.kotlin.test
 
-            import com.shoprunner.baleen.annotation.DataDescription
+            import com.shoprunner.baleen.`annotation`.DataDescription
             import kotlin.String
             
             /**
              * Test Model
              */
             @DataDescription
-            data class Model(
+            public data class Model(
               /**
                * Test field
                */
-              val field: String
+              public val field1: String
             )
 
         """.trimIndent()
@@ -513,7 +513,7 @@ internal class DataClassGeneratorForSimpleModelsTest {
             nameSpace = "com.shoprunner.baleen.kotlin.test",
             markdownDescription = "Test Model"
         ) {
-            "field".type(
+            "field1".type(
                 type = OccurrencesType(StringType()),
                 markdownDescription = "Test field"
             )
@@ -522,7 +522,7 @@ internal class DataClassGeneratorForSimpleModelsTest {
         val expectedDataClassStr = """
             package com.shoprunner.baleen.kotlin.test
 
-            import com.shoprunner.baleen.annotation.DataDescription
+            import com.shoprunner.baleen.`annotation`.DataDescription
             import kotlin.String
             import kotlin.collections.List
             
@@ -530,11 +530,11 @@ internal class DataClassGeneratorForSimpleModelsTest {
              * Test Model
              */
             @DataDescription
-            data class Model(
+            public data class Model(
               /**
                * Test field
                */
-              val field: List<String>
+              public val field1: List<String>
             )
 
         """.trimIndent()
@@ -554,7 +554,7 @@ internal class DataClassGeneratorForSimpleModelsTest {
             nameSpace = "com.shoprunner.baleen.kotlin.test",
             markdownDescription = "Test Model"
         ) {
-            "field".type(
+            "field1".type(
                 type = MapType(StringType(), IntType()),
                 markdownDescription = "Test field"
             )
@@ -563,7 +563,7 @@ internal class DataClassGeneratorForSimpleModelsTest {
         val expectedDataClassStr = """
             package com.shoprunner.baleen.kotlin.test
 
-            import com.shoprunner.baleen.annotation.DataDescription
+            import com.shoprunner.baleen.`annotation`.DataDescription
             import kotlin.Int
             import kotlin.String
             import kotlin.collections.Map
@@ -572,11 +572,11 @@ internal class DataClassGeneratorForSimpleModelsTest {
              * Test Model
              */
             @DataDescription
-            data class Model(
+            public data class Model(
               /**
                * Test field
                */
-              val field: Map<String, Int>
+              public val field1: Map<String, Int>
             )
 
         """.trimIndent()
@@ -596,7 +596,7 @@ internal class DataClassGeneratorForSimpleModelsTest {
             nameSpace = "com.shoprunner.baleen.kotlin.test",
             markdownDescription = "Test Model"
         ) {
-            "field".type(
+            "field1".type(
                 type = AllowsNull(StringType()),
                 markdownDescription = "Test field"
             )
@@ -605,18 +605,18 @@ internal class DataClassGeneratorForSimpleModelsTest {
         val expectedDataClassStr = """
             package com.shoprunner.baleen.kotlin.test
 
-            import com.shoprunner.baleen.annotation.DataDescription
+            import com.shoprunner.baleen.`annotation`.DataDescription
             import kotlin.String
             
             /**
              * Test Model
              */
             @DataDescription
-            data class Model(
+            public data class Model(
               /**
                * Test field
                */
-              val field: String?
+              public val field1: String?
             )
 
         """.trimIndent()
@@ -636,7 +636,7 @@ internal class DataClassGeneratorForSimpleModelsTest {
             nameSpace = "com.shoprunner.baleen.kotlin.test",
             markdownDescription = "Test Model"
         ) {
-            "field".type(
+            "field1".type(
                 type = StringCoercibleToLong(LongType()),
                 markdownDescription = "Test field"
             )
@@ -645,18 +645,18 @@ internal class DataClassGeneratorForSimpleModelsTest {
         val expectedDataClassStr = """
             package com.shoprunner.baleen.kotlin.test
 
-            import com.shoprunner.baleen.annotation.DataDescription
+            import com.shoprunner.baleen.`annotation`.DataDescription
             import kotlin.String
             
             /**
              * Test Model
              */
             @DataDescription
-            data class Model(
+            public data class Model(
               /**
                * Test field
                */
-              val field: String
+              public val field1: String
             )
 
         """.trimIndent()
@@ -676,7 +676,7 @@ internal class DataClassGeneratorForSimpleModelsTest {
             nameSpace = "com.shoprunner.baleen.kotlin.test",
             markdownDescription = "Test Model"
         ) {
-            "field".type(
+            "field1".type(
                 type = StringCoercibleToLong(LongType()),
                 markdownDescription = "Test field"
             )
@@ -685,18 +685,18 @@ internal class DataClassGeneratorForSimpleModelsTest {
         val expectedDataClassStr = """
             package com.shoprunner.baleen.kotlin.test
 
-            import com.shoprunner.baleen.annotation.DataDescription
+            import com.shoprunner.baleen.`annotation`.DataDescription
             import kotlin.Long
             
             /**
              * Test Model
              */
             @DataDescription
-            data class Model(
+            public data class Model(
               /**
                * Test field
                */
-              val field: Long
+              public val field1: Long
             )
 
         """.trimIndent()
@@ -716,7 +716,7 @@ internal class DataClassGeneratorForSimpleModelsTest {
             nameSpace = "com.shoprunner.baleen.kotlin.test",
             markdownDescription = "Test Model"
         ) {
-            "field".type(
+            "field1".type(
                 type = StringType(),
                 markdownDescription = "Test field"
             )
@@ -725,18 +725,18 @@ internal class DataClassGeneratorForSimpleModelsTest {
         val expectedDataClassStr = """
             package com.shoprunner.baleen.kotlin.test
 
-            import com.shoprunner.baleen.annotation.DataDescription
+            import com.shoprunner.baleen.`annotation`.DataDescription
             import kotlin.Long
             
             /**
              * Test Model
              */
             @DataDescription
-            data class Model(
+            public data class Model(
               /**
                * Test field
                */
-              val field: Long
+              public val field1: Long
             )
 
         """.trimIndent()
@@ -760,7 +760,7 @@ internal class DataClassGeneratorForSimpleModelsTest {
             nameSpace = "com.shoprunner.baleen.kotlin.test",
             markdownDescription = "Test Model"
         ) {
-            "field".type(
+            "field1".type(
                 type = StringType(),
                 markdownDescription = "Test field",
                 default = "Hello"
@@ -770,18 +770,18 @@ internal class DataClassGeneratorForSimpleModelsTest {
         val expectedDataClassStr = """
             package com.shoprunner.baleen.kotlin.test
 
-            import com.shoprunner.baleen.annotation.DataDescription
+            import com.shoprunner.baleen.`annotation`.DataDescription
             import kotlin.String
             
             /**
              * Test Model
              */
             @DataDescription
-            data class Model(
+            public data class Model(
               /**
                * Test field
                */
-              val field: String = "Hello"
+              public val field1: String = "Hello"
             )
 
         """.trimIndent()
@@ -801,7 +801,7 @@ internal class DataClassGeneratorForSimpleModelsTest {
             nameSpace = "com.shoprunner.baleen.kotlin.test",
             markdownDescription = "Test Model"
         ) {
-            "field".type(
+            "field1".type(
                 type = AllowsNull(StringType()),
                 markdownDescription = "Test field",
                 default = null
@@ -811,18 +811,18 @@ internal class DataClassGeneratorForSimpleModelsTest {
         val expectedDataClassStr = """
             package com.shoprunner.baleen.kotlin.test
 
-            import com.shoprunner.baleen.annotation.DataDescription
+            import com.shoprunner.baleen.`annotation`.DataDescription
             import kotlin.String
             
             /**
              * Test Model
              */
             @DataDescription
-            data class Model(
+            public data class Model(
               /**
                * Test field
                */
-              val field: String? = null
+              public val field1: String? = null
             )
 
         """.trimIndent()
@@ -842,7 +842,7 @@ internal class DataClassGeneratorForSimpleModelsTest {
             nameSpace = "com.shoprunner.baleen.kotlin.test",
             markdownDescription = "Test Model"
         ) {
-            "field".type(
+            "field1".type(
                 type = StringType().asWarnings(),
                 markdownDescription = "Test field"
             )
@@ -851,18 +851,18 @@ internal class DataClassGeneratorForSimpleModelsTest {
         val expectedDataClassStr = """
             package com.shoprunner.baleen.kotlin.test
 
-            import com.shoprunner.baleen.annotation.DataDescription
+            import com.shoprunner.baleen.`annotation`.DataDescription
             import kotlin.String
             
             /**
              * Test Model
              */
             @DataDescription
-            data class Model(
+            public data class Model(
               /**
                * Test field
                */
-              val field: String
+              public val field1: String
             )
 
         """.trimIndent()
@@ -882,7 +882,7 @@ internal class DataClassGeneratorForSimpleModelsTest {
             nameSpace = "com.shoprunner.baleen.kotlin.test",
             markdownDescription = "Test Model"
         ) {
-            "field".type(
+            "field1".type(
                 type = StringType().tag("key", "value"),
                 markdownDescription = "Test field"
             )
@@ -891,18 +891,18 @@ internal class DataClassGeneratorForSimpleModelsTest {
         val expectedDataClassStr = """
             package com.shoprunner.baleen.kotlin.test
 
-            import com.shoprunner.baleen.annotation.DataDescription
+            import com.shoprunner.baleen.`annotation`.DataDescription
             import kotlin.String
             
             /**
              * Test Model
              */
             @DataDescription
-            data class Model(
+            public data class Model(
               /**
                * Test field
                */
-              val field: String
+              public val field1: String
             )
 
         """.trimIndent()

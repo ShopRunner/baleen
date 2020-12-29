@@ -16,13 +16,13 @@ import com.shoprunner.baleen.xsd.XsdGenerator.encode
 import com.shoprunner.baleen.xsd.xml.MinInclusive
 import com.shoprunner.baleen.xsd.xml.Restriction
 import com.shoprunner.baleen.xsd.xml.SimpleType
-import java.io.ByteArrayOutputStream
-import java.io.PrintStream
-import java.math.BigDecimal
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import java.io.ByteArrayOutputStream
+import java.io.PrintStream
+import java.math.BigDecimal
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class XsdGeneratorTest {
@@ -32,19 +32,24 @@ class XsdGeneratorTest {
 
         @Test
         fun `simple single attribute`() {
-            val dogDescription = Baleen.describe("Dog",
-                markdownDescription = "Type of dog.") {
+            val dogDescription = Baleen.describe(
+                "Dog",
+                markdownDescription = "Type of dog."
+            ) {
 
-                it.attr(name = "name",
+                it.attr(
+                    name = "name",
                     type = StringType(),
                     markdownDescription = "Name of the dog.",
-                    required = true)
+                    required = true
+                )
             }
 
             val outputStream = ByteArrayOutputStream()
             dogDescription.encode(PrintStream(outputStream))
 
-            assertThat(outputStream.toString()).isEqualToIgnoringWhitespace("""
+            assertThat(outputStream.toString()).isEqualToIgnoringWhitespace(
+                """
                 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
                 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
                     <xs:complexType name="Dog">
@@ -70,20 +75,24 @@ class XsdGeneratorTest {
                             <xs:documentation>Type of dog.</xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                </xs:schema>""")
+                </xs:schema>"""
+            )
         }
 
         @Test
         fun `not required`() {
             val dogDescription = Baleen.describe("Dog") {
-                it.attr(name = "name",
-                    type = StringType())
+                it.attr(
+                    name = "name",
+                    type = StringType()
+                )
             }
 
             val outputStream = ByteArrayOutputStream()
             dogDescription.encode(PrintStream(outputStream))
 
-            assertThat(outputStream.toString()).isEqualToIgnoringWhitespace("""
+            assertThat(outputStream.toString()).isEqualToIgnoringWhitespace(
+                """
                 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
                 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
                     <xs:complexType name="Dog">
@@ -99,27 +108,33 @@ class XsdGeneratorTest {
                         </xs:sequence>
                     </xs:complexType>
                     <xs:element name="Dog" type="Dog"/>
-                </xs:schema>""")
+                </xs:schema>"""
+            )
         }
 
         @Test
         fun `nested`() {
             val dogDescription = Baleen.describe("Dog") {
-                it.attr(name = "name",
+                it.attr(
+                    name = "name",
                     type = StringType(),
-                    required = true)
+                    required = true
+                )
             }
 
             val packOptionalAlpha = Baleen.describe("Pack") {
-                it.attr(name = "alpha",
+                it.attr(
+                    name = "alpha",
                     type = dogDescription,
-                    required = false)
+                    required = false
+                )
             }
 
             val outputStream = ByteArrayOutputStream()
             packOptionalAlpha.encode(PrintStream(outputStream))
 
-            assertThat(outputStream.toString()).isEqualTo("""
+            assertThat(outputStream.toString()).isEqualTo(
+                """
                 |<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
                 |<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
                 |    <xs:complexType name="Pack">
@@ -141,27 +156,33 @@ class XsdGeneratorTest {
                 |    </xs:complexType>
                 |    <xs:element name="Pack" type="Pack"/>
                 |</xs:schema>
-                |""".trimMargin())
+                |""".trimMargin()
+            )
         }
 
         @Test
         fun `default value`() {
             val dogDescription = Baleen.describe("Dog") {
-                it.attr(name = "name",
-                        type = StringType(),
-                        default = "Fido",
-                        required = true)
+                it.attr(
+                    name = "name",
+                    type = StringType(),
+                    default = "Fido",
+                    required = true
+                )
 
-                it.attr(name = "legs",
-                        type = IntType(),
-                        default = 4,
-                        required = false)
+                it.attr(
+                    name = "legs",
+                    type = IntType(),
+                    default = 4,
+                    required = false
+                )
             }
 
             val outputStream = ByteArrayOutputStream()
             dogDescription.encode(PrintStream(outputStream))
 
-            assertThat(outputStream.toString()).isEqualToIgnoringWhitespace("""
+            assertThat(outputStream.toString()).isEqualToIgnoringWhitespace(
+                """
                 |<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
                 |<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
                 |    <xs:complexType name="Dog">
@@ -185,7 +206,8 @@ class XsdGeneratorTest {
                 |        </xs:sequence>
                 |    </xs:complexType>
                 |    <xs:element name="Dog" type="Dog"/>
-                |</xs:schema>""".trimMargin())
+                |</xs:schema>""".trimMargin()
+            )
         }
     }
 
@@ -204,7 +226,8 @@ class XsdGeneratorTest {
             val outputStream = ByteArrayOutputStream()
             dogDescription.encode(PrintStream(outputStream))
 
-            assertThat(outputStream.toString()).isEqualTo("""
+            assertThat(outputStream.toString()).isEqualTo(
+                """
                 |<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
                 |<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
                 |    <xs:complexType name="Dog">
@@ -221,7 +244,8 @@ class XsdGeneratorTest {
                 |    </xs:complexType>
                 |    <xs:element name="Dog" type="Dog"/>
                 |</xs:schema>
-                |""".trimMargin())
+                |""".trimMargin()
+            )
         }
 
         @Test
@@ -237,7 +261,8 @@ class XsdGeneratorTest {
             val outputStream = ByteArrayOutputStream()
             dogDescription.encode(PrintStream(outputStream))
 
-            assertThat(outputStream.toString()).isEqualTo("""
+            assertThat(outputStream.toString()).isEqualTo(
+                """
                 |<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
                 |<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
                 |    <xs:complexType name="Dog">
@@ -254,7 +279,8 @@ class XsdGeneratorTest {
                 |    </xs:complexType>
                 |    <xs:element name="Dog" type="Dog"/>
                 |</xs:schema>
-                |""".trimMargin())
+                |""".trimMargin()
+            )
         }
 
         @Test
@@ -270,7 +296,8 @@ class XsdGeneratorTest {
             val outputStream = ByteArrayOutputStream()
             dogDescription.encode(PrintStream(outputStream))
 
-            assertThat(outputStream.toString()).isEqualTo("""
+            assertThat(outputStream.toString()).isEqualTo(
+                """
                 |<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
                 |<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
                 |    <xs:complexType name="Dog">
@@ -284,7 +311,8 @@ class XsdGeneratorTest {
                 |    </xs:complexType>
                 |    <xs:element name="Dog" type="Dog"/>
                 |</xs:schema>
-                |""".trimMargin())
+                |""".trimMargin()
+            )
         }
 
         @Test
@@ -300,7 +328,8 @@ class XsdGeneratorTest {
             val outputStream = ByteArrayOutputStream()
             dogDescription.encode(PrintStream(outputStream))
 
-            assertThat(outputStream.toString()).isEqualTo("""
+            assertThat(outputStream.toString()).isEqualTo(
+                """
                 |<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
                 |<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
                 |    <xs:complexType name="Dog">
@@ -310,7 +339,8 @@ class XsdGeneratorTest {
                 |    </xs:complexType>
                 |    <xs:element name="Dog" type="Dog"/>
                 |</xs:schema>
-                |""".trimMargin())
+                |""".trimMargin()
+            )
         }
     }
 
@@ -340,17 +370,21 @@ class XsdGeneratorTest {
 
             fun customDogMapper(baleenType: BaleenType): TypeDetails =
                 when (baleenType) {
-                    is DogRatingType -> TypeDetails(simpleType = SimpleType(
-                        Restriction(
-                            minInclusive = MinInclusive(BigDecimal.TEN)
-                    )))
+                    is DogRatingType -> TypeDetails(
+                        simpleType = SimpleType(
+                            Restriction(
+                                minInclusive = MinInclusive(BigDecimal.TEN)
+                            )
+                        )
+                    )
                     else -> XsdGenerator.defaultTypeMapper(baleenType)
                 }
 
             val outputStream = ByteArrayOutputStream()
             dogDescription.encode(PrintStream(outputStream), ::customDogMapper)
 
-            assertThat(outputStream.toString()).isEqualTo("""
+            assertThat(outputStream.toString()).isEqualTo(
+                """
                 |<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
                 |<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
                 |    <xs:complexType name="Dog">
@@ -366,7 +400,8 @@ class XsdGeneratorTest {
                 |    </xs:complexType>
                 |    <xs:element name="Dog" type="Dog"/>
                 |</xs:schema>
-                |""".trimMargin())
+                |""".trimMargin()
+            )
         }
 
         @Test
@@ -393,17 +428,21 @@ class XsdGeneratorTest {
 
             fun customDogMapper(baleenType: BaleenType): TypeDetails =
                 when (baleenType) {
-                    is DogRatingType -> TypeDetails(simpleType = SimpleType(
-                        Restriction(
-                            minInclusive = MinInclusive(BigDecimal.TEN)
-                        )))
+                    is DogRatingType -> TypeDetails(
+                        simpleType = SimpleType(
+                            Restriction(
+                                minInclusive = MinInclusive(BigDecimal.TEN)
+                            )
+                        )
+                    )
                     else -> XsdGenerator.recursiveTypeMapper(::customDogMapper, baleenType)
                 }
 
             val outputStream = ByteArrayOutputStream()
             dogDescription.encode(PrintStream(outputStream), ::customDogMapper)
 
-            assertThat(outputStream.toString()).isEqualTo("""
+            assertThat(outputStream.toString()).isEqualTo(
+                """
                 |<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
                 |<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
                 |    <xs:complexType name="Dog">
@@ -419,7 +458,8 @@ class XsdGeneratorTest {
                 |    </xs:complexType>
                 |    <xs:element name="Dog" type="Dog"/>
                 |</xs:schema>
-                |""".trimMargin())
+                |""".trimMargin()
+            )
         }
     }
 }

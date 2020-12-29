@@ -27,9 +27,6 @@ import com.shoprunner.baleen.types.StringType
 import com.shoprunner.baleen.types.Tagged
 import com.shoprunner.baleen.types.TimestampMillisType
 import com.shoprunner.baleen.types.UnionType
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.PrintStream
 import org.apache.avro.LogicalTypes
 import org.apache.avro.Schema
 import org.assertj.core.api.Assertions
@@ -38,6 +35,9 @@ import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.PrintStream
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class AvroGeneratorTest {
@@ -230,33 +230,33 @@ class AvroGeneratorTest {
     inner class Models {
         private val dogDescription = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") { p ->
             p.attr(
-                    name = "name",
-                    type = StringType(),
-                    markdownDescription = "The name of the dog",
-                    required = true
+                name = "name",
+                type = StringType(),
+                markdownDescription = "The name of the dog",
+                required = true
             )
             p.attr(
-                    name = "legs",
-                    type = UnionType(LongType(), IntType()),
-                    markdownDescription = "The number of legs",
-                    required = false,
-                    default = 4
+                name = "legs",
+                type = UnionType(LongType(), IntType()),
+                markdownDescription = "The number of legs",
+                required = false,
+                default = 4
             )
         }
 
         private val packDescription = Baleen.describe("Pack", "com.shoprunner.data.dogs", "It's a Pack of Dogs. Grr Grr!") { p ->
             p.attr(
-                    name = "name",
-                    type = StringType(),
-                    markdownDescription = "The name of the pack",
-                    aliases = arrayOf("packName"),
-                    required = true
+                name = "name",
+                type = StringType(),
+                markdownDescription = "The name of the pack",
+                aliases = arrayOf("packName"),
+                required = true
             )
             p.attr(
-                    name = "dogs",
-                    type = OccurrencesType(dogDescription),
-                    markdownDescription = "The dogs in the pack",
-                    required = true
+                name = "dogs",
+                type = OccurrencesType(dogDescription),
+                markdownDescription = "The dogs in the pack",
+                required = true
             )
         }
 
@@ -374,17 +374,17 @@ class AvroGeneratorTest {
         fun `default values are added for optional fields`() {
             val descriptionWithDefault = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") { p ->
                 p.attr(
-                        name = "name",
-                        type = StringType(),
-                        markdownDescription = "The name of the dog",
-                        required = true
+                    name = "name",
+                    type = StringType(),
+                    markdownDescription = "The name of the dog",
+                    required = true
                 )
                 p.attr(
-                        name = "legs",
-                        type = LongType(),
-                        markdownDescription = "The number of legs",
-                        required = false,
-                        default = 4
+                    name = "legs",
+                    type = LongType(),
+                    markdownDescription = "The number of legs",
+                    required = false,
+                    default = 4
                 )
             }
 
@@ -411,17 +411,17 @@ class AvroGeneratorTest {
         fun `default values are added for optional union fields`() {
             val descriptionWithDefault = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") { p ->
                 p.attr(
-                        name = "name",
-                        type = StringType(),
-                        markdownDescription = "The name of the dog",
-                        required = true
+                    name = "name",
+                    type = StringType(),
+                    markdownDescription = "The name of the dog",
+                    required = true
                 )
                 p.attr(
-                        name = "legs",
-                        type = UnionType(LongType(), IntType()),
-                        markdownDescription = "The number of legs",
-                        required = false,
-                        default = 4
+                    name = "legs",
+                    type = UnionType(LongType(), IntType()),
+                    markdownDescription = "The number of legs",
+                    required = false,
+                    default = 4
                 )
             }
 
@@ -448,17 +448,17 @@ class AvroGeneratorTest {
         fun `null default values are added for optional fields`() {
             val descriptionWithDefault = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") { p ->
                 p.attr(
-                        name = "name",
-                        type = StringType(),
-                        markdownDescription = "The name of the dog",
-                        required = true
+                    name = "name",
+                    type = StringType(),
+                    markdownDescription = "The name of the dog",
+                    required = true
                 )
                 p.attr(
-                        name = "legs",
-                        type = LongType(),
-                        markdownDescription = "The number of legs",
-                        required = false,
-                        default = null
+                    name = "legs",
+                    type = LongType(),
+                    markdownDescription = "The number of legs",
+                    required = false,
+                    default = null
                 )
             }
 
@@ -485,17 +485,17 @@ class AvroGeneratorTest {
         fun `null default values are added for optional union fields`() {
             val descriptionWithDefault = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") { p ->
                 p.attr(
-                        name = "name",
-                        type = StringType(),
-                        markdownDescription = "The name of the dog",
-                        required = true
+                    name = "name",
+                    type = StringType(),
+                    markdownDescription = "The name of the dog",
+                    required = true
                 )
                 p.attr(
-                        name = "legs",
-                        type = UnionType(LongType(), IntType()),
-                        markdownDescription = "The number of legs",
-                        required = false,
-                        default = null
+                    name = "legs",
+                    type = UnionType(LongType(), IntType()),
+                    markdownDescription = "The number of legs",
+                    required = false,
+                    default = null
                 )
             }
 
@@ -522,17 +522,17 @@ class AvroGeneratorTest {
         fun `null default values are added for optional coercible fields`() {
             val descriptionWithDefault = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") { p ->
                 p.attr(
-                        name = "name",
-                        type = StringType(),
-                        markdownDescription = "The name of the dog",
-                        required = true
+                    name = "name",
+                    type = StringType(),
+                    markdownDescription = "The name of the dog",
+                    required = true
                 )
                 p.attr(
-                        name = "legs",
-                        type = StringCoercibleToLong(LongType()),
-                        markdownDescription = "The number of legs",
-                        required = false,
-                        default = null
+                    name = "legs",
+                    type = StringCoercibleToLong(LongType()),
+                    markdownDescription = "The number of legs",
+                    required = false,
+                    default = null
                 )
             }
 
@@ -559,17 +559,17 @@ class AvroGeneratorTest {
         fun `null default values are added for optional map fields`() {
             val descriptionWithDefault = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") { p ->
                 p.attr(
-                        name = "name",
-                        type = StringType(),
-                        markdownDescription = "The name of the dog",
-                        required = true
+                    name = "name",
+                    type = StringType(),
+                    markdownDescription = "The name of the dog",
+                    required = true
                 )
                 p.attr(
-                        name = "doctor_visits",
-                        type = MapType(StringType(), StringCoercibleToInstant(InstantType())),
-                        markdownDescription = "Visits to doctor. Name to visit time",
-                        required = false,
-                        default = null
+                    name = "doctor_visits",
+                    type = MapType(StringType(), StringCoercibleToInstant(InstantType())),
+                    markdownDescription = "Visits to doctor. Name to visit time",
+                    required = false,
+                    default = null
                 )
             }
 
@@ -604,17 +604,17 @@ class AvroGeneratorTest {
         fun `null default values are added for optional occurence fields`() {
             val descriptionWithDefault = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") { p ->
                 p.attr(
-                        name = "name",
-                        type = StringType(),
-                        markdownDescription = "The name of the dog",
-                        required = true
+                    name = "name",
+                    type = StringType(),
+                    markdownDescription = "The name of the dog",
+                    required = true
                 )
                 p.attr(
-                        name = "owner_names",
-                        type = OccurrencesType(StringType()),
-                        markdownDescription = "The owner names",
-                        required = false,
-                        default = null
+                    name = "owner_names",
+                    type = OccurrencesType(StringType()),
+                    markdownDescription = "The owner names",
+                    required = false,
+                    default = null
                 )
             }
 
@@ -645,18 +645,18 @@ class AvroGeneratorTest {
         fun `default values are added for required fields`() {
             val descriptionWithDefault = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") { p ->
                 p.attr(
-                        name = "name",
-                        type = StringType(),
-                        markdownDescription = "The name of the dog",
-                        required = true,
-                        default = "Fido"
+                    name = "name",
+                    type = StringType(),
+                    markdownDescription = "The name of the dog",
+                    required = true,
+                    default = "Fido"
                 )
                 p.attr(
-                        name = "legs",
-                        type = UnionType(LongType(), IntType()),
-                        markdownDescription = "The number of legs",
-                        required = false,
-                        default = 4
+                    name = "legs",
+                    type = UnionType(LongType(), IntType()),
+                    markdownDescription = "The number of legs",
+                    required = false,
+                    default = 4
                 )
             }
 
@@ -683,16 +683,16 @@ class AvroGeneratorTest {
         fun `allows null for required field`() {
             val descriptionWithDefault = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") { p ->
                 p.attr(
-                        name = "name",
-                        type = StringType(),
-                        markdownDescription = "The name of the dog",
-                        required = true
+                    name = "name",
+                    type = StringType(),
+                    markdownDescription = "The name of the dog",
+                    required = true
                 )
                 p.attr(
-                        name = "legs",
-                        type = AllowsNull(LongType()),
-                        markdownDescription = "The number of legs",
-                        required = true
+                    name = "legs",
+                    type = AllowsNull(LongType()),
+                    markdownDescription = "The number of legs",
+                    required = true
                 )
             }
 
@@ -719,17 +719,17 @@ class AvroGeneratorTest {
         fun `allows null for optional field`() {
             val descriptionWithDefault = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") { p ->
                 p.attr(
-                        name = "name",
-                        type = StringType(),
-                        markdownDescription = "The name of the dog",
-                        required = true
+                    name = "name",
+                    type = StringType(),
+                    markdownDescription = "The name of the dog",
+                    required = true
                 )
                 p.attr(
-                        name = "legs",
-                        type = AllowsNull(LongType()),
-                        markdownDescription = "The number of legs",
-                        required = false,
-                        default = null
+                    name = "legs",
+                    type = AllowsNull(LongType()),
+                    markdownDescription = "The number of legs",
+                    required = false,
+                    default = null
                 )
             }
 

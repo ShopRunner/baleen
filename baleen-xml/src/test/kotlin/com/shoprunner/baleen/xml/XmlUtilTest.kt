@@ -21,21 +21,27 @@ import org.junit.jupiter.api.TestInstance
 internal class XmlUtilTest {
 
     private val dogDescription = Baleen.describe("Dog") { p ->
-        p.attr(name = "name",
+        p.attr(
+            name = "name",
             type = StringType(),
-            required = true)
+            required = true
+        )
     }
 
     private val pack = Baleen.describe("Pack") { p ->
-        p.attr(name = "dog",
+        p.attr(
+            name = "dog",
             type = OccurrencesType(dogDescription),
-            required = true)
+            required = true
+        )
     }
 
     private val packContainer = Baleen.describe("PackContainer") { p ->
-        p.attr(name = "pack",
+        p.attr(
+            name = "pack",
             type = pack,
-            required = true)
+            required = true
+        )
     }
 
     @Test
@@ -44,7 +50,7 @@ internal class XmlUtilTest {
             <pack>
                 <dog>Doug</dog>
             </pack>
-            """.trimIndent().byteInputStream()
+        """.trimIndent().byteInputStream()
 
         val context = XmlUtil.fromXmlToContext(dataTrace(), inputStream)
         val data = context.data.attributeDataValue("pack", dataTrace()).value as Data
@@ -54,8 +60,9 @@ internal class XmlUtilTest {
                     value = "Doug",
                     dataTrace = dataTrace("attribute \"dog\"")
                         .tag("line", "2")
-                        .tag("column", "10"))
+                        .tag("column", "10")
                 )
+            )
     }
 
     @Test
@@ -63,7 +70,7 @@ internal class XmlUtilTest {
         val inputStream = """
             <pack dog="Doug">
             </pack>
-            """.trimIndent().byteInputStream()
+        """.trimIndent().byteInputStream()
 
         val context = XmlUtil.fromXmlToContext(dataTrace(), inputStream)
         val data = context.data.attributeDataValue("pack", dataTrace()).value as Data
@@ -73,7 +80,8 @@ internal class XmlUtilTest {
                     value = "Doug",
                     dataTrace = dataTrace("attribute \"dog\"")
                         .tag("line", "1")
-                        .tag("column", "18"))
+                        .tag("column", "18")
+                )
             )
     }
 
@@ -83,7 +91,7 @@ internal class XmlUtilTest {
             <pack>
                 <dog></dog>
             </pack>
-            """.trimIndent().byteInputStream()
+        """.trimIndent().byteInputStream()
 
         val context = XmlUtil.fromXmlToContext(dataTrace(), inputStream)
         assertThat(context.data.attributeDataValue("pack", dataTrace()).value).isInstanceOf(Data::class.java)
@@ -94,7 +102,8 @@ internal class XmlUtilTest {
                     value = "",
                     dataTrace = dataTrace("attribute \"dog\"")
                         .tag("line", "2")
-                        .tag("column", "10"))
+                        .tag("column", "10")
+                )
             )
     }
 
@@ -109,7 +118,7 @@ internal class XmlUtilTest {
                     <name>Doug</name>
                 </dog>
             </pack>
-            """.trimIndent()
+        """.trimIndent()
 
         @Test
         fun `produces data with context`() {
@@ -149,47 +158,61 @@ internal class XmlUtilTest {
 
             assertThat(results).hasSize(5)
 
-            assertThat(results[0]).isEqualTo(ValidationInfo(
-                dataTrace = dataTrace("example.xml"),
-                message = "has attribute \"pack\"",
-                value = rootNode
-            ))
+            assertThat(results[0]).isEqualTo(
+                ValidationInfo(
+                    dataTrace = dataTrace("example.xml"),
+                    message = "has attribute \"pack\"",
+                    value = rootNode
+                )
+            )
 
-            assertThat(results[1]).isEqualTo(ValidationInfo(
-                dataTrace = dataTrace("example.xml", "attribute \"pack\"").tag("line", "1").tag("column", "7"),
-                message = "has attribute \"dog\"",
-                value = packNode
-            ))
+            assertThat(results[1]).isEqualTo(
+                ValidationInfo(
+                    dataTrace = dataTrace("example.xml", "attribute \"pack\"").tag("line", "1").tag("column", "7"),
+                    message = "has attribute \"dog\"",
+                    value = packNode
+                )
+            )
 
-            assertThat(results[2]).isEqualTo(ValidationInfo(
-                dataTrace = dataTrace("example.xml", "attribute \"pack\"", "attribute \"dog\"", "index 0").tag("line", "2").tag("column", "10"),
-                message = "has attribute \"name\"",
-                value = fidoNameNode
-            ))
+            assertThat(results[2]).isEqualTo(
+                ValidationInfo(
+                    dataTrace = dataTrace("example.xml", "attribute \"pack\"", "attribute \"dog\"", "index 0").tag("line", "2").tag("column", "10"),
+                    message = "has attribute \"name\"",
+                    value = fidoNameNode
+                )
+            )
 
-            assertThat(results[3]).isEqualTo(ValidationInfo(
-                dataTrace = dataTrace("example.xml", "attribute \"pack\"", "attribute \"dog\"", "index 1").tag("line", "2").tag("column", "10"),
-                message = "has attribute \"name\"",
-                value = dougNameNode
-            ))
+            assertThat(results[3]).isEqualTo(
+                ValidationInfo(
+                    dataTrace = dataTrace("example.xml", "attribute \"pack\"", "attribute \"dog\"", "index 1").tag("line", "2").tag("column", "10"),
+                    message = "has attribute \"name\"",
+                    value = dougNameNode
+                )
+            )
 
-            assertThat(results[4]).isEqualTo(ValidationSuccess(
-                dataTrace = dataTrace("example.xml"),
-                value = rootNode
-            ))
+            assertThat(results[4]).isEqualTo(
+                ValidationSuccess(
+                    dataTrace = dataTrace("example.xml"),
+                    value = rootNode
+                )
+            )
         }
 
         @Test
         fun `can validate a list of strings`() {
             val pack = Baleen.describe("Pack") { p ->
-                p.attr(name = "dog",
+                p.attr(
+                    name = "dog",
                     type = OccurrencesType(StringType(max = 3)),
-                    required = true)
+                    required = true
+                )
             }
             val packContainer = Baleen.describe("PackContainer") { p ->
-                p.attr(name = "pack",
+                p.attr(
+                    name = "pack",
                     type = pack,
-                    required = true)
+                    required = true
+                )
             }
 
             val multipleOccurrences = """
@@ -215,23 +238,29 @@ internal class XmlUtilTest {
 
             assertThat(results).hasSize(3)
 
-            assertThat(results[0]).isEqualTo(ValidationInfo(
-                dataTrace = dataTrace("example.xml"),
-                message = "has attribute \"pack\"",
-                value = rootNode
-            ))
+            assertThat(results[0]).isEqualTo(
+                ValidationInfo(
+                    dataTrace = dataTrace("example.xml"),
+                    message = "has attribute \"pack\"",
+                    value = rootNode
+                )
+            )
 
-            assertThat(results[1]).isEqualTo(ValidationInfo(
-                dataTrace = dataTrace("example.xml", "attribute \"pack\"").tag("line", "1").tag("column", "7"),
-                message = "has attribute \"dog\"",
-                value = packNode
-            ))
+            assertThat(results[1]).isEqualTo(
+                ValidationInfo(
+                    dataTrace = dataTrace("example.xml", "attribute \"pack\"").tag("line", "1").tag("column", "7"),
+                    message = "has attribute \"dog\"",
+                    value = packNode
+                )
+            )
 
-            assertThat(results[2]).isEqualTo(ValidationError(
-                dataTrace = dataTrace("example.xml", "attribute \"pack\"", "attribute \"dog\"", "index 1").tag("line", "2").tag("column", "10"),
-                message = "is more than 3 characters",
-                value = "Fido"
-            ))
+            assertThat(results[2]).isEqualTo(
+                ValidationError(
+                    dataTrace = dataTrace("example.xml", "attribute \"pack\"", "attribute \"dog\"", "index 1").tag("line", "2").tag("column", "10"),
+                    message = "is more than 3 characters",
+                    value = "Fido"
+                )
+            )
         }
 
         @Test
@@ -249,7 +278,8 @@ internal class XmlUtilTest {
                 .isEqualTo(
                     dataTrace("someFile", "attribute \"pack\"")
                         .tag("line", "1")
-                        .tag("column", "7"))
+                        .tag("column", "7")
+                )
         }
     }
 
@@ -288,7 +318,7 @@ internal class XmlUtilTest {
             <dog>
                 <name xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
             </dog>
-            """.trimIndent()
+        """.trimIndent()
 
         @Test
         fun `produces data with context for namespace nil`() {
@@ -303,7 +333,7 @@ internal class XmlUtilTest {
             <dog>
                 <name nil="true" />
             </dog>
-            """.trimIndent()
+        """.trimIndent()
 
         @Test
         fun `produces data with context for nil without namespace`() {
@@ -312,14 +342,16 @@ internal class XmlUtilTest {
             assertThat(context).isEqualTo(
                 Context(
                     data = HashData(mapOf("dog" to HashData(mapOf("name" to null)))),
-                    dataTrace = dataTrace("example.xml")))
+                    dataTrace = dataTrace("example.xml")
+                )
+            )
         }
 
         private val customNilElement = """
             <dog>
                 <name xsi:nil="true" xmlns:xsi="http://custom_site"/>
             </dog>
-            """.trimIndent()
+        """.trimIndent()
 
         @Test
         fun `doesn't produce data for custom nil`() {

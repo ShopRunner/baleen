@@ -2,10 +2,10 @@ package com.shoprunner.baleen.kotlin
 
 import com.shoprunner.baleen.Baleen.describeAs
 import com.shoprunner.baleen.types.StringType
-import java.io.StringWriter
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import java.io.StringWriter
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class DataClassGeneratorWithAliasesTest {
@@ -32,20 +32,20 @@ internal class DataClassGeneratorWithAliasesTest {
         val expectedDataClassStr = """
             package com.shoprunner.baleen.kotlin.test
 
-            import com.shoprunner.baleen.annotation.Alias
-            import com.shoprunner.baleen.annotation.DataDescription
+            import com.shoprunner.baleen.`annotation`.Alias
+            import com.shoprunner.baleen.`annotation`.DataDescription
             import kotlin.String
             
             /**
              * Test Model
              */
             @DataDescription
-            data class Model(
+            public data class Model(
               /**
                * Test field 1
                */
               @Alias("f1")
-              val field1: String,
+              public val field1: String,
               /**
                * Test field 2
                */
@@ -53,7 +53,7 @@ internal class DataClassGeneratorWithAliasesTest {
                 "f2",
                 "key"
               )
-              val field2: String
+              public val field2: String
             )
 
         """.trimIndent()

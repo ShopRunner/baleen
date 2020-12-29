@@ -21,9 +21,11 @@ class StringCoercibleToTimestamp private constructor(
      * The pattern used to create the DateTimeFormatter if any provided.  DataTimeFormatter.ISO_LOCAL_DATE_TIME and others
      * do not carry over the pattern unfortunately.
      */
-    val pattern: String?
+    val pattern: String? = null
 ) :
-        StringCoercibleToType<TimestampMillisType>(timestampType, {
+    StringCoercibleToType<TimestampMillisType>(
+        timestampType,
+        {
             try {
                 LocalDateTime.parse(it, dateTimeFormatter)
             } catch (ex: DateTimeParseException) {
@@ -32,10 +34,7 @@ class StringCoercibleToTimestamp private constructor(
         }) {
 
     constructor(timestampType: TimestampMillisType) :
-            this(timestampType, DateTimeFormatter.ISO_LOCAL_DATE_TIME, null)
-
-    constructor(timestampType: TimestampMillisType, dateTimeFormatter: DateTimeFormatter) :
-            this(timestampType, dateTimeFormatter, null)
+            this(timestampType, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
 
     constructor(timestampType: TimestampMillisType, pattern: String) :
             this(timestampType, DateTimeFormatter.ofPattern(pattern), pattern)

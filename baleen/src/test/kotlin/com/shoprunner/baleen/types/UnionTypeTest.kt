@@ -18,7 +18,8 @@ internal class UnionTypeTest {
     @Test
     fun `checks none union checks match`() {
         assertThat(UnionType(LongType(), IntType()).validate(dataTrace(), "a string")).containsExactly(
-                ValidationError(dataTrace(), "is not a long", "a string"),
-                ValidationError(dataTrace(), "is not an Int", "a string"))
+            ValidationError(dataTrace(), "is not a long", "a string"),
+            ValidationError(dataTrace(), "is not an Int", "a string")
+        )
     }
 }

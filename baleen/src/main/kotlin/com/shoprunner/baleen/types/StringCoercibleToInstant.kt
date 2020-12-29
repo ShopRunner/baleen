@@ -18,9 +18,11 @@ class StringCoercibleToInstant(
      * The pattern used to create the DateTimeFormatter if any provided. DataTimeFormatter.ISO_INSTANT and others
      * do not carry over the pattern unfortunately.
      */
-    val pattern: String?
+    val pattern: String? = null
 ) :
-        StringCoercibleToType<InstantType>(instantType, {
+    StringCoercibleToType<InstantType>(
+        instantType,
+        {
             try {
                 dateTimeFormatter.parse(it, Instant::from)
             } catch (ex: DateTimeParseException) {
@@ -29,10 +31,7 @@ class StringCoercibleToInstant(
         }) {
 
     constructor(instantType: InstantType) :
-            this(instantType, DateTimeFormatter.ISO_INSTANT, null)
-
-    constructor(instantType: InstantType, dateTimeFormatter: DateTimeFormatter) :
-            this(instantType, dateTimeFormatter, null)
+            this(instantType, DateTimeFormatter.ISO_INSTANT)
 
     constructor(instantType: InstantType, pattern: String) :
             this(instantType, DateTimeFormatter.ofPattern(pattern), pattern)

@@ -1,0 +1,8 @@
+ext {
+    jacksonVersion = "2.12.0"
+}
+
+dependencies {
+    api("com.fasterxml.jackson.core:jackson-core:$jacksonVersion")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
+}

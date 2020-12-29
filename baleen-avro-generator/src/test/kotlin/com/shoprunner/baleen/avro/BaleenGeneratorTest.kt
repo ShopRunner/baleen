@@ -6,22 +6,22 @@ import com.shoprunner.baleen.avro.BaleenGenerator.encode
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.PropertySpec
-import java.io.File
-import java.net.URLClassLoader
-import java.util.logging.Logger
 import org.apache.avro.JsonProperties
 import org.apache.avro.LogicalType
 import org.apache.avro.Schema
 import org.assertj.core.api.Assertions
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.Services
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import java.io.File
+import java.net.URLClassLoader
+import java.util.logging.Logger
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class BaleenGeneratorTest {
@@ -29,11 +29,13 @@ internal class BaleenGeneratorTest {
     fun codeToString(codeBlock: CodeBlock): String {
         val strBuilder = StringBuilder()
         FileSpec.builder("", "Test")
-                .addProperty(PropertySpec.builder("test", BaleenType::class)
-                        .initializer(codeBlock)
-                        .build())
-                .build()
-                .writeTo(strBuilder)
+            .addProperty(
+                PropertySpec.builder("test", BaleenType::class)
+                    .initializer(codeBlock)
+                    .build()
+            )
+            .build()
+            .writeTo(strBuilder)
         return strBuilder.toString()
     }
 
@@ -267,7 +269,7 @@ internal class BaleenGeneratorTest {
 
             override fun hasErrors() = false
 
-            override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation?) {
+            override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
                 when (severity) {
                     CompilerMessageSeverity.ERROR -> logger.severe("$message : $location")
                     CompilerMessageSeverity.EXCEPTION -> logger.severe("$message : $location")
