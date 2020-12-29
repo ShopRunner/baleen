@@ -1,7 +1,7 @@
 package com.shoprunner.baleen.xsd.xml
 
+import jakarta.xml.bind.annotation.XmlAttribute
 import java.math.BigDecimal
-import javax.xml.bind.annotation.XmlAttribute
 
 data class MinInclusive(
     @get:XmlAttribute
