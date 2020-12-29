@@ -1,6 +1,6 @@
 plugins {
     id("org.jetbrains.dokka")
-    id("maven-publish")
+    id("de.marcphilipp.nexus-publish")
     id("kotlin")
     id("org.jmailen.kotlinter")
     id("signing")
@@ -56,14 +56,11 @@ publishing {
             artifact javadocJar
         }
     }
+}
+
+nexusPublishing {
     repositories {
-        maven {
-            url "https://oss.sonatype.org/service/local/staging/deploy/maven2"
-            credentials {
-                username sonatypeUsername
-                password sonatypePassword
-            }
-        }
+        sonatype()
     }
 }
 
