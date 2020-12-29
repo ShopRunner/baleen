@@ -83,7 +83,8 @@ fun defaultTypeMapper(codeBlockBuilder: CodeBlock.Builder, baleenType: BaleenTyp
 
         // Numeric Types
         is FloatType -> {
-            add("%T(min = %L, max = %L)", FloatType::class,
+            add(
+                "%T(min = %L, max = %L)", FloatType::class,
                 when {
                     baleenType.min == Float.NEGATIVE_INFINITY -> "Float.NEGATIVE_INFINITY"
                     baleenType.min == Float.POSITIVE_INFINITY -> "Float.POSITIVE_INFINITY"
@@ -101,7 +102,8 @@ fun defaultTypeMapper(codeBlockBuilder: CodeBlock.Builder, baleenType: BaleenTyp
             )
         }
         is DoubleType -> {
-            add("%T(min = %L, max = %L)", DoubleType::class,
+            add(
+                "%T(min = %L, max = %L)", DoubleType::class,
                 when {
                     baleenType.min == Double.NEGATIVE_INFINITY -> "Double.NEGATIVE_INFINITY"
                     baleenType.min == Double.POSITIVE_INFINITY -> "Double.POSITIVE_INFINITY"
@@ -119,25 +121,29 @@ fun defaultTypeMapper(codeBlockBuilder: CodeBlock.Builder, baleenType: BaleenTyp
             )
         }
         is IntegerType -> {
-            add("%T(min = %L, max = %L)", IntegerType::class,
+            add(
+                "%T(min = %L, max = %L)", IntegerType::class,
                 baleenType.min?.let { "\"$it\".toBigInteger()" },
                 baleenType.max?.let { "\"$it\".toBigInteger()" }
             )
         }
         is IntType -> {
-            add("%T(min = %L, max = %L)", IntType::class,
+            add(
+                "%T(min = %L, max = %L)", IntType::class,
                 baleenType.min.takeIf { it > Int.MIN_VALUE } ?: "Int.MIN_VALUE",
                 baleenType.max.takeIf { it < Int.MAX_VALUE } ?: "Int.MAX_VALUE"
             )
         }
         is LongType -> {
-            add("%T(min = %L, max = %L)", LongType::class,
+            add(
+                "%T(min = %L, max = %L)", LongType::class,
                 baleenType.min.takeIf { it > Long.MIN_VALUE }?.let { "${it}L" } ?: "Long.MIN_VALUE",
                 baleenType.max.takeIf { it < Long.MAX_VALUE }?.let { "${it}L" } ?: "Long.MAX_VALUE"
             )
         }
         is NumericType -> {
-            add("%T(min = %L, max = %L)", NumericType::class,
+            add(
+                "%T(min = %L, max = %L)", NumericType::class,
                 baleenType.min?.let { "\"$it\".toBigDecimal()" },
                 baleenType.max?.let { "\"$it\".toBigDecimal()" }
             )
@@ -173,7 +179,8 @@ fun defaultTypeMapper(codeBlockBuilder: CodeBlock.Builder, baleenType: BaleenTyp
         }
         is StringConstantType -> add("%T(%S)", StringConstantType::class, baleenType.constant)
         is StringType -> {
-            add("%T(min = %L, max = %L)", StringType::class,
+            add(
+                "%T(min = %L, max = %L)", StringType::class,
                 baleenType.min,
                 baleenType.max.takeIf { it < Int.MAX_VALUE } ?: "Int.MAX_VALUE"
             )
@@ -216,8 +223,10 @@ fun defaultTypeMapper(codeBlockBuilder: CodeBlock.Builder, baleenType: BaleenTyp
                     baleenType.pattern
                 )
             } else {
-                throw BaleenPoetException("Unable to generate Kotlin code for StringCoercibleToInstant without a DateTimeFormatter pattern string." +
-                        "Use StringCoercibleToInstant(InstantType, String) constructor")
+                throw BaleenPoetException(
+                    "Unable to generate Kotlin code for StringCoercibleToInstant without a DateTimeFormatter pattern string." +
+                        "Use StringCoercibleToInstant(InstantType, String) constructor"
+                )
             }
         }
         is StringCoercibleToTimestamp -> {
@@ -232,8 +241,10 @@ fun defaultTypeMapper(codeBlockBuilder: CodeBlock.Builder, baleenType: BaleenTyp
                     baleenType.pattern
                 )
             } else {
-                throw BaleenPoetException("Unable to generate Kotlin code for StringCoercibleToTimestamp without a DateTimeFormatter pattern string." +
-                        "Use StringCoercibleToTimestamp(TimestampMillisType, String) constructor")
+                throw BaleenPoetException(
+                    "Unable to generate Kotlin code for StringCoercibleToTimestamp without a DateTimeFormatter pattern string." +
+                        "Use StringCoercibleToTimestamp(TimestampMillisType, String) constructor"
+                )
             }
         }
         // Most Coercible types default to XCoercibleToY(yType)

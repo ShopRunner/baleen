@@ -1,9 +1,9 @@
 package com.shoprunner.baleen.poet
 
-import java.util.logging.Logger
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import java.util.logging.Logger
 
 internal object LogMessageCollector : MessageCollector {
     val logger = Logger.getLogger("LogMessageCollector")

@@ -32,12 +32,12 @@ import com.shoprunner.baleen.types.withAttributeValue
 import com.shoprunner.baleen.types.withConstantValue
 import com.shoprunner.baleen.types.withValue
 import com.squareup.kotlinpoet.CodeBlock
-import java.time.Instant
-import java.time.format.DateTimeFormatter
 import org.assertj.core.api.SoftAssertions.assertSoftly
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.assertThrows
+import java.time.Instant
+import java.time.format.DateTimeFormatter
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class BaleenPoetTest {
@@ -48,12 +48,14 @@ internal class BaleenPoetTest {
         val spec = type.toFileSpec()
 
         assertSoftly {
-            assertThat(spec).isEqualToIgnoringWhitespace("""
+            assertThat(spec).isEqualToIgnoringWhitespace(
+                """
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.BooleanType
                 
                 val boolean: BaleenType = BooleanType()
-            """.trimIndent())
+                """.trimIndent()
+            )
             assertThat(spec).canCompile()
         }
     }
@@ -64,12 +66,14 @@ internal class BaleenPoetTest {
         val spec = type.toFileSpec()
 
         assertSoftly {
-            assertThat(spec).isEqualToIgnoringWhitespace("""
+            assertThat(spec).isEqualToIgnoringWhitespace(
+                """
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.DoubleType
                 
                 val double: BaleenType = DoubleType(min = Double.NEGATIVE_INFINITY, max = Double.POSITIVE_INFINITY)
-            """.trimIndent())
+                """.trimIndent()
+            )
             assertThat(spec).canCompile()
         }
     }
@@ -80,12 +84,14 @@ internal class BaleenPoetTest {
         val spec = type.toFileSpec(name = "DoubleMaxMin")
 
         assertSoftly {
-            assertThat(spec).isEqualToIgnoringWhitespace("""
+            assertThat(spec).isEqualToIgnoringWhitespace(
+                """
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.DoubleType
                 
                 val DoubleMaxMin: BaleenType = DoubleType(min = 0.0, max = 10.0)
-            """.trimIndent())
+                """.trimIndent()
+            )
             assertThat(spec).canCompile()
         }
     }
@@ -96,12 +102,14 @@ internal class BaleenPoetTest {
         val spec = type.toFileSpec()
 
         assertSoftly {
-            assertThat(spec).isEqualToIgnoringWhitespace("""
+            assertThat(spec).isEqualToIgnoringWhitespace(
+                """
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.FloatType
                 
                 val float: BaleenType = FloatType(min = Float.NEGATIVE_INFINITY, max = Float.POSITIVE_INFINITY)
-            """.trimIndent())
+                """.trimIndent()
+            )
             assertThat(spec).canCompile()
         }
     }
@@ -112,12 +120,14 @@ internal class BaleenPoetTest {
         val spec = type.toFileSpec(name = "FloatMaxMin")
 
         assertSoftly {
-            assertThat(spec).isEqualToIgnoringWhitespace("""
+            assertThat(spec).isEqualToIgnoringWhitespace(
+                """
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.FloatType
                 
                 val FloatMaxMin: BaleenType = FloatType(min = 0.0f, max = 10.0f)
-            """.trimIndent())
+                """.trimIndent()
+            )
             assertThat(spec).canCompile()
         }
     }
@@ -128,12 +138,14 @@ internal class BaleenPoetTest {
         val spec = type.toFileSpec()
 
         assertSoftly {
-            assertThat(spec).isEqualToIgnoringWhitespace("""
+            assertThat(spec).isEqualToIgnoringWhitespace(
+                """
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.IntType
                 
                 val int: BaleenType = IntType(min = Int.MIN_VALUE, max = Int.MAX_VALUE)
-            """.trimIndent())
+                """.trimIndent()
+            )
             assertThat(spec).canCompile()
         }
     }
@@ -144,12 +156,14 @@ internal class BaleenPoetTest {
         val spec = type.toFileSpec(name = "IntMaxMin")
 
         assertSoftly {
-            assertThat(spec).isEqualToIgnoringWhitespace("""
+            assertThat(spec).isEqualToIgnoringWhitespace(
+                """
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.IntType
                 
                 val IntMaxMin: BaleenType = IntType(min = 0, max = 10)
-            """.trimIndent())
+                """.trimIndent()
+            )
             assertThat(spec).canCompile()
         }
     }
@@ -160,12 +174,14 @@ internal class BaleenPoetTest {
         val spec = type.toFileSpec()
 
         assertSoftly {
-            assertThat(spec).isEqualToIgnoringWhitespace("""
+            assertThat(spec).isEqualToIgnoringWhitespace(
+                """
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.LongType
                 
                 val long: BaleenType = LongType(min = Long.MIN_VALUE, max = Long.MAX_VALUE)
-            """.trimIndent())
+                """.trimIndent()
+            )
             assertThat(spec).canCompile()
         }
     }
@@ -176,12 +192,14 @@ internal class BaleenPoetTest {
         val spec = type.toFileSpec(name = "LongMaxMin")
 
         assertSoftly {
-            assertThat(spec).isEqualToIgnoringWhitespace("""
+            assertThat(spec).isEqualToIgnoringWhitespace(
+                """
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.LongType
                 
                 val LongMaxMin: BaleenType = LongType(min = 0L, max = 10L)
-            """.trimIndent())
+                """.trimIndent()
+            )
             assertThat(spec).canCompile()
         }
     }
@@ -192,12 +210,14 @@ internal class BaleenPoetTest {
         val spec = type.toFileSpec()
 
         assertSoftly {
-            assertThat(spec).isEqualToIgnoringWhitespace("""
+            assertThat(spec).isEqualToIgnoringWhitespace(
+                """
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.IntegerType
                 
                 val integer: BaleenType = IntegerType(min = null, max = null)
-            """.trimIndent())
+                """.trimIndent()
+            )
             assertThat(spec).canCompile()
         }
     }
@@ -208,12 +228,14 @@ internal class BaleenPoetTest {
         val spec = type.toFileSpec(name = "IntegerMaxMin")
 
         assertSoftly {
-            assertThat(spec).isEqualToIgnoringWhitespace("""
+            assertThat(spec).isEqualToIgnoringWhitespace(
+                """
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.IntegerType
                 
                 val IntegerMaxMin: BaleenType = IntegerType(min = "0".toBigInteger(), max = "10".toBigInteger())
-            """.trimIndent())
+                """.trimIndent()
+            )
             assertThat(spec).canCompile()
         }
     }
@@ -224,12 +246,14 @@ internal class BaleenPoetTest {
         val spec = type.toFileSpec()
 
         assertSoftly {
-            assertThat(spec).isEqualToIgnoringWhitespace("""
+            assertThat(spec).isEqualToIgnoringWhitespace(
+                """
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.NumericType
                 
                 val number: BaleenType = NumericType(min = null, max = null)
-            """.trimIndent())
+                """.trimIndent()
+            )
             assertThat(spec).canCompile()
         }
     }
@@ -240,12 +264,14 @@ internal class BaleenPoetTest {
         val spec = type.toFileSpec(name = "NumberMaxMin")
 
         assertSoftly {
-            assertThat(spec).isEqualToIgnoringWhitespace("""
+            assertThat(spec).isEqualToIgnoringWhitespace(
+                """
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.NumericType
                 
                 val NumberMaxMin: BaleenType = NumericType(min = "0".toBigDecimal(), max = "10".toBigDecimal())
-            """.trimIndent())
+                """.trimIndent()
+            )
             assertThat(spec).canCompile()
         }
     }
@@ -256,12 +282,14 @@ internal class BaleenPoetTest {
         val spec = type.toFileSpec()
 
         assertSoftly {
-            assertThat(spec).isEqualToIgnoringWhitespace("""
+            assertThat(spec).isEqualToIgnoringWhitespace(
+                """
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.EnumType
                 
                 val enum: BaleenType = EnumType("myEnum", listOf("A", "B", "C"))
-            """.trimIndent())
+                """.trimIndent()
+            )
             assertThat(spec).canCompile()
         }
     }
@@ -272,12 +300,14 @@ internal class BaleenPoetTest {
         val spec = type.toFileSpec()
 
         assertSoftly {
-            assertThat(spec).isEqualToIgnoringWhitespace("""
+            assertThat(spec).isEqualToIgnoringWhitespace(
+                """
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.StringConstantType
                 
                 val stringConstant: BaleenType = StringConstantType("Hello World")
-            """.trimIndent())
+                """.trimIndent()
+            )
             assertThat(spec).canCompile()
         }
     }
@@ -288,12 +318,14 @@ internal class BaleenPoetTest {
         val spec = type.toFileSpec()
 
         assertSoftly {
-            assertThat(spec).isEqualToIgnoringWhitespace("""
+            assertThat(spec).isEqualToIgnoringWhitespace(
+                """
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.StringType
                 
                 val string: BaleenType = StringType(min = 0, max = Int.MAX_VALUE)
-            """.trimIndent())
+                """.trimIndent()
+            )
             assertThat(spec).canCompile()
         }
     }
@@ -304,12 +336,14 @@ internal class BaleenPoetTest {
         val spec = type.toFileSpec(name = "StringMaxMin")
 
         assertSoftly {
-            assertThat(spec).isEqualToIgnoringWhitespace("""
+            assertThat(spec).isEqualToIgnoringWhitespace(
+                """
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.StringType
                 
                 val StringMaxMin: BaleenType = StringType(min = 10, max = 20)
-            """.trimIndent())
+                """.trimIndent()
+            )
             assertThat(spec).canCompile()
         }
     }
@@ -320,13 +354,15 @@ internal class BaleenPoetTest {
         val spec = type.toFileSpec()
 
         assertSoftly {
-            assertThat(spec).isEqualToIgnoringWhitespace("""
+            assertThat(spec).isEqualToIgnoringWhitespace(
+                """
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.InstantType
                 import java.time.Instant
                 
                 val instant: BaleenType = InstantType(before = Instant.MAX, after = Instant.MIN)
-            """.trimIndent())
+                """.trimIndent()
+            )
             assertThat(spec).canCompile()
         }
     }
@@ -337,14 +373,16 @@ internal class BaleenPoetTest {
         val spec = type.toFileSpec(name = "InstantBeforeAfter")
 
         assertSoftly {
-            assertThat(spec).isEqualToIgnoringWhitespace("""
+            assertThat(spec).isEqualToIgnoringWhitespace(
+                """
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.InstantType
                 import java.time.Instant
                 
                 val InstantBeforeAfter: BaleenType = InstantType(before = Instant.parse("2020-02-02T02:02:02Z"), 
                                                                  after = Instant.parse("2001-01-01T01:01:01Z"))
-            """.trimIndent())
+                """.trimIndent()
+            )
             assertThat(spec).canCompile()
         }
     }
@@ -355,12 +393,14 @@ internal class BaleenPoetTest {
         val spec = type.toFileSpec()
 
         assertSoftly {
-            assertThat(spec).isEqualToIgnoringWhitespace("""
+            assertThat(spec).isEqualToIgnoringWhitespace(
+                """
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.TimestampMillisType
                 
                 val timestampMillis: BaleenType = TimestampMillisType()
-            """.trimIndent())
+                """.trimIndent()
+            )
             assertThat(spec).canCompile()
         }
     }
@@ -371,14 +411,16 @@ internal class BaleenPoetTest {
         val spec = type.toFileSpec("com.shoprunner.baleen.poet.test", "MyString")
 
         assertSoftly {
-            assertThat(spec).isEqualToIgnoringWhitespace("""
+            assertThat(spec).isEqualToIgnoringWhitespace(
+                """
                 package com.shoprunner.baleen.poet.test
                 
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.StringType
                 
                 val MyString: BaleenType = StringType(min = 0, max = Int.MAX_VALUE)
-            """.trimIndent())
+                """.trimIndent()
+            )
             assertThat(spec).canCompile()
         }
     }
@@ -389,13 +431,15 @@ internal class BaleenPoetTest {
         val spec = type.toFileSpec()
 
         assertSoftly {
-            assertThat(spec).isEqualToIgnoringWhitespace("""
+            assertThat(spec).isEqualToIgnoringWhitespace(
+                """
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.AllowsNull
                 import com.shoprunner.baleen.types.BooleanType
                 
                 val nullOrBoolean: BaleenType = AllowsNull(BooleanType())
-            """.trimIndent())
+                """.trimIndent()
+            )
             assertThat(spec).canCompile()
         }
     }
@@ -406,20 +450,23 @@ internal class BaleenPoetTest {
         val spec = type.toFileSpec(name = "ErrorsAreWarnings")
 
         assertSoftly {
-            assertThat(spec).isEqualToIgnoringWhitespace("""
+            assertThat(spec).isEqualToIgnoringWhitespace(
+                """
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.BooleanType
                 import com.shoprunner.baleen.types.ErrorsAreWarnings
 
                 val ErrorsAreWarnings: BaleenType = ErrorsAreWarnings(BooleanType())
-            """.trimIndent())
+                """.trimIndent()
+            )
             assertThat(spec).canCompile()
         }
     }
 
     @Test
     fun `test write Tagged`() {
-        val type = Tagged(BooleanType(),
+        val type = Tagged(
+            BooleanType(),
             "constantTag" to withConstantValue("value"),
             "valueTag" to withValue(),
             "attributeTag" to withAttributeValue("attr"),
@@ -428,7 +475,8 @@ internal class BaleenPoetTest {
         val spec = type.toFileSpec(name = "Tagged")
 
         assertSoftly {
-            assertThat(spec).isEqualToIgnoringWhitespace("""
+            assertThat(spec).isEqualToIgnoringWhitespace(
+                """
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.BooleanType
                 import com.shoprunner.baleen.types.Tagged
@@ -443,7 +491,8 @@ internal class BaleenPoetTest {
                         "attributeTag" to withAttributeValue("attr")
                     )
                 )
-            """.trimIndent())
+                """.trimIndent()
+            )
             assertThat(spec).canCompile()
         }
     }
@@ -454,13 +503,15 @@ internal class BaleenPoetTest {
         val spec = type.toFileSpec()
 
         assertSoftly {
-            assertThat(spec).isEqualToIgnoringWhitespace("""
+            assertThat(spec).isEqualToIgnoringWhitespace(
+                """
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.OccurrencesType
                 import com.shoprunner.baleen.types.StringType
                 
                 val multipleOccurrencesOfString: BaleenType = OccurrencesType(StringType(min = 0, max = Int.MAX_VALUE))
-            """.trimIndent())
+                """.trimIndent()
+            )
             assertThat(spec).canCompile()
         }
     }
@@ -471,7 +522,8 @@ internal class BaleenPoetTest {
         val spec = type.toFileSpec()
 
         assertSoftly {
-            assertThat(spec).isEqualToIgnoringWhitespace("""
+            assertThat(spec).isEqualToIgnoringWhitespace(
+                """
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.IntType
                 import com.shoprunner.baleen.types.MapType
@@ -481,7 +533,8 @@ internal class BaleenPoetTest {
                     StringType(min = 0, max = Int.MAX_VALUE), 
                     IntType(min = Int.MIN_VALUE, max = Int.MAX_VALUE)
                 )
-            """.trimIndent())
+                """.trimIndent()
+            )
             assertThat(spec).canCompile()
         }
     }
@@ -492,7 +545,8 @@ internal class BaleenPoetTest {
         val spec = type.toFileSpec()
 
         assertSoftly {
-            assertThat(spec).isEqualToIgnoringWhitespace("""
+            assertThat(spec).isEqualToIgnoringWhitespace(
+                """
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.IntType
                 import com.shoprunner.baleen.types.StringType
@@ -502,7 +556,8 @@ internal class BaleenPoetTest {
                     StringType(min = 0, max = Int.MAX_VALUE), 
                     IntType(min = Int.MIN_VALUE, max = Int.MAX_VALUE)
                 )
-            """.trimIndent())
+                """.trimIndent()
+            )
             assertThat(spec).canCompile()
         }
     }
@@ -517,7 +572,8 @@ internal class BaleenPoetTest {
         val spec = type.toFileSpec()
 
         assertSoftly {
-            assertThat(spec).isEqualToIgnoringWhitespace("""
+            assertThat(spec).isEqualToIgnoringWhitespace(
+                """
             import com.shoprunner.baleen.Baleen.describe
             import com.shoprunner.baleen.DataDescription
             import com.shoprunner.baleen.types.AllowsNull
@@ -535,7 +591,8 @@ internal class BaleenPoetTest {
                   )
             
                 }
-            """.trimIndent())
+                """.trimIndent()
+            )
             assertThat(spec).canCompile()
         }
     }
@@ -550,7 +607,8 @@ internal class BaleenPoetTest {
         val spec = type.toFileSpec()
 
         assertSoftly {
-            assertThat(spec).isEqualToIgnoringWhitespace("""
+            assertThat(spec).isEqualToIgnoringWhitespace(
+                """
             package com.shoprunner.baleen.poet.test
                 
             import com.shoprunner.baleen.Baleen.describe
@@ -570,7 +628,8 @@ internal class BaleenPoetTest {
                   )
             
                 }
-            """.trimIndent())
+                """.trimIndent()
+            )
             assertThat(spec).canCompile()
         }
     }
@@ -585,7 +644,8 @@ internal class BaleenPoetTest {
         val spec = type.toFileSpec(name = "DogWithComments")
 
         assertSoftly {
-            assertThat(spec).isEqualToIgnoringWhitespace("""
+            assertThat(spec).isEqualToIgnoringWhitespace(
+                """
                 import com.shoprunner.baleen.Baleen.describe
                 import com.shoprunner.baleen.DataDescription
                 import com.shoprunner.baleen.types.AllowsNull
@@ -608,7 +668,8 @@ internal class BaleenPoetTest {
                       )
                 
                     }
-            """.trimIndent())
+                """.trimIndent()
+            )
             assertThat(spec).canCompile()
         }
     }
@@ -623,7 +684,8 @@ internal class BaleenPoetTest {
         val spec = type.toFileSpec(name = "DogWithAliases")
 
         assertSoftly {
-            assertThat(spec).isEqualToIgnoringWhitespace("""
+            assertThat(spec).isEqualToIgnoringWhitespace(
+                """
                 import com.shoprunner.baleen.Baleen.describe
                 import com.shoprunner.baleen.DataDescription
                 import com.shoprunner.baleen.types.AllowsNull
@@ -643,7 +705,8 @@ internal class BaleenPoetTest {
                       )
                 
                     }
-            """.trimIndent())
+                """.trimIndent()
+            )
             assertThat(spec).canCompile()
         }
     }
@@ -661,7 +724,8 @@ internal class BaleenPoetTest {
         val spec = type.toFileSpec(name = "DogWithDefaults")
 
         assertSoftly {
-            assertThat(spec).isEqualToIgnoringWhitespace("""
+            assertThat(spec).isEqualToIgnoringWhitespace(
+                """
                 import com.shoprunner.baleen.Baleen.describe
                 import com.shoprunner.baleen.DataDescription
                 import com.shoprunner.baleen.poet.TestEnum
@@ -700,7 +764,8 @@ internal class BaleenPoetTest {
                         default = TestEnum.One
                       )
                     }
-            """.trimIndent())
+                """.trimIndent()
+            )
             assertThat(spec).canCompile()
         }
     }
@@ -715,7 +780,8 @@ internal class BaleenPoetTest {
         val spec = type.toFileSpec(name = "DogWithRequiredAttrs")
 
         assertSoftly {
-            assertThat(spec).isEqualToIgnoringWhitespace("""
+            assertThat(spec).isEqualToIgnoringWhitespace(
+                """
                 import com.shoprunner.baleen.Baleen.describe
                 import com.shoprunner.baleen.DataDescription
                 import com.shoprunner.baleen.types.AllowsNull
@@ -735,7 +801,8 @@ internal class BaleenPoetTest {
                       )
                 
                     }
-            """.trimIndent())
+                """.trimIndent()
+            )
             assertThat(spec).canCompile()
         }
     }
@@ -750,7 +817,8 @@ internal class BaleenPoetTest {
         val spec = type.toFileSpec(name = "DogsWithAttributeWarnings")
 
         assertSoftly {
-            assertThat(spec).isEqualToIgnoringWhitespace("""
+            assertThat(spec).isEqualToIgnoringWhitespace(
+                """
             import com.shoprunner.baleen.Baleen.describe
             import com.shoprunner.baleen.DataDescription
             import com.shoprunner.baleen.types.AllowsNull
@@ -768,7 +836,8 @@ internal class BaleenPoetTest {
                   )
             
                 }
-            """.trimIndent())
+                """.trimIndent()
+            )
             assertThat(spec).canCompile()
         }
     }
@@ -787,7 +856,8 @@ internal class BaleenPoetTest {
         val spec = type.toFileSpec(name = "DogsWithAttributeTags")
 
         assertSoftly {
-            assertThat(spec).isEqualToIgnoringWhitespace("""
+            assertThat(spec).isEqualToIgnoringWhitespace(
+                """
             import com.shoprunner.baleen.Baleen.describe
             import com.shoprunner.baleen.DataDescription
             import com.shoprunner.baleen.types.AllowsNull
@@ -810,7 +880,8 @@ internal class BaleenPoetTest {
                   .tag("valueTag" to withValue())
                   .tag("attributeTag" to withAttributeValue("attr"))
                 }
-            """.trimIndent())
+                """.trimIndent()
+            )
             assertThat(spec).canCompile()
         }
     }
@@ -846,7 +917,7 @@ internal class BaleenPoetTest {
                   )
             
                 }
-            """.trimIndent()
+        """.trimIndent()
 
         val packSpec = """
             import com.shoprunner.baleen.Baleen.describe
@@ -863,9 +934,11 @@ internal class BaleenPoetTest {
         """.trimIndent()
 
         assertSoftly {
-            assertThat(allSpecs).isEqualToIgnoringWhitespace(listOf(
-                dogSpec, packSpec
-            ))
+            assertThat(allSpecs).isEqualToIgnoringWhitespace(
+                listOf(
+                    dogSpec, packSpec
+                )
+            )
             assertThat(allSpecs).canCompile()
         }
     }
@@ -903,7 +976,7 @@ internal class BaleenPoetTest {
                   )
             
                 }
-            """.trimIndent()
+        """.trimIndent()
 
         val packSpec = """
             package com.shoprunner.pack
@@ -923,9 +996,11 @@ internal class BaleenPoetTest {
         """.trimIndent()
 
         assertSoftly {
-            assertThat(allSpecs).isEqualToIgnoringWhitespace(listOf(
-                dogSpec, packSpec
-            ))
+            assertThat(allSpecs).isEqualToIgnoringWhitespace(
+                listOf(
+                    dogSpec, packSpec
+                )
+            )
             assertThat(allSpecs).canCompile()
         }
     }
@@ -936,14 +1011,16 @@ internal class BaleenPoetTest {
         val spec = type.toFileSpec()
 
         assertSoftly {
-            assertThat(spec).isEqualToIgnoringWhitespace("""
+            assertThat(spec).isEqualToIgnoringWhitespace(
+                """
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.BooleanType
                 import com.shoprunner.baleen.types.StringCoercibleToBoolean
                 
                 val stringCoercibleToBoolean: BaleenType = StringCoercibleToBoolean(BooleanType())
 
-            """.trimIndent())
+                """.trimIndent()
+            )
             assertThat(spec).canCompile()
         }
     }
@@ -954,14 +1031,16 @@ internal class BaleenPoetTest {
         val spec = type.toFileSpec()
 
         assertSoftly {
-            assertThat(spec).isEqualToIgnoringWhitespace("""
+            assertThat(spec).isEqualToIgnoringWhitespace(
+                """
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.FloatType
                 import com.shoprunner.baleen.types.StringCoercibleToFloat
                 
                 val stringCoercibleToFloat: BaleenType = StringCoercibleToFloat(FloatType(min = 0.0f, max = 1.0f))
 
-            """.trimIndent())
+                """.trimIndent()
+            )
             assertThat(spec).canCompile()
         }
     }
@@ -972,14 +1051,16 @@ internal class BaleenPoetTest {
         val spec = type.toFileSpec()
 
         assertSoftly {
-            assertThat(spec).isEqualToIgnoringWhitespace("""
+            assertThat(spec).isEqualToIgnoringWhitespace(
+                """
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.LongType
                 import com.shoprunner.baleen.types.StringCoercibleToLong
                 
                 val stringCoercibleToLong: BaleenType = StringCoercibleToLong(LongType(min = 0L, max = 10L))
 
-            """.trimIndent())
+                """.trimIndent()
+            )
             assertThat(spec).canCompile()
         }
     }
@@ -990,7 +1071,8 @@ internal class BaleenPoetTest {
         val spec = type.toFileSpec()
 
         assertSoftly {
-            assertThat(spec).isEqualToIgnoringWhitespace("""
+            assertThat(spec).isEqualToIgnoringWhitespace(
+                """
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.InstantType
                 import com.shoprunner.baleen.types.StringCoercibleToInstant
@@ -999,7 +1081,8 @@ internal class BaleenPoetTest {
                 
                 val stringCoercibleToInstant: BaleenType =
                     StringCoercibleToInstant(InstantType(before = Instant.MAX, after = Instant.MIN), ISO_INSTANT)
-            """.trimIndent())
+                """.trimIndent()
+            )
             assertThat(spec).canCompile()
         }
     }
@@ -1010,7 +1093,8 @@ internal class BaleenPoetTest {
         val spec = type.toFileSpec(name = "StringCoercibleToInstantDifferentPattern")
 
         assertSoftly {
-            assertThat(spec).isEqualToIgnoringWhitespace("""
+            assertThat(spec).isEqualToIgnoringWhitespace(
+                """
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.InstantType
                 import com.shoprunner.baleen.types.StringCoercibleToInstant
@@ -1020,7 +1104,8 @@ internal class BaleenPoetTest {
                 val StringCoercibleToInstantDifferentPattern: BaleenType =
                     StringCoercibleToInstant(InstantType(before = Instant.MAX, after = Instant.MIN),
                         ofPattern("YYYY/mm/DD/hh/MM/ss/Z"))
-            """.trimIndent())
+                """.trimIndent()
+            )
             assertThat(spec).canCompile()
         }
     }
@@ -1038,7 +1123,8 @@ internal class BaleenPoetTest {
         val spec = type.toFileSpec()
 
         assertSoftly {
-            assertThat(spec).isEqualToIgnoringWhitespace("""
+            assertThat(spec).isEqualToIgnoringWhitespace(
+                """
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.StringCoercibleToTimestamp
                 import com.shoprunner.baleen.types.TimestampMillisType
@@ -1047,7 +1133,7 @@ internal class BaleenPoetTest {
                 val stringCoercibleToTimestampMillis: BaleenType =
                     StringCoercibleToTimestamp(TimestampMillisType(), ISO_LOCAL_DATE_TIME)
 
-            """.trimIndent()
+                """.trimIndent()
             )
             assertThat(spec).canCompile()
         }
@@ -1089,7 +1175,8 @@ internal class BaleenPoetTest {
         val spec = type.toFileSpec()
 
         assertSoftly {
-            assertThat(spec).isEqualToIgnoringWhitespace("""
+            assertThat(spec).isEqualToIgnoringWhitespace(
+                """
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.OccurrencesType
                 import com.shoprunner.baleen.types.StringCoercibleToOccurrencesType
@@ -1097,7 +1184,8 @@ internal class BaleenPoetTest {
                 
                 val stringCoercibleToMultipleOccurrencesOfString: BaleenType =
                     StringCoercibleToOccurrencesType(OccurrencesType(StringType(min = 0, max = Int.MAX_VALUE)))
-            """.trimIndent())
+                """.trimIndent()
+            )
             assertThat(spec).canCompile()
         }
     }
@@ -1108,7 +1196,8 @@ internal class BaleenPoetTest {
         val spec = type.toFileSpec()
 
         assertSoftly {
-            assertThat(spec).isEqualToIgnoringWhitespace("""
+            assertThat(spec).isEqualToIgnoringWhitespace(
+                """
                 import com.shoprunner.baleen.BaleenType
                 import com.shoprunner.baleen.types.InstantType
                 import com.shoprunner.baleen.types.LongCoercibleToInstant
@@ -1117,7 +1206,8 @@ internal class BaleenPoetTest {
                 
                 val longCoercibleToInstant: BaleenType = LongCoercibleToInstant(InstantType(before = Instant.MAX,
                     after = Instant.MIN), millis)
-            """.trimIndent())
+                """.trimIndent()
+            )
             assertThat(spec).canCompile()
         }
     }
@@ -1133,12 +1223,14 @@ internal class BaleenPoetTest {
         val spec = type.toFileSpec(name = "StringOverrideToInt", typeMapper = ::customOverride)
 
         assertSoftly {
-            assertThat(spec).isEqualToIgnoringWhitespace("""
+            assertThat(spec).isEqualToIgnoringWhitespace(
+                """
             import com.shoprunner.baleen.BaleenType
             import com.shoprunner.baleen.types.IntType
             
             val StringOverrideToInt: BaleenType = IntType()
-        """.trimIndent())
+                """.trimIndent()
+            )
             assertThat(spec).canCompile()
         }
     }
@@ -1157,7 +1249,8 @@ internal class BaleenPoetTest {
         val spec = type.toFileSpec(name = "DogWithStringOverrideToInt", typeMapper = ::customOverride)
 
         assertSoftly {
-            assertThat(spec).isEqualToIgnoringWhitespace("""
+            assertThat(spec).isEqualToIgnoringWhitespace(
+                """
             import com.shoprunner.baleen.Baleen.describe
             import com.shoprunner.baleen.DataDescription
             import com.shoprunner.baleen.types.AllowsNull
@@ -1174,7 +1267,8 @@ internal class BaleenPoetTest {
                   )
             
                 }
-        """.trimIndent())
+                """.trimIndent()
+            )
             assertThat(spec).canCompile()
         }
     }
@@ -1197,7 +1291,8 @@ internal class BaleenPoetTest {
         val spec = pack.toFileSpec(name = "PackWithDogOverrideToString", typeMapper = ::customOverride)
 
         assertSoftly {
-            assertThat(spec).isEqualToIgnoringWhitespace("""
+            assertThat(spec).isEqualToIgnoringWhitespace(
+                """
             import com.shoprunner.baleen.Baleen.describe
             import com.shoprunner.baleen.DataDescription
             import com.shoprunner.baleen.types.OccurrencesType
@@ -1211,7 +1306,8 @@ internal class BaleenPoetTest {
             
                 }
 
-        """.trimIndent())
+                """.trimIndent()
+            )
             assertThat(spec).canCompile()
         }
     }

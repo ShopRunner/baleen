@@ -28,11 +28,12 @@ class StringCoercibleToInstant(
             } catch (ex: DateTimeParseException) {
                 null
             }
-        }) {
+        }
+    ) {
 
     constructor(instantType: InstantType) :
-            this(instantType, DateTimeFormatter.ISO_INSTANT)
+        this(instantType, DateTimeFormatter.ISO_INSTANT)
 
     constructor(instantType: InstantType, pattern: String) :
-            this(instantType, DateTimeFormatter.ofPattern(pattern), pattern)
+        this(instantType, DateTimeFormatter.ofPattern(pattern), pattern)
 }

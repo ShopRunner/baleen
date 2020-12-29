@@ -29,7 +29,8 @@ fun BaleenType.toFileSpec(packageName: String = "", name: String = this.name(), 
         toFileSpec(
             packageName.takeIf { it.isNotBlank() } ?: this.nameSpace,
             name,
-            typeMapper)
+            typeMapper
+        )
     } else {
         val cleanName = name.takeIf { it == this.name() }?.toCleanFileName() ?: name
         FileSpec.builder(packageName, cleanName)
@@ -91,17 +92,21 @@ fun DataDescription.toPropertySpec(name: String = this.name, typeMapper: TypeMap
  * @return The Kotlin PropertySpec
  */
 fun PropertySpec.Builder.addDataDescription(dataDescription: DataDescription, typeMapper: TypeMapper = ::defaultTypeMapper): PropertySpec.Builder =
-        this.addKdoc(dataDescription.markdownDescription)
-        .initializer(CodeBlock.builder()
-            .beginControlFlow("%M(%S, %S, %S)",
-                MemberName(Baleen::class.asClassName(), "describe"),
-                dataDescription.name,
-                dataDescription.nameSpace,
-                dataDescription.markdownDescription)
-            .addAttributeDescriptions(dataDescription.attrs, typeMapper)
-            .add(CodeBlock.of("\n"))
-            .endControlFlow()
-            .build())
+    this.addKdoc(dataDescription.markdownDescription)
+        .initializer(
+            CodeBlock.builder()
+                .beginControlFlow(
+                    "%M(%S, %S, %S)",
+                    MemberName(Baleen::class.asClassName(), "describe"),
+                    dataDescription.name,
+                    dataDescription.nameSpace,
+                    dataDescription.markdownDescription
+                )
+                .addAttributeDescriptions(dataDescription.attrs, typeMapper)
+                .add(CodeBlock.of("\n"))
+                .endControlFlow()
+                .build()
+        )
 
 /**
  * Add all AttributeDescriptions to a CodeBlock

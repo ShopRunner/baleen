@@ -31,11 +31,12 @@ class StringCoercibleToTimestamp private constructor(
             } catch (ex: DateTimeParseException) {
                 null
             }
-        }) {
+        }
+    ) {
 
     constructor(timestampType: TimestampMillisType) :
-            this(timestampType, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+        this(timestampType, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
 
     constructor(timestampType: TimestampMillisType, pattern: String) :
-            this(timestampType, DateTimeFormatter.ofPattern(pattern), pattern)
+        this(timestampType, DateTimeFormatter.ofPattern(pattern), pattern)
 }

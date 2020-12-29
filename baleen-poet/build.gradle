@@ -1,3 +1,7 @@
+plugins {
+    id("baleen.project-conventions")
+}
+
 dependencies {
     api project(':baleen')
     api 'com.squareup:kotlinpoet:1.5.0'
@@ -12,8 +16,4 @@ test {
             ).join(":")
     ]
     environment map
-}
-
-compileTestKotlin {
-    kotlinOptions.jvmTarget = "1.8"
 }
