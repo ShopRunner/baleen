@@ -4,6 +4,14 @@ Baleen Poet is an extension of the awesome [KotlinPoet](https://github.com/squar
 takes a BaleenType as input and then writes it to the file.  This is especially useful for Baleen generators where an
 external format like Json schema or Avro schemas can be imported to create a Baleen schema.
 
+## Installation
+
+### Gradle
+```kotlin
+implementation "com.shoprunner:baleen:$baleen_version"
+implementation "com.shoprunner:baleen-poet:$baleen_version"
+```
+
 ## Examples
 
 Simple Baleen Types write to a file with no package.
@@ -15,9 +23,10 @@ import com.shoprunner.baleen.types.BooleanType
 val booleanTest = BooleanType()
 
 booleanTest.toFileSpec().writeTo(File("src/"))
+```
 
-// Creates src/boolean.kt
-
+Creates `src/boolean.kt`
+```kotlin
 import com.shoprunner.baleen.BaleenType
 import com.shoprunner.baleen.types.BooleanType
 
@@ -33,8 +42,10 @@ import com.shoprunner.baleen.types.BooleanType
 val booleanTest = BooleanType()
 
 booleanTest.toFileSpec("com.shoprunner.baleen.test", "MyBooleanType").writeTo(File("src/"))
+```
 
-// Creates src/com/shoprunner/baleen/test/MyBooleanType.kt
+Creates `src/com/shoprunner/baleen/test/MyBooleanType.kt`
+```kotlin
 package com.shoprunner.baleen.test
 
 import com.shoprunner.baleen.BaleenType
@@ -58,8 +69,9 @@ val type = "Dog".describeAs("com.shoprunner.baleen.test") {
 }
 
 type.toFileSpec().writeTo(File("src/"))
-
-// Creates src/com/shoprunner/baleen/test/Dog.kt
+```
+Creates `src/com/shoprunner/baleen/test/Dog.kt`
+```kotlin
 package com.shoprunner.baleen.poet.test
 
 import com.shoprunner.baleen.Baleen.describe
@@ -101,11 +113,11 @@ val pack = "Pack".describeAs(nameSpace = "com.shoprunner.pack") {
 }
 
 pack.generateAllFileSpecs().forEach { it.writeTo(File("src/")) }
+```
+Generates 2 source files
 
-// Generates 2 source files
-
-// src/com/shoprunner/dog/Dog.kt
-
+`src/com/shoprunner/dog/Dog.kt`
+```kotlin
 package com.shoprunner.dog
 
 import com.shoprunner.baleen.Baleen.describe
@@ -125,9 +137,10 @@ val Dog: DataDescription = describe("NestedDog", "com.shoprunner.dog", "") {
       )
 
     }
+```
 
-// src/com/shoprunner/pack/Pack.kt
-
+`src/com/shoprunner/pack/Pack.kt`
+```kotlin
 package com.shoprunner.pack
 
 import com.shoprunner.baleen.Baleen.describe
