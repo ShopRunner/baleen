@@ -5,8 +5,8 @@ plugins {
 
 dependencies {
     api project(":baleen")
-    implementation project(":baleen-base-schema-generator")
-    implementation project(":jsonschema-model")
+    api project(":baleen-base-schema-generator")
+    api project(":jsonschema-model")
     implementation "com.fasterxml.jackson.module:jackson-module-jsonSchema:$jacksonVersion"
     implementation "org.jetbrains.kotlin:kotlin-reflect"
 }
