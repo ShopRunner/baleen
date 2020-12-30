@@ -8,7 +8,6 @@ external format like Json schema or Avro schemas can be imported to create a Bal
 
 ### Gradle
 ```kotlin
-implementation "com.shoprunner:baleen:$baleen_version"
 implementation "com.shoprunner:baleen-poet:$baleen_version"
 ```
 

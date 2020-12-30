@@ -9,11 +9,13 @@ Baleen is fluent Kotlin DSL for validating data (JSON, XML, CSV, Avro)
 - [Validating JSON](./baleen-json-jackson)
 - [Validating CSV](./baleen-csv)
 - [Validating XML](./baleen-xml)
-- [Generate JSON Schema from Baleen data definition](./baleen-jsonschema-generator)
-- [Generate Avro Schema from Baleen data definition](./baleen-avro-generator)
-- [Generate XSD Schema from Baleen data definition](./baleen-xsd-generator)
+- [Generate JSON Schema from Baleen data description](./baleen-jsonschema-generator)
+- [Generate Avro Schema from Baleen data description](./baleen-avro-generator)
+- [Generate XSD Schema from Baleen data description](./baleen-xsd-generator)
 - [Generate Kotlin data classes from Baleen schema](./baleen-poet)
-- [Generate Baleen data definition from JSON Schema](./jsonschema-baleen-generator)
+- [Generate Baleen data description from Kotlin data class](./baleen-kotlin)
+- [Generate Baleen data description from JSON Schema](./jsonschema-baleen-generator)
+- [Generate Baleen data description from AVRO Schema](./baleen-avro-generator)
 
 ## Example Baleen Data Description
 

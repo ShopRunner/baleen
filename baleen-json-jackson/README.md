@@ -4,7 +4,6 @@
 
 ### Gradle
 ```kotlin
-implementation "com.shoprunner:baleen:$baleen_version"
 implementation "com.shoprunner:baleen-json-jackson:$baleen_version"
 ```
 
