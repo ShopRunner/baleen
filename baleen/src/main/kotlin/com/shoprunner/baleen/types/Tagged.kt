@@ -32,19 +32,29 @@ typealias Tagger = (Any?) -> String
 /**
  * Constant tagger always returns the tag value passed in
  */
-fun withConstantValue(value: String): Tagger = { value }
+fun withConstantValue(value: String): Tagger = WithConstantValue(value)
+
+class WithConstantValue(val value: String) : Tagger {
+    override fun invoke(data: Any?): String = value
+}
 
 /**
  * Value tagger always returns the value of the data passed in
  */
-fun withValue(): Tagger = { it?.toString() ?: "null" }
+fun withValue(): Tagger = WithValue()
+
+class WithValue() : Tagger {
+    override fun invoke(data: Any?): String = data?.toString() ?: "null"
+}
 
 /**
  * Dynamic tagger returns the value set for
  */
-fun withAttributeValue(attrName: String): Tagger = {
-    when {
-        it is Data && it.containsKey(attrName) -> it[attrName]?.toString() ?: "null"
+fun withAttributeValue(attrName: String): Tagger = WithAttributeValue(attrName)
+
+class WithAttributeValue(val attrName: String) : Tagger {
+    override fun invoke(data: Any?): String = when {
+        data is Data && data.containsKey(attrName) -> data[attrName]?.toString() ?: "null"
         else -> "attr_not_found"
     }
 }
