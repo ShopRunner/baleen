@@ -2,6 +2,14 @@
 
 Given a Baleen description, generate a Json Schema.
 
+
+### Gradle
+```kotlin
+implementation "com.shoprunner:baleen-jsonschema-generator:$baleen_version"
+```
+
+## Example
+
 ```kotlin
 val Dog = Baleen.describe("Dog", "com.shoprunner.data.dogs", "It's a dog. Ruff Ruff!") {
     it.attr(
