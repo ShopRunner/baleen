@@ -16,16 +16,24 @@ class EnumType(val enumName: String, val enum: List<String>) : BaleenType {
     override fun name() = "enum"
 
     override fun validate(dataTrace: DataTrace, value: Any?): Sequence<ValidationResult> =
-            when {
-                value == null -> sequenceOf(ValidationError(dataTrace, "is null", value))
-                value is String && !enum.contains(value) ->
-                    sequenceOf(ValidationError(dataTrace,
-                            "is not contained in enum $enumName [$enumStr]",
-                            value))
-                value is Enum<*> && !enum.contains(value.name) ->
-                    sequenceOf(ValidationError(dataTrace,
-                            "is not contained in enum $enumName [$enumStr]",
-                            value))
-                else -> emptySequence()
-            }
+        when {
+            value == null -> sequenceOf(ValidationError(dataTrace, "is null", value))
+            value is String && !enum.contains(value) ->
+                sequenceOf(
+                    ValidationError(
+                        dataTrace,
+                        "is not contained in enum $enumName [$enumStr]",
+                        value
+                    )
+                )
+            value is Enum<*> && !enum.contains(value.name) ->
+                sequenceOf(
+                    ValidationError(
+                        dataTrace,
+                        "is not contained in enum $enumName [$enumStr]",
+                        value
+                    )
+                )
+            else -> emptySequence()
+        }
 }

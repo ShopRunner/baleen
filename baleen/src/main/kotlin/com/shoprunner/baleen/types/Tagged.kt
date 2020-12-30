@@ -32,19 +32,29 @@ typealias Tagger = (Any?) -> String
 /**
  * Constant tagger always returns the tag value passed in
  */
-fun withConstantValue(value: String): Tagger = { value }
+fun withConstantValue(value: String): Tagger = WithConstantValue(value)
+
+class WithConstantValue(val value: String) : Tagger {
+    override fun invoke(data: Any?): String = value
+}
 
 /**
  * Value tagger always returns the value of the data passed in
  */
-fun withValue(): Tagger = { it?.toString() ?: "null" }
+fun withValue(): Tagger = WithValue()
+
+class WithValue() : Tagger {
+    override fun invoke(data: Any?): String = data?.toString() ?: "null"
+}
 
 /**
  * Dynamic tagger returns the value set for
  */
-fun withAttributeValue(attrName: String): Tagger = {
-    when {
-        it is Data && it.containsKey(attrName) -> it[attrName]?.toString() ?: "null"
+fun withAttributeValue(attrName: String): Tagger = WithAttributeValue(attrName)
+
+class WithAttributeValue(val attrName: String) : Tagger {
+    override fun invoke(data: Any?): String = when {
+        data is Data && data.containsKey(attrName) -> data[attrName]?.toString() ?: "null"
         else -> "attr_not_found"
     }
 }
@@ -53,21 +63,21 @@ fun withAttributeValue(attrName: String): Tagger = {
  * Tags a BaleenType with a tag and value that will appear on the DataTrace on the results.
  */
 fun BaleenType.tag(tag: String, value: String): Tagged =
-        Tagged(this, tag to withConstantValue(value))
+    Tagged(this, tag to withConstantValue(value))
 
 /**
  * Tags a BaleenType with a tag and Tagger function that will evaluate on the input data and appear on the DataTrace on
  * the results.
  */
 fun BaleenType.tag(tag: String, tagger: Tagger): Tagged =
-        Tagged(this, tag to tagger)
+    Tagged(this, tag to tagger)
 
 /**
  * Tags a BaleenType with a tags and Tagger functions that will evaluate on the input data and appear on the DataTrace on
  * the results.
  */
 fun BaleenType.tag(vararg tags: Pair<String, Tagger>): Tagged =
-        Tagged(this, *tags)
+    Tagged(this, *tags)
 
 /**
  * Tags a BaleenType with a map of tags to Tagger functions that will evaluate on the input data and appear on the DataTrace on

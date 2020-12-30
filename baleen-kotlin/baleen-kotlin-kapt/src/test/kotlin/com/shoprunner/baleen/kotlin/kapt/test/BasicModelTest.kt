@@ -13,10 +13,10 @@ import com.shoprunner.baleen.types.IntegerType
 import com.shoprunner.baleen.types.LongType
 import com.shoprunner.baleen.types.NumericType
 import com.shoprunner.baleen.types.StringType
-import java.time.Instant
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import java.time.Instant
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class BasicModelTest {

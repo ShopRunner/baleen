@@ -81,10 +81,12 @@ internal class TaggedTest {
 
     @Test
     fun `test Tagged adds multiple tags in a map to BaleenType`() {
-        val type = StringType(min = 2).tag(mapOf(
-            "staticTag" to withConstantValue("value"),
-            "dynamicTag" to withValue()
-        ))
+        val type = StringType(min = 2).tag(
+            mapOf(
+                "staticTag" to withConstantValue("value"),
+                "dynamicTag" to withValue()
+            )
+        )
 
         assertThat(type.validate(dataTrace(), "a")).containsExactly(
             ValidationError(
@@ -155,10 +157,12 @@ internal class TaggedTest {
             return sequenceOf(ValidationInfo(dataTrace, "Validator was called", null))
         }
 
-        val taggedValidator = ::customValidator.tag(mapOf(
-            "staticTag" to withConstantValue("value"),
-            "dynamicTag" to withAttributeValue("key")
-        ))
+        val taggedValidator = ::customValidator.tag(
+            mapOf(
+                "staticTag" to withConstantValue("value"),
+                "dynamicTag" to withAttributeValue("key")
+            )
+        )
 
         assertThat(taggedValidator(dataTrace(), dataOf("key" to "attrValue"))).containsExactly(
             ValidationInfo(

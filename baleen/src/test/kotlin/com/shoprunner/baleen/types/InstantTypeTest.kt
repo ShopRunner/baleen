@@ -3,9 +3,9 @@ package com.shoprunner.baleen.types
 import com.shoprunner.baleen.SequenceAssert.Companion.assertThat
 import com.shoprunner.baleen.ValidationError
 import com.shoprunner.baleen.dataTrace
-import java.time.Instant
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import java.time.Instant
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class InstantTypeTest {

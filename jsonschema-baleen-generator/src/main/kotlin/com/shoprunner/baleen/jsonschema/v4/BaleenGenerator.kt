@@ -72,25 +72,27 @@ object BaleenGenerator {
         val attrsCodeBlock = schema.properties.map { (k, v) ->
             processField(k, v, schema.required?.contains(k) ?: false)
         }
-                .fold(CodeBlock.builder(), { b, c -> b.add(c).add("\n") })
-                .build()
+            .fold(CodeBlock.builder(), { b, c -> b.add(c).add("\n") })
+            .build()
 
         val modelCodeBlock = CodeBlock.builder()
-                .beginControlFlow("%L(%S, %S, %S)",
-                        Baleen::describe.name,
-                        name,
-                        namespace,
-                        schema.description ?: "")
-                .add(attrsCodeBlock)
-                .add("\n")
-                .endControlFlow()
-                .build()
+            .beginControlFlow(
+                "%L(%S, %S, %S)",
+                Baleen::describe.name,
+                name,
+                namespace,
+                schema.description ?: ""
+            )
+            .add(attrsCodeBlock)
+            .add("\n")
+            .endControlFlow()
+            .build()
 
         return PropertySpec.builder(name, DataDescription::class)
-                .addKdoc(schema.description ?: "")
-                .addModifiers(KModifier.PUBLIC)
-                .initializer(modelCodeBlock)
-                .build()
+            .addKdoc(schema.description ?: "")
+            .addModifiers(KModifier.PUBLIC)
+            .initializer(modelCodeBlock)
+            .build()
     }
 
     fun processField(fieldName: String, schema: JsonSchema, isRequired: Boolean): CodeBlock {
@@ -140,10 +142,10 @@ object BaleenGenerator {
             is AnyOf -> toUnionType(schema.anyOf)
             is ArraySchema ->
                 CodeBlock.builder()
-                        .add("%T(", OccurrencesType::class)
-                        .add(jsonSchemaToBaleenType(schema.items))
-                        .add(")")
-                        .build()
+                    .add("%T(", OccurrencesType::class)
+                    .add(jsonSchemaToBaleenType(schema.items))
+                    .add(")")
+                    .build()
             is BooleanSchema -> CodeBlock.of("%T()", BooleanType::class)
             is IntegerSchema -> {
                 CodeBlock.builder().apply {
@@ -162,10 +164,10 @@ object BaleenGenerator {
             }
             is MapSchema -> {
                 CodeBlock.builder()
-                        .add("%T(%T(), ", MapType::class, StringType::class)
-                        .add(jsonSchemaToBaleenType(schema.additionalProperties))
-                        .add(")")
-                        .build()
+                    .add("%T(%T(), ", MapType::class, StringType::class)
+                    .add(jsonSchemaToBaleenType(schema.additionalProperties))
+                    .add(")")
+                    .build()
             }
             is NumberSchema -> {
                 CodeBlock.builder().apply {
@@ -195,10 +197,10 @@ object BaleenGenerator {
                     if (schema.enum!!.size > 1) {
                         val enumName = "Enum${schema.enum!!.map { it.capitalize().first() }.joinToString("")}"
                         CodeBlock.builder()
-                                .add(CodeBlock.of("%T(%S, listOf(", EnumType::class, enumName))
-                                .add(schema.enum!!.map { CodeBlock.of("%S", it) }.reduceRight { a, b -> a.toBuilder().add(", ").add(b).build() })
-                                .add(CodeBlock.of("))"))
-                                .build()
+                            .add(CodeBlock.of("%T(%S, listOf(", EnumType::class, enumName))
+                            .add(schema.enum!!.map { CodeBlock.of("%S", it) }.reduceRight { a, b -> a.toBuilder().add(", ").add(b).build() })
+                            .add(CodeBlock.of("))"))
+                            .build()
                     } else if (schema.enum!!.size == 1) {
                         CodeBlock.of("%T(%S)", StringConstantType::class, schema.enum!!.first())
                     } else {
@@ -212,8 +214,11 @@ object BaleenGenerator {
                 } else if ((schema.minLength == null || schema.minLength == 0) && (schema.maxLength == null || schema.maxLength == Int.MAX_VALUE)) {
                     CodeBlock.of("%T()", StringType::class)
                 } else {
-                    CodeBlock.of("%T(${schema.minLength ?: 0}, ${schema.maxLength
-                            ?: Int.MAX_VALUE})", StringType::class)
+                    CodeBlock.of(
+                        "%T(${schema.minLength ?: 0}, ${schema.maxLength
+                            ?: Int.MAX_VALUE})",
+                        StringType::class
+                    )
                 }
             }
             else -> throw IllegalArgumentException("json type ${schema::class.simpleName} not supported")
@@ -224,10 +229,10 @@ object BaleenGenerator {
         val unionedTypes = schemas.filterNot { it is NullSchema }.map { jsonSchemaToBaleenType(it) }
         val baleenTypeCode = if (unionedTypes.size > 1) {
             CodeBlock.builder()
-                    .add("%T(", UnionType::class)
-                    .add(schemas.map { jsonSchemaToBaleenType(it) }.reduceRight { a, b -> a.toBuilder().add(", ").add(b).build() })
-                    .add(")")
-                    .build()
+                .add("%T(", UnionType::class)
+                .add(schemas.map { jsonSchemaToBaleenType(it) }.reduceRight { a, b -> a.toBuilder().add(", ").add(b).build() })
+                .add(")")
+                .build()
         } else {
             unionedTypes.first()
         }
@@ -235,10 +240,10 @@ object BaleenGenerator {
         val isNullable = schemas.any { it is NullSchema }
         return if (isNullable) {
             CodeBlock.builder()
-                    .add("%T(", AllowsNull::class)
-                    .add(baleenTypeCode)
-                    .add(")")
-                    .build()
+                .add("%T(", AllowsNull::class)
+                .add(baleenTypeCode)
+                .add(")")
+                .build()
         } else {
             baleenTypeCode
         }
@@ -246,9 +251,9 @@ object BaleenGenerator {
 
     fun encode(namespace: String, name: String, schema: ObjectSchema): FileSpec {
         return FileSpec.builder(namespace, name)
-                .addImport(Baleen::class, Baleen::describe.name)
-                .addProperty(processSchema(namespace, name, schema))
-                .build()
+            .addImport(Baleen::class, Baleen::describe.name)
+            .addProperty(processSchema(namespace, name, schema))
+            .build()
     }
 
     fun encode(schema: RootJsonSchema): List<FileSpec> {
@@ -260,9 +265,10 @@ object BaleenGenerator {
         } else if (schema.type == JsonType.`object`) {
             val (namespace, name) = getNamespaceAndName(schema)
             val objectSchema = ObjectSchema(
-                    schema.required,
-                    schema.additionalProperties,
-                    schema.properties ?: emptyMap())
+                schema.required,
+                schema.additionalProperties,
+                schema.properties ?: emptyMap()
+            )
             listOf(encode(namespace, name, objectSchema))
         } else {
             emptyList()

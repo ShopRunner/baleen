@@ -10,11 +10,11 @@ import com.shoprunner.baleen.types.MapType
 import com.shoprunner.baleen.types.OccurrencesType
 import com.shoprunner.baleen.types.StringCoercibleToType
 import com.shoprunner.baleen.types.StringType
-import java.io.StringWriter
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.assertThrows
+import java.io.StringWriter
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class DataClassGeneratorForNestedModelsTest {
@@ -25,7 +25,7 @@ internal class DataClassGeneratorForNestedModelsTest {
             nameSpace = "com.shoprunner.baleen.kotlin.test",
             markdownDescription = "Test Child"
         ) {
-            "field".type(
+            "field1".type(
                 type = StringType(),
                 markdownDescription = "Test field"
             )
@@ -40,18 +40,18 @@ internal class DataClassGeneratorForNestedModelsTest {
         val expectedChildClassStr = """
             package com.shoprunner.baleen.kotlin.test
 
-            import com.shoprunner.baleen.annotation.DataDescription
+            import com.shoprunner.baleen.`annotation`.DataDescription
             import kotlin.String
             
             /**
              * Test Child
              */
             @DataDescription
-            data class Child(
+            public data class Child(
               /**
                * Test field
                */
-              val field: String
+              public val field1: String
             )
 
         """.trimIndent()
@@ -59,14 +59,14 @@ internal class DataClassGeneratorForNestedModelsTest {
         val expectedParentClassStr = """
             package com.shoprunner.baleen.kotlin.test
 
-            import com.shoprunner.baleen.annotation.DataDescription
+            import com.shoprunner.baleen.`annotation`.DataDescription
             
             /**
              * Test Parent
              */
             @DataDescription
-            data class Parent(
-              val child: Child
+            public data class Parent(
+              public val child: Child
             )
 
         """.trimIndent()
@@ -92,7 +92,7 @@ internal class DataClassGeneratorForNestedModelsTest {
             nameSpace = "com.shoprunner.baleen.kotlin.test",
             markdownDescription = "Test Child"
         ) {
-            "field".type(
+            "field1".type(
                 type = AllowsNull(StringType()),
                 markdownDescription = "Test field"
             )
@@ -107,18 +107,18 @@ internal class DataClassGeneratorForNestedModelsTest {
         val expectedChildClassStr = """
             package com.shoprunner.baleen.kotlin.test
 
-            import com.shoprunner.baleen.annotation.DataDescription
+            import com.shoprunner.baleen.`annotation`.DataDescription
             import kotlin.String
             
             /**
              * Test Child
              */
             @DataDescription
-            data class Child(
+            public data class Child(
               /**
                * Test field
                */
-              val field: String?
+              public val field1: String?
             )
 
         """.trimIndent()
@@ -126,14 +126,14 @@ internal class DataClassGeneratorForNestedModelsTest {
         val expectedParentClassStr = """
             package com.shoprunner.baleen.kotlin.test
 
-            import com.shoprunner.baleen.annotation.DataDescription
+            import com.shoprunner.baleen.`annotation`.DataDescription
             
             /**
              * Test Parent
              */
             @DataDescription
-            data class Parent(
-              val child: Child?
+            public data class Parent(
+              public val child: Child?
             )
 
         """.trimIndent()
@@ -159,7 +159,7 @@ internal class DataClassGeneratorForNestedModelsTest {
             nameSpace = "com.shoprunner.baleen.kotlin.test",
             markdownDescription = "Test Child"
         ) {
-            "field".type(
+            "field1".type(
                 type = StringType(),
                 markdownDescription = "Test field"
             )
@@ -174,18 +174,18 @@ internal class DataClassGeneratorForNestedModelsTest {
         val expectedChildClassStr = """
             package com.shoprunner.baleen.kotlin.test
 
-            import com.shoprunner.baleen.annotation.DataDescription
+            import com.shoprunner.baleen.`annotation`.DataDescription
             import kotlin.String
             
             /**
              * Test Child
              */
             @DataDescription
-            data class Child(
+            public data class Child(
               /**
                * Test field
                */
-              val field: String
+              public val field1: String
             )
 
         """.trimIndent()
@@ -193,15 +193,15 @@ internal class DataClassGeneratorForNestedModelsTest {
         val expectedParentClassStr = """
             package com.shoprunner.baleen.kotlin.test
 
-            import com.shoprunner.baleen.annotation.DataDescription
+            import com.shoprunner.baleen.`annotation`.DataDescription
             import kotlin.collections.List
             
             /**
              * Test Parent
              */
             @DataDescription
-            data class Parent(
-              val child: List<Child>
+            public data class Parent(
+              public val child: List<Child>
             )
 
         """.trimIndent()
@@ -227,7 +227,7 @@ internal class DataClassGeneratorForNestedModelsTest {
             nameSpace = "com.shoprunner.baleen.kotlin.test",
             markdownDescription = "Test Child"
         ) {
-            "field".type(
+            "field1".type(
                 type = StringType(),
                 markdownDescription = "Test field"
             )
@@ -242,18 +242,18 @@ internal class DataClassGeneratorForNestedModelsTest {
         val expectedChildClassStr = """
             package com.shoprunner.baleen.kotlin.test
 
-            import com.shoprunner.baleen.annotation.DataDescription
+            import com.shoprunner.baleen.`annotation`.DataDescription
             import kotlin.String
             
             /**
              * Test Child
              */
             @DataDescription
-            data class Child(
+            public data class Child(
               /**
                * Test field
                */
-              val field: String
+              public val field1: String
             )
 
         """.trimIndent()
@@ -261,7 +261,7 @@ internal class DataClassGeneratorForNestedModelsTest {
         val expectedParentClassStr = """
             package com.shoprunner.baleen.kotlin.test
 
-            import com.shoprunner.baleen.annotation.DataDescription
+            import com.shoprunner.baleen.`annotation`.DataDescription
             import kotlin.String
             import kotlin.collections.Map
             
@@ -269,8 +269,8 @@ internal class DataClassGeneratorForNestedModelsTest {
              * Test Parent
              */
             @DataDescription
-            data class Parent(
-              val child: Map<String, Child>
+            public data class Parent(
+              public val child: Map<String, Child>
             )
 
         """.trimIndent()
@@ -296,7 +296,7 @@ internal class DataClassGeneratorForNestedModelsTest {
             nameSpace = "com.shoprunner.baleen.kotlin.test",
             markdownDescription = "Test Child"
         ) {
-            "field".type(
+            "field1".type(
                 type = StringType(),
                 markdownDescription = "Test field"
             )
@@ -311,18 +311,18 @@ internal class DataClassGeneratorForNestedModelsTest {
         val expectedChildClassStr = """
             package com.shoprunner.baleen.kotlin.test
 
-            import com.shoprunner.baleen.annotation.DataDescription
+            import com.shoprunner.baleen.`annotation`.DataDescription
             import kotlin.String
             
             /**
              * Test Child
              */
             @DataDescription
-            data class Child(
+            public data class Child(
               /**
                * Test field
                */
-              val field: String
+              public val field1: String
             )
 
         """.trimIndent()
@@ -330,7 +330,7 @@ internal class DataClassGeneratorForNestedModelsTest {
         val expectedParentClassStr = """
             package com.shoprunner.baleen.kotlin.test
 
-            import com.shoprunner.baleen.annotation.DataDescription
+            import com.shoprunner.baleen.`annotation`.DataDescription
             import kotlin.String
             import kotlin.collections.Map
             
@@ -338,8 +338,8 @@ internal class DataClassGeneratorForNestedModelsTest {
              * Test Parent
              */
             @DataDescription
-            data class Parent(
-              val child: Map<Child, String>
+            public data class Parent(
+              public val child: Map<Child, String>
             )
 
         """.trimIndent()
@@ -365,7 +365,7 @@ internal class DataClassGeneratorForNestedModelsTest {
             nameSpace = "com.shoprunner.baleen.kotlin.test",
             markdownDescription = "Test Child"
         ) {
-            "field".type(
+            "field1".type(
                 type = StringType(),
                 markdownDescription = "Test field"
             )
@@ -380,18 +380,18 @@ internal class DataClassGeneratorForNestedModelsTest {
         val expectedChildClassStr = """
             package com.shoprunner.baleen.kotlin.test
 
-            import com.shoprunner.baleen.annotation.DataDescription
+            import com.shoprunner.baleen.`annotation`.DataDescription
             import kotlin.String
             
             /**
              * Test Child
              */
             @DataDescription
-            data class Child(
+            public data class Child(
               /**
                * Test field
                */
-              val field: String
+              public val field1: String
             )
 
         """.trimIndent()
@@ -399,14 +399,14 @@ internal class DataClassGeneratorForNestedModelsTest {
         val expectedParentClassStr = """
             package com.shoprunner.baleen.kotlin.test
 
-            import com.shoprunner.baleen.annotation.DataDescription
+            import com.shoprunner.baleen.`annotation`.DataDescription
             
             /**
              * Test Parent
              */
             @DataDescription
-            data class Parent(
-              val child: Child
+            public data class Parent(
+              public val child: Child
             )
 
         """.trimIndent()
@@ -432,7 +432,7 @@ internal class DataClassGeneratorForNestedModelsTest {
             nameSpace = "com.shoprunner.baleen.kotlin.test",
             markdownDescription = "Test Child"
         ) {
-            "field".type(
+            "field1".type(
                 type = StringType(),
                 markdownDescription = "Test field"
             )
@@ -447,15 +447,15 @@ internal class DataClassGeneratorForNestedModelsTest {
         val expectedParentClassStr = """
             package com.shoprunner.baleen.kotlin.test
 
-            import com.shoprunner.baleen.annotation.DataDescription
+            import com.shoprunner.baleen.`annotation`.DataDescription
             import kotlin.String
             
             /**
              * Test Parent
              */
             @DataDescription
-            data class Parent(
-              val child: String
+            public data class Parent(
+              public val child: String
             )
 
         """.trimIndent()
@@ -499,19 +499,19 @@ internal class DataClassGeneratorForNestedModelsTest {
             nameSpace = "com.shoprunner.baleen.kotlin.test",
             markdownDescription = "Test Recursively nested"
         )
-        model.attr("field", model)
+        model.attr("field1", model)
 
         val expectedClassStr = """
             package com.shoprunner.baleen.kotlin.test
 
-            import com.shoprunner.baleen.annotation.DataDescription
+            import com.shoprunner.baleen.`annotation`.DataDescription
             
             /**
              * Test Recursively nested
              */
             @DataDescription
-            data class Recursive(
-              val field: Recursive
+            public data class Recursive(
+              public val field1: Recursive
             )
 
         """.trimIndent()
@@ -542,11 +542,11 @@ internal class DataClassGeneratorForNestedModelsTest {
         val expectedChildClassStr = """
             package com.shoprunner.baleen.kotlin.test
 
-            import com.shoprunner.baleen.annotation.DataDescription
+            import com.shoprunner.baleen.`annotation`.DataDescription
 
             @DataDescription
-            data class RecursiveChild(
-              val parent: RecursiveParent
+            public data class RecursiveChild(
+              public val parent: RecursiveParent
             )
 
         """.trimIndent()
@@ -554,11 +554,11 @@ internal class DataClassGeneratorForNestedModelsTest {
         val expectedParentClassStr = """
             package com.shoprunner.baleen.kotlin.test
 
-            import com.shoprunner.baleen.annotation.DataDescription
+            import com.shoprunner.baleen.`annotation`.DataDescription
 
             @DataDescription
-            data class RecursiveParent(
-              val child: RecursiveChild
+            public data class RecursiveParent(
+              public val child: RecursiveChild
             )
 
         """.trimIndent()
@@ -584,7 +584,7 @@ internal class DataClassGeneratorForNestedModelsTest {
             nameSpace = "com.shoprunner.baleen.kotlin.test",
             markdownDescription = "Test Child"
         ) {
-            "field".type(
+            "field1".type(
                 type = StringType(),
                 markdownDescription = "Test field"
             )
@@ -599,15 +599,15 @@ internal class DataClassGeneratorForNestedModelsTest {
         val expectedParentClassStr = """
             package com.shoprunner.baleen.kotlin.test
 
-            import com.shoprunner.baleen.annotation.DataDescription
+            import com.shoprunner.baleen.`annotation`.DataDescription
             import kotlin.String
             
             /**
              * Test Parent
              */
             @DataDescription
-            data class Parent(
-              val child: String
+            public data class Parent(
+              public val child: String
             )
 
         """.trimIndent()
@@ -632,7 +632,7 @@ internal class DataClassGeneratorForNestedModelsTest {
             nameSpace = "com.shoprunner.baleen.kotlin.test",
             markdownDescription = "Test Child"
         ) {
-            "field".type(
+            "field1".type(
                 type = StringType(),
                 markdownDescription = "Test field",
                 default = "Hello"
@@ -648,18 +648,18 @@ internal class DataClassGeneratorForNestedModelsTest {
         val expectedChildClassStr = """
             package com.shoprunner.baleen.kotlin.test
 
-            import com.shoprunner.baleen.annotation.DataDescription
+            import com.shoprunner.baleen.`annotation`.DataDescription
             import kotlin.String
             
             /**
              * Test Child
              */
             @DataDescription
-            data class Child(
+            public data class Child(
               /**
                * Test field
                */
-              val field: String = "Hello"
+              public val field1: String = "Hello"
             )
 
         """.trimIndent()
@@ -667,14 +667,14 @@ internal class DataClassGeneratorForNestedModelsTest {
         val expectedParentClassStr = """
             package com.shoprunner.baleen.kotlin.test
 
-            import com.shoprunner.baleen.annotation.DataDescription
+            import com.shoprunner.baleen.`annotation`.DataDescription
             
             /**
              * Test Parent
              */
             @DataDescription
-            data class Parent(
-              val child: Child = "hmmm this works but won't compile"
+            public data class Parent(
+              public val child: Child = "hmmm this works but won't compile"
             )
 
         """.trimIndent()
@@ -700,7 +700,7 @@ internal class DataClassGeneratorForNestedModelsTest {
             nameSpace = "com.shoprunner.baleen.kotlin.test",
             markdownDescription = "Test Child"
         ) {
-            "field".type(
+            "field1".type(
                 type = AllowsNull(StringType()),
                 markdownDescription = "Test field",
                 default = null
@@ -716,18 +716,18 @@ internal class DataClassGeneratorForNestedModelsTest {
         val expectedChildClassStr = """
             package com.shoprunner.baleen.kotlin.test
 
-            import com.shoprunner.baleen.annotation.DataDescription
+            import com.shoprunner.baleen.`annotation`.DataDescription
             import kotlin.String
             
             /**
              * Test Child
              */
             @DataDescription
-            data class Child(
+            public data class Child(
               /**
                * Test field
                */
-              val field: String? = null
+              public val field1: String? = null
             )
 
         """.trimIndent()
@@ -735,14 +735,14 @@ internal class DataClassGeneratorForNestedModelsTest {
         val expectedParentClassStr = """
             package com.shoprunner.baleen.kotlin.test
 
-            import com.shoprunner.baleen.annotation.DataDescription
+            import com.shoprunner.baleen.`annotation`.DataDescription
             
             /**
              * Test Parent
              */
             @DataDescription
-            data class Parent(
-              val child: Child? = null
+            public data class Parent(
+              public val child: Child? = null
             )
 
         """.trimIndent()

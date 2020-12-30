@@ -12,5 +12,6 @@ include 'baleen-kotlin:baleen-kotlin-api'
 include 'baleen-kotlin:baleen-kotlin-kapt'
 include 'baleen-kotlin:baleen-kotlin-generator'
 include 'baleen-kotlin:example'
+include 'baleen-poet'
 
 rootProject.name = 'baleen'

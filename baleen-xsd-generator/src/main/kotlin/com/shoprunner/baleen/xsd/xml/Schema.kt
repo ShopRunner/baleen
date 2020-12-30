@@ -1,7 +1,7 @@
 package com.shoprunner.baleen.xsd.xml
 
-import javax.xml.bind.annotation.XmlElement
-import javax.xml.bind.annotation.XmlRootElement
+import jakarta.xml.bind.annotation.XmlElement
+import jakarta.xml.bind.annotation.XmlRootElement
 
 @XmlRootElement(name = "schema", namespace = "http://www.w3.org/2001/XMLSchema")
 data class Schema(

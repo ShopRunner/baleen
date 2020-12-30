@@ -27,6 +27,12 @@ class AttributeDescription(
             }
         }
 
+    val allTags: Map<String, Tagger>
+        get() = tags.toMap()
+
+    val isWarning: Boolean
+        get() = warn
+
     fun test(validator: Validator): AttributeDescription {
         // TODO change context
         tests.add(validator)

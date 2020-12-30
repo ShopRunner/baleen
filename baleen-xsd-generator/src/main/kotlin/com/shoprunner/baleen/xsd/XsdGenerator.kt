@@ -32,9 +32,9 @@ import com.shoprunner.baleen.xsd.xml.Restriction
 import com.shoprunner.baleen.xsd.xml.Schema
 import com.shoprunner.baleen.xsd.xml.Sequence
 import com.shoprunner.baleen.xsd.xml.SimpleType
+import jakarta.xml.bind.JAXBContext
+import jakarta.xml.bind.Marshaller
 import java.io.PrintStream
-import javax.xml.bind.JAXBContext
-import javax.xml.bind.Marshaller
 
 object XsdGenerator : BaseGenerator<TypeDetails, XsdOptions> {
 
@@ -53,76 +53,101 @@ object XsdGenerator : BaseGenerator<TypeDetails, XsdOptions> {
             is BooleanType -> TypeDetails("xs:boolean")
             is CoercibleType<*, *> -> typeMapper(baleenType.toSubType(options.coercibleHandlerOption), options)
             is DataDescription -> TypeDetails(baleenType.name)
-            is DoubleType -> TypeDetails(simpleType = SimpleType(
-                Restriction(
-                    base = "xs:double",
-                    maxInclusive = if (baleenType.max.isFinite()) MaxInclusive(baleenType.max.toBigDecimal()) else null,
-                    minInclusive = if (baleenType.min.isFinite()) MinInclusive(baleenType.min.toBigDecimal()) else null)
-            ))
-            is EnumType -> TypeDetails(simpleType = SimpleType(
-                Restriction(
-                    base = "xs:string",
-                    enumeration = baleenType.enum.map { Enumeration(it) })
-            ))
-            is FloatType -> TypeDetails(simpleType = SimpleType(
-                                Restriction(
-                                    base = "xs:float",
-                                    maxInclusive = if (baleenType.max.isFinite()) MaxInclusive(baleenType.max.toBigDecimal()) else null,
-                                    minInclusive = if (baleenType.min.isFinite()) MinInclusive(baleenType.min.toBigDecimal()) else null)
-                            ))
+            is DoubleType -> TypeDetails(
+                simpleType = SimpleType(
+                    Restriction(
+                        base = "xs:double",
+                        maxInclusive = if (baleenType.max.isFinite()) MaxInclusive(baleenType.max.toBigDecimal()) else null,
+                        minInclusive = if (baleenType.min.isFinite()) MinInclusive(baleenType.min.toBigDecimal()) else null
+                    )
+                )
+            )
+            is EnumType -> TypeDetails(
+                simpleType = SimpleType(
+                    Restriction(
+                        base = "xs:string",
+                        enumeration = baleenType.enum.map { Enumeration(it) }
+                    )
+                )
+            )
+            is FloatType -> TypeDetails(
+                simpleType = SimpleType(
+                    Restriction(
+                        base = "xs:float",
+                        maxInclusive = if (baleenType.max.isFinite()) MaxInclusive(baleenType.max.toBigDecimal()) else null,
+                        minInclusive = if (baleenType.min.isFinite()) MinInclusive(baleenType.min.toBigDecimal()) else null
+                    )
+                )
+            )
             is InstantType -> TypeDetails("xs:dateTime")
-            is IntType -> TypeDetails(simpleType = SimpleType(
-                Restriction(
-                    base = "xs:int",
-                    maxInclusive = MaxInclusive(baleenType.max.toBigDecimal()),
-                    minInclusive = MinInclusive(baleenType.min.toBigDecimal()))
-            ))
-            is IntegerType -> TypeDetails(simpleType = SimpleType(
-                Restriction(
-                    base = "xs:int",
-                    maxInclusive = baleenType.max?.let { MaxInclusive(it.toBigDecimal()) },
-                    minInclusive = baleenType.min?.let { MinInclusive(it.toBigDecimal()) })
-            ))
-            is LongType -> TypeDetails(simpleType = SimpleType(
-                                Restriction(
-                                    base = "xs:long",
-                                    maxInclusive = MaxInclusive(baleenType.max.toBigDecimal()),
-                                    minInclusive = MinInclusive(baleenType.min.toBigDecimal()))
-                            ))
-            is NumericType -> TypeDetails(simpleType = SimpleType(
-                Restriction(
-                    base = "xs:double",
-                    maxInclusive = baleenType.max?.let { MaxInclusive(it) },
-                    minInclusive = baleenType.min?.let { MinInclusive(it) })
-            ))
+            is IntType -> TypeDetails(
+                simpleType = SimpleType(
+                    Restriction(
+                        base = "xs:int",
+                        maxInclusive = MaxInclusive(baleenType.max.toBigDecimal()),
+                        minInclusive = MinInclusive(baleenType.min.toBigDecimal())
+                    )
+                )
+            )
+            is IntegerType -> TypeDetails(
+                simpleType = SimpleType(
+                    Restriction(
+                        base = "xs:int",
+                        maxInclusive = baleenType.max?.let { MaxInclusive(it.toBigDecimal()) },
+                        minInclusive = baleenType.min?.let { MinInclusive(it.toBigDecimal()) }
+                    )
+                )
+            )
+            is LongType -> TypeDetails(
+                simpleType = SimpleType(
+                    Restriction(
+                        base = "xs:long",
+                        maxInclusive = MaxInclusive(baleenType.max.toBigDecimal()),
+                        minInclusive = MinInclusive(baleenType.min.toBigDecimal())
+                    )
+                )
+            )
+            is NumericType -> TypeDetails(
+                simpleType = SimpleType(
+                    Restriction(
+                        base = "xs:double",
+                        maxInclusive = baleenType.max?.let { MaxInclusive(it) },
+                        minInclusive = baleenType.min?.let { MinInclusive(it) }
+                    )
+                )
+            )
             is OccurrencesType -> typeMapper(baleenType.memberType, options).copy(maxOccurs = "unbounded")
             is StringType -> TypeDetails(
-                                simpleType = SimpleType(
-                                        Restriction(
-                                            base = "xs:string",
-                                            maxLength = MaxLength(baleenType.max),
-                                            minLength = MinLength(baleenType.min))
-                                        ))
+                simpleType = SimpleType(
+                    Restriction(
+                        base = "xs:string",
+                        maxLength = MaxLength(baleenType.max),
+                        minLength = MinLength(baleenType.min)
+                    )
+                )
+            )
             is TimestampMillisType -> TypeDetails("xs:dateTime")
             else -> throw Exception("No mapping is defined for ${baleenType.name()} to XSD")
         }
 
     private fun generateType(type: DataDescription, typeMapper: XsdTypeMapper) =
-            ComplexType(
-                name = type.name,
-                annotation = createDocumentationAnnotation(type.markdownDescription),
-                sequence = Sequence(type.attrs.map { generateElement(it, typeMapper) })
-            )
+        ComplexType(
+            name = type.name,
+            annotation = createDocumentationAnnotation(type.markdownDescription),
+            sequence = Sequence(type.attrs.map { generateElement(it, typeMapper) })
+        )
 
     private fun generateElement(attr: AttributeDescription, typeMapper: XsdTypeMapper): Element {
         val typeDetails = typeMapper(attr.type)
-        return Element(name = attr.name,
+        return Element(
+            name = attr.name,
             type = typeDetails.type,
             minOccurs = if (attr.required) null else 0,
             maxOccurs = typeDetails.maxOccurs,
             annotation = createDocumentationAnnotation(attr.markdownDescription),
             simpleType = typeDetails.simpleType,
-            default = if (attr.default != NoDefault) attr.default.toString() else null)
+            default = if (attr.default != NoDefault) attr.default.toString() else null
+        )
     }
 
     private fun createDocumentationAnnotation(doc: String) =
@@ -144,10 +169,14 @@ object XsdGenerator : BaseGenerator<TypeDetails, XsdOptions> {
 
         val schema = Schema(
             elements = listOf(
-                Element(name = this.name,
+                Element(
+                    name = this.name,
                     type = this.name,
-                    annotation = createDocumentationAnnotation(this.markdownDescription))),
-            complexTypes = complexTypes)
+                    annotation = createDocumentationAnnotation(this.markdownDescription)
+                )
+            ),
+            complexTypes = complexTypes
+        )
 
         jaxbMarshaller.marshal(schema, outputStream)
     }

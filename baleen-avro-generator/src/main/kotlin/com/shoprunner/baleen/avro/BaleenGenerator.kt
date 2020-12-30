@@ -31,31 +31,35 @@ object BaleenGenerator {
 
     fun processSchema(schema: Schema): TypeSpec {
         val attrsCodeBlock = schema.fields.map(::processField)
-                .fold(CodeBlock.builder(), { b, c -> b.add(c).add("\n") })
-                .build()
+            .fold(CodeBlock.builder(), { b, c -> b.add(c).add("\n") })
+            .build()
 
         val modelCodeBlock = CodeBlock.builder()
-                .beginControlFlow("%T.%L(%S, %S, %S)",
-                        Baleen::class,
-                        Baleen::describe.name,
-                        schema.name,
-                        schema.namespace,
-                        schema.doc)
-                .add("p ->\n")
-                .indent()
-                .add(attrsCodeBlock)
-                .add("\n")
-                .unindent()
-                .endControlFlow()
-                .build()
+            .beginControlFlow(
+                "%T.%L(%S, %S, %S)",
+                Baleen::class,
+                Baleen::describe.name,
+                schema.name,
+                schema.namespace,
+                schema.doc
+            )
+            .add("p ->\n")
+            .indent()
+            .add(attrsCodeBlock)
+            .add("\n")
+            .unindent()
+            .endControlFlow()
+            .build()
         return TypeSpec.objectBuilder(ClassName(schema.namespace, "${schema.name}Type"))
-                .addKdoc(schema.doc)
-                .addProperty(PropertySpec.builder("description", DataDescription::class)
-                        .addModifiers(KModifier.PUBLIC)
-                        .addAnnotation(JvmStatic::class)
-                        .initializer(modelCodeBlock)
-                        .build())
-                .build()
+            .addKdoc(schema.doc)
+            .addProperty(
+                PropertySpec.builder("description", DataDescription::class)
+                    .addModifiers(KModifier.PUBLIC)
+                    .addAnnotation(JvmStatic::class)
+                    .initializer(modelCodeBlock)
+                    .build()
+            )
+            .build()
     }
 
     fun processField(field: Schema.Field): CodeBlock {
@@ -69,7 +73,7 @@ object BaleenGenerator {
         )
          */
         val allowsNull = field.schema().type == Schema.Type.UNION &&
-                field.schema().types.any { it.type == Schema.Type.NULL }
+            field.schema().types.any { it.type == Schema.Type.NULL }
         val defaultNull = field.defaultVal() == JsonProperties.NULL_VALUE
         val isOptional = allowsNull && defaultNull
 
@@ -87,8 +91,10 @@ object BaleenGenerator {
             add("%L = %S,\n", DataDescription::attr.parameters[3].name, field.doc())
             // aliases
             if (field.aliases().isNotEmpty()) {
-                add("%L = %L,\n", DataDescription::attr.parameters[4].name,
-                        field.aliases().joinToString(", ", prefix = "arrayOf(\"", postfix = "\")"))
+                add(
+                    "%L = %L,\n", DataDescription::attr.parameters[4].name,
+                    field.aliases().joinToString(", ", prefix = "arrayOf(\"", postfix = "\")")
+                )
             }
             // required
             add("%L = %L", DataDescription::attr.parameters[5].name, !isOptional)
@@ -110,17 +116,17 @@ object BaleenGenerator {
         return when (schema.type) {
             Schema.Type.ARRAY -> {
                 CodeBlock.builder()
-                        .add("%T(", OccurrencesType::class)
-                        .add(avroTypeToBaleenType(schema.elementType))
-                        .add(")")
-                        .build()
+                    .add("%T(", OccurrencesType::class)
+                    .add(avroTypeToBaleenType(schema.elementType))
+                    .add(")")
+                    .build()
             }
             Schema.Type.MAP -> {
                 CodeBlock.builder()
-                        .add("%T(%T(), ", MapType::class, StringType::class)
-                        .add(avroTypeToBaleenType(schema.valueType))
-                        .add(")")
-                        .build()
+                    .add("%T(%T(), ", MapType::class, StringType::class)
+                    .add(avroTypeToBaleenType(schema.valueType))
+                    .add(")")
+                    .build()
             }
             Schema.Type.BOOLEAN -> CodeBlock.of("%T()", BooleanType::class)
             Schema.Type.STRING -> CodeBlock.of("%T()", StringType::class)
@@ -153,9 +159,9 @@ object BaleenGenerator {
                 if (schema.logicalType != null) {
                     when (schema.logicalType.name) {
                         "timestamp-millis" -> CodeBlock.of("%T(%T())", LongCoercibleToInstant::class, InstantType::class)
-                    // TODO: Handle more logical types
-                    // "timestamp-micros" -> CodeBlock.of("%T()", ?::class)
-                    // "time-micros" -> CodeBlock.of("%T()", ?::class)
+                        // TODO: Handle more logical types
+                        // "timestamp-micros" -> CodeBlock.of("%T()", ?::class)
+                        // "time-micros" -> CodeBlock.of("%T()", ?::class)
                         else -> CodeBlock.of("%T()", LongType::class)
                     }
                 } else CodeBlock.of("%T()", LongType::class)
@@ -180,10 +186,10 @@ object BaleenGenerator {
                 val isNullable = schema.types.any { it.type == Schema.Type.NULL }
                 if (isNullable) {
                     CodeBlock.builder()
-                            .add("%T(", AllowsNull::class)
-                            .add(baleenTypeCode)
-                            .add(")")
-                            .build()
+                        .add("%T(", AllowsNull::class)
+                        .add(baleenTypeCode)
+                        .add(")")
+                        .build()
                 } else {
                     baleenTypeCode
                 }
@@ -194,7 +200,7 @@ object BaleenGenerator {
 
     fun encode(schema: Schema): FileSpec {
         return FileSpec.builder(schema.namespace, "${schema.name}Type")
-                .addType(processSchema(schema))
-                .build()
+            .addType(processSchema(schema))
+            .build()
     }
 }

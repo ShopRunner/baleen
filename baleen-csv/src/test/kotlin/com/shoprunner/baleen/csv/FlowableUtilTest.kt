@@ -10,9 +10,9 @@ import com.shoprunner.baleen.types.LongType
 import com.shoprunner.baleen.types.StringCoercibleToLong
 import com.shoprunner.baleen.types.StringType
 import io.reactivex.rxkotlin.toFlowable
-import java.io.StringReader
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import java.io.StringReader
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class FlowableUtilTest {
@@ -32,12 +32,14 @@ internal class FlowableUtilTest {
                 data = HashData(mapOf("name" to "fido", "license" to "F4K9")),
                 dataTrace = dataTrace("testFile", "line 2")
                     .tag("line", "2")
-                    .tag("row", "0")),
+                    .tag("row", "0")
+            ),
             Context(
                 data = HashData(mapOf("name" to "spot", "license" to "WOOF")),
                 dataTrace = dataTrace("testFile", "line 3")
                     .tag("line", "3")
-                    .tag("row", "1"))
+                    .tag("row", "1")
+            )
         )
     }
 
@@ -51,11 +53,15 @@ internal class FlowableUtilTest {
 
         val dogDescription = "Dog".describeAs {
 
-            "name".type(StringType(),
-                required = true)
+            "name".type(
+                StringType(),
+                required = true
+            )
 
-            "legs".type(StringCoercibleToLong(LongType(min = 0, max = 4)),
-                required = true)
+            "legs".type(
+                StringCoercibleToLong(LongType(min = 0, max = 4)),
+                required = true
+            )
         }
 
         val contexts = FlowableUtil.fromCsvWithHeader(dataTrace, { StringReader(dogsCsv) })
@@ -69,18 +75,26 @@ internal class FlowableUtilTest {
                     .tag("row", "0")
                     .tag("line", "2"),
                 message = "has attribute \"name\"",
-                value = HashData(mapOf(
-                    "name" to "fido",
-                    "legs" to "6"))),
+                value = HashData(
+                    mapOf(
+                        "name" to "fido",
+                        "legs" to "6"
+                    )
+                )
+            ),
 
             ValidationInfo(
                 dataTrace = dataTrace("testFile", "line 2")
                     .tag("row", "0")
                     .tag("line", "2"),
                 message = "has attribute \"legs\"",
-                value = HashData(mapOf(
-                    "name" to "fido",
-                    "legs" to "6"))),
+                value = HashData(
+                    mapOf(
+                        "name" to "fido",
+                        "legs" to "6"
+                    )
+                )
+            ),
 
             ValidationError(
                 dataTrace = dataTrace("testFile", "line 2", "attribute \"legs\"")

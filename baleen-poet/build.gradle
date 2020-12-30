@@ -1,0 +1,19 @@
+plugins {
+    id("baleen.project-conventions")
+}
+
+dependencies {
+    api project(':baleen')
+    api 'com.squareup:kotlinpoet:1.7.2'
+    implementation 'org.jetbrains.kotlin:kotlin-reflect'
+    testImplementation "org.jetbrains.kotlin:kotlin-compiler"
+}
+
+test {
+    def map = [
+            GEN_CLASSPATH: (
+                    configurations.testCompileClasspath.files.path + files(compileTestKotlin.destinationDir)
+            ).join(":")
+    ]
+    environment map
+}

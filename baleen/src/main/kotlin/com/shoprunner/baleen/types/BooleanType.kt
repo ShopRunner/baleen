@@ -9,9 +9,9 @@ class BooleanType : BaleenType {
     override fun name() = "boolean"
 
     override fun validate(dataTrace: DataTrace, value: Any?): Sequence<ValidationResult> =
-            when (value) {
-                null -> sequenceOf(ValidationError(dataTrace, "is null", value))
-                !is Boolean -> sequenceOf(ValidationError(dataTrace, "is not a boolean", value))
-                else -> emptySequence()
-            }
+        when (value) {
+            null -> sequenceOf(ValidationError(dataTrace, "is null", value))
+            !is Boolean -> sequenceOf(ValidationError(dataTrace, "is not a boolean", value))
+            else -> emptySequence()
+        }
 }

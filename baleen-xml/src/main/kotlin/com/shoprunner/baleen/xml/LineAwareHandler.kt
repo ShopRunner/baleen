@@ -1,9 +1,9 @@
 package com.shoprunner.baleen.xml
 
-import java.util.Stack
 import org.xml.sax.Attributes
 import org.xml.sax.Locator
 import org.xml.sax.helpers.DefaultHandler
+import java.util.Stack
 
 /**
  * SAX Parser Handler to create the LineAware data from XML

@@ -13,14 +13,20 @@ import io.reactivex.rxkotlin.toFlowable
 
 val dogDescription = "Dog".describeAs {
 
-    "name".type(StringType(),
-        required = true)
+    "name".type(
+        StringType(),
+        required = true
+    )
 
-    "license".type(StringType(),
-        required = true)
+    "license".type(
+        StringType(),
+        required = true
+    )
 
-    "legs".type(StringCoercibleToLong(LongType(min = 0, max = 4)),
-        required = true)
+    "legs".type(
+        StringCoercibleToLong(LongType(min = 0, max = 4)),
+        required = true
+    )
 
     warnOnExtraAttributes()
 
@@ -28,7 +34,8 @@ val dogDescription = "Dog".describeAs {
         val license = data["license"]
         val name = data["name"]
         if (name !is String || license !is String ||
-            name.firstOrNull() == license.firstOrNull()) {
+            name.firstOrNull() == license.firstOrNull()
+        ) {
             emptySequence()
         } else {
             sequenceOf(ValidationError(dataTrace, "first character of license must match name.", data))
@@ -36,11 +43,12 @@ val dogDescription = "Dog".describeAs {
     }
 }
 
-fun main(args: Array<String>) {
+fun main() {
 
     val dogFeed = FlowableUtil.fromCsvWithHeader(
         dataTrace = dataTrace("file example.csv"),
-        readerSupplier = { Baleen.javaClass.getResourceAsStream("/example.csv").bufferedReader() })
+        readerSupplier = { Baleen.javaClass.getResourceAsStream("/example.csv").bufferedReader() }
+    )
 
     val validationFeed = dogFeed
         .flatMap { dogDescription.validate(it).results.toFlowable() }

@@ -36,10 +36,12 @@ class DataDescription(
     }
 
     fun warnOnExtraAttributes() {
-        tests.add(fun(dataTrace: DataTrace, data: Data): Sequence<ValidationResult> {
-            val extraAttributes = data.keys - attrs.map { it.name }.toSet()
-            return extraAttributes.asSequence().map { ValidationWarning(dataTrace, "extra attribute \"$it\"", data) }
-        })
+        tests.add(
+            fun(dataTrace: DataTrace, data: Data): Sequence<ValidationResult> {
+                val extraAttributes = data.keys - attrs.map { it.name }.toSet()
+                return extraAttributes.asSequence().map { ValidationWarning(dataTrace, "extra attribute \"$it\"", data) }
+            }
+        )
     }
 
     override fun validate(dataTrace: DataTrace, value: Any?): Sequence<ValidationResult> {

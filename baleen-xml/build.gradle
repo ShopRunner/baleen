@@ -1,3 +1,7 @@
+plugins {
+    id("baleen.project-conventions")
+}
+
 dependencies {
     implementation project(':baleen')
 }

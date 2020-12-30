@@ -8,9 +8,9 @@ import com.squareup.kotlinpoet.metadata.declaresDefaultValue
 import com.squareup.kotlinpoet.metadata.isNullable
 import com.squareup.kotlinpoet.metadata.isPrimary
 import com.squareup.kotlinpoet.metadata.toImmutableKmClass
+import kotlinx.metadata.KmClassifier
 import java.time.Instant
 import javax.lang.model.element.TypeElement
-import kotlinx.metadata.KmClassifier
 
 internal data class DefaultValueContainer(
     val defaultValueInstance: CodeBlock,
@@ -76,7 +76,8 @@ internal fun TypeElement.defaultValues(): DefaultValueContainer {
             val n = this.qualifiedName.toString().split(".")
             val pkg = n.subList(0, n.size - 1).joinToString(".")
             val name = n.last()
-            it.name to CodeBlock.of("%M.%L", MemberName(pkg, "${name}Defaults"), it.name) }
+            it.name to CodeBlock.of("%M.%L", MemberName(pkg, "${name}Defaults"), it.name)
+        }
         .toMap()
 
     return DefaultValueContainer(defaultValInstance, fieldsWithDefaults)

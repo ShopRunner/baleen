@@ -19,10 +19,12 @@ internal class OccurrencesModelTest {
         DataDescriptionAssert.assertBaleen(model.dataDescription())
             .hasName("ListStringModel")
             .hasNamespace("com.shoprunner.baleen.kotlin.kapt.test")
-            .hasAttribute("stringList",
+            .hasAttribute(
+                "stringList",
                 OccurrencesType(StringType())
             )
-            .hasAttribute("nullableStringList",
+            .hasAttribute(
+                "nullableStringList",
                 AllowsNull(OccurrencesType(StringType()))
             )
 
@@ -37,7 +39,8 @@ internal class OccurrencesModelTest {
             .hasName("ListIntModel")
             .hasNamespace("com.shoprunner.baleen.kotlin.kapt.test")
             .hasAttribute("intList", OccurrencesType(IntType()))
-            .hasAttribute("nullableIntList",
+            .hasAttribute(
+                "nullableIntList",
                 AllowsNull(OccurrencesType(IntType()))
             )
 
@@ -51,10 +54,12 @@ internal class OccurrencesModelTest {
         DataDescriptionAssert.assertBaleen(model.dataDescription())
             .hasName("ArrayStringModel")
             .hasNamespace("com.shoprunner.baleen.kotlin.kapt.test")
-            .hasAttribute("stringArray",
+            .hasAttribute(
+                "stringArray",
                 OccurrencesType(StringType())
             )
-            .hasAttribute("nullableStringArray",
+            .hasAttribute(
+                "nullableStringArray",
                 AllowsNull(OccurrencesType(StringType()))
             )
 
@@ -68,10 +73,12 @@ internal class OccurrencesModelTest {
         DataDescriptionAssert.assertBaleen(model.dataDescription())
             .hasName("ArrayIntModel")
             .hasNamespace("com.shoprunner.baleen.kotlin.kapt.test")
-            .hasAttribute("intArray",
+            .hasAttribute(
+                "intArray",
                 OccurrencesType(IntType())
             )
-            .hasAttribute("nullableIntArray",
+            .hasAttribute(
+                "nullableIntArray",
                 AllowsNull(OccurrencesType(IntType()))
             )
 
@@ -85,10 +92,12 @@ internal class OccurrencesModelTest {
         DataDescriptionAssert.assertBaleen(model.dataDescription())
             .hasName("SetStringModel")
             .hasNamespace("com.shoprunner.baleen.kotlin.kapt.test")
-            .hasAttribute("stringSet",
+            .hasAttribute(
+                "stringSet",
                 OccurrencesType(StringType())
             )
-            .hasAttribute("nullableStringSet",
+            .hasAttribute(
+                "nullableStringSet",
                 AllowsNull(OccurrencesType(StringType()))
             )
 
@@ -103,7 +112,8 @@ internal class OccurrencesModelTest {
             .hasName("SetIntModel")
             .hasNamespace("com.shoprunner.baleen.kotlin.kapt.test")
             .hasAttribute("intSet", OccurrencesType(IntType()))
-            .hasAttribute("nullableIntSet",
+            .hasAttribute(
+                "nullableIntSet",
                 AllowsNull(OccurrencesType(IntType()))
             )
 
@@ -117,10 +127,12 @@ internal class OccurrencesModelTest {
         DataDescriptionAssert.assertBaleen(model.dataDescription())
             .hasName("IterableStringModel")
             .hasNamespace("com.shoprunner.baleen.kotlin.kapt.test")
-            .hasAttribute("stringIterable",
+            .hasAttribute(
+                "stringIterable",
                 OccurrencesType(StringType())
             )
-            .hasAttribute("nullableStringIterable",
+            .hasAttribute(
+                "nullableStringIterable",
                 AllowsNull(OccurrencesType(StringType()))
             )
 
@@ -134,10 +146,12 @@ internal class OccurrencesModelTest {
         DataDescriptionAssert.assertBaleen(model.dataDescription())
             .hasName("IterableIntModel")
             .hasNamespace("com.shoprunner.baleen.kotlin.kapt.test")
-            .hasAttribute("intIterable",
+            .hasAttribute(
+                "intIterable",
                 OccurrencesType(IntType())
             )
-            .hasAttribute("nullableIntIterable",
+            .hasAttribute(
+                "nullableIntIterable",
                 AllowsNull(OccurrencesType(IntType()))
             )
 

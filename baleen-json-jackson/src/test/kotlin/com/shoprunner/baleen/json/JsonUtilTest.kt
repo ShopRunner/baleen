@@ -124,7 +124,8 @@ internal class JsonUtilTest {
             {
                 "name": "Fido",
                 "numLegs": 4
-            }""".trimIndent()
+            }
+            """.trimIndent()
 
             val validation = JsonUtil.validate(dogType, DataTrace("dog"), json.byteInputStream())
             assertThat(validation.errors()).isEmpty()
@@ -155,7 +156,8 @@ internal class JsonUtilTest {
                         "numLegs": 4
                     }
                 ]
-            }""".trimIndent()
+            }
+            """.trimIndent()
 
             val validation = JsonUtil.validate(packType, DataTrace("pack"), json.byteInputStream())
             assertThat(validation.errors()).isEmpty()
@@ -168,7 +170,7 @@ internal class JsonUtilTest {
             val e = assertThrows<JsonParseException> {
                 JsonUtil.validate(StringType(), DataTrace("string"), json.byteInputStream())
             }
-            assertThat(e.originalMessage).isEqualTo("Unrecognized token 'bad': was expecting ('true', 'false' or 'null')")
+            assertThat(e.originalMessage).isEqualTo("Unrecognized token 'bad': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')")
             assertThat(e.location.lineNr).isEqualTo(1)
             assertThat(e.location.columnNr).isEqualTo(5)
         }
@@ -200,10 +202,11 @@ internal class JsonUtilTest {
             assertThat(validation.errors()).contains(
                 ValidationError(
                     DataTrace("dog")
-                        .tag("line", "1").tag("column", "5"),
+                        .tag("line", "1").tag("column", "3"),
                     "is less than 0",
                     -1.toBigInteger()
-                ))
+                )
+            )
         }
 
         @Test
@@ -217,7 +220,8 @@ internal class JsonUtilTest {
             {
                 "name": "Fido",
                 "numLegs": "wrong"
-            }""".trimIndent()
+            }
+            """.trimIndent()
 
             val validation = JsonUtil.validate(dogType, DataTrace("dog"), json.byteInputStream())
             assertThat(validation.errors()).contains(
@@ -226,7 +230,8 @@ internal class JsonUtilTest {
                         .tag("line", "3").tag("column", "17"),
                     "is not an Int",
                     "wrong"
-                ))
+                )
+            )
         }
 
         @Test
@@ -240,7 +245,8 @@ internal class JsonUtilTest {
             [{
                 "name": "Fido",
                 "numLegs": "wrong"
-            }]""".trimIndent()
+            }]
+            """.trimIndent()
 
             val validation = JsonUtil.validate(OccurrencesType(dogType), DataTrace("dogs"), json.byteInputStream())
             assertThat(validation.errors()).contains(
@@ -249,7 +255,8 @@ internal class JsonUtilTest {
                         .tag("line", "3").tag("column", "17"),
                     "is not an Int",
                     "wrong"
-                ))
+                )
+            )
         }
     }
 
@@ -335,7 +342,8 @@ internal class JsonUtilTest {
             [{
                 "name": "Fido",
                 "numLegs": "wrong"
-            }]""".trimIndent()
+            }]
+            """.trimIndent()
 
             val validation = JsonUtil.validateRootJsonArray(dogType, DataTrace("dogs"), json.byteInputStream())
             assertThat(validation.errors()).contains(
@@ -344,7 +352,8 @@ internal class JsonUtilTest {
                         .tag("line", "3").tag("column", "17"),
                     "is not an Int",
                     "wrong"
-                ))
+                )
+            )
         }
 
         @Test
@@ -358,7 +367,8 @@ internal class JsonUtilTest {
                         .tag("line", "1").tag("column", "1"),
                     "is not an array",
                     null
-                ))
+                )
+            )
         }
 
         @Test
@@ -368,7 +378,7 @@ internal class JsonUtilTest {
             val e = assertThrows<JsonParseException> {
                 JsonUtil.validateRootJsonArray(StringType(), DataTrace("string"), json.byteInputStream())
             }
-            assertThat(e.originalMessage).isEqualTo("Unrecognized token 'bad': was expecting ('true', 'false' or 'null')")
+            assertThat(e.originalMessage).isEqualTo("Unrecognized token 'bad': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')")
             assertThat(e.location.lineNr).isEqualTo(1)
             assertThat(e.location.columnNr).isEqualTo(5)
         }
@@ -483,7 +493,8 @@ internal class JsonUtilTest {
                         .tag("line", "1").tag("column", "30"),
                     "is not a number",
                     "wrong"
-                ))
+                )
+            )
         }
 
         @Test
@@ -493,7 +504,7 @@ internal class JsonUtilTest {
             val e = assertThrows<JsonParseException> {
                 JsonUtil.validateJsonStream(StringType(), DataTrace("string"), json.byteInputStream()).eval()
             }
-            assertThat(e.originalMessage).isEqualTo("Unrecognized token 'bad': was expecting ('true', 'false' or 'null')")
+            assertThat(e.originalMessage).isEqualTo("Unrecognized token 'bad': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')")
             assertThat(e.location.lineNr).isEqualTo(1)
             assertThat(e.location.columnNr).isEqualTo(5)
         }
