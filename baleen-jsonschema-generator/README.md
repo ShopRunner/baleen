@@ -5,7 +5,7 @@ Given a Baleen description, generate a Json Schema.
 
 ### Gradle
 ```kotlin
-implementation "com.shoprunner:baleen-jsonschema-generator:$baleen_version"
+implementation("com.shoprunner:baleen-jsonschema-generator:$baleen_version")
 ```
 
 ## Example
