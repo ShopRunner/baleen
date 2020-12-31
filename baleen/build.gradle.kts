@@ -1,7 +1,4 @@
 plugins {
     id("baleen.project-conventions")
-}
-
-dependencies {
-    api project(':baleen')
+    id("baleen.publish")
 }
