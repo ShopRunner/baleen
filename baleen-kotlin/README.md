@@ -18,8 +18,8 @@ plugins {
 }
 
 dependencies {
-    implementation 'com.shoprunner:baleen-kotlin-api:x.y.z'
-    kapt 'com.shoprunner:baleen-kotlin-kapt:x.y.z'
+    implementation("com.shoprunner:baleen-kotlin-api:$baleen_version")
+    kapt("com.shoprunner:baleen-kotlin-kapt:$baleen_version")
 }
 ```
 
