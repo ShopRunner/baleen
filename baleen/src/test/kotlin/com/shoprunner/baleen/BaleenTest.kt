@@ -254,4 +254,67 @@ internal class BaleenTest {
         assertThat(dataDesc.validate(dataOf("favorite number" to 42))).isValid()
         assertThat(dataDesc.validate(dataOf("favorite number" to 41))).isNotValid()
     }
+
+    @Test
+    fun `validation summary`() {
+        val dataDesc = "Empty".describeAs {
+            test { dataTrace, value ->
+                when (value["favorite number"]) {
+                    42 -> emptySequence()
+                    else -> sequenceOf(ValidationError(dataTrace, "Wrong, guess again", value))
+                }
+            }
+        }
+
+        val data = dataOf("favorite number" to 41)
+        val summary = dataDesc.validate(data).createSummary().toList()
+
+        assertThat(summary).containsExactlyInAnyOrder(
+            ValidationSummary(
+                dataTrace = dataTrace(),
+                summary = "Summary",
+                numInfos = 0,
+                numErrors = 1,
+                numWarnings = 0,
+                topErrorsAndWarnings = listOf(ValidationError(dataTrace(), "Wrong, guess again", data)),
+            )
+        )
+    }
+
+    @Test
+    fun `validation summary grouped by tag`() {
+        val dataDesc = "Empty".describeAs {
+            test { dataTrace, value ->
+                when (value["favorite number"]) {
+                    42 -> emptySequence()
+                    else -> sequenceOf(
+                        ValidationInfo(dataTrace.tag("test", "false"), "Wrong, guess again", value),
+                        ValidationError(dataTrace.tag("test", "true"), "Wrong, guess again", value)
+                    )
+                }
+            }
+        }
+
+        val data = dataOf("favorite number" to 41)
+        val summary = dataDesc.validate(data).createSummary(groupBy = groupByTag("test")).toList()
+
+        assertThat(summary).containsExactlyInAnyOrder(
+            ValidationSummary(
+                dataTrace = dataTrace().tag("test", "false"),
+                summary = "Summary",
+                numInfos = 1,
+                numErrors = 0,
+                numWarnings = 0,
+                topErrorsAndWarnings = emptyList(),
+            ),
+            ValidationSummary(
+                dataTrace = dataTrace().tag("test", "true"),
+                summary = "Summary",
+                numInfos = 0,
+                numErrors = 1,
+                numWarnings = 0,
+                topErrorsAndWarnings = listOf(ValidationError(dataTrace().tag("test", "true"), "Wrong, guess again", data)),
+            ),
+        )
+    }
 }
