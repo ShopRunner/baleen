@@ -4,6 +4,7 @@ import com.shoprunner.baleen.Baleen.describeAs
 import com.shoprunner.baleen.TestHelper.dataOf
 import com.shoprunner.baleen.ValidationAssert.Companion.assertThat
 import com.shoprunner.baleen.types.AllowsNull
+import com.shoprunner.baleen.types.IntType
 import com.shoprunner.baleen.types.StringType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
@@ -251,6 +252,32 @@ internal class BaleenTest {
         }
 
         assertThat(dataDesc.validate(dataOf<String>())).isNotValid()
+        assertThat(dataDesc.validate(dataOf("favorite number" to 42))).isValid()
+        assertThat(dataDesc.validate(dataOf("favorite number" to 41))).isNotValid()
+    }
+
+    @Test
+    fun `junit style attribute test`() {
+        val dataDesc = "FavoriteNumber".describeAs {
+            "favorite number".type(IntType()).describe {
+                test("favorite number is 42") { data ->
+                    assertEquals("favorite number == 42", data.getAsInt("favorite number"), 42)
+                }
+            }
+        }
+
+        assertThat(dataDesc.validate(dataOf("favorite number" to 42))).isValid()
+        assertThat(dataDesc.validate(dataOf("favorite number" to 41))).isNotValid()
+    }
+
+    @Test
+    fun `junit style test`() {
+        val dataDesc = "FavoriteNumber".describeAs {
+            test("favorite number is 42") { data ->
+                assertEquals("favorite number == 42", data.getAsInt("favorite number"), 42)
+            }
+        }
+
         assertThat(dataDesc.validate(dataOf("favorite number" to 42))).isValid()
         assertThat(dataDesc.validate(dataOf("favorite number" to 41))).isNotValid()
     }

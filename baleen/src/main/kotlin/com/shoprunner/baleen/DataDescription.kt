@@ -72,6 +72,15 @@ class DataDescription(
         tests.add(validation)
     }
 
+    fun test(testName: String, validator: Asserts.(Data) -> Unit): DataDescription {
+        this.test { dataTrace, data ->
+            val asserts = Asserts(dataTrace.tag("test" to testName))
+            asserts.validator(data)
+            asserts.results
+        }
+        return this
+    }
+
     private val allTests: List<Validator>
         get() = attrs.flatMap { it.allTests } + tests
 }
