@@ -35,7 +35,7 @@ fun Sequence<ValidationResult>.createSummary(
                     ValidationSummary(dataTrace.tag(key), "Summary", 0, 0, 0, 0, emptyList())
                 },
                 { _, accumulator, element ->
-                    if(element is ValidationSummary) {
+                    if (element is ValidationSummary) {
                         ValidationSummary(
                             accumulator.dataTrace,
                             accumulator.summary,

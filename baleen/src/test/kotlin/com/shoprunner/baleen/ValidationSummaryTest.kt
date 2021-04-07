@@ -30,10 +30,12 @@ class ValidationSummaryTest {
 
         assertThat(results.createSummary()).containsExactly(
             ValidationSummary(
-                dataTrace(), "Summary", 0, 0, 3, 0, listOf(
-                        ValidationError(dataTrace(), "Error 1", null),
-                        ValidationError(dataTrace(), "Error 2", null),
-                        ValidationError(dataTrace(), "Error 3", null),)
+                dataTrace(), "Summary", 0, 0, 3, 0,
+                listOf(
+                    ValidationError(dataTrace(), "Error 1", null),
+                    ValidationError(dataTrace(), "Error 2", null),
+                    ValidationError(dataTrace(), "Error 3", null),
+                )
             )
         )
     }
@@ -47,11 +49,14 @@ class ValidationSummaryTest {
         )
 
         assertThat(results.createSummary()).containsExactly(
-            ValidationSummary(dataTrace(), "Summary", 0, 0, 0, 3, listOf(
-                ValidationWarning(dataTrace(), "Warning 1", null),
-                ValidationWarning(dataTrace(), "Warning 2", null),
-                ValidationWarning(dataTrace(), "Warning 3", null),
-            ))
+            ValidationSummary(
+                dataTrace(), "Summary", 0, 0, 0, 3,
+                listOf(
+                    ValidationWarning(dataTrace(), "Warning 1", null),
+                    ValidationWarning(dataTrace(), "Warning 2", null),
+                    ValidationWarning(dataTrace(), "Warning 3", null),
+                )
+            )
         )
     }
 
@@ -73,28 +78,35 @@ class ValidationSummaryTest {
         val results = sequenceOf(
             ValidationSummary(dataTrace(), "Summary", 3, 0, 0, 0, emptyList()),
             ValidationSummary(dataTrace(), "Summary", 0, 3, 0, 0, emptyList()),
-            ValidationSummary(dataTrace(), "Summary", 0, 0, 0, 3, listOf(
-                ValidationWarning(dataTrace(), "Warning 1", null),
-                ValidationWarning(dataTrace(), "Warning 2", null),
-                ValidationWarning(dataTrace(), "Warning 3", null),
-            )),
             ValidationSummary(
-                dataTrace(), "Summary", 0, 0, 3, 0, listOf(
+                dataTrace(), "Summary", 0, 0, 0, 3,
+                listOf(
+                    ValidationWarning(dataTrace(), "Warning 1", null),
+                    ValidationWarning(dataTrace(), "Warning 2", null),
+                    ValidationWarning(dataTrace(), "Warning 3", null),
+                )
+            ),
+            ValidationSummary(
+                dataTrace(), "Summary", 0, 0, 3, 0,
+                listOf(
                     ValidationError(dataTrace(), "Error 1", null),
                     ValidationError(dataTrace(), "Error 2", null),
-                    ValidationError(dataTrace(), "Error 3", null),)
+                    ValidationError(dataTrace(), "Error 3", null),
+                )
             )
         )
 
         assertThat(results.createSummary()).containsExactly(
             ValidationSummary(
-                dataTrace(), "Summary", 3, 3, 3, 3, listOf(
+                dataTrace(), "Summary", 3, 3, 3, 3,
+                listOf(
                     ValidationWarning(dataTrace(), "Warning 1", null),
                     ValidationWarning(dataTrace(), "Warning 2", null),
                     ValidationWarning(dataTrace(), "Warning 3", null),
                     ValidationError(dataTrace(), "Error 1", null),
                     ValidationError(dataTrace(), "Error 2", null),
-                    ValidationError(dataTrace(), "Error 3", null),)
+                    ValidationError(dataTrace(), "Error 3", null),
+                )
             )
         )
     }
@@ -112,17 +124,23 @@ class ValidationSummaryTest {
 
         assertThat(results.createSummary(groupBy = groupByTag("priority"))).containsExactly(
             ValidationSummary(
-                dataTrace().tag("priority", "high"), "Summary", 1, 0, 1, 0, listOf(
+                dataTrace().tag("priority", "high"), "Summary", 1, 0, 1, 0,
+                listOf(
                     ValidationError(dataTrace().tag("priority", "high"), "Error 1", null),
-            )),
+                )
+            ),
             ValidationSummary(
-                dataTrace().tag("priority", "medium"), "Summary", 1, 0, 1, 0, listOf(
+                dataTrace().tag("priority", "medium"), "Summary", 1, 0, 1, 0,
+                listOf(
                     ValidationError(dataTrace().tag("priority", "medium"), "Error 2", null),
-            )),
+                )
+            ),
             ValidationSummary(
-                dataTrace().tag("priority", "low"), "Summary", 1, 0, 1, 0, listOf(
+                dataTrace().tag("priority", "low"), "Summary", 1, 0, 1, 0,
+                listOf(
                     ValidationError(dataTrace().tag("priority", "low"), "Error 3", null),
-            ))
+                )
+            )
         )
     }
 
@@ -141,25 +159,33 @@ class ValidationSummaryTest {
 
         Assertions.assertThat(summaries).containsExactly(
             ValidationSummary(
-                dataTrace().tag("priority", "high"), "Summary", 1, 0, 1, 0, listOf(
+                dataTrace().tag("priority", "high"), "Summary", 1, 0, 1, 0,
+                listOf(
                     ValidationError(dataTrace().tag("priority", "high"), "Error 1", null),
-                )),
+                )
+            ),
             ValidationSummary(
-                dataTrace().tag("priority", "medium"), "Summary", 1, 0, 1, 0, listOf(
+                dataTrace().tag("priority", "medium"), "Summary", 1, 0, 1, 0,
+                listOf(
                     ValidationError(dataTrace().tag("priority", "medium"), "Error 2", null),
-                )),
+                )
+            ),
             ValidationSummary(
-                dataTrace().tag("priority", "low"), "Summary", 1, 0, 1, 0, listOf(
+                dataTrace().tag("priority", "low"), "Summary", 1, 0, 1, 0,
+                listOf(
                     ValidationError(dataTrace().tag("priority", "low"), "Error 3", null),
-                ))
+                )
+            )
         )
 
         Assertions.assertThat(summaries.asIterable().createSummary()).containsExactly(
             ValidationSummary(
-                dataTrace(), "Summary", 3, 0, 3, 0, listOf(
+                dataTrace(), "Summary", 3, 0, 3, 0,
+                listOf(
                     ValidationError(dataTrace().tag("priority", "high"), "Error 1", null),
                     ValidationError(dataTrace().tag("priority", "medium"), "Error 2", null),
-                    ValidationError(dataTrace().tag("priority", "low"), "Error 3", null),)
+                    ValidationError(dataTrace().tag("priority", "low"), "Error 3", null),
+                )
             )
         )
     }
