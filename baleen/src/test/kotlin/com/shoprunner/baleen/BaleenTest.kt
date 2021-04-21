@@ -267,7 +267,13 @@ internal class BaleenTest {
         }
 
         assertThat(dataDesc.validate(dataOf("favorite number" to 42))).isValid()
+        assertThat(dataDesc.validate(dataOf("favorite number" to 42)).results).contains(
+            ValidationInfo(dataTrace().tag("test" to "favorite number is 42", "assertion" to "favorite number == 42"), "Pass: favorite number == 42", "42 == 42")
+        )
         assertThat(dataDesc.validate(dataOf("favorite number" to 41))).isNotValid()
+        assertThat(dataDesc.validate(dataOf("favorite number" to 41)).results).contains(
+            ValidationError(dataTrace().tag("test" to "favorite number is 42", "assertion" to "favorite number == 42"), "Fail: favorite number == 42", "41 == 42")
+        )
     }
 
     @Test
@@ -279,6 +285,12 @@ internal class BaleenTest {
         }
 
         assertThat(dataDesc.validate(dataOf("favorite number" to 42))).isValid()
+        assertThat(dataDesc.validate(dataOf("favorite number" to 42)).results).contains(
+            ValidationInfo(dataTrace().tag("test" to "favorite number is 42", "assertion" to "favorite number == 42"), "Pass: favorite number == 42", "42 == 42")
+        )
         assertThat(dataDesc.validate(dataOf("favorite number" to 41))).isNotValid()
+        assertThat(dataDesc.validate(dataOf("favorite number" to 41)).results).contains(
+            ValidationError(dataTrace().tag("test" to "favorite number is 42", "assertion" to "favorite number == 42"), "Fail: favorite number == 42", "41 == 42")
+        )
     }
 }

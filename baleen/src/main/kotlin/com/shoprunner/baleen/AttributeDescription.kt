@@ -39,9 +39,9 @@ class AttributeDescription(
         return this
     }
 
-    fun AttributeDescription.test(testName: String, validator: Asserts.(Data) -> Unit): AttributeDescription {
+    fun AttributeDescription.test(testName: String, validator: Assertions.(Data) -> Unit): AttributeDescription {
         this.test { dataTrace, data ->
-            val asserts = Asserts(dataTrace.tag("test" to testName))
+            val asserts = Assertions(dataTrace.tag("test" to testName))
             asserts.validator(data)
             asserts.results
         }

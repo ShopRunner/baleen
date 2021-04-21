@@ -72,9 +72,9 @@ class DataDescription(
         tests.add(validation)
     }
 
-    fun test(testName: String, validator: Asserts.(Data) -> Unit): DataDescription {
+    fun test(testName: String, validator: Assertions.(Data) -> Unit): DataDescription {
         this.test { dataTrace, data ->
-            val asserts = Asserts(dataTrace.tag("test" to testName))
+            val asserts = Assertions(dataTrace.tag("test" to testName))
             asserts.validator(data)
             asserts.results
         }
