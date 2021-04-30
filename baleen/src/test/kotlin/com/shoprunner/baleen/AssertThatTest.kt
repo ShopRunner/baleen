@@ -44,7 +44,6 @@ internal class AssertThatTest {
         }
     }
 
-
     @Test
     fun `test assertThat Boolean isTrue`() {
         val data = dataOf(

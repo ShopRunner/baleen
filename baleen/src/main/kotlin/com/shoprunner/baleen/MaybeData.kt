@@ -6,8 +6,8 @@ package com.shoprunner.baleen
 sealed class MaybeData<E : Throwable, T>(val original: Any?) {
     abstract fun getOrThrow(): T
     abstract fun getOrNull(): T?
-    abstract fun <R> map(f: (T)-> R): MaybeData<E, R>
-    abstract fun <E2: Throwable, R> flatMap(f: (T)-> MaybeData<E2,R>): MaybeData<Throwable, R>
+    abstract fun <R> map(f: (T) -> R): MaybeData<E, R>
+    abstract fun <E2 : Throwable, R> flatMap(f: (T) -> MaybeData<E2, R>): MaybeData<Throwable, R>
 }
 
 /**
@@ -17,7 +17,7 @@ class BadData<E : Throwable, T>(val error: E, original: Any?) : MaybeData<E, T>(
     override fun getOrThrow(): T = throw error
     override fun getOrNull(): T? = null
     override fun <R> map(f: (T) -> R): MaybeData<E, R> = BadData(this.error, this.original)
-    override fun <E2: Throwable, R> flatMap(f: (T) -> MaybeData<E2, R>): MaybeData<Throwable, R> =
+    override fun <E2 : Throwable, R> flatMap(f: (T) -> MaybeData<E2, R>): MaybeData<Throwable, R> =
         BadData(this.error, this.original)
 }
 
@@ -29,7 +29,7 @@ class GoodData<E : Throwable, T>(val value: T) : MaybeData<E, T>(value) {
     override fun getOrNull(): T? = value
     override fun <R> map(f: (T) -> R): MaybeData<E, R> = GoodData(f(this.value))
     override fun <E2 : Throwable, R> flatMap(f: (T) -> MaybeData<E2, R>): MaybeData<Throwable, R> =
-        when(val result = f(this.value)) {
+        when (val result = f(this.value)) {
             is GoodData -> GoodData(result.value)
             is BadData -> BadData(result.error, result.original)
         }

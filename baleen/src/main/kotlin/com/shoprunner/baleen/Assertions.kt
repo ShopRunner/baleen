@@ -67,8 +67,10 @@ class Assertions(val dataTrace: DataTrace) {
     inline fun <reified T> assertThat(messagePrefix: String = "", getFun: () -> MaybeData<*, T>): AssertThat<T> {
         return when (val result = getFun()) {
             is BadData -> {
-                fail("assertThat<${T::class.qualifiedName}>(${messagePrefix.trim()})",
-                    "${result.original} is a ${result.original?.let { it::class.qualifiedName } ?: "${T::class.qualifiedName}?"}")
+                fail(
+                    "assertThat<${T::class.qualifiedName}>(${messagePrefix.trim()})",
+                    "${result.original} is a ${result.original?.let { it::class.qualifiedName } ?: "${T::class.qualifiedName}?"}"
+                )
                 AssertThatNoValue(result.original, messagePrefix)
             }
             is GoodData -> {
