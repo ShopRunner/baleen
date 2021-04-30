@@ -7,6 +7,7 @@ sealed class MaybeData<E : Throwable, T>(val original: Any?) {
     abstract fun getOrThrow(): T
     abstract fun getOrNull(): T?
     abstract fun <R> map(f: (T) -> R): MaybeData<E, R>
+    abstract fun <R> tryMap(f: (T) -> R): MaybeData<Throwable, R>
     abstract fun <E2 : Throwable, R> flatMap(f: (T) -> MaybeData<E2, R>): MaybeData<Throwable, R>
 }
 
@@ -17,6 +18,7 @@ class BadData<E : Throwable, T>(val error: E, original: Any?) : MaybeData<E, T>(
     override fun getOrThrow(): T = throw error
     override fun getOrNull(): T? = null
     override fun <R> map(f: (T) -> R): MaybeData<E, R> = BadData(this.error, this.original)
+    override fun <R> tryMap(f: (T) -> R): MaybeData<Throwable, R> = BadData(this.error, this.original)
     override fun <E2 : Throwable, R> flatMap(f: (T) -> MaybeData<E2, R>): MaybeData<Throwable, R> =
         BadData(this.error, this.original)
 }
@@ -24,13 +26,19 @@ class BadData<E : Throwable, T>(val error: E, original: Any?) : MaybeData<E, T>(
 /**
  * Good Data. Contains the correct value with the correct type.
  */
-class GoodData<E : Throwable, T>(val value: T) : MaybeData<E, T>(value) {
+class GoodData<E : Throwable, T>(val value: T, original: Any? = value) : MaybeData<E, T>(original) {
     override fun getOrThrow(): T = value
     override fun getOrNull(): T? = value
-    override fun <R> map(f: (T) -> R): MaybeData<E, R> = GoodData(f(this.value))
+    override fun <R> map(f: (T) -> R): MaybeData<E, R> = GoodData(f(this.value), this.original)
+    override fun <R> tryMap(f: (T) -> R): MaybeData<Throwable, R> =
+        try {
+            GoodData(f(this.value), this.original)
+        } catch (e: Throwable) {
+            BadData(e, this.original)
+        }
     override fun <E2 : Throwable, R> flatMap(f: (T) -> MaybeData<E2, R>): MaybeData<Throwable, R> =
         when (val result = f(this.value)) {
-            is GoodData -> GoodData(result.value)
+            is GoodData -> GoodData(result.value, result.original)
             is BadData -> BadData(result.error, result.original)
         }
 }

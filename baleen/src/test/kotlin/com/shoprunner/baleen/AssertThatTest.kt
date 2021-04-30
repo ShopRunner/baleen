@@ -1,5 +1,6 @@
 package com.shoprunner.baleen
 
+import com.shoprunner.baleen.Data.Companion.getAs
 import com.shoprunner.baleen.TestHelper.dataOf
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -9,6 +10,28 @@ import org.assertj.core.api.Assertions.assertThat as junitAssertThat
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExperimentalContracts
 internal class AssertThatTest {
+
+    @Test
+    fun `test assertThat with getAs`() {
+        val data = dataOf(
+            "value" to "true",
+        )
+        with(Assertions(dataTrace())) {
+            assertThat { data.getAs<String>("value")}
+            assertThat { data.getAs<Boolean>("value")}
+            assertThat { data.getAs<String>("value").tryMap { it.toBoolean() } }
+            assertThat { data.getAs<String>("value").tryMap { it.toInt() } }
+
+            val results = this.results.toList()
+
+            junitAssertThat(results).contains(
+                ValidationInfo(dataTrace().tag("assertion" to "assertThat<kotlin.String>()"), "Pass: assertThat<kotlin.String>()", "true is a kotlin.String"),
+                ValidationError(dataTrace().tag("assertion" to "assertThat<kotlin.Boolean>()"), "Fail: assertThat<kotlin.Boolean>()", "true is a kotlin.String"),
+                ValidationInfo(dataTrace().tag("assertion" to "assertThat<kotlin.Boolean>()"), "Pass: assertThat<kotlin.Boolean>()", "true is a kotlin.Boolean"),
+                ValidationError(dataTrace().tag("assertion" to "assertThat<kotlin.Int>()"), "Fail: assertThat<kotlin.Int>()", "true is a kotlin.String"),
+            )
+        }
+    }
 
     @Test
     fun `test assertThat validate instance of`() {
