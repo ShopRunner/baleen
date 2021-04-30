@@ -10,6 +10,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import kotlin.contracts.ExperimentalContracts
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class BaleenTest {
@@ -261,7 +262,7 @@ internal class BaleenTest {
         val dataDesc = "FavoriteNumber".describeAs {
             "favorite number".type(IntType()).describe {
                 test("favorite number is 42") { data ->
-                    assertEquals("favorite number == 42", data.getAsInt("favorite number"), 42)
+                    assertEquals("favorite number == 42", data.getAsIntOrNull("favorite number"), 42)
                 }
             }
         }
@@ -277,10 +278,33 @@ internal class BaleenTest {
     }
 
     @Test
+    @ExperimentalContracts
+    fun `junit style attribute test - assertThat`() {
+        val dataDesc = "FavoriteNumber".describeAs {
+            "favorite number".type(IntType()).describe {
+                test("favorite number is 42") { data ->
+                    assertThat { data.getAsInt("favorite number") }.isEqualTo(42)
+                }
+            }
+        }
+
+        assertThat(dataDesc.validate(dataOf("favorite number" to 42))).isValid()
+        assertThat(dataDesc.validate(dataOf("favorite number" to 42)).results).contains(
+            ValidationInfo(dataTrace().tag("test" to "favorite number is 42", "assertion" to "assertThat<kotlin.Int>()"), "Pass: assertThat<kotlin.Int>()", "42 is a kotlin.Int"),
+            ValidationInfo(dataTrace().tag("test" to "favorite number is 42", "assertion" to "is equal to 42"), "Pass: is equal to 42", "42 == 42")
+        )
+        assertThat(dataDesc.validate(dataOf("favorite number" to 41))).isNotValid()
+        assertThat(dataDesc.validate(dataOf("favorite number" to 41)).results).contains(
+            ValidationInfo(dataTrace().tag("test" to "favorite number is 42", "assertion" to "assertThat<kotlin.Int>()"), "Pass: assertThat<kotlin.Int>()", "41 is a kotlin.Int"),
+            ValidationError(dataTrace().tag("test" to "favorite number is 42", "assertion" to "is equal to 42"), "Fail: is equal to 42", "41 == 42")
+        )
+    }
+
+    @Test
     fun `junit style test`() {
         val dataDesc = "FavoriteNumber".describeAs {
             test("favorite number is 42") { data ->
-                assertEquals("favorite number == 42", data.getAsInt("favorite number"), 42)
+                assertEquals("favorite number == 42", data.getAsIntOrNull("favorite number"), 42)
             }
         }
 
@@ -291,6 +315,27 @@ internal class BaleenTest {
         assertThat(dataDesc.validate(dataOf("favorite number" to 41))).isNotValid()
         assertThat(dataDesc.validate(dataOf("favorite number" to 41)).results).contains(
             ValidationError(dataTrace().tag("test" to "favorite number is 42", "assertion" to "favorite number == 42"), "Fail: favorite number == 42", "41 == 42")
+        )
+    }
+
+    @Test
+    @ExperimentalContracts
+    fun `junit style test - assertThat`() {
+        val dataDesc = "FavoriteNumber".describeAs {
+            test("favorite number is 42") { data ->
+                assertThat { data.getAsInt("favorite number") }.isEqualTo(42)
+            }
+        }
+
+        assertThat(dataDesc.validate(dataOf("favorite number" to 42))).isValid()
+        assertThat(dataDesc.validate(dataOf("favorite number" to 42)).results).contains(
+            ValidationInfo(dataTrace().tag("test" to "favorite number is 42", "assertion" to "assertThat<kotlin.Int>()"), "Pass: assertThat<kotlin.Int>()", "42 is a kotlin.Int"),
+            ValidationInfo(dataTrace().tag("test" to "favorite number is 42", "assertion" to "is equal to 42"), "Pass: is equal to 42", "42 == 42")
+        )
+        assertThat(dataDesc.validate(dataOf("favorite number" to 41))).isNotValid()
+        assertThat(dataDesc.validate(dataOf("favorite number" to 41)).results).contains(
+            ValidationInfo(dataTrace().tag("test" to "favorite number is 42", "assertion" to "assertThat<kotlin.Int>()"), "Pass: assertThat<kotlin.Int>()", "41 is a kotlin.Int"),
+            ValidationError(dataTrace().tag("test" to "favorite number is 42", "assertion" to "is equal to 42"), "Fail: is equal to 42", "41 == 42")
         )
     }
 }

@@ -3,8 +3,10 @@ package com.shoprunner.baleen
 import com.shoprunner.baleen.SequenceAssert.Companion.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import kotlin.contracts.ExperimentalContracts
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@ExperimentalContracts
 internal class AssertionsTest {
 
     @Test
@@ -335,9 +337,9 @@ internal class AssertionsTest {
     fun `test assertContains`() {
         val assertions = Assertions(dataTrace())
 
-        assertions.assertContains("test 1 in [1,2,3]", listOf(1,2,3), 1)
+        assertions.assertContains("test 1 in [1,2,3]", listOf(1, 2, 3), 1)
         assertions.assertContains("test 1 in []", emptyList<Int>(), 1)
-        assertions.assertContains("test null in [1,2,3]", listOf(1,2,3), null)
+        assertions.assertContains("test null in [1,2,3]", listOf(1, 2, 3), null)
         assertions.assertContains("test 1 in null", null, 1)
 
         assertThat(assertions.results).containsExactly(
@@ -352,9 +354,9 @@ internal class AssertionsTest {
     fun `test assertNotContains`() {
         val assertions = Assertions(dataTrace())
 
-        assertions.assertNotContains("test 1 !in [1,2,3]", listOf(1,2,3), 1)
+        assertions.assertNotContains("test 1 !in [1,2,3]", listOf(1, 2, 3), 1)
         assertions.assertNotContains("test 1 !in []", emptyList<Int>(), 1)
-        assertions.assertNotContains("test null !in [1,2,3]", listOf(1,2,3), null)
+        assertions.assertNotContains("test null !in [1,2,3]", listOf(1, 2, 3), null)
         assertions.assertNotContains("test 1 !in null", null, 1)
 
         assertThat(assertions.results).containsExactly(
@@ -369,7 +371,7 @@ internal class AssertionsTest {
     fun `test assertEmpty`() {
         val assertions = Assertions(dataTrace())
 
-        assertions.assertEmpty("test [1,2,3] is empty", listOf(1,2,3))
+        assertions.assertEmpty("test [1,2,3] is empty", listOf(1, 2, 3))
         assertions.assertEmpty("test [] is empty", emptyList<Int>())
         assertions.assertEmpty("test null is empty", null)
 
@@ -384,7 +386,7 @@ internal class AssertionsTest {
     fun `test assertNullOrEmpty`() {
         val assertions = Assertions(dataTrace())
 
-        assertions.assertNullOrEmpty("test [1,2,3] is null or empty", listOf(1,2,3))
+        assertions.assertNullOrEmpty("test [1,2,3] is null or empty", listOf(1, 2, 3))
         assertions.assertNullOrEmpty("test [] is null or empty", emptyList<Int>())
         assertions.assertNullOrEmpty("test null is null or empty", null)
 
@@ -399,7 +401,7 @@ internal class AssertionsTest {
     fun `test assertNotEmpty`() {
         val assertions = Assertions(dataTrace())
 
-        assertions.assertNotEmpty("test [1,2,3] is not empty", listOf(1,2,3))
+        assertions.assertNotEmpty("test [1,2,3] is not empty", listOf(1, 2, 3))
         assertions.assertNotEmpty("test [] is not empty", emptyList<Int>())
         assertions.assertNotEmpty("test null is not empty", null)
 
@@ -414,7 +416,7 @@ internal class AssertionsTest {
     fun `test assertSizeEquals`() {
         val assertions = Assertions(dataTrace())
 
-        assertions.assertSizeEquals("test [1,2,3] is length 3", listOf(1,2,3), 3)
+        assertions.assertSizeEquals("test [1,2,3] is length 3", listOf(1, 2, 3), 3)
         assertions.assertSizeEquals("test [] is length 3", emptyList<Int>(), 3)
         assertions.assertSizeEquals("test null is length 3", null, 3)
 
@@ -448,6 +450,23 @@ internal class AssertionsTest {
         assertThat(assertions.results).containsExactly(
             ValidationInfo(dataTrace().tag("assertion" to "test \"hello\" is not null"), "Pass: test \"hello\" is not null", "hello"),
             ValidationError(dataTrace().tag("assertion" to "test null is not null"), "Fail: test null is not null", null),
+        )
+    }
+
+    @Test
+    fun `test assertInstanceOf`() {
+        val assertions = Assertions(dataTrace())
+
+        assertions.assertInstanceOf<String>("test \"hello\" is a String", "hello")
+        assertions.assertInstanceOf<String>("test 1 is a String", 1)
+        assertions.assertInstanceOf<String>("test null is a String", null)
+        assertions.assertInstanceOf<String?>("test null is a nullable String", null)
+
+        assertThat(assertions.results).containsExactly(
+            ValidationInfo(dataTrace().tag("assertion" to "test \"hello\" is a String"), "Pass: test \"hello\" is a String", "hello is a kotlin.String"),
+            ValidationError(dataTrace().tag("assertion" to "test 1 is a String"), "Fail: test 1 is a String", "1 is a kotlin.Int"),
+            ValidationError(dataTrace().tag("assertion" to "test null is a String"), "Fail: test null is a String", "null is a kotlin.String?"),
+            ValidationInfo(dataTrace().tag("assertion" to "test null is a nullable String"), "Pass: test null is a nullable String", "null is a kotlin.String?"),
         )
     }
 }
