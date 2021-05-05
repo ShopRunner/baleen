@@ -12,13 +12,27 @@ import org.assertj.core.api.Assertions.assertThat as junitAssertThat
 internal class AssertThatTest {
 
     @Test
-    fun `test assertThat with getAs`() {
+    fun `test assertThat with typed value returns AssertThatValue`() {
+        with(Assertions(dataTrace())) {
+            val assertThatValue = assertThat("hello world").isNotNull()
+            junitAssertThat(assertThatValue.actual).isEqualTo("hello world")
+
+            val results = this.results.toList()
+
+            junitAssertThat(results).contains(
+                ValidationInfo(dataTrace().tag("assertion" to "is not null"), "Pass: is not null", "hello world"),
+            )
+        }
+    }
+
+    @Test
+    fun `test assertThat with getAs validates types`() {
         val data = dataOf(
             "value" to "true",
         )
         with(Assertions(dataTrace())) {
-            assertThat { data.getAs<String>("value")}
-            assertThat { data.getAs<Boolean>("value")}
+            assertThat { data.getAs<String>("value") }
+            assertThat { data.getAs<Boolean>("value") }
             assertThat { data.getAs<String>("value").tryMap { it.toBoolean() } }
             assertThat { data.getAs<String>("value").tryMap { it.toInt() } }
 
@@ -34,7 +48,7 @@ internal class AssertThatTest {
     }
 
     @Test
-    fun `test assertThat validate instance of`() {
+    fun `test assertThat validates types`() {
         val data = dataOf(
             "value" to true,
         )
@@ -78,6 +92,8 @@ internal class AssertThatTest {
             assertThat<Boolean>(data, "value1").isTrue()
             assertThat<Boolean>(data, "value2").isTrue()
             assertThat<Boolean>(data, "value3").isTrue()
+            assertThat<Boolean?>(data, "valueNull").isTrue()
+            assertThat<Boolean>(data, "valueNull").isTrue()
 
             val results = this.results.toList()
 
@@ -85,6 +101,8 @@ internal class AssertThatTest {
                 ValidationInfo(dataTrace().tag("assertion" to "data[value1] is true"), "Pass: data[value1] is true", true),
                 ValidationError(dataTrace().tag("assertion" to "data[value2] is true"), "Fail: data[value2] is true", false),
                 ValidationError(dataTrace().tag("assertion" to "data[value3] is true"), "Fail: data[value3] is true", "Hello World"),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] is true"), "Fail: data[valueNull] is true", null),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] is true"), "Fail: data[valueNull] is true", null),
             )
         }
     }
@@ -100,6 +118,8 @@ internal class AssertThatTest {
             assertThat<Boolean>(data, "value1").isFalse()
             assertThat<Boolean>(data, "value2").isFalse()
             assertThat<Boolean>(data, "value3").isFalse()
+            assertThat<Boolean?>(data, "valueNull").isTrue()
+            assertThat<Boolean>(data, "valueNull").isTrue()
 
             val results = this.results.toList()
 
@@ -107,6 +127,8 @@ internal class AssertThatTest {
                 ValidationError(dataTrace().tag("assertion" to "data[value1] is false"), "Fail: data[value1] is false", true),
                 ValidationInfo(dataTrace().tag("assertion" to "data[value2] is false"), "Pass: data[value2] is false", false),
                 ValidationError(dataTrace().tag("assertion" to "data[value3] is false"), "Fail: data[value3] is false", "Hello World"),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] is true"), "Fail: data[valueNull] is true", null),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] is true"), "Fail: data[valueNull] is true", null),
             )
         }
     }
@@ -122,6 +144,8 @@ internal class AssertThatTest {
             assertThat<Boolean>(data, "value1").isEqualTo(false)
             assertThat<String>(data, "value2").isEqualTo("Hello World")
             assertThat<String>(data, "value2").isEqualTo("Goodbye")
+            assertThat<String?>(data, "valueNull").isEqualTo("Hi")
+            assertThat<String>(data, "valueNull").isEqualTo("Hi")
 
             val results = this.results.toList()
 
@@ -130,32 +154,34 @@ internal class AssertThatTest {
                 ValidationError(dataTrace().tag("assertion" to "data[value1] is equal to false"), "Fail: data[value1] is equal to false", "true == false"),
                 ValidationInfo(dataTrace().tag("assertion" to "data[value2] is equal to Hello World"), "Pass: data[value2] is equal to Hello World", "Hello World == Hello World"),
                 ValidationError(dataTrace().tag("assertion" to "data[value2] is equal to Goodbye"), "Fail: data[value2] is equal to Goodbye", "Hello World == Goodbye"),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] is equal to Hi"), "Fail: data[valueNull] is equal to Hi", "null == Hi"),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] is equal to Hi"), "Fail: data[valueNull] is equal to Hi", "null == Hi"),
             )
         }
     }
 
     @Test
-        fun `test assertThat isNotEquals`() {
-            val data = dataOf(
-                "value1" to true,
-                "value2" to "Hello World"
+    fun `test assertThat isNotEquals`() {
+        val data = dataOf(
+            "value1" to true,
+            "value2" to "Hello World"
+        )
+        with(Assertions(dataTrace())) {
+            assertThat<Boolean>(data, "value1").isNotEqualTo(true)
+            assertThat<Boolean>(data, "value1").isNotEqualTo(false)
+            assertThat<String>(data, "value2").isNotEqualTo("Hello World")
+            assertThat<String>(data, "value2").isNotEqualTo("Goodbye")
+
+            val results = this.results.toList()
+
+            junitAssertThat(results).contains(
+                ValidationError(dataTrace().tag("assertion" to "data[value1] is not equal to true"), "Fail: data[value1] is not equal to true", "true != true"),
+                ValidationInfo(dataTrace().tag("assertion" to "data[value1] is not equal to false"), "Pass: data[value1] is not equal to false", "true != false"),
+                ValidationError(dataTrace().tag("assertion" to "data[value2] is not equal to Hello World"), "Fail: data[value2] is not equal to Hello World", "Hello World != Hello World"),
+                ValidationInfo(dataTrace().tag("assertion" to "data[value2] is not equal to Goodbye"), "Pass: data[value2] is not equal to Goodbye", "Hello World != Goodbye"),
             )
-            with(Assertions(dataTrace())) {
-                assertThat<Boolean>(data, "value1").isNotEqualTo(true)
-                assertThat<Boolean>(data, "value1").isNotEqualTo(false)
-                assertThat<String>(data, "value2").isNotEqualTo("Hello World")
-                assertThat<String>(data, "value2").isNotEqualTo("Goodbye")
-
-                val results = this.results.toList()
-
-                junitAssertThat(results).contains(
-                    ValidationError(dataTrace().tag("assertion" to "data[value1] is not equal to true"), "Pass: data[value1] is not equal to true", "true != true"),
-                    ValidationInfo(dataTrace().tag("assertion" to "data[value1] is not equal to false"), "Fail: data[value1] is not equal to false", "true != false"),
-                    ValidationError(dataTrace().tag("assertion" to "data[value2] is not equal to Hello World"), "Pass: data[value2] is not equal to Hello World", "Hello World != Hello World"),
-                    ValidationInfo(dataTrace().tag("assertion" to "data[value2] is not equal to Goodbye"), "Fail: data[value2] is not equal to Goodbye", "Hello World != Goodbye"),
-                )
-            }
         }
+    }
 
     @Test
     fun `test assertThat Int isLessThan`() {
@@ -166,12 +192,14 @@ internal class AssertThatTest {
             assertThat<Int>(data, "value").isLessThan(1)
             assertThat<Int>(data, "value").isLessThan(2)
             assertThat<Int?>(data, "valueNull").isLessThan(1)
+            assertThat<Int>(data, "valueNull").isLessThan(1)
 
             val results = this.results.toList()
 
             junitAssertThat(results).contains(
-                ValidationInfo(dataTrace().tag("assertion" to "data[value] is less than 1"), "Pass: data[value] is less than 1", "1 < 1"),
-                ValidationError(dataTrace().tag("assertion" to "data[value] is less than 2"), "Fail: data[value] is less than 2", "1 < 2"),
+                ValidationError(dataTrace().tag("assertion" to "data[value] is less than 1"), "Fail: data[value] is less than 1", "1 < 1"),
+                ValidationInfo(dataTrace().tag("assertion" to "data[value] is less than 2"), "Pass: data[value] is less than 2", "1 < 2"),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] is less than 1"), "Fail: data[valueNull] is less than 1", "null < 1"),
                 ValidationError(dataTrace().tag("assertion" to "data[valueNull] is less than 1"), "Fail: data[valueNull] is less than 1", "null < 1"),
             )
         }
@@ -180,278 +208,357 @@ internal class AssertThatTest {
     @Test
     fun `test assertThat Long isLessThan`() {
         val data = dataOf(
-            "value" to 1,
+            "value" to 1L,
         )
         with(Assertions(dataTrace())) {
             assertThat<Long>(data, "value").isLessThan(1)
             assertThat<Long>(data, "value").isLessThan(2)
             assertThat<Long?>(data, "valueNull").isLessThan(1)
+            assertThat<Long>(data, "valueNull").isLessThan(1)
 
             val results = this.results.toList()
 
             junitAssertThat(results).contains(
-                ValidationInfo(dataTrace().tag("assertion" to "data[value] is less than 1"), "Pass: data[value] is less than 1", "1 < 1"),
-                ValidationError(dataTrace().tag("assertion" to "data[value] is less than 2"), "Fail: data[value] is less than 2", "1 < 2"),
+                ValidationError(dataTrace().tag("assertion" to "data[value] is less than 1"), "Fail: data[value] is less than 1", "1 < 1"),
+                ValidationInfo(dataTrace().tag("assertion" to "data[value] is less than 2"), "Pass: data[value] is less than 2", "1 < 2"),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] is less than 1"), "Fail: data[valueNull] is less than 1", "null < 1"),
                 ValidationError(dataTrace().tag("assertion" to "data[valueNull] is less than 1"), "Fail: data[valueNull] is less than 1", "null < 1"),
             )
         }
     }
 
-//    @Test
-//    fun `test assertLessThan(Int)`() {
-//        val assertions = Assertions(dataTrace())
-//
-//        assertions.assertLessThan("test 1 < 1", 1.toInt(), 1)
-//        assertions.assertLessThan("test 1 < 2", 1.toInt(), 2)
-//        assertions.assertLessThan("test null < null", null?.toInt(), null)
-//
-//        assertThat(assertions.results).containsExactly(
-//            ValidationError(dataTrace().tag("assertion" to "test 1 < 1"), "Fail: test 1 < 1", "1 < 1"),
-//            ValidationInfo(dataTrace().tag("assertion" to "test 1 < 2"), "Pass: test 1 < 2", "1 < 2"),
-//            ValidationError(dataTrace().tag("assertion" to "test null < null"), "Fail: test null < null", "null < null"),
-//        )
-//    }
-//
-//    @Test
-//    fun `test assertLessThan(Long)`() {
-//        val assertions = Assertions(dataTrace())
-//
-//        assertions.assertLessThan("test 1 < 1", 1L, 1L)
-//        assertions.assertLessThan("test 1 < 2", 1L, 2L)
-//        assertions.assertLessThan("test null < null", null?.toLong(), null)
-//
-//        assertThat(assertions.results).containsExactly(
-//            ValidationError(dataTrace().tag("assertion" to "test 1 < 1"), "Fail: test 1 < 1", "1 < 1"),
-//            ValidationInfo(dataTrace().tag("assertion" to "test 1 < 2"), "Pass: test 1 < 2", "1 < 2"),
-//            ValidationError(dataTrace().tag("assertion" to "test null < null"), "Fail: test null < null", "null < null"),
-//        )
-//    }
-//
-//    @Test
-//    fun `test assertLessThan(Float)`() {
-//        val assertions = Assertions(dataTrace())
-//
-//        assertions.assertLessThan("test 1 < 1", 1f, 1f)
-//        assertions.assertLessThan("test 1 < 2", 1f, 2f)
-//        assertions.assertLessThan("test null < null", null?.toFloat(), null)
-//
-//        assertThat(assertions.results).containsExactly(
-//            ValidationError(dataTrace().tag("assertion" to "test 1 < 1"), "Fail: test 1 < 1", "1.0 < 1.0"),
-//            ValidationInfo(dataTrace().tag("assertion" to "test 1 < 2"), "Pass: test 1 < 2", "1.0 < 2.0"),
-//            ValidationError(dataTrace().tag("assertion" to "test null < null"), "Fail: test null < null", "null < null"),
-//        )
-//    }
-//
-//    @Test
-//    fun `test assertLessThan(Double)`() {
-//        val assertions = Assertions(dataTrace())
-//
-//        assertions.assertLessThan("test 1 < 1", 1.0, 1.0)
-//        assertions.assertLessThan("test 1 < 2", 1.0, 2.0)
-//        assertions.assertLessThan("test null < null", null?.toDouble(), null)
-//
-//        assertThat(assertions.results).containsExactly(
-//            ValidationError(dataTrace().tag("assertion" to "test 1 < 1"), "Fail: test 1 < 1", "1.0 < 1.0"),
-//            ValidationInfo(dataTrace().tag("assertion" to "test 1 < 2"), "Pass: test 1 < 2", "1.0 < 2.0"),
-//            ValidationError(dataTrace().tag("assertion" to "test null < null"), "Fail: test null < null", "null < null"),
-//        )
-//    }
-//
-//    @Test
-//    fun `test assertLessThanEquals(Int)`() {
-//        val assertions = Assertions(dataTrace())
-//
-//        assertions.assertLessThanEquals("test 1 <= 0", 1.toInt(), 0)
-//        assertions.assertLessThanEquals("test 1 <= 1", 1.toInt(), 1)
-//        assertions.assertLessThanEquals("test 1 <= 2", 1.toInt(), 2)
-//        assertions.assertLessThanEquals("test null <= null", null?.toInt(), null)
-//
-//        assertThat(assertions.results).containsExactly(
-//            ValidationError(dataTrace().tag("assertion" to "test 1 <= 0"), "Fail: test 1 <= 0", "1 <= 0"),
-//            ValidationInfo(dataTrace().tag("assertion" to "test 1 <= 1"), "Pass: test 1 <= 1", "1 <= 1"),
-//            ValidationInfo(dataTrace().tag("assertion" to "test 1 <= 2"), "Pass: test 1 <= 2", "1 <= 2"),
-//            ValidationError(dataTrace().tag("assertion" to "test null <= null"), "Fail: test null <= null", "null <= null"),
-//        )
-//    }
-//
-//    @Test
-//    fun `test assertLessThanEquals(Long)`() {
-//        val assertions = Assertions(dataTrace())
-//
-//        assertions.assertLessThanEquals("test 1 <= 0", 1L, 0)
-//        assertions.assertLessThanEquals("test 1 <= 1", 1L, 1L)
-//        assertions.assertLessThanEquals("test 1 <= 2", 1L, 2L)
-//        assertions.assertLessThanEquals("test null <= null", null?.toLong(), null)
-//
-//        assertThat(assertions.results).containsExactly(
-//            ValidationError(dataTrace().tag("assertion" to "test 1 <= 0"), "Fail: test 1 <= 0", "1 <= 0"),
-//            ValidationInfo(dataTrace().tag("assertion" to "test 1 <= 1"), "Pass: test 1 <= 1", "1 <= 1"),
-//            ValidationInfo(dataTrace().tag("assertion" to "test 1 <= 2"), "Pass: test 1 <= 2", "1 <= 2"),
-//            ValidationError(dataTrace().tag("assertion" to "test null <= null"), "Fail: test null <= null", "null <= null"),
-//        )
-//    }
-//
-//    @Test
-//    fun `test assertLessThanEquals(Float)`() {
-//        val assertions = Assertions(dataTrace())
-//
-//        assertions.assertLessThanEquals("test 1 <= 0", 1f, 0f)
-//        assertions.assertLessThanEquals("test 1 <= 1", 1f, 1f)
-//        assertions.assertLessThanEquals("test 1 <= 2", 1f, 2f)
-//        assertions.assertLessThanEquals("test null <= null", null?.toFloat(), null)
-//
-//        assertThat(assertions.results).containsExactly(
-//            ValidationError(dataTrace().tag("assertion" to "test 1 <= 0"), "Fail: test 1 <= 0", "1.0 <= 0.0"),
-//            ValidationInfo(dataTrace().tag("assertion" to "test 1 <= 1"), "Pass: test 1 <= 1", "1.0 <= 1.0"),
-//            ValidationInfo(dataTrace().tag("assertion" to "test 1 <= 2"), "Pass: test 1 <= 2", "1.0 <= 2.0"),
-//            ValidationError(dataTrace().tag("assertion" to "test null <= null"), "Fail: test null <= null", "null <= null"),
-//        )
-//    }
-//
-//    @Test
-//    fun `test assertLessThanEquals(Double)`() {
-//        val assertions = Assertions(dataTrace())
-//
-//        assertions.assertLessThanEquals("test 1 <= 0", 1.0, 0.0)
-//        assertions.assertLessThanEquals("test 1 <= 1", 1.0, 1.0)
-//        assertions.assertLessThanEquals("test 1 <= 2", 1.0, 2.0)
-//        assertions.assertLessThanEquals("test null <= null", null?.toDouble(), null)
-//
-//        assertThat(assertions.results).containsExactly(
-//            ValidationError(dataTrace().tag("assertion" to "test 1 <= 0"), "Fail: test 1 <= 0", "1.0 <= 0.0"),
-//            ValidationInfo(dataTrace().tag("assertion" to "test 1 <= 1"), "Pass: test 1 <= 1", "1.0 <= 1.0"),
-//            ValidationInfo(dataTrace().tag("assertion" to "test 1 <= 2"), "Pass: test 1 <= 2", "1.0 <= 2.0"),
-//            ValidationError(dataTrace().tag("assertion" to "test null <= null"), "Fail: test null <= null", "null <= null"),
-//        )
-//    }
-//
-//    @Test
-//    fun `test assertGreaterThan(Int)`() {
-//        val assertions = Assertions(dataTrace())
-//
-//        assertions.assertGreaterThan("test 1 > 1", 1.toInt(), 1)
-//        assertions.assertGreaterThan("test 2 > 1", 2.toInt(), 1)
-//        assertions.assertGreaterThan("test null > null", null?.toInt(), null)
-//
-//        assertThat(assertions.results).containsExactly(
-//            ValidationError(dataTrace().tag("assertion" to "test 1 > 1"), "Fail: test 1 > 1", "1 > 1"),
-//            ValidationInfo(dataTrace().tag("assertion" to "test 2 > 1"), "Pass: test 2 > 1", "2 > 1"),
-//            ValidationError(dataTrace().tag("assertion" to "test null > null"), "Fail: test null > null", "null > null"),
-//        )
-//    }
-//
-//    @Test
-//    fun `test assertGreaterThan(Long)`() {
-//        val assertions = Assertions(dataTrace())
-//
-//        assertions.assertGreaterThan("test 1 > 1", 1L, 1L)
-//        assertions.assertGreaterThan("test 2 > 1", 2L, 1L)
-//        assertions.assertGreaterThan("test null > null", null?.toLong(), null)
-//
-//        assertThat(assertions.results).containsExactly(
-//            ValidationError(dataTrace().tag("assertion" to "test 1 > 1"), "Fail: test 1 > 1", "1 > 1"),
-//            ValidationInfo(dataTrace().tag("assertion" to "test 2 > 1"), "Pass: test 2 > 1", "2 > 1"),
-//            ValidationError(dataTrace().tag("assertion" to "test null > null"), "Fail: test null > null", "null > null"),
-//        )
-//    }
-//
-//    @Test
-//    fun `test assertGreaterThan(Float)`() {
-//        val assertions = Assertions(dataTrace())
-//
-//        assertions.assertGreaterThan("test 1 > 1", 1f, 1f)
-//        assertions.assertGreaterThan("test 2 > 1", 2f, 1f)
-//        assertions.assertGreaterThan("test null > null", null?.toFloat(), null)
-//
-//        assertThat(assertions.results).containsExactly(
-//            ValidationError(dataTrace().tag("assertion" to "test 1 > 1"), "Fail: test 1 > 1", "1.0 > 1.0"),
-//            ValidationInfo(dataTrace().tag("assertion" to "test 2 > 1"), "Pass: test 2 > 1", "2.0 > 1.0"),
-//            ValidationError(dataTrace().tag("assertion" to "test null > null"), "Fail: test null > null", "null > null"),
-//        )
-//    }
-//
-//    @Test
-//    fun `test assertGreaterThan(Double)`() {
-//        val assertions = Assertions(dataTrace())
-//
-//        assertions.assertGreaterThan("test 1 > 1", 1.0, 1.0)
-//        assertions.assertGreaterThan("test 2 > 1", 2.0, 1.0)
-//        assertions.assertGreaterThan("test null > null", null?.toDouble(), null)
-//
-//        assertThat(assertions.results).containsExactly(
-//            ValidationError(dataTrace().tag("assertion" to "test 1 > 1"), "Fail: test 1 > 1", "1.0 > 1.0"),
-//            ValidationInfo(dataTrace().tag("assertion" to "test 2 > 1"), "Pass: test 2 > 1", "2.0 > 1.0"),
-//            ValidationError(dataTrace().tag("assertion" to "test null > null"), "Fail: test null > null", "null > null"),
-//        )
-//    }
-//
-//    @Test
-//    fun `test assertGreaterThanEquals(Int)`() {
-//        val assertions = Assertions(dataTrace())
-//
-//        assertions.assertGreaterThanEquals("test 0 >= 1", 0.toInt(), 1)
-//        assertions.assertGreaterThanEquals("test 1 >= 1", 1.toInt(), 1)
-//        assertions.assertGreaterThanEquals("test 2 >= 1", 2.toInt(), 1)
-//        assertions.assertGreaterThanEquals("test null >= null", null?.toInt(), null)
-//
-//        assertThat(assertions.results).containsExactly(
-//            ValidationError(dataTrace().tag("assertion" to "test 0 >= 1"), "Fail: test 0 >= 1", "0 >= 1"),
-//            ValidationInfo(dataTrace().tag("assertion" to "test 1 >= 1"), "Pass: test 1 >= 1", "1 >= 1"),
-//            ValidationInfo(dataTrace().tag("assertion" to "test 2 >= 1"), "Pass: test 2 >= 1", "2 >= 1"),
-//            ValidationError(dataTrace().tag("assertion" to "test null >= null"), "Fail: test null >= null", "null >= null"),
-//        )
-//    }
-//
-//    @Test
-//    fun `test assertGreaterThanEquals(Long)`() {
-//        val assertions = Assertions(dataTrace())
-//
-//        assertions.assertGreaterThanEquals("test 0 >= 1", 0L, 1)
-//        assertions.assertGreaterThanEquals("test 1 >= 1", 1L, 1L)
-//        assertions.assertGreaterThanEquals("test 2 >= 1", 2L, 1L)
-//        assertions.assertGreaterThanEquals("test null >= null", null?.toLong(), null)
-//
-//        assertThat(assertions.results).containsExactly(
-//            ValidationError(dataTrace().tag("assertion" to "test 0 >= 1"), "Fail: test 0 >= 1", "0 >= 1"),
-//            ValidationInfo(dataTrace().tag("assertion" to "test 1 >= 1"), "Pass: test 1 >= 1", "1 >= 1"),
-//            ValidationInfo(dataTrace().tag("assertion" to "test 2 >= 1"), "Pass: test 2 >= 1", "2 >= 1"),
-//            ValidationError(dataTrace().tag("assertion" to "test null >= null"), "Fail: test null >= null", "null >= null"),
-//        )
-//    }
-//
-//    @Test
-//    fun `test assertGreaterThanEquals(Float)`() {
-//        val assertions = Assertions(dataTrace())
-//
-//        assertions.assertGreaterThanEquals("test 0 >= 1", 0f, 1f)
-//        assertions.assertGreaterThanEquals("test 1 >= 1", 1f, 1f)
-//        assertions.assertGreaterThanEquals("test 2 >= 1", 2f, 1f)
-//        assertions.assertGreaterThanEquals("test null >= null", null?.toFloat(), null)
-//
-//        assertThat(assertions.results).containsExactly(
-//            ValidationError(dataTrace().tag("assertion" to "test 0 >= 1"), "Fail: test 0 >= 1", "0.0 >= 1.0"),
-//            ValidationInfo(dataTrace().tag("assertion" to "test 1 >= 1"), "Pass: test 1 >= 1", "1.0 >= 1.0"),
-//            ValidationInfo(dataTrace().tag("assertion" to "test 2 >= 1"), "Pass: test 2 >= 1", "2.0 >= 1.0"),
-//            ValidationError(dataTrace().tag("assertion" to "test null >= null"), "Fail: test null >= null", "null >= null"),
-//        )
-//    }
-//
-//    @Test
-//    fun `test assertGreaterThanEquals(Double)`() {
-//        val assertions = Assertions(dataTrace())
-//
-//        assertions.assertGreaterThanEquals("test 0 >= 1", 0.0, 1.0)
-//        assertions.assertGreaterThanEquals("test 1 >= 1", 1.0, 1.0)
-//        assertions.assertGreaterThanEquals("test 2 >= 1", 2.0, 1.0)
-//        assertions.assertGreaterThanEquals("test null >= null", null?.toDouble(), null)
-//
-//        assertThat(assertions.results).containsExactly(
-//            ValidationError(dataTrace().tag("assertion" to "test 0 >= 1"), "Fail: test 0 >= 1", "0.0 >= 1.0"),
-//            ValidationInfo(dataTrace().tag("assertion" to "test 1 >= 1"), "Pass: test 1 >= 1", "1.0 >= 1.0"),
-//            ValidationInfo(dataTrace().tag("assertion" to "test 2 >= 1"), "Pass: test 2 >= 1", "2.0 >= 1.0"),
-//            ValidationError(dataTrace().tag("assertion" to "test null >= null"), "Fail: test null >= null", "null >= null"),
-//        )
-//    }
+    @Test
+    fun `test assertThat Float isLessThan`() {
+        val data = dataOf(
+            "value" to 1.0f,
+        )
+        with(Assertions(dataTrace())) {
+            assertThat<Float>(data, "value").isLessThan(1.0f)
+            assertThat<Float>(data, "value").isLessThan(2.0f)
+            assertThat<Float?>(data, "valueNull").isLessThan(1.0f)
+            assertThat<Float>(data, "valueNull").isLessThan(1.0f)
+
+            val results = this.results.toList()
+
+            junitAssertThat(results).contains(
+                ValidationError(dataTrace().tag("assertion" to "data[value] is less than 1.0"), "Fail: data[value] is less than 1.0", "1.0 < 1.0"),
+                ValidationInfo(dataTrace().tag("assertion" to "data[value] is less than 2.0"), "Pass: data[value] is less than 2.0", "1.0 < 2.0"),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] is less than 1.0"), "Fail: data[valueNull] is less than 1.0", "null < 1.0"),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] is less than 1.0"), "Fail: data[valueNull] is less than 1.0", "null < 1.0"),
+            )
+        }
+    }
+
+    @Test
+    fun `test assertThat Double isLessThan`() {
+        val data = dataOf(
+            "value" to 1.0,
+        )
+        with(Assertions(dataTrace())) {
+            assertThat<Double>(data, "value").isLessThan(1.0)
+            assertThat<Double>(data, "value").isLessThan(2.0)
+            assertThat<Double?>(data, "valueNull").isLessThan(1.0)
+            assertThat<Double>(data, "valueNull").isLessThan(1.0)
+
+            val results = this.results.toList()
+
+            junitAssertThat(results).contains(
+                ValidationError(dataTrace().tag("assertion" to "data[value] is less than 1.0"), "Fail: data[value] is less than 1.0", "1.0 < 1.0"),
+                ValidationInfo(dataTrace().tag("assertion" to "data[value] is less than 2.0"), "Pass: data[value] is less than 2.0", "1.0 < 2.0"),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] is less than 1.0"), "Fail: data[valueNull] is less than 1.0", "null < 1.0"),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] is less than 1.0"), "Fail: data[valueNull] is less than 1.0", "null < 1.0"),
+            )
+        }
+    }
+
+    @Test
+    fun `test assertThat Int isLessThanEquals`() {
+        val data = dataOf(
+            "value" to 1,
+        )
+        with(Assertions(dataTrace())) {
+            assertThat<Int>(data, "value").isLessThanEquals(0)
+            assertThat<Int>(data, "value").isLessThanEquals(1)
+            assertThat<Int>(data, "value").isLessThanEquals(2)
+            assertThat<Int?>(data, "valueNull").isLessThanEquals(1)
+            assertThat<Int>(data, "valueNull").isLessThanEquals(1)
+
+            val results = this.results.toList()
+
+            junitAssertThat(results).contains(
+                ValidationError(dataTrace().tag("assertion" to "data[value] is less than equals 0"), "Fail: data[value] is less than equals 0", "1 <= 0"),
+                ValidationInfo(dataTrace().tag("assertion" to "data[value] is less than equals 1"), "Pass: data[value] is less than equals 1", "1 <= 1"),
+                ValidationInfo(dataTrace().tag("assertion" to "data[value] is less than equals 2"), "Pass: data[value] is less than equals 2", "1 <= 2"),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] is less than equals 1"), "Fail: data[valueNull] is less than equals 1", "null <= 1"),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] is less than equals 1"), "Fail: data[valueNull] is less than equals 1", "null <= 1"),
+            )
+        }
+    }
+
+    @Test
+    fun `test assertThat Long isLessThanEquals`() {
+        val data = dataOf(
+            "value" to 1L,
+        )
+        with(Assertions(dataTrace())) {
+            assertThat<Long>(data, "value").isLessThanEquals(0)
+            assertThat<Long>(data, "value").isLessThanEquals(1)
+            assertThat<Long>(data, "value").isLessThanEquals(2)
+            assertThat<Long?>(data, "valueNull").isLessThanEquals(1)
+            assertThat<Long>(data, "valueNull").isLessThanEquals(1)
+
+            val results = this.results.toList()
+
+            junitAssertThat(results).contains(
+                ValidationError(dataTrace().tag("assertion" to "data[value] is less than equals 0"), "Fail: data[value] is less than equals 0", "1 <= 0"),
+                ValidationInfo(dataTrace().tag("assertion" to "data[value] is less than equals 1"), "Pass: data[value] is less than equals 1", "1 <= 1"),
+                ValidationInfo(dataTrace().tag("assertion" to "data[value] is less than equals 2"), "Pass: data[value] is less than equals 2", "1 <= 2"),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] is less than equals 1"), "Fail: data[valueNull] is less than equals 1", "null <= 1"),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] is less than equals 1"), "Fail: data[valueNull] is less than equals 1", "null <= 1"),
+            )
+        }
+    }
+
+    @Test
+    fun `test assertThat Float isLessThanEquals`() {
+        val data = dataOf(
+            "value" to 1.0f,
+        )
+        with(Assertions(dataTrace())) {
+            assertThat<Float>(data, "value").isLessThanEquals(0.0f)
+            assertThat<Float>(data, "value").isLessThanEquals(1.0f)
+            assertThat<Float>(data, "value").isLessThanEquals(2.0f)
+            assertThat<Float?>(data, "valueNull").isLessThanEquals(1.0f)
+            assertThat<Float>(data, "valueNull").isLessThanEquals(1.0f)
+
+            val results = this.results.toList()
+
+            junitAssertThat(results).contains(
+                ValidationError(dataTrace().tag("assertion" to "data[value] is less than equals 0.0"), "Fail: data[value] is less than equals 0.0", "1.0 <= 0.0"),
+                ValidationInfo(dataTrace().tag("assertion" to "data[value] is less than equals 1.0"), "Pass: data[value] is less than equals 1.0", "1.0 <= 1.0"),
+                ValidationInfo(dataTrace().tag("assertion" to "data[value] is less than equals 2.0"), "Pass: data[value] is less than equals 2.0", "1.0 <= 2.0"),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] is less than equals 1.0"), "Fail: data[valueNull] is less than equals 1.0", "null <= 1.0"),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] is less than equals 1.0"), "Fail: data[valueNull] is less than equals 1.0", "null <= 1.0"),
+            )
+        }
+    }
+
+    @Test
+    fun `test assertThat Double isLessThanEquals`() {
+        val data = dataOf(
+            "value" to 1.0,
+        )
+        with(Assertions(dataTrace())) {
+            assertThat<Double>(data, "value").isLessThanEquals(0.0)
+            assertThat<Double>(data, "value").isLessThanEquals(1.0)
+            assertThat<Double>(data, "value").isLessThanEquals(2.0)
+            assertThat<Double?>(data, "valueNull").isLessThanEquals(1.0)
+            assertThat<Double>(data, "valueNull").isLessThanEquals(1.0)
+
+            val results = this.results.toList()
+
+            junitAssertThat(results).contains(
+                ValidationError(dataTrace().tag("assertion" to "data[value] is less than equals 0.0"), "Fail: data[value] is less than equals 0.0", "1.0 <= 0.0"),
+                ValidationInfo(dataTrace().tag("assertion" to "data[value] is less than equals 1.0"), "Pass: data[value] is less than equals 1.0", "1.0 <= 1.0"),
+                ValidationInfo(dataTrace().tag("assertion" to "data[value] is less than equals 2.0"), "Pass: data[value] is less than equals 2.0", "1.0 <= 2.0"),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] is less than equals 1.0"), "Fail: data[valueNull] is less than equals 1.0", "null <= 1.0"),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] is less than equals 1.0"), "Fail: data[valueNull] is less than equals 1.0", "null <= 1.0"),
+            )
+        }
+    }
+
+    @Test
+    fun `test assertThat Int isGreaterThan`() {
+        val data = dataOf(
+            "value" to 1,
+        )
+        with(Assertions(dataTrace())) {
+            assertThat<Int>(data, "value").isGreaterThan(0)
+            assertThat<Int>(data, "value").isGreaterThan(1)
+            assertThat<Int>(data, "value").isGreaterThan(2)
+            assertThat<Int?>(data, "valueNull").isGreaterThan(1)
+            assertThat<Int>(data, "valueNull").isGreaterThan(1)
+
+            val results = this.results.toList()
+
+            junitAssertThat(results).contains(
+                ValidationInfo(dataTrace().tag("assertion" to "data[value] is greater than 0"), "Pass: data[value] is greater than 0", "1 > 0"),
+                ValidationError(dataTrace().tag("assertion" to "data[value] is greater than 1"), "Fail: data[value] is greater than 1", "1 > 1"),
+                ValidationError(dataTrace().tag("assertion" to "data[value] is greater than 2"), "Fail: data[value] is greater than 2", "1 > 2"),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] is greater than 1"), "Fail: data[valueNull] is greater than 1", "null > 1"),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] is greater than 1"), "Fail: data[valueNull] is greater than 1", "null > 1"),
+            )
+        }
+    }
+
+    @Test
+    fun `test assertThat Long isGreaterThan`() {
+        val data = dataOf(
+            "value" to 1L,
+        )
+        with(Assertions(dataTrace())) {
+            assertThat<Long>(data, "value").isGreaterThan(0)
+            assertThat<Long>(data, "value").isGreaterThan(1)
+            assertThat<Long>(data, "value").isGreaterThan(2)
+            assertThat<Long?>(data, "valueNull").isGreaterThan(1)
+            assertThat<Long>(data, "valueNull").isGreaterThan(1)
+
+            val results = this.results.toList()
+
+            junitAssertThat(results).contains(
+                ValidationInfo(dataTrace().tag("assertion" to "data[value] is greater than 0"), "Pass: data[value] is greater than 0", "1 > 0"),
+                ValidationError(dataTrace().tag("assertion" to "data[value] is greater than 1"), "Fail: data[value] is greater than 1", "1 > 1"),
+                ValidationError(dataTrace().tag("assertion" to "data[value] is greater than 2"), "Fail: data[value] is greater than 2", "1 > 2"),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] is greater than 1"), "Fail: data[valueNull] is greater than 1", "null > 1"),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] is greater than 1"), "Fail: data[valueNull] is greater than 1", "null > 1"),
+            )
+        }
+    }
+
+    @Test
+    fun `test assertThat Float isGreaterThan`() {
+        val data = dataOf(
+            "value" to 1.0f,
+        )
+        with(Assertions(dataTrace())) {
+            assertThat<Float>(data, "value").isGreaterThan(0.0f)
+            assertThat<Float>(data, "value").isGreaterThan(1.0f)
+            assertThat<Float>(data, "value").isGreaterThan(2.0f)
+            assertThat<Float?>(data, "valueNull").isGreaterThan(1.0f)
+            assertThat<Float>(data, "valueNull").isGreaterThan(1.0f)
+
+            val results = this.results.toList()
+
+            junitAssertThat(results).contains(
+                ValidationInfo(dataTrace().tag("assertion" to "data[value] is greater than 0.0"), "Pass: data[value] is greater than 0.0", "1.0 > 0.0"),
+                ValidationError(dataTrace().tag("assertion" to "data[value] is greater than 1.0"), "Fail: data[value] is greater than 1.0", "1.0 > 1.0"),
+                ValidationError(dataTrace().tag("assertion" to "data[value] is greater than 2.0"), "Fail: data[value] is greater than 2.0", "1.0 > 2.0"),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] is greater than 1.0"), "Fail: data[valueNull] is greater than 1.0", "null > 1.0"),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] is greater than 1.0"), "Fail: data[valueNull] is greater than 1.0", "null > 1.0"),
+            )
+        }
+    }
+
+    @Test
+    fun `test assertThat Double isGreaterThan`() {
+        val data = dataOf(
+            "value" to 1.0,
+        )
+        with(Assertions(dataTrace())) {
+            assertThat<Double>(data, "value").isGreaterThan(0.0)
+            assertThat<Double>(data, "value").isGreaterThan(1.0)
+            assertThat<Double>(data, "value").isGreaterThan(2.0)
+            assertThat<Double?>(data, "valueNull").isGreaterThan(1.0)
+            assertThat<Double>(data, "valueNull").isGreaterThan(1.0)
+
+            val results = this.results.toList()
+
+            junitAssertThat(results).contains(
+                ValidationInfo(dataTrace().tag("assertion" to "data[value] is greater than 0.0"), "Pass: data[value] is greater than 0.0", "1.0 > 0.0"),
+                ValidationError(dataTrace().tag("assertion" to "data[value] is greater than 1.0"), "Fail: data[value] is greater than 1.0", "1.0 > 1.0"),
+                ValidationError(dataTrace().tag("assertion" to "data[value] is greater than 2.0"), "Fail: data[value] is greater than 2.0", "1.0 > 2.0"),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] is greater than 1.0"), "Fail: data[valueNull] is greater than 1.0", "null > 1.0"),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] is greater than 1.0"), "Fail: data[valueNull] is greater than 1.0", "null > 1.0"),
+            )
+        }
+    }
+
+    @Test
+    fun `test assertThat Int isGreaterThanEquals`() {
+        val data = dataOf(
+            "value" to 1,
+        )
+        with(Assertions(dataTrace())) {
+            assertThat<Int>(data, "value").isGreaterThanEquals(0)
+            assertThat<Int>(data, "value").isGreaterThanEquals(1)
+            assertThat<Int>(data, "value").isGreaterThanEquals(2)
+            assertThat<Int?>(data, "valueNull").isGreaterThanEquals(1)
+            assertThat<Int>(data, "valueNull").isGreaterThanEquals(1)
+
+            val results = this.results.toList()
+
+            junitAssertThat(results).contains(
+                ValidationInfo(dataTrace().tag("assertion" to "data[value] is greater than equals 0"), "Pass: data[value] is greater than equals 0", "1 >= 0"),
+                ValidationInfo(dataTrace().tag("assertion" to "data[value] is greater than equals 1"), "Pass: data[value] is greater than equals 1", "1 >= 1"),
+                ValidationError(dataTrace().tag("assertion" to "data[value] is greater than equals 2"), "Fail: data[value] is greater than equals 2", "1 >= 2"),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] is greater than equals 1"), "Fail: data[valueNull] is greater than equals 1", "null >= 1"),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] is greater than equals 1"), "Fail: data[valueNull] is greater than equals 1", "null >= 1"),
+            )
+        }
+    }
+
+    @Test
+    fun `test assertThat Long isGreaterThanEquals`() {
+        val data = dataOf(
+            "value" to 1L,
+        )
+        with(Assertions(dataTrace())) {
+            assertThat<Long>(data, "value").isGreaterThanEquals(0)
+            assertThat<Long>(data, "value").isGreaterThanEquals(1)
+            assertThat<Long>(data, "value").isGreaterThanEquals(2)
+            assertThat<Long?>(data, "valueNull").isGreaterThanEquals(1)
+            assertThat<Long>(data, "valueNull").isGreaterThanEquals(1)
+
+            val results = this.results.toList()
+
+            junitAssertThat(results).contains(
+                ValidationInfo(dataTrace().tag("assertion" to "data[value] is greater than equals 0"), "Pass: data[value] is greater than equals 0", "1 >= 0"),
+                ValidationInfo(dataTrace().tag("assertion" to "data[value] is greater than equals 1"), "Pass: data[value] is greater than equals 1", "1 >= 1"),
+                ValidationError(dataTrace().tag("assertion" to "data[value] is greater than equals 2"), "Fail: data[value] is greater than equals 2", "1 >= 2"),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] is greater than equals 1"), "Fail: data[valueNull] is greater than equals 1", "null >= 1"),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] is greater than equals 1"), "Fail: data[valueNull] is greater than equals 1", "null >= 1"),
+            )
+        }
+    }
+
+    @Test
+    fun `test assertThat Float isGreaterThanEquals`() {
+        val data = dataOf(
+            "value" to 1.0f,
+        )
+        with(Assertions(dataTrace())) {
+            assertThat<Float>(data, "value").isGreaterThanEquals(0.0f)
+            assertThat<Float>(data, "value").isGreaterThanEquals(1.0f)
+            assertThat<Float>(data, "value").isGreaterThanEquals(2.0f)
+            assertThat<Float?>(data, "valueNull").isGreaterThanEquals(1.0f)
+            assertThat<Float>(data, "valueNull").isGreaterThanEquals(1.0f)
+
+            val results = this.results.toList()
+
+            junitAssertThat(results).contains(
+                ValidationInfo(dataTrace().tag("assertion" to "data[value] is greater than equals 0.0"), "Pass: data[value] is greater than equals 0.0", "1.0 >= 0.0"),
+                ValidationInfo(dataTrace().tag("assertion" to "data[value] is greater than equals 1.0"), "Pass: data[value] is greater than equals 1.0", "1.0 >= 1.0"),
+                ValidationError(dataTrace().tag("assertion" to "data[value] is greater than equals 2.0"), "Fail: data[value] is greater than equals 2.0", "1.0 >= 2.0"),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] is greater than equals 1.0"), "Fail: data[valueNull] is greater than equals 1.0", "null >= 1.0"),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] is greater than equals 1.0"), "Fail: data[valueNull] is greater than equals 1.0", "null >= 1.0"),
+            )
+        }
+    }
+
+    @Test
+    fun `test assertThat Double isGreaterThanEquals`() {
+        val data = dataOf(
+            "value" to 1.0,
+        )
+        with(Assertions(dataTrace())) {
+            assertThat<Double>(data, "value").isGreaterThanEquals(0.0)
+            assertThat<Double>(data, "value").isGreaterThanEquals(1.0)
+            assertThat<Double>(data, "value").isGreaterThanEquals(2.0)
+            assertThat<Double?>(data, "valueNull").isGreaterThanEquals(1.0)
+            assertThat<Double>(data, "valueNull").isGreaterThanEquals(1.0)
+
+            val results = this.results.toList()
+
+            junitAssertThat(results).contains(
+                ValidationInfo(dataTrace().tag("assertion" to "data[value] is greater than equals 0.0"), "Pass: data[value] is greater than equals 0.0", "1.0 >= 0.0"),
+                ValidationInfo(dataTrace().tag("assertion" to "data[value] is greater than equals 1.0"), "Pass: data[value] is greater than equals 1.0", "1.0 >= 1.0"),
+                ValidationError(dataTrace().tag("assertion" to "data[value] is greater than equals 2.0"), "Fail: data[value] is greater than equals 2.0", "1.0 >= 2.0"),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] is greater than equals 1.0"), "Fail: data[valueNull] is greater than equals 1.0", "null >= 1.0"),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] is greater than equals 1.0"), "Fail: data[valueNull] is greater than equals 1.0", "null >= 1.0"),
+            )
+        }
+    }
+
 //
 //    @Test
 //    fun `test assertContains`() {

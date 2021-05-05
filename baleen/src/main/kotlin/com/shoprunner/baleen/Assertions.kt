@@ -128,7 +128,7 @@ class Assertions(val dataTrace: DataTrace) {
             is AssertThatValue ->
                 assertEquals(this.messagePrefix + message, this.typedActual, expected)
             is AssertThatNoValue ->
-                fail(this.messagePrefix + message, this.actual)
+                fail(this.messagePrefix + message, "${this.actual} == $expected")
         }
         return this
     }
@@ -142,7 +142,7 @@ class Assertions(val dataTrace: DataTrace) {
             is AssertThatValue ->
                 assertNotEquals(this.messagePrefix + message, this.typedActual, expected)
             is AssertThatNoValue ->
-                fail(this.messagePrefix + message, this.actual)
+                fail(this.messagePrefix + message, "${this.actual} != $expected")
         }
         return this
     }
@@ -156,7 +156,7 @@ class Assertions(val dataTrace: DataTrace) {
             is AssertThatValue ->
                 assertLessThan(this.messagePrefix + message, this.typedActual, expected)
             is AssertThatNoValue ->
-                fail(this.messagePrefix + message, this.actual)
+                fail(this.messagePrefix + message, "${this.actual} < $expected")
         }
         return this
     }
@@ -170,7 +170,7 @@ class Assertions(val dataTrace: DataTrace) {
             is AssertThatValue ->
                 assertLessThan(this.messagePrefix + message, this.typedActual, expected)
             is AssertThatNoValue ->
-                fail(this.messagePrefix + message, this.actual)
+                fail(this.messagePrefix + message, "${this.actual} < $expected")
         }
         return this
     }
@@ -184,7 +184,7 @@ class Assertions(val dataTrace: DataTrace) {
             is AssertThatValue ->
                 assertLessThan(this.messagePrefix + message, this.typedActual, expected)
             is AssertThatNoValue ->
-                fail(this.messagePrefix + message, this.actual)
+                fail(this.messagePrefix + message, "${this.actual} < $expected")
         }
         return this
     }
@@ -198,7 +198,7 @@ class Assertions(val dataTrace: DataTrace) {
             is AssertThatValue ->
                 assertLessThan(this.messagePrefix + message, this.typedActual, expected)
             is AssertThatNoValue ->
-                fail(this.messagePrefix + message, this.actual)
+                fail(this.messagePrefix + message, "${this.actual} < $expected")
         }
         return this
     }
@@ -212,7 +212,7 @@ class Assertions(val dataTrace: DataTrace) {
             is AssertThatValue ->
                 assertLessThanEquals(this.messagePrefix + message, this.typedActual, expected)
             is AssertThatNoValue ->
-                fail(this.messagePrefix + message, this.actual)
+                fail(this.messagePrefix + message, "${this.actual} <= $expected")
         }
         return this
     }
@@ -226,7 +226,7 @@ class Assertions(val dataTrace: DataTrace) {
             is AssertThatValue ->
                 assertLessThanEquals(this.messagePrefix + message, this.typedActual, expected)
             is AssertThatNoValue ->
-                fail(this.messagePrefix + message, this.actual)
+                fail(this.messagePrefix + message, "${this.actual} <= $expected")
         }
         return this
     }
@@ -240,7 +240,7 @@ class Assertions(val dataTrace: DataTrace) {
             is AssertThatValue ->
                 assertLessThanEquals(this.messagePrefix + message, this.typedActual, expected)
             is AssertThatNoValue ->
-                fail(this.messagePrefix + message, this.actual)
+                fail(this.messagePrefix + message, "${this.actual} <= $expected")
         }
         return this
     }
@@ -254,7 +254,7 @@ class Assertions(val dataTrace: DataTrace) {
             is AssertThatValue ->
                 assertLessThanEquals(this.messagePrefix + message, this.typedActual, expected)
             is AssertThatNoValue ->
-                fail(this.messagePrefix + message, this.actual)
+                fail(this.messagePrefix + message, "${this.actual} <= $expected")
         }
         return this
     }
@@ -268,7 +268,7 @@ class Assertions(val dataTrace: DataTrace) {
             is AssertThatValue ->
                 assertGreaterThan(this.messagePrefix + message, this.typedActual, expected)
             is AssertThatNoValue ->
-                fail(this.messagePrefix + message, this.actual)
+                fail(this.messagePrefix + message, "${this.actual} > $expected")
         }
         return this
     }
@@ -277,12 +277,12 @@ class Assertions(val dataTrace: DataTrace) {
         assertTrue(message, left != null && right != null && left > right, "$left > $right")
     }
 
-    fun <T : Long?> AssertThat<T>.isGreaterThan(expected: Long, message: String = "is greater than equals $expected"): AssertThat<T> {
+    fun <T : Long?> AssertThat<T>.isGreaterThan(expected: Long, message: String = "is greater than $expected"): AssertThat<T> {
         when (this) {
             is AssertThatValue ->
                 assertGreaterThan(this.messagePrefix + message, this.typedActual, expected)
             is AssertThatNoValue ->
-                fail(this.messagePrefix + message, this.actual)
+                fail(this.messagePrefix + message, "${this.actual} > $expected")
         }
         return this
     }
@@ -291,12 +291,12 @@ class Assertions(val dataTrace: DataTrace) {
         assertTrue(message, left != null && right != null && left > right, "$left > $right")
     }
 
-    fun <T : Float?> AssertThat<T>.isGreaterThan(expected: Float, message: String = "is greater than equals $expected"): AssertThat<T> {
+    fun <T : Float?> AssertThat<T>.isGreaterThan(expected: Float, message: String = "is greater than $expected"): AssertThat<T> {
         when (this) {
             is AssertThatValue ->
                 assertGreaterThan(this.messagePrefix + message, this.typedActual, expected)
             is AssertThatNoValue ->
-                fail(this.messagePrefix + message, this.actual)
+                fail(this.messagePrefix + message, "${this.actual} > $expected")
         }
         return this
     }
@@ -310,7 +310,7 @@ class Assertions(val dataTrace: DataTrace) {
             is AssertThatValue ->
                 assertGreaterThan(this.messagePrefix + message, this.typedActual, expected)
             is AssertThatNoValue ->
-                fail(this.messagePrefix + message, this.actual)
+                fail(this.messagePrefix + message, "${this.actual} > $expected")
         }
         return this
     }
@@ -324,7 +324,7 @@ class Assertions(val dataTrace: DataTrace) {
             is AssertThatValue ->
                 assertGreaterThanEquals(this.messagePrefix + message, this.typedActual, expected)
             is AssertThatNoValue ->
-                fail(this.messagePrefix + message, this.actual)
+                fail(this.messagePrefix + message, "${this.actual} >= $expected")
         }
         return this
     }
@@ -338,7 +338,7 @@ class Assertions(val dataTrace: DataTrace) {
             is AssertThatValue ->
                 assertGreaterThanEquals(this.messagePrefix + message, this.typedActual, expected)
             is AssertThatNoValue ->
-                fail(this.messagePrefix + message, this.actual)
+                fail(this.messagePrefix + message, "${this.actual} >= $expected")
         }
         return this
     }
@@ -352,7 +352,7 @@ class Assertions(val dataTrace: DataTrace) {
             is AssertThatValue ->
                 assertGreaterThanEquals(this.messagePrefix + message, this.typedActual, expected)
             is AssertThatNoValue ->
-                fail(this.messagePrefix + message, this.actual)
+                fail(this.messagePrefix + message, "${this.actual} >= $expected")
         }
         return this
     }
@@ -366,7 +366,7 @@ class Assertions(val dataTrace: DataTrace) {
             is AssertThatValue ->
                 assertGreaterThanEquals(this.messagePrefix + message, this.typedActual, expected)
             is AssertThatNoValue ->
-                fail(this.messagePrefix + message, this.actual)
+                fail(this.messagePrefix + message, "${this.actual} >= $expected")
         }
         return this
     }
@@ -380,7 +380,7 @@ class Assertions(val dataTrace: DataTrace) {
             is AssertThatValue ->
                 assertContains(this.messagePrefix + message, this.typedActual, expected)
             is AssertThatNoValue ->
-                fail(this.messagePrefix + message, this.actual)
+                fail(this.messagePrefix + message, "$expected in ${this.actual}")
         }
         return this
     }
@@ -394,7 +394,7 @@ class Assertions(val dataTrace: DataTrace) {
             is AssertThatValue ->
                 assertNotContains(this.messagePrefix + message, this.typedActual, expected)
             is AssertThatNoValue ->
-                fail(this.messagePrefix + message, this.actual)
+                fail(this.messagePrefix + message, "$expected not in ${this.actual}")
         }
         return this
     }
@@ -450,7 +450,7 @@ class Assertions(val dataTrace: DataTrace) {
             is AssertThatValue ->
                 assertSizeEquals(this.messagePrefix + message, this.typedActual, size)
             is AssertThatNoValue ->
-                fail(this.messagePrefix + message, this.actual)
+                fail(this.messagePrefix + message, "$size = size(${this.actual})")
         }
         return this
     }
