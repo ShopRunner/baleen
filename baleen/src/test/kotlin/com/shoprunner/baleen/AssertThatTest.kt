@@ -559,141 +559,185 @@ internal class AssertThatTest {
         }
     }
 
-//
-//    @Test
-//    fun `test assertContains`() {
-//        val assertions = Assertions(dataTrace())
-//
-//        assertions.assertContains("test 1 in [1,2,3]", listOf(1,2,3), 1)
-//        assertions.assertContains("test 1 in []", emptyList<Int>(), 1)
-//        assertions.assertContains("test null in [1,2,3]", listOf(1,2,3), null)
-//        assertions.assertContains("test 1 in null", null, 1)
-//
-//        assertThat(assertions.results).containsExactly(
-//            ValidationInfo(dataTrace().tag("assertion" to "test 1 in [1,2,3]"), "Pass: test 1 in [1,2,3]", "1 in [1, 2, 3]"),
-//            ValidationError(dataTrace().tag("assertion" to "test 1 in []"), "Fail: test 1 in []", "1 in []"),
-//            ValidationError(dataTrace().tag("assertion" to "test null in [1,2,3]"), "Fail: test null in [1,2,3]", "null in [1, 2, 3]"),
-//            ValidationError(dataTrace().tag("assertion" to "test 1 in null"), "Fail: test 1 in null", "1 in null"),
-//        )
-//    }
-//
-//    @Test
-//    fun `test assertNotContains`() {
-//        val assertions = Assertions(dataTrace())
-//
-//        assertions.assertNotContains("test 1 !in [1,2,3]", listOf(1,2,3), 1)
-//        assertions.assertNotContains("test 1 !in []", emptyList<Int>(), 1)
-//        assertions.assertNotContains("test null !in [1,2,3]", listOf(1,2,3), null)
-//        assertions.assertNotContains("test 1 !in null", null, 1)
-//
-//        assertThat(assertions.results).containsExactly(
-//            ValidationError(dataTrace().tag("assertion" to "test 1 !in [1,2,3]"), "Fail: test 1 !in [1,2,3]", "1 not in [1, 2, 3]"),
-//            ValidationInfo(dataTrace().tag("assertion" to "test 1 !in []"), "Pass: test 1 !in []", "1 not in []"),
-//            ValidationInfo(dataTrace().tag("assertion" to "test null !in [1,2,3]"), "Pass: test null !in [1,2,3]", "null not in [1, 2, 3]"),
-//            ValidationError(dataTrace().tag("assertion" to "test 1 !in null"), "Fail: test 1 !in null", "1 not in null"),
-//        )
-//    }
-//
-//    @Test
-//    fun `test assertEmpty`() {
-//        val assertions = Assertions(dataTrace())
-//
-//        assertions.assertEmpty("test [1,2,3] is empty", listOf(1,2,3))
-//        assertions.assertEmpty("test [] is empty", emptyList<Int>())
-//        assertions.assertEmpty("test null is empty", null)
-//
-//        assertThat(assertions.results).containsExactly(
-//            ValidationError(dataTrace().tag("assertion" to "test [1,2,3] is empty"), "Fail: test [1,2,3] is empty", listOf(1, 2, 3)),
-//            ValidationInfo(dataTrace().tag("assertion" to "test [] is empty"), "Pass: test [] is empty", emptyList<Int>()),
-//            ValidationError(dataTrace().tag("assertion" to "test null is empty"), "Fail: test null is empty", null),
-//        )
-//    }
-//
-//    @Test
-//    fun `test assertNullOrEmpty`() {
-//        val assertions = Assertions(dataTrace())
-//
-//        assertions.assertNullOrEmpty("test [1,2,3] is null or empty", listOf(1,2,3))
-//        assertions.assertNullOrEmpty("test [] is null or empty", emptyList<Int>())
-//        assertions.assertNullOrEmpty("test null is null or empty", null)
-//
-//        assertThat(assertions.results).containsExactly(
-//            ValidationError(dataTrace().tag("assertion" to "test [1,2,3] is null or empty"), "Fail: test [1,2,3] is null or empty", listOf(1, 2, 3)),
-//            ValidationInfo(dataTrace().tag("assertion" to "test [] is null or empty"), "Pass: test [] is null or empty", emptyList<Int>()),
-//            ValidationInfo(dataTrace().tag("assertion" to "test null is null or empty"), "Pass: test null is null or empty", null),
-//        )
-//    }
-//
-//    @Test
-//    fun `test assertNotEmpty`() {
-//        val assertions = Assertions(dataTrace())
-//
-//        assertions.assertNotEmpty("test [1,2,3] is not empty", listOf(1,2,3))
-//        assertions.assertNotEmpty("test [] is not empty", emptyList<Int>())
-//        assertions.assertNotEmpty("test null is not empty", null)
-//
-//        assertThat(assertions.results).containsExactly(
-//            ValidationInfo(dataTrace().tag("assertion" to "test [1,2,3] is not empty"), "Pass: test [1,2,3] is not empty", listOf(1, 2, 3)),
-//            ValidationError(dataTrace().tag("assertion" to "test [] is not empty"), "Fail: test [] is not empty", emptyList<Int>()),
-//            ValidationError(dataTrace().tag("assertion" to "test null is not empty"), "Fail: test null is not empty", null),
-//        )
-//    }
-//
-//    @Test
-//    fun `test assertSizeEquals`() {
-//        val assertions = Assertions(dataTrace())
-//
-//        assertions.assertSizeEquals("test [1,2,3] is length 3", listOf(1,2,3), 3)
-//        assertions.assertSizeEquals("test [] is length 3", emptyList<Int>(), 3)
-//        assertions.assertSizeEquals("test null is length 3", null, 3)
-//
-//        assertThat(assertions.results).containsExactly(
-//            ValidationInfo(dataTrace().tag("assertion" to "test [1,2,3] is length 3"), "Pass: test [1,2,3] is length 3", "3 = size([1, 2, 3])"),
-//            ValidationError(dataTrace().tag("assertion" to "test [] is length 3"), "Fail: test [] is length 3", "3 = size([])"),
-//            ValidationError(dataTrace().tag("assertion" to "test null is length 3"), "Fail: test null is length 3", "3 = size(null)"),
-//        )
-//    }
-//
-//    @Test
-//    fun `test assertNull`() {
-//        val assertions = Assertions(dataTrace())
-//
-//        assertions.assertNull("test \"hello\" is null", "hello")
-//        assertions.assertNull("test null is null", null)
-//
-//        assertThat(assertions.results).containsExactly(
-//            ValidationError(dataTrace().tag("assertion" to "test \"hello\" is null"), "Fail: test \"hello\" is null", "hello"),
-//            ValidationInfo(dataTrace().tag("assertion" to "test null is null"), "Pass: test null is null", null),
-//        )
-//    }
-//
-//    @Test
-//    fun `test assertNotNull`() {
-//        val assertions = Assertions(dataTrace())
-//
-//        assertions.assertNotNull("test \"hello\" is not null", "hello")
-//        assertions.assertNotNull("test null is not null", null)
-//
-//        assertThat(assertions.results).containsExactly(
-//            ValidationInfo(dataTrace().tag("assertion" to "test \"hello\" is not null"), "Pass: test \"hello\" is not null", "hello"),
-//            ValidationError(dataTrace().tag("assertion" to "test null is not null"), "Fail: test null is not null", null),
-//        )
-//    }
-//
-//    @Test
-//    fun `test assertInstanceOf`() {
-//        val assertions = Assertions(dataTrace())
-//
-//        assertions.assertInstanceOf<String>("test \"hello\" is a String", "hello")
-//        assertions.assertInstanceOf<String>("test 1 is a String", 1)
-//        assertions.assertInstanceOf<String>("test null is a String", null)
-//        assertions.assertInstanceOf<String?>("test null is a nullable String", null)
-//
-//        assertThat(assertions.results).containsExactly(
-//            ValidationInfo(dataTrace().tag("assertion" to "test \"hello\" is a String"), "Pass: test \"hello\" is a String", "hello is a kotlin.String"),
-//            ValidationError(dataTrace().tag("assertion" to "test 1 is a String"), "Fail: test 1 is a String", "1 is a kotlin.Int"),
-//            ValidationError(dataTrace().tag("assertion" to "test null is a String"), "Fail: test null is a String", "null is a null"),
-//            ValidationInfo(dataTrace().tag("assertion" to "test null is a nullable String"), "Pass: test null is a nullable String", "null is a null"),
-//        )
-//    }
+    @Test
+    fun `test assertThat Collection contains`() {
+        val data = dataOf(
+            "value" to listOf(1, 2, 3),
+            "valueEmpty" to emptyList<Int>(),
+        )
+        with(Assertions(dataTrace())) {
+            assertThat<List<Int>>(data, "value").contains(1)
+            assertThat<List<Int>>(data, "valueEmpty").contains(1)
+            assertThat<List<Int>>(data, "value").contains(null)
+            assertThat<List<Int>?>(data, "valueNull").contains(1)
+            assertThat<List<Int>>(data, "valueNull").contains(1)
+
+            val results = this.results.toList()
+
+            junitAssertThat(results).contains(
+                ValidationInfo(dataTrace().tag("assertion" to "data[value] contains 1"), "Pass: data[value] contains 1", "1 in [1, 2, 3]"),
+                ValidationError(dataTrace().tag("assertion" to "data[valueEmpty] contains 1"), "Fail: data[valueEmpty] contains 1", "1 in []"),
+                ValidationError(dataTrace().tag("assertion" to "data[value] contains null"), "Fail: data[value] contains null", "null in [1, 2, 3]"),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] contains 1"), "Fail: data[valueNull] contains 1", "1 in null"),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] contains 1"), "Fail: data[valueNull] contains 1", "1 in null"),
+            )
+        }
+    }
+
+    @Test
+    fun `test assertThat Collection notContains`() {
+        val data = dataOf(
+            "value" to listOf(1, 2, 3),
+            "valueEmpty" to emptyList<Int>(),
+        )
+        with(Assertions(dataTrace())) {
+            assertThat<List<Int>>(data, "value").notContains(1)
+            assertThat<List<Int>>(data, "valueEmpty").notContains(1)
+            assertThat<List<Int>>(data, "value").notContains(null)
+            assertThat<List<Int>?>(data, "valueNull").notContains(1)
+            assertThat<List<Int>>(data, "valueNull").notContains(1)
+
+            val results = this.results.toList()
+
+            junitAssertThat(results).contains(
+                ValidationError(dataTrace().tag("assertion" to "data[value] not contains 1"), "Fail: data[value] not contains 1", "1 not in [1, 2, 3]"),
+                ValidationInfo(dataTrace().tag("assertion" to "data[valueEmpty] not contains 1"), "Pass: data[valueEmpty] not contains 1", "1 not in []"),
+                ValidationInfo(dataTrace().tag("assertion" to "data[value] not contains null"), "Pass: data[value] not contains null", "null not in [1, 2, 3]"),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] not contains 1"), "Fail: data[valueNull] not contains 1", "1 not in null"),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] not contains 1"), "Fail: data[valueNull] not contains 1", "1 not in null"),
+            )
+        }
+    }
+
+    @Test
+    fun `test assertThat Collection isEmpty`() {
+        val data = dataOf(
+            "value" to listOf(1, 2, 3),
+            "valueEmpty" to emptyList<Int>(),
+        )
+        with(Assertions(dataTrace())) {
+            assertThat<List<Int>>(data, "value").isEmpty()
+            assertThat<List<Int>>(data, "valueEmpty").isEmpty()
+            assertThat<List<Int>?>(data, "valueNull").isEmpty()
+            assertThat<List<Int>>(data, "valueNull").isEmpty()
+
+            val results = this.results.toList()
+
+            junitAssertThat(results).contains(
+                ValidationError(dataTrace().tag("assertion" to "data[value] is empty"), "Fail: data[value] is empty", listOf(1, 2, 3)),
+                ValidationInfo(dataTrace().tag("assertion" to "data[valueEmpty] is empty"), "Pass: data[valueEmpty] is empty", emptyList<Int>()),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] is empty"), "Fail: data[valueNull] is empty", null),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] is empty"), "Fail: data[valueNull] is empty", null),
+            )
+        }
+    }
+
+    @Test
+    fun `test assertThat Collection isNullOrEmpty`() {
+        val data = dataOf(
+            "value" to listOf(1, 2, 3),
+            "valueEmpty" to emptyList<Int>(),
+        )
+        with(Assertions(dataTrace())) {
+            assertThat<List<Int>>(data, "value").isNullOrEmpty()
+            assertThat<List<Int>>(data, "valueEmpty").isNullOrEmpty()
+            assertThat<List<Int>?>(data, "valueNull").isNullOrEmpty()
+            assertThat<List<Int>>(data, "valueNull").isNullOrEmpty()
+
+            val results = this.results.toList()
+
+            junitAssertThat(results).contains(
+                ValidationError(dataTrace().tag("assertion" to "data[value] is null or empty"), "Fail: data[value] is null or empty", listOf(1, 2, 3)),
+                ValidationInfo(dataTrace().tag("assertion" to "data[valueEmpty] is null or empty"), "Pass: data[valueEmpty] is null or empty", emptyList<Int>()),
+                ValidationInfo(dataTrace().tag("assertion" to "data[valueNull] is null or empty"), "Pass: data[valueNull] is null or empty", null),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] is null or empty"), "Fail: data[valueNull] is null or empty", null),
+            )
+        }
+    }
+
+    @Test
+    fun `test assertThat Collection isNotEmpty`() {
+        val data = dataOf(
+            "value" to listOf(1, 2, 3),
+            "valueEmpty" to emptyList<Int>(),
+        )
+        with(Assertions(dataTrace())) {
+            assertThat<List<Int>>(data, "value").isNotEmpty()
+            assertThat<List<Int>>(data, "valueEmpty").isNotEmpty()
+            assertThat<List<Int>?>(data, "valueNull").isNotEmpty()
+            assertThat<List<Int>>(data, "valueNull").isNotEmpty()
+
+            val results = this.results.toList()
+
+            junitAssertThat(results).contains(
+                ValidationInfo(dataTrace().tag("assertion" to "data[value] is not empty"), "Pass: data[value] is not empty", listOf(1, 2, 3)),
+                ValidationError(dataTrace().tag("assertion" to "data[valueEmpty] is not empty"), "Fail: data[valueEmpty] is not empty", emptyList<Int>()),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] is not empty"), "Fail: data[valueNull] is not empty", null),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] is not empty"), "Fail: data[valueNull] is not empty", null),
+            )
+        }
+    }
+
+    @Test
+    fun `test assertThat Collection isSizeEquals`() {
+        val data = dataOf(
+            "value" to listOf(1, 2, 3),
+            "valueEmpty" to emptyList<Int>(),
+        )
+        with(Assertions(dataTrace())) {
+            assertThat<List<Int>>(data, "value").isSizeEquals(3)
+            assertThat<List<Int>>(data, "valueEmpty").isSizeEquals(3)
+            assertThat<List<Int>?>(data, "valueNull").isSizeEquals(3)
+            assertThat<List<Int>>(data, "valueNull").isSizeEquals(3)
+
+            val results = this.results.toList()
+
+            junitAssertThat(results).contains(
+                ValidationInfo(dataTrace().tag("assertion" to "data[value] is size equal to 3"), "Pass: data[value] is size equal to 3", "3 = size([1, 2, 3])"),
+                ValidationError(dataTrace().tag("assertion" to "data[valueEmpty] is size equal to 3"), "Fail: data[valueEmpty] is size equal to 3", "3 = size([])"),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] is size equal to 3"), "Fail: data[valueNull] is size equal to 3", "3 = size(null)"),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] is size equal to 3"), "Fail: data[valueNull] is size equal to 3", "3 = size(null)"),
+            )
+        }
+    }
+
+    @Test
+    fun `test assertThat isNull`() {
+        val data = dataOf(
+            "value" to "Hello World",
+        )
+        with(Assertions(dataTrace())) {
+            assertThat<String>(data, "value").isNull()
+            assertThat<String?>(data, "valueNull").isNull()
+            assertThat<String>(data, "valueNull").isNull()
+
+            val results = this.results.toList()
+
+            junitAssertThat(results).contains(
+                ValidationError(dataTrace().tag("assertion" to "data[value] is null"), "Fail: data[value] is null", "Hello World"),
+                ValidationInfo(dataTrace().tag("assertion" to "data[valueNull] is null"), "Pass: data[valueNull] is null", null),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] is null"), "Fail: data[valueNull] is null", null),
+            )
+        }
+    }
+
+    @Test
+    fun `test assertThat isNotNull`() {
+        val data = dataOf(
+            "value" to "Hello World",
+        )
+        with(Assertions(dataTrace())) {
+            assertThat<String>(data, "value").isNotNull()
+            assertThat<String?>(data, "valueNull").isNotNull()
+            assertThat<String>(data, "valueNull").isNotNull()
+
+            val results = this.results.toList()
+
+            junitAssertThat(results).contains(
+                ValidationInfo(dataTrace().tag("assertion" to "data[value] is not null"), "Pass: data[value] is not null", "Hello World"),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] is not null"), "Fail: data[valueNull] is not null", null),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] is not null"), "Fail: data[valueNull] is not null", null),
+            )
+        }
+    }
 }
