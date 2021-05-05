@@ -110,45 +110,93 @@ internal class AssertThatTest {
             )
         }
     }
-//
-//    @Test
-//    fun `test assertEquals`() {
-//        val assertions = Assertions(dataTrace())
-//
-//        assertions.assertEquals("test 1 = 1", 1, 1)
-//        assertions.assertEquals("test 1 = 2", 1, 2)
-//        assertions.assertEquals("test \"hello\" = \"hello\"", "hello", "hello")
-//        assertions.assertEquals("test \"hello\" = \"world\"", "hello", "world")
-//        assertions.assertEquals("test null = null", null, null)
-//
-//        assertThat(assertions.results).containsExactly(
-//            ValidationInfo(dataTrace().tag("assertion" to "test 1 = 1"), "Pass: test 1 = 1", "1 == 1"),
-//            ValidationError(dataTrace().tag("assertion" to "test 1 = 2"), "Fail: test 1 = 2", "1 == 2"),
-//            ValidationInfo(dataTrace().tag("assertion" to "test \"hello\" = \"hello\""), "Pass: test \"hello\" = \"hello\"", "hello == hello"),
-//            ValidationError(dataTrace().tag("assertion" to "test \"hello\" = \"world\""), "Fail: test \"hello\" = \"world\"", "hello == world"),
-//            ValidationInfo(dataTrace().tag("assertion" to "test null = null"), "Pass: test null = null", "null == null"),
-//        )
-//    }
-//
-//    @Test
-//    fun `test assertNotEquals`() {
-//        val assertions = Assertions(dataTrace())
-//
-//        assertions.assertNotEquals("test 1 != 1", 1, 1)
-//        assertions.assertNotEquals("test 1 != 2", 1, 2)
-//        assertions.assertNotEquals("test \"hello\" != \"hello\"", "hello", "hello")
-//        assertions.assertNotEquals("test \"hello\" != \"world\"", "hello", "world")
-//        assertions.assertNotEquals("test null != null", null, null)
-//
-//        assertThat(assertions.results).containsExactly(
-//            ValidationError(dataTrace().tag("assertion" to "test 1 != 1"), "Fail: test 1 != 1", "1 != 1"),
-//            ValidationInfo(dataTrace().tag("assertion" to "test 1 != 2"), "Pass: test 1 != 2", "1 != 2"),
-//            ValidationError(dataTrace().tag("assertion" to "test \"hello\" != \"hello\""), "Fail: test \"hello\" != \"hello\"", "hello != hello"),
-//            ValidationInfo(dataTrace().tag("assertion" to "test \"hello\" != \"world\""), "Pass: test \"hello\" != \"world\"", "hello != world"),
-//            ValidationError(dataTrace().tag("assertion" to "test null != null"), "Fail: test null != null", "null != null"),
-//        )
-//    }
-//
+
+    @Test
+    fun `test assertThat isEquals`() {
+        val data = dataOf(
+            "value1" to true,
+            "value2" to "Hello World"
+        )
+        with(Assertions(dataTrace())) {
+            assertThat<Boolean>(data, "value1").isEqualTo(true)
+            assertThat<Boolean>(data, "value1").isEqualTo(false)
+            assertThat<String>(data, "value2").isEqualTo("Hello World")
+            assertThat<String>(data, "value2").isEqualTo("Goodbye")
+
+            val results = this.results.toList()
+
+            junitAssertThat(results).contains(
+                ValidationInfo(dataTrace().tag("assertion" to "data[value1] is equal to true"), "Pass: data[value1] is equal to true", "true == true"),
+                ValidationError(dataTrace().tag("assertion" to "data[value1] is equal to false"), "Fail: data[value1] is equal to false", "true == false"),
+                ValidationInfo(dataTrace().tag("assertion" to "data[value2] is equal to Hello World"), "Pass: data[value2] is equal to Hello World", "Hello World == Hello World"),
+                ValidationError(dataTrace().tag("assertion" to "data[value2] is equal to Goodbye"), "Fail: data[value2] is equal to Goodbye", "Hello World == Goodbye"),
+            )
+        }
+    }
+
+    @Test
+        fun `test assertThat isNotEquals`() {
+            val data = dataOf(
+                "value1" to true,
+                "value2" to "Hello World"
+            )
+            with(Assertions(dataTrace())) {
+                assertThat<Boolean>(data, "value1").isNotEqualTo(true)
+                assertThat<Boolean>(data, "value1").isNotEqualTo(false)
+                assertThat<String>(data, "value2").isNotEqualTo("Hello World")
+                assertThat<String>(data, "value2").isNotEqualTo("Goodbye")
+
+                val results = this.results.toList()
+
+                junitAssertThat(results).contains(
+                    ValidationError(dataTrace().tag("assertion" to "data[value1] is not equal to true"), "Pass: data[value1] is not equal to true", "true != true"),
+                    ValidationInfo(dataTrace().tag("assertion" to "data[value1] is not equal to false"), "Fail: data[value1] is not equal to false", "true != false"),
+                    ValidationError(dataTrace().tag("assertion" to "data[value2] is not equal to Hello World"), "Pass: data[value2] is not equal to Hello World", "Hello World != Hello World"),
+                    ValidationInfo(dataTrace().tag("assertion" to "data[value2] is not equal to Goodbye"), "Fail: data[value2] is not equal to Goodbye", "Hello World != Goodbye"),
+                )
+            }
+        }
+
+    @Test
+    fun `test assertThat Int isLessThan`() {
+        val data = dataOf(
+            "value" to 1,
+        )
+        with(Assertions(dataTrace())) {
+            assertThat<Int>(data, "value").isLessThan(1)
+            assertThat<Int>(data, "value").isLessThan(2)
+            assertThat<Int?>(data, "valueNull").isLessThan(1)
+
+            val results = this.results.toList()
+
+            junitAssertThat(results).contains(
+                ValidationInfo(dataTrace().tag("assertion" to "data[value] is less than 1"), "Pass: data[value] is less than 1", "1 < 1"),
+                ValidationError(dataTrace().tag("assertion" to "data[value] is less than 2"), "Fail: data[value] is less than 2", "1 < 2"),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] is less than 1"), "Fail: data[valueNull] is less than 1", "null < 1"),
+            )
+        }
+    }
+
+    @Test
+    fun `test assertThat Long isLessThan`() {
+        val data = dataOf(
+            "value" to 1,
+        )
+        with(Assertions(dataTrace())) {
+            assertThat<Long>(data, "value").isLessThan(1)
+            assertThat<Long>(data, "value").isLessThan(2)
+            assertThat<Long?>(data, "valueNull").isLessThan(1)
+
+            val results = this.results.toList()
+
+            junitAssertThat(results).contains(
+                ValidationInfo(dataTrace().tag("assertion" to "data[value] is less than 1"), "Pass: data[value] is less than 1", "1 < 1"),
+                ValidationError(dataTrace().tag("assertion" to "data[value] is less than 2"), "Fail: data[value] is less than 2", "1 < 2"),
+                ValidationError(dataTrace().tag("assertion" to "data[valueNull] is less than 1"), "Fail: data[valueNull] is less than 1", "null < 1"),
+            )
+        }
+    }
+
 //    @Test
 //    fun `test assertLessThan(Int)`() {
 //        val assertions = Assertions(dataTrace())

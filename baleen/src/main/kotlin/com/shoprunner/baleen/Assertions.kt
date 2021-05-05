@@ -137,7 +137,7 @@ class Assertions(val dataTrace: DataTrace) {
         assertTrue(message, left != right, "$left != $right")
     }
 
-    fun <T : Any?> AssertThat<T>.isNotEqualTo(expected: Boolean, message: String = "is not equal to $expected"): AssertThat<T> {
+    fun <T : Any?> AssertThat<T>.isNotEqualTo(expected: Any?, message: String = "is not equal to $expected"): AssertThat<T> {
         when (this) {
             is AssertThatValue ->
                 assertNotEquals(this.messagePrefix + message, this.typedActual, expected)
