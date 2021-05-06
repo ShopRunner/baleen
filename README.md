@@ -69,7 +69,7 @@ cachedValidation.results.forEach { }
 
 // Summarize into Validation object with list of ValidationSummary with examples of errors included    
 // val validationSummary = validation.createSummary()
-val validationSummary = cachedValidation.createSummary()
+val validationSummary: Validation = cachedValidation.createSummary()
 validationSummary.results.forEach { }
 
 ```
