@@ -5,14 +5,6 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
 /**
- * Container around the value
- */
-sealed class AssertThat<T>(val actual: Any?, val messagePrefix: String)
-
-class AssertThatValue<T>(val typedActual: T, messagePrefix: String = "") : AssertThat<T>(typedActual, messagePrefix)
-class AssertThatNoValue<T>(actual: Any?, messagePrefix: String = "") : AssertThat<T>(actual, messagePrefix)
-
-/**
  * Simplify writing tests by using JUnit style assertions.
  * @param dataTrace The dataTrace for the test
  */
