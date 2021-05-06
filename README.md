@@ -68,8 +68,8 @@ val isValid: Boolean = cachedValidation.isValid()
 cachedValidation.results.forEach { }
 
 // Summarize into Validation object with list of ValidationSummary with examples of errors included    
-// val validationSummary = validation.createSummary()
-val validationSummary: Validation = cachedValidation.createSummary()
+// val validationSummary: Validation= validation.createSummary()
+val validationSummary: CachedValidation = cachedValidation.createSummary()
 validationSummary.results.forEach { }
 
 ```
