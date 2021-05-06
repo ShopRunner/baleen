@@ -94,7 +94,21 @@ fun Validation.createSummary(
     dataTrace: DataTrace = dataTrace(),
     numErrorsWarningsToKeep: Int = 100,
     groupBy: SummaryGroupBy = { emptyMap() },
-): Iterable<ValidationResult> = results.createSummary(dataTrace, numErrorsWarningsToKeep, groupBy)
+): Validation = Validation(context, results.createSummary(dataTrace, numErrorsWarningsToKeep, groupBy))
+
+/**
+ * Create a ValidationSummary by combining all results.
+ *
+ * @param groupBy Optional group-by function that returns a map to key the summary. Will add these as tags to the ValidationSummary dataTrace.
+ * @param dataTrace a DataTrace to build upon
+ * @param numErrorsWarningsToKeep Defaults to 100. The number of errors and warnings to return.
+ */
+fun CachedValidation.createSummary(
+    dataTrace: DataTrace = dataTrace(),
+    numErrorsWarningsToKeep: Int = 100,
+    groupBy: SummaryGroupBy = { emptyMap() },
+): CachedValidation =
+    CachedValidation(context, results.createSummary(dataTrace, numErrorsWarningsToKeep, groupBy))
 
 /**
  * Group by tags. Functions like GROUP BY in Sql, were all the combinations receive its own Summary.

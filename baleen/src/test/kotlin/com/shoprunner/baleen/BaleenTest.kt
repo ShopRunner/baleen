@@ -267,7 +267,7 @@ internal class BaleenTest {
         }
 
         val data = dataOf("favorite number" to 41)
-        val summary = dataDesc.validate(data).createSummary().toList()
+        val summary = dataDesc.validate(data).createSummary().results.toList()
 
         assertThat(summary).containsExactlyInAnyOrder(
             ValidationSummary(
@@ -297,7 +297,7 @@ internal class BaleenTest {
         }
 
         val data = dataOf("favorite number" to 41)
-        val summary = dataDesc.validate(data).createSummary(groupBy = groupByTag("test")).toList()
+        val summary = dataDesc.validate(data).createSummary(groupBy = groupByTag("test")).results.toList()
 
         assertThat(summary).containsExactlyInAnyOrder(
             ValidationSummary(

@@ -48,6 +48,30 @@ val productDescription = "Product".describeAs {
         }
     }
 }
+
+// Get your data
+val data: Data = // get from file or database or whatever 
+
+// Get Validation Results
+val validation: Validation = dataDesc.validate(data)
+
+// Each call on `isValid` and `results` will iterate over dataset again. 
+// Warning: that for large datasets this will eat memory
+val cachedValidation: CachedValidation = validation.cache()
+
+// Check if any errors. True if no errors, false otherwise. 
+// val isValid: Boolean = validation.isValid()
+val isValid: Boolean = cachedValidation.isValid() 
+
+// Iterate over results. Each iteration over results will execute entire flow again.
+// validation.results.forEach { }
+cachedValidation.results.forEach { }
+
+// Summarize into Validation object with list of ValidationSummary with examples of errors included    
+// val validationSummary = validation.createSummary()
+val validationSummary = cachedValidation.createSummary()
+validationSummary.results.forEach { }
+
 ```
 
 ## Getting Help
