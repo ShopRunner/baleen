@@ -5,26 +5,37 @@ import com.shoprunner.baleen.DataTrace
 import com.shoprunner.baleen.DataValue
 import java.sql.ResultSet
 
+/**
+ * [Data] representation of a row in a [ResultSet]. Look ups are case-insensitive because
+ * SQL is case-insensitive.  Various implementations of JDBC drivers return column names in different ways, with
+ * some returning all caps and some lower-case.
+ */
 class DatabaseRow(
     private val rs: ResultSet,
     private val rowNumber: Int
 ) : Data {
 
-    override val keys: Set<String> = (1..rs.metaData.columnCount).map { i ->
-        rs.metaData.getColumnName(i).toUpperCase()
-    }.toSet()
+    private val columnIdxMapping = (1..rs.metaData.columnCount).map { idx ->
+        rs.metaData.getColumnName(idx).toUpperCase() to idx
+    }.toMap()
+
+    override val keys: Set<String> = columnIdxMapping.keys
 
     override fun containsKey(key: String): Boolean = keys.contains(key.toUpperCase())
 
     override fun get(key: String): Any? {
-        return rs.getObject(key.toUpperCase())
+        return columnIdxMapping[key.toUpperCase()]?.let { rs.getObject(it) }
     }
 
     override fun attributeDataValue(key: String, dataTrace: DataTrace): DataValue {
         val tags = mapOf("row" to rowNumber.toString()) +
-                if(containsKey(key)) mapOf("column" to key.toUpperCase())
-                else emptyMap()
-        return super.attributeDataValue(key, dataTrace.tag(tags))
+                if(containsKey(key)) {
+                    mapOf("column" to key.toUpperCase(), "columnIdx" to columnIdxMapping[key.toUpperCase()].toString())
+                }
+                else {
+                    emptyMap()
+                }
+        return DataValue(get(key), (dataTrace + "column \"$key\"").tag(tags))
     }
 
     override fun toString(): String {
