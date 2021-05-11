@@ -37,8 +37,10 @@ val productDescription = "Product".describeAs {
 
     "department".type(StringType(min = 0, max = 100))
          .describeAs {
-             test("department is correct value") { data -> 
-                 assertThat(departments).contains(data.getAsString("department").getOrNull())
+             test("department is correct value") { data ->
+                 assertThat(data).hasAttribute("department") {
+                     it.isOneOf(departments)
+                 }
              }
          }
 }
@@ -120,7 +122,9 @@ val productDescription = "Product".describeAs {
     // The asWarnings() method is on the attribute. The attribute's custom test will also be turned into a warning.
     "department".type(StringType(min = 0, max = 100)).describeAs {
         test("department is correct value") { data ->
-            assertThat(departments).contains(data.getAsString("department").getOrNull())
+            assertThat(data).hasAttribute("department") {
+                it.isOneOf(departments)
+            }
         }
     }.asWarnings()
 }
@@ -170,7 +174,9 @@ Tagging is also done at the data evaluation level.  When writing tests, addition
 ```kotlin
     "department".type(StringType(min = 0, max = 100)).describeAs {
         test("department is correct value", "sku" to withAttributeValue("sku")) { data ->
-            assertThat(departments).contains(data.getAsString("department").getOrNull())
+            assertThat(data).hasAttribute("department") {
+                it.isOneOf(departments)
+            }
         }
     }
 ```

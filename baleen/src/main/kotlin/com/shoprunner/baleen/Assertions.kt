@@ -39,15 +39,12 @@ class Assertions(val dataTrace: DataTrace) {
     }
 
     /**
-     * Begin assertions for a single value
-     * @param actual the value we are testing
+     * Begin assertions for a data map
+     * @param actual the data we are testing
      * @param messagePrefix an optional prefix to make the data more informative
      */
-    @ExperimentalContracts
-    inline fun <reified T> assertThat(data: Data, key: String, messagePrefix: String = "data[$key] "): AssertThat<T> {
-        return assertThat(messagePrefix) {
-            data.getAs(key)
-        }
+    fun assertThat(actual: Data, messagePrefix: String = ""): AssertThat<Data> {
+        return AssertThatValue(actual, messagePrefix)
     }
 
     /**
@@ -77,6 +74,24 @@ class Assertions(val dataTrace: DataTrace) {
         }
     }
 
+    fun AssertThat<Data>.hasAttribute(attribute: String, attributeAssertions: Assertions.(AssertThat<Any?>)-> Unit = {}): AssertThat<Data> {
+        when(this) {
+            is AssertThatValue<Data> ->
+                if (this.typedActual.containsKey(attribute)) {
+                    pass(messagePrefix + "data[$attribute] exists", this.typedActual)
+                    attributeAssertions(assertThat(this.typedActual[attribute], messagePrefix + "data[$attribute] "))
+                } else {
+                    fail(messagePrefix + "data[$attribute] exists", this.typedActual)
+                    attributeAssertions(AssertThatNoValue(null, messagePrefix + "data[$attribute] "))
+                }
+            is AssertThatNoValue -> {
+                fail(messagePrefix + "data[$attribute] exists", this.actual)
+                attributeAssertions(AssertThatNoValue(null, messagePrefix + "data[$attribute] "))
+            }
+        }
+        return this
+    }
+
     fun assertTrue(message: String, test: Boolean?, value: Any? = null): Boolean {
         return if (test != null && test) {
             pass(message, value)
@@ -87,7 +102,7 @@ class Assertions(val dataTrace: DataTrace) {
         }
     }
 
-    fun <T : Boolean?> AssertThat<T>.isTrue(message: String = "is true"): AssertThat<T> {
+    fun AssertThat<Boolean>.isTrue(message: String = "is true"): AssertThat<Boolean> {
         when (this) {
             is AssertThatValue ->
                 assertTrue(this.messagePrefix + message, this.typedActual, this.actual)
@@ -101,7 +116,7 @@ class Assertions(val dataTrace: DataTrace) {
         assertTrue(message, test?.not(), right)
     }
 
-    fun <T : Boolean?> AssertThat<T>.isFalse(message: String = "is false"): AssertThat<T> {
+    fun AssertThat<Boolean>.isFalse(message: String = "is false"): AssertThat<Boolean> {
         when (this) {
             is AssertThatValue ->
                 assertFalse(this.messagePrefix + message, this.typedActual, this.actual)
@@ -143,7 +158,7 @@ class Assertions(val dataTrace: DataTrace) {
         assertTrue(message, left != null && right != null && left < right, "$left < $right")
     }
 
-    fun <T : Int?> AssertThat<T>.isLessThan(expected: Int, message: String = "is less than $expected"): AssertThat<T> {
+    fun AssertThat<Int>.isLessThan(expected: Int, message: String = "is less than $expected"): AssertThat<Int> {
         when (this) {
             is AssertThatValue ->
                 assertLessThan(this.messagePrefix + message, this.typedActual, expected)
@@ -157,7 +172,7 @@ class Assertions(val dataTrace: DataTrace) {
         assertTrue(message, left != null && right != null && left < right, "$left < $right")
     }
 
-    fun <T : Long?> AssertThat<T>.isLessThan(expected: Long, message: String = "is less than $expected"): AssertThat<T> {
+    fun AssertThat<Long>.isLessThan(expected: Long, message: String = "is less than $expected"): AssertThat<Long> {
         when (this) {
             is AssertThatValue ->
                 assertLessThan(this.messagePrefix + message, this.typedActual, expected)
@@ -171,7 +186,7 @@ class Assertions(val dataTrace: DataTrace) {
         assertTrue(message, left != null && right != null && left < right, "$left < $right")
     }
 
-    fun <T : Float?> AssertThat<T>.isLessThan(expected: Float, message: String = "is less than $expected"): AssertThat<T> {
+    fun AssertThat<Float>.isLessThan(expected: Float, message: String = "is less than $expected"): AssertThat<Float> {
         when (this) {
             is AssertThatValue ->
                 assertLessThan(this.messagePrefix + message, this.typedActual, expected)
@@ -185,7 +200,7 @@ class Assertions(val dataTrace: DataTrace) {
         assertTrue(message, left != null && right != null && left < right, "$left < $right")
     }
 
-    fun <T : Double?> AssertThat<T>.isLessThan(expected: Double, message: String = "is less than $expected"): AssertThat<T> {
+    fun AssertThat<Double>.isLessThan(expected: Double, message: String = "is less than $expected"): AssertThat<Double> {
         when (this) {
             is AssertThatValue ->
                 assertLessThan(this.messagePrefix + message, this.typedActual, expected)
@@ -199,7 +214,7 @@ class Assertions(val dataTrace: DataTrace) {
         assertTrue(message, left != null && right != null && left <= right, "$left <= $right")
     }
 
-    fun <T : Int?> AssertThat<T>.isLessThanEquals(expected: Int, message: String = "is less than equals $expected"): AssertThat<T> {
+    fun AssertThat<Int>.isLessThanEquals(expected: Int, message: String = "is less than equals $expected"): AssertThat<Int> {
         when (this) {
             is AssertThatValue ->
                 assertLessThanEquals(this.messagePrefix + message, this.typedActual, expected)
@@ -213,7 +228,7 @@ class Assertions(val dataTrace: DataTrace) {
         assertTrue(message, left != null && right != null && left <= right, "$left <= $right")
     }
 
-    fun <T : Long?> AssertThat<T>.isLessThanEquals(expected: Long, message: String = "is less than equals $expected"): AssertThat<T> {
+    fun AssertThat<Long>.isLessThanEquals(expected: Long, message: String = "is less than equals $expected"): AssertThat<Long> {
         when (this) {
             is AssertThatValue ->
                 assertLessThanEquals(this.messagePrefix + message, this.typedActual, expected)
@@ -227,7 +242,7 @@ class Assertions(val dataTrace: DataTrace) {
         assertTrue(message, left != null && right != null && left <= right, "$left <= $right")
     }
 
-    fun <T : Float?> AssertThat<T>.isLessThanEquals(expected: Float, message: String = "is less than equals $expected"): AssertThat<T> {
+    fun AssertThat<Float>.isLessThanEquals(expected: Float, message: String = "is less than equals $expected"): AssertThat<Float> {
         when (this) {
             is AssertThatValue ->
                 assertLessThanEquals(this.messagePrefix + message, this.typedActual, expected)
@@ -241,7 +256,7 @@ class Assertions(val dataTrace: DataTrace) {
         assertTrue(message, left != null && right != null && left <= right, "$left <= $right")
     }
 
-    fun <T : Double?> AssertThat<T>.isLessThanEquals(expected: Double, message: String = "is less than equals $expected"): AssertThat<T> {
+    fun AssertThat<Double>.isLessThanEquals(expected: Double, message: String = "is less than equals $expected"): AssertThat<Double> {
         when (this) {
             is AssertThatValue ->
                 assertLessThanEquals(this.messagePrefix + message, this.typedActual, expected)
@@ -255,7 +270,7 @@ class Assertions(val dataTrace: DataTrace) {
         assertTrue(message, left != null && right != null && left > right, "$left > $right")
     }
 
-    fun <T : Int?> AssertThat<T>.isGreaterThan(expected: Int, message: String = "is greater than $expected"): AssertThat<T> {
+    fun AssertThat<Int>.isGreaterThan(expected: Int, message: String = "is greater than $expected"): AssertThat<Int> {
         when (this) {
             is AssertThatValue ->
                 assertGreaterThan(this.messagePrefix + message, this.typedActual, expected)
@@ -269,7 +284,7 @@ class Assertions(val dataTrace: DataTrace) {
         assertTrue(message, left != null && right != null && left > right, "$left > $right")
     }
 
-    fun <T : Long?> AssertThat<T>.isGreaterThan(expected: Long, message: String = "is greater than $expected"): AssertThat<T> {
+    fun AssertThat<Long>.isGreaterThan(expected: Long, message: String = "is greater than $expected"): AssertThat<Long> {
         when (this) {
             is AssertThatValue ->
                 assertGreaterThan(this.messagePrefix + message, this.typedActual, expected)
@@ -283,7 +298,7 @@ class Assertions(val dataTrace: DataTrace) {
         assertTrue(message, left != null && right != null && left > right, "$left > $right")
     }
 
-    fun <T : Float?> AssertThat<T>.isGreaterThan(expected: Float, message: String = "is greater than $expected"): AssertThat<T> {
+    fun AssertThat<Float>.isGreaterThan(expected: Float, message: String = "is greater than $expected"): AssertThat<Float> {
         when (this) {
             is AssertThatValue ->
                 assertGreaterThan(this.messagePrefix + message, this.typedActual, expected)
@@ -297,7 +312,7 @@ class Assertions(val dataTrace: DataTrace) {
         assertTrue(message, left != null && right != null && left > right, "$left > $right")
     }
 
-    fun <T : Double?> AssertThat<T>.isGreaterThan(expected: Double, message: String = "is greater than $expected"): AssertThat<T> {
+    fun AssertThat<Double>.isGreaterThan(expected: Double, message: String = "is greater than $expected"): AssertThat<Double> {
         when (this) {
             is AssertThatValue ->
                 assertGreaterThan(this.messagePrefix + message, this.typedActual, expected)
@@ -311,7 +326,7 @@ class Assertions(val dataTrace: DataTrace) {
         assertTrue(message, left != null && right != null && left >= right, "$left >= $right")
     }
 
-    fun <T : Int?> AssertThat<T>.isGreaterThanEquals(expected: Int, message: String = "is greater than equals $expected"): AssertThat<T> {
+    fun AssertThat<Int>.isGreaterThanEquals(expected: Int, message: String = "is greater than equals $expected"): AssertThat<Int> {
         when (this) {
             is AssertThatValue ->
                 assertGreaterThanEquals(this.messagePrefix + message, this.typedActual, expected)
@@ -325,7 +340,7 @@ class Assertions(val dataTrace: DataTrace) {
         assertTrue(message, left != null && right != null && left >= right, "$left >= $right")
     }
 
-    fun <T : Long?> AssertThat<T>.isGreaterThanEquals(expected: Long, message: String = "is greater than equals $expected"): AssertThat<T> {
+    fun AssertThat<Long>.isGreaterThanEquals(expected: Long, message: String = "is greater than equals $expected"): AssertThat<Long> {
         when (this) {
             is AssertThatValue ->
                 assertGreaterThanEquals(this.messagePrefix + message, this.typedActual, expected)
@@ -339,7 +354,7 @@ class Assertions(val dataTrace: DataTrace) {
         assertTrue(message, left != null && right != null && left >= right, "$left >= $right")
     }
 
-    fun <T : Float?> AssertThat<T>.isGreaterThanEquals(expected: Float, message: String = "is greater than equals $expected"): AssertThat<T> {
+    fun AssertThat<Float>.isGreaterThanEquals(expected: Float, message: String = "is greater than equals $expected"): AssertThat<Float> {
         when (this) {
             is AssertThatValue ->
                 assertGreaterThanEquals(this.messagePrefix + message, this.typedActual, expected)
@@ -353,7 +368,7 @@ class Assertions(val dataTrace: DataTrace) {
         assertTrue(message, left != null && right != null && left >= right, "$left >= $right")
     }
 
-    fun <T : Double?> AssertThat<T>.isGreaterThanEquals(expected: Double, message: String = "is greater than equals $expected"): AssertThat<T> {
+    fun AssertThat<Double>.isGreaterThanEquals(expected: Double, message: String = "is greater than equals $expected"): AssertThat<Double> {
         when (this) {
             is AssertThatValue ->
                 assertGreaterThanEquals(this.messagePrefix + message, this.typedActual, expected)
@@ -367,7 +382,7 @@ class Assertions(val dataTrace: DataTrace) {
         assertTrue(message, collection?.contains(value) == true, "$value in $collection")
     }
 
-    fun <T, C : Collection<T>?> AssertThat<C>.contains(expected: T, message: String = "contains $expected"): AssertThat<C> {
+    fun <T, C: Collection<T>> AssertThat<C>.contains(expected: T, message: String = "contains $expected"): AssertThat<C> {
         when (this) {
             is AssertThatValue ->
                 assertContains(this.messagePrefix + message, this.typedActual, expected)
@@ -377,11 +392,21 @@ class Assertions(val dataTrace: DataTrace) {
         return this
     }
 
+    fun <T: Any?> AssertThat<T>.isOneOf(collection: Collection<T>, message: String = "is one of $collection"): AssertThat<T> {
+        when(this) {
+            is AssertThatValue ->
+                assertContains(this.messagePrefix + message, collection, this.typedActual)
+            is AssertThatNoValue ->
+                fail(this.messagePrefix + message, "${this.actual} in $collection")
+        }
+        return this
+    }
+
     fun assertNotContains(message: String, collection: Collection<*>?, value: Any?) {
         assertTrue(message, collection?.contains(value) == false, "$value not in $collection")
     }
 
-    fun <T, C : Collection<T>?> AssertThat<C>.notContains(expected: T, message: String = "not contains $expected"): AssertThat<C> {
+    fun <T, C: Collection<T>> AssertThat<C>.notContains(expected: T, message: String = "not contains $expected"): AssertThat<C> {
         when (this) {
             is AssertThatValue ->
                 assertNotContains(this.messagePrefix + message, this.typedActual, expected)
@@ -395,7 +420,7 @@ class Assertions(val dataTrace: DataTrace) {
         assertTrue(message, collection?.isEmpty() == true, collection)
     }
 
-    fun <T : Collection<*>?> AssertThat<T>.isEmpty(message: String = "is empty"): AssertThat<T> {
+    fun <T, C: Collection<T>> AssertThat<C>.isEmpty(message: String = "is empty"): AssertThat<C> {
         when (this) {
             is AssertThatValue ->
                 assertEmpty(this.messagePrefix + message, this.typedActual)
@@ -409,7 +434,7 @@ class Assertions(val dataTrace: DataTrace) {
         assertTrue(message, collection.isNullOrEmpty(), collection)
     }
 
-    fun <T : Collection<*>?> AssertThat<T>.isNullOrEmpty(message: String = "is null or empty"): AssertThat<T> {
+    fun <T, C: Collection<T>> AssertThat<C?>.isNullOrEmpty(message: String = "is null or empty"): AssertThat<C?> {
         when (this) {
             is AssertThatValue ->
                 assertNullOrEmpty(this.messagePrefix + message, this.typedActual)
@@ -423,7 +448,7 @@ class Assertions(val dataTrace: DataTrace) {
         assertTrue(message, collection?.isNotEmpty() == true, collection)
     }
 
-    fun <T : Collection<*>?> AssertThat<T>.isNotEmpty(message: String = "is not empty"): AssertThat<T> {
+    fun <T, C: Collection<T>?> AssertThat<C>.isNotEmpty(message: String = "is not empty"): AssertThat<C> {
         when (this) {
             is AssertThatValue ->
                 assertNotEmpty(this.messagePrefix + message, this.typedActual)
@@ -437,7 +462,7 @@ class Assertions(val dataTrace: DataTrace) {
         assertTrue(message, collection?.size == size, "$size = size($collection)")
     }
 
-    fun <T : Collection<*>?> AssertThat<T>.isSizeEquals(size: Int, message: String = "is size equal to $size"): AssertThat<T> {
+    fun <T, C: Collection<T>?> AssertThat<C>.isSizeEquals(size: Int, message: String = "is size equal to $size"): AssertThat<C> {
         when (this) {
             is AssertThatValue ->
                 assertSizeEquals(this.messagePrefix + message, this.typedActual, size)
@@ -456,10 +481,24 @@ class Assertions(val dataTrace: DataTrace) {
     }
 
     @ExperimentalContracts
-    fun <T : Any?> AssertThat<T>.isNull(message: String = "is null"): AssertThat<T> {
+    fun <T> AssertThat<T?>.isNull(message: String = "is null"): AssertThat<Unit> {
         when (this) {
             is AssertThatValue ->
                 assertNull(this.messagePrefix + message, this.typedActual)
+            is AssertThatNoValue ->
+                fail(this.messagePrefix + message, this.actual)
+        }
+        return AssertThatNoValue(this.actual, messagePrefix)
+    }
+
+    fun <T> AssertThat<T?>.isNullOr(message: String = "is null", body: Assertions.(AssertThat<T>) -> Unit): AssertThat<T?> {
+        when (this) {
+            is AssertThatValue -> {
+                when(typedActual) {
+                    null -> pass(messagePrefix + message, typedActual)
+                    else -> body(AssertThatValue(typedActual, messagePrefix))
+                }
+            }
             is AssertThatNoValue ->
                 fail(this.messagePrefix + message, this.actual)
         }
@@ -475,14 +514,19 @@ class Assertions(val dataTrace: DataTrace) {
     }
 
     @ExperimentalContracts
-    fun <T : Any?> AssertThat<T>.isNotNull(message: String = "is not null"): AssertThat<T> {
-        when (this) {
+    fun <T> AssertThat<T?>.isNotNull(message: String = "is not null"): AssertThat<T> {
+        return when (this) {
             is AssertThatValue ->
-                assertNotNull(this.messagePrefix + message, this.typedActual)
-            is AssertThatNoValue ->
+                if(assertNotNull(this.messagePrefix + message, this.typedActual)) {
+                    AssertThatValue(this.typedActual, this.messagePrefix)
+                } else {
+                    AssertThatNoValue(this.typedActual, this.messagePrefix)
+                }
+            is AssertThatNoValue -> {
                 fail(this.messagePrefix + message, this.actual)
+                AssertThatNoValue(this.actual, this.messagePrefix)
+            }
         }
-        return this
     }
 
     @ExperimentalContracts
@@ -491,5 +535,40 @@ class Assertions(val dataTrace: DataTrace) {
             returns(true) implies (value is T)
         }
         return assertTrue(message, value is T, "$value is a ${value?.let { it::class.qualifiedName } ?: "${T::class.qualifiedName}?"}")
+    }
+
+    inline fun <reified T : Any?> AssertThat<Any?>.isA(message: String = "is a ${T::class.qualifiedName}"): AssertThat<T> {
+        return when (this) {
+            is AssertThatValue ->
+                if(this.typedActual is T) {
+                    pass(messagePrefix + message, this.typedActual)
+                    AssertThatValue(this.typedActual, this.messagePrefix)
+                } else {
+                    fail(messagePrefix + message, this.typedActual)
+                    AssertThatNoValue(this.typedActual, this.messagePrefix)
+                }
+            is AssertThatNoValue -> {
+                fail(this.messagePrefix + message, this.actual)
+                AssertThatNoValue(this.actual, this.messagePrefix)
+            }
+        }
+    }
+
+    /**
+     *
+     */
+    fun <T: Any?> AssertThat<T>.or(vararg ors: Assertions.(AssertThat<T>) -> Unit): AssertThat<T> {
+        val testResults = ors.map { orFun ->
+            val orAssertions = Assertions(dataTrace)
+            orAssertions.orFun(this)
+            orAssertions.results.toList()
+        }
+
+        val firstSuccessOrAllErrors = testResults.firstOrNull { r -> r.none { it is ValidationError } }
+            ?: testResults.flatten()
+
+        firstSuccessOrAllErrors.forEach(this@Assertions::addValidationResult)
+
+        return this
     }
 }
