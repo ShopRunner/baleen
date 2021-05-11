@@ -21,7 +21,10 @@ class DatabaseRow(
     }
 
     override fun attributeDataValue(key: String, dataTrace: DataTrace): DataValue {
-        return super.attributeDataValue(key, dataTrace.tag("row" to rowNumber.toString(), "column" to key.toUpperCase()))
+        val tags = mapOf("row" to rowNumber.toString()) +
+                if(containsKey(key)) mapOf("column" to key.toUpperCase())
+                else emptyMap()
+        return super.attributeDataValue(key, dataTrace.tag(tags))
     }
 
     override fun toString(): String {
