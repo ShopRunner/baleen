@@ -1,6 +1,5 @@
 package com.shoprunner.baleen
 
-import com.shoprunner.baleen.Data.Companion.getAs
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -74,8 +73,8 @@ class Assertions(val dataTrace: DataTrace) {
         }
     }
 
-    fun AssertThat<Data>.hasAttribute(attribute: String, attributeAssertions: Assertions.(AssertThat<Any?>)-> Unit = {}): AssertThat<Data> {
-        when(this) {
+    fun AssertThat<Data>.hasAttribute(attribute: String, attributeAssertions: Assertions.(AssertThat<Any?>) -> Unit = {}): AssertThat<Data> {
+        when (this) {
             is AssertThatValue<Data> ->
                 if (this.typedActual.containsKey(attribute)) {
                     pass(messagePrefix + "data[$attribute] exists", this.typedActual)
@@ -382,7 +381,7 @@ class Assertions(val dataTrace: DataTrace) {
         assertTrue(message, collection?.contains(value) == true, "$value in $collection")
     }
 
-    fun <T, C: Collection<T>> AssertThat<C>.contains(expected: T, message: String = "contains $expected"): AssertThat<C> {
+    fun <T, C : Collection<T>> AssertThat<C>.contains(expected: T, message: String = "contains $expected"): AssertThat<C> {
         when (this) {
             is AssertThatValue ->
                 assertContains(this.messagePrefix + message, this.typedActual, expected)
@@ -392,8 +391,8 @@ class Assertions(val dataTrace: DataTrace) {
         return this
     }
 
-    fun <T: Any?> AssertThat<T>.isOneOf(collection: Collection<T>, message: String = "is one of $collection"): AssertThat<T> {
-        when(this) {
+    fun <T : Any?> AssertThat<T>.isOneOf(collection: Collection<T>, message: String = "is one of $collection"): AssertThat<T> {
+        when (this) {
             is AssertThatValue ->
                 assertContains(this.messagePrefix + message, collection, this.typedActual)
             is AssertThatNoValue ->
@@ -406,7 +405,7 @@ class Assertions(val dataTrace: DataTrace) {
         assertTrue(message, collection?.contains(value) == false, "$value not in $collection")
     }
 
-    fun <T, C: Collection<T>> AssertThat<C>.notContains(expected: T, message: String = "not contains $expected"): AssertThat<C> {
+    fun <T, C : Collection<T>> AssertThat<C>.notContains(expected: T, message: String = "not contains $expected"): AssertThat<C> {
         when (this) {
             is AssertThatValue ->
                 assertNotContains(this.messagePrefix + message, this.typedActual, expected)
@@ -420,7 +419,7 @@ class Assertions(val dataTrace: DataTrace) {
         assertTrue(message, collection?.isEmpty() == true, collection)
     }
 
-    fun <T, C: Collection<T>> AssertThat<C>.isEmpty(message: String = "is empty"): AssertThat<C> {
+    fun <T, C : Collection<T>> AssertThat<C>.isEmpty(message: String = "is empty"): AssertThat<C> {
         when (this) {
             is AssertThatValue ->
                 assertEmpty(this.messagePrefix + message, this.typedActual)
@@ -434,7 +433,7 @@ class Assertions(val dataTrace: DataTrace) {
         assertTrue(message, collection.isNullOrEmpty(), collection)
     }
 
-    fun <T, C: Collection<T>> AssertThat<C?>.isNullOrEmpty(message: String = "is null or empty"): AssertThat<C?> {
+    fun <T, C : Collection<T>> AssertThat<C?>.isNullOrEmpty(message: String = "is null or empty"): AssertThat<C?> {
         when (this) {
             is AssertThatValue ->
                 assertNullOrEmpty(this.messagePrefix + message, this.typedActual)
@@ -448,7 +447,7 @@ class Assertions(val dataTrace: DataTrace) {
         assertTrue(message, collection?.isNotEmpty() == true, collection)
     }
 
-    fun <T, C: Collection<T>?> AssertThat<C>.isNotEmpty(message: String = "is not empty"): AssertThat<C> {
+    fun <T, C : Collection<T>?> AssertThat<C>.isNotEmpty(message: String = "is not empty"): AssertThat<C> {
         when (this) {
             is AssertThatValue ->
                 assertNotEmpty(this.messagePrefix + message, this.typedActual)
@@ -462,7 +461,7 @@ class Assertions(val dataTrace: DataTrace) {
         assertTrue(message, collection?.size == size, "$size = size($collection)")
     }
 
-    fun <T, C: Collection<T>?> AssertThat<C>.isSizeEquals(size: Int, message: String = "is size equal to $size"): AssertThat<C> {
+    fun <T, C : Collection<T>?> AssertThat<C>.isSizeEquals(size: Int, message: String = "is size equal to $size"): AssertThat<C> {
         when (this) {
             is AssertThatValue ->
                 assertSizeEquals(this.messagePrefix + message, this.typedActual, size)
@@ -494,7 +493,7 @@ class Assertions(val dataTrace: DataTrace) {
     fun <T> AssertThat<T?>.isNullOr(message: String = "is null", body: Assertions.(AssertThat<T>) -> Unit): AssertThat<T?> {
         when (this) {
             is AssertThatValue -> {
-                when(typedActual) {
+                when (typedActual) {
                     null -> pass(messagePrefix + message, typedActual)
                     else -> body(AssertThatValue(typedActual, messagePrefix))
                 }
@@ -517,7 +516,7 @@ class Assertions(val dataTrace: DataTrace) {
     fun <T> AssertThat<T?>.isNotNull(message: String = "is not null"): AssertThat<T> {
         return when (this) {
             is AssertThatValue ->
-                if(assertNotNull(this.messagePrefix + message, this.typedActual)) {
+                if (assertNotNull(this.messagePrefix + message, this.typedActual)) {
                     AssertThatValue(this.typedActual, this.messagePrefix)
                 } else {
                     AssertThatNoValue(this.typedActual, this.messagePrefix)
@@ -540,7 +539,7 @@ class Assertions(val dataTrace: DataTrace) {
     inline fun <reified T : Any?> AssertThat<Any?>.isA(message: String = "is a ${T::class.qualifiedName}"): AssertThat<T> {
         return when (this) {
             is AssertThatValue ->
-                if(this.typedActual is T) {
+                if (this.typedActual is T) {
                     pass(messagePrefix + message, this.typedActual)
                     AssertThatValue(this.typedActual, this.messagePrefix)
                 } else {
@@ -557,7 +556,7 @@ class Assertions(val dataTrace: DataTrace) {
     /**
      *
      */
-    fun <T: Any?> AssertThat<T>.or(vararg ors: Assertions.(AssertThat<T>) -> Unit): AssertThat<T> {
+    fun <T : Any?> AssertThat<T>.or(vararg ors: Assertions.(AssertThat<T>) -> Unit): AssertThat<T> {
         val testResults = ors.map { orFun ->
             val orAssertions = Assertions(dataTrace)
             orAssertions.orFun(this)

@@ -84,10 +84,10 @@ internal class AssertThatTest {
             "valueNull" to null,
         )
         with(Assertions(dataTrace())) {
-            assertThat(data).hasAttribute("value1"){ it.isA<Boolean>().isTrue() }
-            assertThat(data).hasAttribute("value2"){ it.isA<Boolean>().isTrue() }
-            assertThat(data).hasAttribute("value3"){ it.isA<Boolean>().isTrue() }
-            assertThat(data).hasAttribute("valueNull"){ it.isA<Boolean>().isTrue() }
+            assertThat(data).hasAttribute("value1") { it.isA<Boolean>().isTrue() }
+            assertThat(data).hasAttribute("value2") { it.isA<Boolean>().isTrue() }
+            assertThat(data).hasAttribute("value3") { it.isA<Boolean>().isTrue() }
+            assertThat(data).hasAttribute("valueNull") { it.isA<Boolean>().isTrue() }
 
             val results = this.results.toList()
 
@@ -109,10 +109,10 @@ internal class AssertThatTest {
             "valueNull" to null,
         )
         with(Assertions(dataTrace())) {
-            assertThat(data).hasAttribute("value1"){ it.isA<Boolean>().isFalse() }
-            assertThat(data).hasAttribute("value2"){ it.isA<Boolean>().isFalse() }
-            assertThat(data).hasAttribute("value3"){ it.isA<Boolean>().isFalse() }
-            assertThat(data).hasAttribute("valueNull"){ it.isA<Boolean>().isTrue() }
+            assertThat(data).hasAttribute("value1") { it.isA<Boolean>().isFalse() }
+            assertThat(data).hasAttribute("value2") { it.isA<Boolean>().isFalse() }
+            assertThat(data).hasAttribute("value3") { it.isA<Boolean>().isFalse() }
+            assertThat(data).hasAttribute("valueNull") { it.isA<Boolean>().isTrue() }
 
             val results = this.results.toList()
 
@@ -133,12 +133,12 @@ internal class AssertThatTest {
             "valueNull" to null,
         )
         with(Assertions(dataTrace())) {
-            assertThat(data).hasAttribute("value1"){ it.isA<Boolean>().isEqualTo(true) }
-            assertThat(data).hasAttribute("value1"){ it.isA<Boolean>().isEqualTo(false) }
-            assertThat(data).hasAttribute("value2"){ it.isA<String>().isEqualTo("Hello World") }
-            assertThat(data).hasAttribute("value2"){ it.isA<String>().isEqualTo("Goodbye") }
-            assertThat(data).hasAttribute("valueNull"){ it.isA<String?>().isEqualTo("Hi") }
-            assertThat(data).hasAttribute("valueNull"){ it.isA<String>().isEqualTo("Hi") }
+            assertThat(data).hasAttribute("value1") { it.isA<Boolean>().isEqualTo(true) }
+            assertThat(data).hasAttribute("value1") { it.isA<Boolean>().isEqualTo(false) }
+            assertThat(data).hasAttribute("value2") { it.isA<String>().isEqualTo("Hello World") }
+            assertThat(data).hasAttribute("value2") { it.isA<String>().isEqualTo("Goodbye") }
+            assertThat(data).hasAttribute("valueNull") { it.isA<String?>().isEqualTo("Hi") }
+            assertThat(data).hasAttribute("valueNull") { it.isA<String>().isEqualTo("Hi") }
 
             val results = this.results.toList()
 
@@ -161,10 +161,10 @@ internal class AssertThatTest {
             "valueNull" to null,
         )
         with(Assertions(dataTrace())) {
-            assertThat(data).hasAttribute("value1"){ it.isA<Boolean>().isNotEqualTo(true) }
-            assertThat(data).hasAttribute("value1"){ it.isA<Boolean>().isNotEqualTo(false) }
-            assertThat(data).hasAttribute("value2"){ it.isA<String>().isNotEqualTo("Hello World") }
-            assertThat(data).hasAttribute("value2"){ it.isA<String>().isNotEqualTo("Goodbye") }
+            assertThat(data).hasAttribute("value1") { it.isA<Boolean>().isNotEqualTo(true) }
+            assertThat(data).hasAttribute("value1") { it.isA<Boolean>().isNotEqualTo(false) }
+            assertThat(data).hasAttribute("value2") { it.isA<String>().isNotEqualTo("Hello World") }
+            assertThat(data).hasAttribute("value2") { it.isA<String>().isNotEqualTo("Goodbye") }
 
             val results = this.results.toList()
 
@@ -184,9 +184,9 @@ internal class AssertThatTest {
             "valueNull" to null,
         )
         with(Assertions(dataTrace())) {
-            assertThat(data).hasAttribute("value"){ it.isA<Int>().isLessThan(1) }
-            assertThat(data).hasAttribute("value"){ it.isA<Int>().isLessThan(2) }
-            assertThat(data).hasAttribute("valueNull"){ it.isA<Int>().isLessThan(1) }
+            assertThat(data).hasAttribute("value") { it.isA<Int>().isLessThan(1) }
+            assertThat(data).hasAttribute("value") { it.isA<Int>().isLessThan(2) }
+            assertThat(data).hasAttribute("valueNull") { it.isA<Int>().isLessThan(1) }
 
             val results = this.results.toList()
 
@@ -206,9 +206,9 @@ internal class AssertThatTest {
             "valueNull" to null,
         )
         with(Assertions(dataTrace())) {
-            assertThat(data).hasAttribute("value"){ it.isA<Long>().isLessThan(1) }
-            assertThat(data).hasAttribute("value"){ it.isA<Long>().isLessThan(2) }
-            assertThat(data).hasAttribute("valueNull"){ it.isA<Long>().isLessThan(1) }
+            assertThat(data).hasAttribute("value") { it.isA<Long>().isLessThan(1) }
+            assertThat(data).hasAttribute("value") { it.isA<Long>().isLessThan(2) }
+            assertThat(data).hasAttribute("valueNull") { it.isA<Long>().isLessThan(1) }
 
             val results = this.results.toList()
 
@@ -228,9 +228,9 @@ internal class AssertThatTest {
             "valueNull" to null,
         )
         with(Assertions(dataTrace())) {
-            assertThat(data).hasAttribute("value"){ it.isA<Float>().isLessThan(1.0f) }
-            assertThat(data).hasAttribute("value"){ it.isA<Float>().isLessThan(2.0f) }
-            assertThat(data).hasAttribute("valueNull"){ it.isA<Float>().isLessThan(1.0f) }
+            assertThat(data).hasAttribute("value") { it.isA<Float>().isLessThan(1.0f) }
+            assertThat(data).hasAttribute("value") { it.isA<Float>().isLessThan(2.0f) }
+            assertThat(data).hasAttribute("valueNull") { it.isA<Float>().isLessThan(1.0f) }
 
             val results = this.results.toList()
 
@@ -250,9 +250,9 @@ internal class AssertThatTest {
             "valueNull" to null,
         )
         with(Assertions(dataTrace())) {
-            assertThat(data).hasAttribute("value"){ it.isA<Double>().isLessThan(1.0) }
-            assertThat(data).hasAttribute("value"){ it.isA<Double>().isLessThan(2.0) }
-            assertThat(data).hasAttribute("valueNull"){ it.isA<Double>().isLessThan(1.0) }
+            assertThat(data).hasAttribute("value") { it.isA<Double>().isLessThan(1.0) }
+            assertThat(data).hasAttribute("value") { it.isA<Double>().isLessThan(2.0) }
+            assertThat(data).hasAttribute("valueNull") { it.isA<Double>().isLessThan(1.0) }
 
             val results = this.results.toList()
 
@@ -271,10 +271,10 @@ internal class AssertThatTest {
             "valueNull" to null,
         )
         with(Assertions(dataTrace())) {
-            assertThat(data).hasAttribute("value"){ it.isA<Int>().isLessThanEquals(0) }
-            assertThat(data).hasAttribute("value"){ it.isA<Int>().isLessThanEquals(1) }
-            assertThat(data).hasAttribute("value"){ it.isA<Int>().isLessThanEquals(2) }
-            assertThat(data).hasAttribute("valueNull"){ it.isA<Int>().isLessThanEquals(1) }
+            assertThat(data).hasAttribute("value") { it.isA<Int>().isLessThanEquals(0) }
+            assertThat(data).hasAttribute("value") { it.isA<Int>().isLessThanEquals(1) }
+            assertThat(data).hasAttribute("value") { it.isA<Int>().isLessThanEquals(2) }
+            assertThat(data).hasAttribute("valueNull") { it.isA<Int>().isLessThanEquals(1) }
 
             val results = this.results.toList()
 
@@ -294,10 +294,10 @@ internal class AssertThatTest {
             "valueNull" to null,
         )
         with(Assertions(dataTrace())) {
-            assertThat(data).hasAttribute("value"){ it.isA<Long>().isLessThanEquals(0) }
-            assertThat(data).hasAttribute("value"){ it.isA<Long>().isLessThanEquals(1) }
-            assertThat(data).hasAttribute("value"){ it.isA<Long>().isLessThanEquals(2) }
-            assertThat(data).hasAttribute("valueNull"){ it.isA<Long>().isLessThanEquals(1) }
+            assertThat(data).hasAttribute("value") { it.isA<Long>().isLessThanEquals(0) }
+            assertThat(data).hasAttribute("value") { it.isA<Long>().isLessThanEquals(1) }
+            assertThat(data).hasAttribute("value") { it.isA<Long>().isLessThanEquals(2) }
+            assertThat(data).hasAttribute("valueNull") { it.isA<Long>().isLessThanEquals(1) }
 
             val results = this.results.toList()
 
@@ -317,10 +317,10 @@ internal class AssertThatTest {
             "valueNull" to null,
         )
         with(Assertions(dataTrace())) {
-            assertThat(data).hasAttribute("value"){ it.isA<Float>().isLessThanEquals(0.0f) }
-            assertThat(data).hasAttribute("value"){ it.isA<Float>().isLessThanEquals(1.0f) }
-            assertThat(data).hasAttribute("value"){ it.isA<Float>().isLessThanEquals(2.0f) }
-            assertThat(data).hasAttribute("valueNull"){ it.isA<Float>().isLessThanEquals(1.0f) }
+            assertThat(data).hasAttribute("value") { it.isA<Float>().isLessThanEquals(0.0f) }
+            assertThat(data).hasAttribute("value") { it.isA<Float>().isLessThanEquals(1.0f) }
+            assertThat(data).hasAttribute("value") { it.isA<Float>().isLessThanEquals(2.0f) }
+            assertThat(data).hasAttribute("valueNull") { it.isA<Float>().isLessThanEquals(1.0f) }
 
             val results = this.results.toList()
 
@@ -340,10 +340,10 @@ internal class AssertThatTest {
             "valueNull" to null,
         )
         with(Assertions(dataTrace())) {
-            assertThat(data).hasAttribute("value"){ it.isA<Double>().isLessThanEquals(0.0) }
-            assertThat(data).hasAttribute("value"){ it.isA<Double>().isLessThanEquals(1.0) }
-            assertThat(data).hasAttribute("value"){ it.isA<Double>().isLessThanEquals(2.0) }
-            assertThat(data).hasAttribute("valueNull"){ it.isA<Double>().isLessThanEquals(1.0) }
+            assertThat(data).hasAttribute("value") { it.isA<Double>().isLessThanEquals(0.0) }
+            assertThat(data).hasAttribute("value") { it.isA<Double>().isLessThanEquals(1.0) }
+            assertThat(data).hasAttribute("value") { it.isA<Double>().isLessThanEquals(2.0) }
+            assertThat(data).hasAttribute("valueNull") { it.isA<Double>().isLessThanEquals(1.0) }
 
             val results = this.results.toList()
 
@@ -363,10 +363,10 @@ internal class AssertThatTest {
             "valueNull" to null,
         )
         with(Assertions(dataTrace())) {
-            assertThat(data).hasAttribute("value"){ it.isA<Int>().isGreaterThan(0) }
-            assertThat(data).hasAttribute("value"){ it.isA<Int>().isGreaterThan(1) }
-            assertThat(data).hasAttribute("value"){ it.isA<Int>().isGreaterThan(2) }
-            assertThat(data).hasAttribute("valueNull"){ it.isA<Int>().isGreaterThan(1) }
+            assertThat(data).hasAttribute("value") { it.isA<Int>().isGreaterThan(0) }
+            assertThat(data).hasAttribute("value") { it.isA<Int>().isGreaterThan(1) }
+            assertThat(data).hasAttribute("value") { it.isA<Int>().isGreaterThan(2) }
+            assertThat(data).hasAttribute("valueNull") { it.isA<Int>().isGreaterThan(1) }
 
             val results = this.results.toList()
 
@@ -386,10 +386,10 @@ internal class AssertThatTest {
             "valueNull" to null,
         )
         with(Assertions(dataTrace())) {
-            assertThat(data).hasAttribute("value"){ it.isA<Long>().isGreaterThan(0) }
-            assertThat(data).hasAttribute("value"){ it.isA<Long>().isGreaterThan(1) }
-            assertThat(data).hasAttribute("value"){ it.isA<Long>().isGreaterThan(2) }
-            assertThat(data).hasAttribute("valueNull"){ it.isA<Long>().isGreaterThan(1) }
+            assertThat(data).hasAttribute("value") { it.isA<Long>().isGreaterThan(0) }
+            assertThat(data).hasAttribute("value") { it.isA<Long>().isGreaterThan(1) }
+            assertThat(data).hasAttribute("value") { it.isA<Long>().isGreaterThan(2) }
+            assertThat(data).hasAttribute("valueNull") { it.isA<Long>().isGreaterThan(1) }
 
             val results = this.results.toList()
 
@@ -409,10 +409,10 @@ internal class AssertThatTest {
             "valueNull" to null,
         )
         with(Assertions(dataTrace())) {
-            assertThat(data).hasAttribute("value"){ it.isA<Float>().isGreaterThan(0.0f) }
-            assertThat(data).hasAttribute("value"){ it.isA<Float>().isGreaterThan(1.0f) }
-            assertThat(data).hasAttribute("value"){ it.isA<Float>().isGreaterThan(2.0f) }
-            assertThat(data).hasAttribute("valueNull"){ it.isA<Float>().isGreaterThan(1.0f) }
+            assertThat(data).hasAttribute("value") { it.isA<Float>().isGreaterThan(0.0f) }
+            assertThat(data).hasAttribute("value") { it.isA<Float>().isGreaterThan(1.0f) }
+            assertThat(data).hasAttribute("value") { it.isA<Float>().isGreaterThan(2.0f) }
+            assertThat(data).hasAttribute("valueNull") { it.isA<Float>().isGreaterThan(1.0f) }
 
             val results = this.results.toList()
 
@@ -432,10 +432,10 @@ internal class AssertThatTest {
             "valueNull" to null,
         )
         with(Assertions(dataTrace())) {
-            assertThat(data).hasAttribute("value"){ it.isA<Double>().isGreaterThan(0.0) }
-            assertThat(data).hasAttribute("value"){ it.isA<Double>().isGreaterThan(1.0) }
-            assertThat(data).hasAttribute("value"){ it.isA<Double>().isGreaterThan(2.0) }
-            assertThat(data).hasAttribute("valueNull"){ it.isA<Double>().isGreaterThan(1.0) }
+            assertThat(data).hasAttribute("value") { it.isA<Double>().isGreaterThan(0.0) }
+            assertThat(data).hasAttribute("value") { it.isA<Double>().isGreaterThan(1.0) }
+            assertThat(data).hasAttribute("value") { it.isA<Double>().isGreaterThan(2.0) }
+            assertThat(data).hasAttribute("valueNull") { it.isA<Double>().isGreaterThan(1.0) }
 
             val results = this.results.toList()
 
@@ -455,10 +455,10 @@ internal class AssertThatTest {
             "valueNull" to null,
         )
         with(Assertions(dataTrace())) {
-            assertThat(data).hasAttribute("value"){ it.isA<Int>().isGreaterThanEquals(0) }
-            assertThat(data).hasAttribute("value"){ it.isA<Int>().isGreaterThanEquals(1) }
-            assertThat(data).hasAttribute("value"){ it.isA<Int>().isGreaterThanEquals(2) }
-            assertThat(data).hasAttribute("valueNull"){ it.isA<Int>().isGreaterThanEquals(1) }
+            assertThat(data).hasAttribute("value") { it.isA<Int>().isGreaterThanEquals(0) }
+            assertThat(data).hasAttribute("value") { it.isA<Int>().isGreaterThanEquals(1) }
+            assertThat(data).hasAttribute("value") { it.isA<Int>().isGreaterThanEquals(2) }
+            assertThat(data).hasAttribute("valueNull") { it.isA<Int>().isGreaterThanEquals(1) }
 
             val results = this.results.toList()
 
@@ -478,10 +478,10 @@ internal class AssertThatTest {
             "valueNull" to null,
         )
         with(Assertions(dataTrace())) {
-            assertThat(data).hasAttribute("value"){ it.isA<Long>().isGreaterThanEquals(0) }
-            assertThat(data).hasAttribute("value"){ it.isA<Long>().isGreaterThanEquals(1) }
-            assertThat(data).hasAttribute("value"){ it.isA<Long>().isGreaterThanEquals(2) }
-            assertThat(data).hasAttribute("valueNull"){ it.isA<Long>().isGreaterThanEquals(1) }
+            assertThat(data).hasAttribute("value") { it.isA<Long>().isGreaterThanEquals(0) }
+            assertThat(data).hasAttribute("value") { it.isA<Long>().isGreaterThanEquals(1) }
+            assertThat(data).hasAttribute("value") { it.isA<Long>().isGreaterThanEquals(2) }
+            assertThat(data).hasAttribute("valueNull") { it.isA<Long>().isGreaterThanEquals(1) }
 
             val results = this.results.toList()
 
@@ -501,10 +501,10 @@ internal class AssertThatTest {
             "valueNull" to null,
         )
         with(Assertions(dataTrace())) {
-            assertThat(data).hasAttribute("value"){ it.isA<Float>().isGreaterThanEquals(0.0f) }
-            assertThat(data).hasAttribute("value"){ it.isA<Float>().isGreaterThanEquals(1.0f) }
-            assertThat(data).hasAttribute("value"){ it.isA<Float>().isGreaterThanEquals(2.0f) }
-            assertThat(data).hasAttribute("valueNull"){ it.isA<Float>().isGreaterThanEquals(1.0f) }
+            assertThat(data).hasAttribute("value") { it.isA<Float>().isGreaterThanEquals(0.0f) }
+            assertThat(data).hasAttribute("value") { it.isA<Float>().isGreaterThanEquals(1.0f) }
+            assertThat(data).hasAttribute("value") { it.isA<Float>().isGreaterThanEquals(2.0f) }
+            assertThat(data).hasAttribute("valueNull") { it.isA<Float>().isGreaterThanEquals(1.0f) }
 
             val results = this.results.toList()
 
@@ -524,10 +524,10 @@ internal class AssertThatTest {
             "valueNull" to null,
         )
         with(Assertions(dataTrace())) {
-            assertThat(data).hasAttribute("value"){ it.isA<Double>().isGreaterThanEquals(0.0) }
-            assertThat(data).hasAttribute("value"){ it.isA<Double>().isGreaterThanEquals(1.0) }
-            assertThat(data).hasAttribute("value"){ it.isA<Double>().isGreaterThanEquals(2.0) }
-            assertThat(data).hasAttribute("valueNull"){ it.isA<Double>().isGreaterThanEquals(1.0) }
+            assertThat(data).hasAttribute("value") { it.isA<Double>().isGreaterThanEquals(0.0) }
+            assertThat(data).hasAttribute("value") { it.isA<Double>().isGreaterThanEquals(1.0) }
+            assertThat(data).hasAttribute("value") { it.isA<Double>().isGreaterThanEquals(2.0) }
+            assertThat(data).hasAttribute("valueNull") { it.isA<Double>().isGreaterThanEquals(1.0) }
 
             val results = this.results.toList()
 
@@ -548,10 +548,10 @@ internal class AssertThatTest {
             "valueNull" to null,
         )
         with(Assertions(dataTrace())) {
-            assertThat(data).hasAttribute("value"){ it.isA<List<Int>>().contains(1) }
-            assertThat(data).hasAttribute("valueEmpty"){ it.isA<List<Int>>().contains(1) }
-            assertThat(data).hasAttribute("value"){ it.isA<List<Int>>().contains(null) }
-            assertThat(data).hasAttribute("valueNull"){ it.isA<List<Int>>().contains(1) }
+            assertThat(data).hasAttribute("value") { it.isA<List<Int>>().contains(1) }
+            assertThat(data).hasAttribute("valueEmpty") { it.isA<List<Int>>().contains(1) }
+            assertThat(data).hasAttribute("value") { it.isA<List<Int>>().contains(null) }
+            assertThat(data).hasAttribute("valueNull") { it.isA<List<Int>>().contains(1) }
 
             val results = this.results.toList()
 
@@ -574,10 +574,10 @@ internal class AssertThatTest {
             "valueNull" to null,
         )
         with(Assertions(dataTrace())) {
-            assertThat(data).hasAttribute("value"){ it.isOneOf(collection) }
-            assertThat(data).hasAttribute("value"){ it.isOneOf(emptyCollection) }
-            assertThat(data).hasAttribute("valueNull"){ it.isOneOf(collection) }
-            assertThat(data).hasAttribute("valueNull"){ it.isOneOf(collectionWithNull) }
+            assertThat(data).hasAttribute("value") { it.isOneOf(collection) }
+            assertThat(data).hasAttribute("value") { it.isOneOf(emptyCollection) }
+            assertThat(data).hasAttribute("valueNull") { it.isOneOf(collection) }
+            assertThat(data).hasAttribute("valueNull") { it.isOneOf(collectionWithNull) }
 
             val results = this.results.toList()
 
@@ -598,10 +598,10 @@ internal class AssertThatTest {
             "valueNull" to null,
         )
         with(Assertions(dataTrace())) {
-            assertThat(data).hasAttribute("value"){ it.isA<List<Int>>().notContains(1) }
-            assertThat(data).hasAttribute("valueEmpty"){ it.isA<List<Int>>().notContains(1) }
-            assertThat(data).hasAttribute("value"){ it.isA<List<Int>>().notContains(null) }
-            assertThat(data).hasAttribute("valueNull"){ it.isA<List<Int>>().notContains(1) }
+            assertThat(data).hasAttribute("value") { it.isA<List<Int>>().notContains(1) }
+            assertThat(data).hasAttribute("valueEmpty") { it.isA<List<Int>>().notContains(1) }
+            assertThat(data).hasAttribute("value") { it.isA<List<Int>>().notContains(null) }
+            assertThat(data).hasAttribute("valueNull") { it.isA<List<Int>>().notContains(1) }
 
             val results = this.results.toList()
 
@@ -622,9 +622,9 @@ internal class AssertThatTest {
             "valueNull" to null,
         )
         with(Assertions(dataTrace())) {
-            assertThat(data).hasAttribute("value"){ it.isA<List<Int>>().isEmpty() }
-            assertThat(data).hasAttribute("valueEmpty"){ it.isA<List<Int>>().isEmpty() }
-            assertThat(data).hasAttribute("valueNull"){ it.isA<List<Int>>().isEmpty() }
+            assertThat(data).hasAttribute("value") { it.isA<List<Int>>().isEmpty() }
+            assertThat(data).hasAttribute("valueEmpty") { it.isA<List<Int>>().isEmpty() }
+            assertThat(data).hasAttribute("valueNull") { it.isA<List<Int>>().isEmpty() }
 
             val results = this.results.toList()
 
@@ -644,9 +644,9 @@ internal class AssertThatTest {
             "valueNull" to null,
         )
         with(Assertions(dataTrace())) {
-            assertThat(data).hasAttribute("value"){ it.isA<List<Int>?>().isNullOrEmpty() }
-            assertThat(data).hasAttribute("valueEmpty"){ it.isA<List<Int>?>().isNullOrEmpty() }
-            assertThat(data).hasAttribute("valueNull"){ it.isA<List<Int>?>().isNullOrEmpty() }
+            assertThat(data).hasAttribute("value") { it.isA<List<Int>?>().isNullOrEmpty() }
+            assertThat(data).hasAttribute("valueEmpty") { it.isA<List<Int>?>().isNullOrEmpty() }
+            assertThat(data).hasAttribute("valueNull") { it.isA<List<Int>?>().isNullOrEmpty() }
 
             val results = this.results.toList()
 
@@ -666,10 +666,10 @@ internal class AssertThatTest {
             "valueNull" to null,
         )
         with(Assertions(dataTrace())) {
-            assertThat(data).hasAttribute("value"){ it.isA<List<Int>>().isNotEmpty() }
-            assertThat(data).hasAttribute("valueEmpty"){ it.isA<List<Int>>().isNotEmpty() }
-            assertThat(data).hasAttribute("valueNull"){ it.isA<List<Int>?>().isNotEmpty() }
-            assertThat(data).hasAttribute("valueNull"){ it.isA<List<Int>>().isNotEmpty() }
+            assertThat(data).hasAttribute("value") { it.isA<List<Int>>().isNotEmpty() }
+            assertThat(data).hasAttribute("valueEmpty") { it.isA<List<Int>>().isNotEmpty() }
+            assertThat(data).hasAttribute("valueNull") { it.isA<List<Int>?>().isNotEmpty() }
+            assertThat(data).hasAttribute("valueNull") { it.isA<List<Int>>().isNotEmpty() }
 
             val results = this.results.toList()
 
@@ -690,10 +690,10 @@ internal class AssertThatTest {
             "valueNull" to null,
         )
         with(Assertions(dataTrace())) {
-            assertThat(data).hasAttribute("value"){ it.isA<List<Int>>().isSizeEquals(3) }
-            assertThat(data).hasAttribute("valueEmpty"){ it.isA<List<Int>>().isSizeEquals(3) }
-            assertThat(data).hasAttribute("valueNull"){ it.isA<List<Int>?>().isSizeEquals(3) }
-            assertThat(data).hasAttribute("valueNull"){ it.isA<List<Int>>().isSizeEquals(3) }
+            assertThat(data).hasAttribute("value") { it.isA<List<Int>>().isSizeEquals(3) }
+            assertThat(data).hasAttribute("valueEmpty") { it.isA<List<Int>>().isSizeEquals(3) }
+            assertThat(data).hasAttribute("valueNull") { it.isA<List<Int>?>().isSizeEquals(3) }
+            assertThat(data).hasAttribute("valueNull") { it.isA<List<Int>>().isSizeEquals(3) }
 
             val results = this.results.toList()
 
@@ -713,8 +713,8 @@ internal class AssertThatTest {
             "valueNull" to null,
         )
         with(Assertions(dataTrace())) {
-            assertThat(data).hasAttribute("value"){ it.isNull() }
-            assertThat(data).hasAttribute("valueNull"){ it.isNull() }
+            assertThat(data).hasAttribute("value") { it.isNull() }
+            assertThat(data).hasAttribute("valueNull") { it.isNull() }
 
             val results = this.results.toList()
 
@@ -732,12 +732,12 @@ internal class AssertThatTest {
             "valueNull" to null,
         )
         with(Assertions(dataTrace())) {
-            assertThat(data).hasAttribute("value"){
+            assertThat(data).hasAttribute("value") {
                 it.isNullOr {
                     it.isEqualTo("Hello World")
                 }
             }
-            assertThat(data).hasAttribute("valueNull"){
+            assertThat(data).hasAttribute("valueNull") {
                 it.isNullOr {
                     it.isEqualTo("Hello World")
                 }
@@ -759,8 +759,8 @@ internal class AssertThatTest {
             "valueNull" to null,
         )
         with(Assertions(dataTrace())) {
-            assertThat(data).hasAttribute("value"){ it.isNotNull() }
-            assertThat(data).hasAttribute("valueNull"){ it.isNotNull() }
+            assertThat(data).hasAttribute("value") { it.isNotNull() }
+            assertThat(data).hasAttribute("valueNull") { it.isNotNull() }
 
             val results = this.results.toList()
 
@@ -778,10 +778,10 @@ internal class AssertThatTest {
             "valueNull" to null,
         )
         with(Assertions(dataTrace())) {
-            assertThat(data).hasAttribute("valueStr"){ it.isA<String>() }
-            assertThat(data).hasAttribute("valueStr"){ it.isA<Int>() }
-            assertThat(data).hasAttribute("valueNull"){ it.isA<String>() }
-            assertThat(data).hasAttribute("valueNull"){ it.isA<String?>() }
+            assertThat(data).hasAttribute("valueStr") { it.isA<String>() }
+            assertThat(data).hasAttribute("valueStr") { it.isA<Int>() }
+            assertThat(data).hasAttribute("valueNull") { it.isA<String>() }
+            assertThat(data).hasAttribute("valueNull") { it.isA<String?>() }
 
             val results = this.results.toList()
 
@@ -804,19 +804,19 @@ internal class AssertThatTest {
             assertThat(data).hasAttribute("value") { attr ->
                 attr.or(
                     { it.isNull() },
-                    { it.isEqualTo("Hello World")}
+                    { it.isEqualTo("Hello World") }
                 )
             }
-            assertThat(data).hasAttribute("valueNull"){ attr ->
+            assertThat(data).hasAttribute("valueNull") { attr ->
                 attr.or(
                     { it.isNull() },
-                    { it.isEqualTo("Hello World")}
+                    { it.isEqualTo("Hello World") }
                 )
             }
             assertThat(data).hasAttribute("value") { attr ->
                 attr.or(
                     { it.isNull() },
-                    { it.isEqualTo("Good Bye")}
+                    { it.isEqualTo("Good Bye") }
                 )
             }
 
