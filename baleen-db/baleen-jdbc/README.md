@@ -41,5 +41,22 @@ val validation = query("shoes", "SELECT * FROM product WHERE name LIKE 'Shoes%",
 }
 
 validation.isValid()
+```
 
+It is advisable to add tags for primary key to make it easier to find bad data later.
+
+```kotlin
+val validation = table("product", dbConnection, tags=mapOf("id" to withAttributeValue("id"))) {
+    "id".type(LongType(min = 1), required = true)
+    "name".type(StringType(min = 1, max = 500), required = true)
+}
+
+val validation = query("shoes", "SELECT * FROM product WHERE name LIKE 'Shoes%", dbConnection,
+    tags=mapOf("id" to withAttributeValue("id"))) {
+    
+    "id".type(LongType(min = 1), required = true)
+    "name".type(StringType(min = 1, max = 500), required = true)
+}
+
+validation.isValid()
 ```
