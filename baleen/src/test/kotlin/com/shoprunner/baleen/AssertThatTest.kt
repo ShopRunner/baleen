@@ -802,21 +802,21 @@ internal class AssertThatTest {
         )
         with(Assertions(dataTrace())) {
             assertThat(data).hasAttribute("value") { attr ->
-                attr.or(
-                    { it.isNull() },
-                    { it.isEqualTo("Hello World") }
+                or(
+                    { attr.isNull() },
+                    { attr.isEqualTo("Hello World") }
                 )
             }
             assertThat(data).hasAttribute("valueNull") { attr ->
-                attr.or(
-                    { it.isNull() },
-                    { it.isEqualTo("Hello World") }
+                or(
+                    { attr.isNull() },
+                    { attr.isEqualTo("Hello World") }
                 )
             }
             assertThat(data).hasAttribute("value") { attr ->
-                attr.or(
-                    { it.isNull() },
-                    { it.isEqualTo("Good Bye") }
+                or(
+                    { attr.isNull() },
+                    { attr.isEqualTo("Good Bye") },
                 )
             }
 

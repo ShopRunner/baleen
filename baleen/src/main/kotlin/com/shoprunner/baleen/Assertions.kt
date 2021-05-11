@@ -556,10 +556,10 @@ class Assertions(val dataTrace: DataTrace) {
     /**
      *
      */
-    fun <T : Any?> AssertThat<T>.or(vararg ors: Assertions.(AssertThat<T>) -> Unit): AssertThat<T> {
+    fun or(vararg ors: Assertions.() -> Unit) {
         val testResults = ors.map { orFun ->
             val orAssertions = Assertions(dataTrace)
-            orAssertions.orFun(this)
+            orAssertions.orFun()
             orAssertions.results.toList()
         }
 
@@ -567,7 +567,5 @@ class Assertions(val dataTrace: DataTrace) {
             ?: testResults.flatten()
 
         firstSuccessOrAllErrors.forEach(this@Assertions::addValidationResult)
-
-        return this
     }
 }
