@@ -83,7 +83,7 @@ object DatabaseUtil {
                             dataTrace.tag("row" to rowNumber.toString()),
                             data
                         )
-                        yield(results)
+                        yield(results.toList())
                     }
                 }
             }

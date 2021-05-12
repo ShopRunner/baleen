@@ -11,7 +11,7 @@ import java.sql.ResultSet
  * some returning all caps and some lower-case.
  */
 class DatabaseRow(
-    private val rs: ResultSet,
+    rs: ResultSet,
     private val rowNumber: Int
 ) : Data {
 
@@ -19,27 +19,30 @@ class DatabaseRow(
         rs.metaData.getColumnName(idx).toUpperCase() to idx
     }.toMap()
 
+    private val data = columnIdxMapping.map { (key, idx) -> key to rs.getObject(idx) }.toMap()
+
     override val keys: Set<String> = columnIdxMapping.keys
 
     override fun containsKey(key: String): Boolean = keys.contains(key.toUpperCase())
 
     override fun get(key: String): Any? {
-        return columnIdxMapping[key.toUpperCase()]?.let { rs.getObject(it) }
+        return data[key.toUpperCase()]
     }
 
     override fun attributeDataValue(key: String, dataTrace: DataTrace): DataValue {
+        val dbColumn = key.toUpperCase()
         val tags = mapOf("row" to rowNumber.toString()) +
-                if(containsKey(key)) {
-                    mapOf("column" to key.toUpperCase(), "columnIdx" to columnIdxMapping[key.toUpperCase()].toString())
+                if(containsKey(dbColumn)) {
+                    mapOf("column" to dbColumn, "columnIdx" to columnIdxMapping[dbColumn].toString())
                 }
                 else {
                     emptyMap()
                 }
-        return DataValue(get(key), (dataTrace + "column \"$key\"").tag(tags))
+        return DataValue(get(key), (dataTrace + "column \"$dbColumn\"").tag(tags))
     }
 
     override fun toString(): String {
-        val mapString = keys.map { key -> key to get(key) }.joinToString()
+        val mapString = keys.map { key -> "$key=${get(key)}" }.joinToString()
         return "DatabaseRow(rowNumber=$rowNumber, $mapString)"
     }
 }
