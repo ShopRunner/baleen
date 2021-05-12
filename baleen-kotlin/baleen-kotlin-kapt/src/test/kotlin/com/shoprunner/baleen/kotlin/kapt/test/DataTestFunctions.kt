@@ -1,11 +1,13 @@
 package com.shoprunner.baleen.kotlin.kapt.test
 
+import com.shoprunner.baleen.Assertions
 import com.shoprunner.baleen.DataTrace
 import com.shoprunner.baleen.ValidationError
 import com.shoprunner.baleen.ValidationInfo
 import com.shoprunner.baleen.ValidationResult
 import com.shoprunner.baleen.annotation.DataTest
 import com.shoprunner.baleen.dataTrace
+import java.time.Instant
 
 @DataTest
 fun assertStringLength(stringModel: StringModel, dataTrace: DataTrace = dataTrace()): Sequence<ValidationResult> {
@@ -41,4 +43,14 @@ fun assertArrayNotEmpty(arrayModel: ArrayStringModel, dataTrace: DataTrace = dat
     } else {
         return listOf(ValidationError(dataTrace + "attr stringArray", "is empty", arrayModel.stringArray))
     }
+}
+
+@DataTest
+fun testInstantAfterToday(assertions: Assertions, instantModel: InstantModel) = with(assertions) {
+    assertTrue("instant >= today", instantModel.instant.isAfter(Instant.now()))
+}
+
+@DataTest(isExtension = true)
+fun Assertions.testMaxIs100(intModel: LongModel) {
+    assertThat(intModel.longNumber).isLessThanEquals(100)
 }

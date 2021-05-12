@@ -1,5 +1,7 @@
 package com.shoprunner.baleen
 
+import com.shoprunner.baleen.types.Tagger
+
 class DataDescription(
     val name: String,
     val nameSpace: String = "",
@@ -70,6 +72,16 @@ class DataDescription(
 
     fun test(validation: Validator) {
         tests.add(validation)
+    }
+
+    fun test(testName: String, vararg additionalTags: Pair<String, Tagger>, validator: Assertions.(Data) -> Unit): DataDescription {
+        this.test { dataTrace, data ->
+            val additionalTestTags = additionalTags.map { (key, tagger) -> key to tagger(data) } + ("test" to testName)
+            val asserts = Assertions(dataTrace.tag(additionalTestTags.toMap()))
+            asserts.validator(data)
+            asserts.results
+        }
+        return this
     }
 
     private val allTests: List<Validator>

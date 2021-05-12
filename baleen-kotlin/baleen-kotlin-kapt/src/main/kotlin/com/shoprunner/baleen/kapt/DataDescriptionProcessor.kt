@@ -1,6 +1,7 @@
 package com.shoprunner.baleen.kapt
 
 import com.google.auto.service.AutoService
+import com.shoprunner.baleen.Assertions
 import com.shoprunner.baleen.DataTrace
 import com.shoprunner.baleen.ValidationResult
 import com.shoprunner.baleen.annotation.DataDescription
@@ -94,11 +95,11 @@ class DataDescriptionProcessor : AbstractProcessor() {
             when {
                 it.kind != ElementKind.METHOD ->
                     messager.error { "Element annotated with @DataTest is not a method: `$it`" }
-                !returnValidationResultIterable(it as ExecutableElement) ->
-                    messager.error { "Method annotated with @DataTest does not return Iterable<ValidationResult> or Sequence<ValidationResult>: `$it`" }
-                !isValidDataTestFunction(it) ->
-                    messager.error { "Method annotated with @DataTest is not a valid function in format `@DataTest fun name(data: DataClass, dataTrace: DataTrace): Sequence<ValidationResult>` : $it" }
-                it.parameters.first().asType().toString() !in allSchemas ->
+                !isValidDataTestFunction(it as ExecutableElement) ->
+                    messager.error { "Method annotated with @DataTest is not a valid function in format `@DataTest fun name(data: DataClass, dataTrace: DataTrace): Sequence<ValidationResult>` or `@DataTest fun name(assertions: Assertions, data: DataClass): Unit` : $it" }
+                isValidDataTraceDataTestFunction(it) && it.parameters.first().asType().toString() !in allSchemas ->
+                    messager.error { "Method annotated with @DataTest does not have a valid data class to apply to: `$it`. Class `${it.parameters.first().asType()}` is not annotated with @DataDescription" }
+                isValidAssertionDataTestFunction(it) && it.parameters[1].asType().toString() !in allSchemas ->
                     messager.error { "Method annotated with @DataTest does not have a valid data class to apply to: `$it`. Class `${it.parameters.first().asType()}` is not annotated with @DataDescription" }
                 else ->
                     messager.note { "@DataTest '$it' identified for '${it.parameters.first().asType()}'" }
@@ -108,10 +109,18 @@ class DataDescriptionProcessor : AbstractProcessor() {
         val allExtraTests = annotatedWithDataTest
             .filter { it.kind == ElementKind.METHOD }
             .map { it as ExecutableElement }
-            .filter(::returnValidationResultIterable)
             .filter(::isValidDataTestFunction)
-            .map { DataTestElement(it, it.parameters.first().asType() as DeclaredType, it.isExtension()) }
-            .groupBy { it.receiverType.toString() }
+            .map {
+                DataTestElement(
+                    dataTestFunction = it,
+                    dataClass =
+                    if (isValidAssertionDataTestFunction(it)) it.parameters[1].asType() as DeclaredType
+                    else it.parameters[0].asType() as DeclaredType,
+                    isExtension = it.isExtension(),
+                    isAssertionBased = isValidAssertionDataTestFunction(it)
+                )
+            }
+            .groupBy { it.dataClass.toString() }
 
         schemas.forEach {
             val fullName = it.key
@@ -124,16 +133,34 @@ class DataDescriptionProcessor : AbstractProcessor() {
         return schemas.isNotEmpty() || allExtraTests.isNotEmpty()
     }
 
-    // Function with a two parameters: testFun(dog: Dog, dataTrace: DataTrace)
-    private fun isValidDataTestFunction(func: ExecutableElement): Boolean {
-        return (
+    // Function with a two parameters:
+    //      testFun(dog: Dog, dataTrace: DataTrace)
+    private fun isValidDataTraceDataTestFunction(func: ExecutableElement): Boolean {
+        return returnValidationResultIterable(func) &&
             func.parameters?.size == 2 &&
-                func.parameters?.first()?.asType()?.kind == TypeKind.DECLARED &&
-                typeUtils.isSameType(
-                    func.parameters[1]?.asType(),
-                    elementUtils.getTypeElement(DataTrace::class.java.canonicalName).asType()
-                )
+            func.parameters?.first()?.asType()?.kind == TypeKind.DECLARED &&
+            typeUtils.isSameType(
+                func.parameters[1]?.asType(),
+                elementUtils.getTypeElement(DataTrace::class.java.canonicalName).asType()
             )
+    }
+
+    // Function with a two parameters:
+    //      testFun(assertions: Assertion, dog: Dog)
+    private fun isValidAssertionDataTestFunction(func: ExecutableElement): Boolean {
+        return func.parameters?.size == 2 &&
+            typeUtils.isSameType(
+                func.parameters[0]?.asType(),
+                elementUtils.getTypeElement(Assertions::class.java.canonicalName).asType()
+            ) && func.parameters[1]?.asType()?.kind == TypeKind.DECLARED
+    }
+
+    // Function with a two parameters:
+    //      testFun(dog: Dog, dataTrace: DataTrace)
+    // OR
+    //      testFun(assertions: Assertion, dog: Dog)
+    private fun isValidDataTestFunction(func: ExecutableElement): Boolean {
+        return isValidDataTraceDataTestFunction(func) || isValidAssertionDataTestFunction(func)
     }
 
     private fun ExecutableElement.isExtension(): Boolean = this.getAnnotation(DataTest::class.java).isExtension

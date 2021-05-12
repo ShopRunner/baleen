@@ -19,9 +19,56 @@ internal class ExtraTestBuilder(
     fun addExtraTest(
         extraTest: DataTestElement,
         typeElement: TypeElement
+    ): CodeBlock =
+        if (extraTest.isAssertionBased) {
+            addAssertionExtraTest(extraTest, typeElement)
+        } else {
+            addNonAssertionExtraTest(extraTest, typeElement)
+        }
+
+    private fun addAssertionExtraTest(
+        extraTest: DataTestElement,
+        typeElement: TypeElement
     ): CodeBlock {
         return CodeBlock.builder().apply {
-            add("/* ${extraTest.executableElement.annotationMirrors} ${extraTest.executableElement} */\n")
+            val memberName = MemberName(
+                elementUtils.getPackageOf(extraTest.dataTestFunction).toString(),
+                extraTest.dataTestFunction.simpleName.toString()
+            )
+
+            add("/* ${extraTest.dataTestFunction.annotationMirrors} ${extraTest.dataTestFunction} */\n")
+            beginControlFlow("it.test(\"${memberName.canonicalName}\")")
+            add("data ->\n")
+            // Create object
+            indent()
+            beginControlFlow("try")
+
+            add("val obj = %M(data)\n", MemberName("com.shoprunner.baleen.kotlin", "as${typeElement.simpleName}"))
+
+            if (extraTest.isExtension) {
+                add("%M(obj)", memberName)
+            } else {
+                add("%M(this, obj)", memberName)
+            }
+            add("\n")
+            endControlFlow()
+            beginControlFlow("catch(npe: %T)", NullPointerException::class.java)
+            add("fail(%P, data)\n", "Unable to run test `${memberName.canonicalName}`: '\${npe.message}'")
+            endControlFlow()
+            beginControlFlow("catch(cce: %T)", ClassCastException::class.java)
+            add("fail(%P, data)\n", "Unable to run test `${memberName.canonicalName}`: '\${cce.message}'")
+            endControlFlow()
+            unindent()
+            endControlFlow()
+        }.build()
+    }
+
+    private fun addNonAssertionExtraTest(
+        extraTest: DataTestElement,
+        typeElement: TypeElement
+    ): CodeBlock {
+        return CodeBlock.builder().apply {
+            add("/* ${extraTest.dataTestFunction.annotationMirrors} ${extraTest.dataTestFunction} */\n")
             beginControlFlow("it.test")
             add("dataTrace, data ->\n")
             // Create object
@@ -30,8 +77,8 @@ internal class ExtraTestBuilder(
             add("val obj = %M(data)\n", MemberName("com.shoprunner.baleen.kotlin", "as${typeElement.simpleName}"))
 
             val memberName = MemberName(
-                elementUtils.getPackageOf(extraTest.executableElement).toString(),
-                extraTest.executableElement.simpleName.toString()
+                elementUtils.getPackageOf(extraTest.dataTestFunction).toString(),
+                extraTest.dataTestFunction.simpleName.toString()
             )
 
             if (extraTest.isExtension) {

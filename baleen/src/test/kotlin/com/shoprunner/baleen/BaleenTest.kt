@@ -4,11 +4,13 @@ import com.shoprunner.baleen.Baleen.describeAs
 import com.shoprunner.baleen.TestHelper.dataOf
 import com.shoprunner.baleen.ValidationAssert.Companion.assertThat
 import com.shoprunner.baleen.types.AllowsNull
+import com.shoprunner.baleen.types.IntType
 import com.shoprunner.baleen.types.StringType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import kotlin.contracts.ExperimentalContracts
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class BaleenTest {
@@ -318,6 +320,88 @@ internal class BaleenTest {
                 numWarnings = 0,
                 topErrorsAndWarnings = listOf(ValidationError(dataTrace().tag("test", "true"), "Wrong, guess again", data)),
             ),
+        )
+    }
+
+    @Test
+    fun `junit style attribute test`() {
+        val dataDesc = "FavoriteNumber".describeAs {
+            "favorite number".type(IntType()).describe {
+                test("favorite number is 42") { data ->
+                    assertEquals("favorite number == 42", data.getAsIntOrNull("favorite number"), 42)
+                }
+            }
+        }
+
+        assertThat(dataDesc.validate(dataOf("favorite number" to 42))).isValid()
+        assertThat(dataDesc.validate(dataOf("favorite number" to 42)).results).contains(
+            ValidationInfo(dataTrace().tag("test" to "favorite number is 42", "assertion" to "favorite number == 42"), "Pass: favorite number == 42", "42 == 42")
+        )
+        assertThat(dataDesc.validate(dataOf("favorite number" to 41))).isNotValid()
+        assertThat(dataDesc.validate(dataOf("favorite number" to 41)).results).contains(
+            ValidationError(dataTrace().tag("test" to "favorite number is 42", "assertion" to "favorite number == 42"), "Fail: favorite number == 42", "41 == 42")
+        )
+    }
+
+    @Test
+    @ExperimentalContracts
+    fun `junit style attribute test - assertThat`() {
+        val dataDesc = "FavoriteNumber".describeAs {
+            "favorite number".type(IntType()).describe {
+                test("favorite number is 42") { data ->
+                    assertThat { data.getAsInt("favorite number") }.isEqualTo(42)
+                }
+            }
+        }
+
+        assertThat(dataDesc.validate(dataOf("favorite number" to 42))).isValid()
+        assertThat(dataDesc.validate(dataOf("favorite number" to 42)).results).contains(
+            ValidationInfo(dataTrace().tag("test" to "favorite number is 42", "assertion" to "assertThat<kotlin.Int>()"), "Pass: assertThat<kotlin.Int>()", "42 is a kotlin.Int"),
+            ValidationInfo(dataTrace().tag("test" to "favorite number is 42", "assertion" to "is equal to 42"), "Pass: is equal to 42", "42 == 42")
+        )
+        assertThat(dataDesc.validate(dataOf("favorite number" to 41))).isNotValid()
+        assertThat(dataDesc.validate(dataOf("favorite number" to 41)).results).contains(
+            ValidationInfo(dataTrace().tag("test" to "favorite number is 42", "assertion" to "assertThat<kotlin.Int>()"), "Pass: assertThat<kotlin.Int>()", "41 is a kotlin.Int"),
+            ValidationError(dataTrace().tag("test" to "favorite number is 42", "assertion" to "is equal to 42"), "Fail: is equal to 42", "41 == 42")
+        )
+    }
+
+    @Test
+    fun `junit style test`() {
+        val dataDesc = "FavoriteNumber".describeAs {
+            test("favorite number is 42") { data ->
+                assertEquals("favorite number == 42", data.getAsIntOrNull("favorite number"), 42)
+            }
+        }
+
+        assertThat(dataDesc.validate(dataOf("favorite number" to 42))).isValid()
+        assertThat(dataDesc.validate(dataOf("favorite number" to 42)).results).contains(
+            ValidationInfo(dataTrace().tag("test" to "favorite number is 42", "assertion" to "favorite number == 42"), "Pass: favorite number == 42", "42 == 42")
+        )
+        assertThat(dataDesc.validate(dataOf("favorite number" to 41))).isNotValid()
+        assertThat(dataDesc.validate(dataOf("favorite number" to 41)).results).contains(
+            ValidationError(dataTrace().tag("test" to "favorite number is 42", "assertion" to "favorite number == 42"), "Fail: favorite number == 42", "41 == 42")
+        )
+    }
+
+    @Test
+    @ExperimentalContracts
+    fun `junit style test - assertThat`() {
+        val dataDesc = "FavoriteNumber".describeAs {
+            test("favorite number is 42") { data ->
+                assertThat { data.getAsInt("favorite number") }.isEqualTo(42)
+            }
+        }
+
+        assertThat(dataDesc.validate(dataOf("favorite number" to 42))).isValid()
+        assertThat(dataDesc.validate(dataOf("favorite number" to 42)).results).contains(
+            ValidationInfo(dataTrace().tag("test" to "favorite number is 42", "assertion" to "assertThat<kotlin.Int>()"), "Pass: assertThat<kotlin.Int>()", "42 is a kotlin.Int"),
+            ValidationInfo(dataTrace().tag("test" to "favorite number is 42", "assertion" to "is equal to 42"), "Pass: is equal to 42", "42 == 42")
+        )
+        assertThat(dataDesc.validate(dataOf("favorite number" to 41))).isNotValid()
+        assertThat(dataDesc.validate(dataOf("favorite number" to 41)).results).contains(
+            ValidationInfo(dataTrace().tag("test" to "favorite number is 42", "assertion" to "assertThat<kotlin.Int>()"), "Pass: assertThat<kotlin.Int>()", "41 is a kotlin.Int"),
+            ValidationError(dataTrace().tag("test" to "favorite number is 42", "assertion" to "is equal to 42"), "Fail: is equal to 42", "41 == 42")
         )
     }
 }
