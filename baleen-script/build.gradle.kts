@@ -6,6 +6,7 @@ plugins {
 dependencies {
     api(project(":baleen"))
     implementation(project(":baleen-csv"))
+    implementation(project(":baleen-db:baleen-jdbc"))
     implementation(project(":baleen-json-jackson"))
     implementation(project(":baleen-xml"))
     implementation(kotlin("stdlib"))
