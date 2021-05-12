@@ -7,6 +7,8 @@
 implementation("com.shoprunner:baleen-jdbc:$baleen_version")
 ```
 
+Also include the jdbc driver for the database of choice. It is not included.
+
 ## Example
 
 There are two functions available.
