@@ -84,8 +84,10 @@ internal class DatabaseUtilTest {
 
     @Test
     fun `test table with inline description adds custom tags`() {
-        val validation = DatabaseUtil.validateTable("product", connection,
-        tags = mapOf("id" to withAttributeValue("id"))) {
+        val validation = DatabaseUtil.validateTable(
+            "product", connection,
+            tags = mapOf("id" to withAttributeValue("id"))
+        ) {
             "id".type(NumericType())
             "name".type(StringType(max = 50))
             "type".type(StringType(max = 50))
@@ -119,7 +121,8 @@ internal class DatabaseUtilTest {
     fun `test query with inline description add custom tags`() {
         val validation = DatabaseUtil.validateQuery(
             "shoes", "SELECT * FROM product WHERE type = 'shoes'", connection,
-            tags = mapOf("id" to withAttributeValue("id"))) {
+            tags = mapOf("id" to withAttributeValue("id"))
+        ) {
             "id".type(NumericType())
             "name".type(StringType(max = 50))
             "type".type(StringType(max = 50))
