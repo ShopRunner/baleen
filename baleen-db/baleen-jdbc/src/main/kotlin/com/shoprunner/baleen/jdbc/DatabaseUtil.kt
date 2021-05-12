@@ -1,7 +1,13 @@
 package com.shoprunner.baleen.jdbc
 
-import com.shoprunner.baleen.*
 import com.shoprunner.baleen.Baleen.describeAs
+import com.shoprunner.baleen.BaleenType
+import com.shoprunner.baleen.Context
+import com.shoprunner.baleen.DataDescription
+import com.shoprunner.baleen.DataTrace
+import com.shoprunner.baleen.Validation
+import com.shoprunner.baleen.ValidationResult
+import com.shoprunner.baleen.dataTrace
 import com.shoprunner.baleen.datawrappers.HashData
 import com.shoprunner.baleen.types.Tagger
 import com.shoprunner.baleen.types.tag

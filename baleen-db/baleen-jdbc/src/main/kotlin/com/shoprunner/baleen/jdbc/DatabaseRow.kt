@@ -32,12 +32,11 @@ class DatabaseRow(
     override fun attributeDataValue(key: String, dataTrace: DataTrace): DataValue {
         val dbColumn = key.toUpperCase()
         val tags = mapOf("row" to rowNumber.toString()) +
-                if(containsKey(dbColumn)) {
-                    mapOf("column" to dbColumn, "columnIdx" to columnIdxMapping[dbColumn].toString())
-                }
-                else {
-                    emptyMap()
-                }
+            if (containsKey(dbColumn)) {
+                mapOf("column" to dbColumn, "columnIdx" to columnIdxMapping[dbColumn].toString())
+            } else {
+                emptyMap()
+            }
         return DataValue(get(key), (dataTrace + "column \"$dbColumn\"").tag(tags))
     }
 

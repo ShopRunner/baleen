@@ -1,12 +1,15 @@
 package com.shoprunner.baleen.jdbc
 
-import com.shoprunner.baleen.*
 import com.shoprunner.baleen.Baleen.describeAs
+import com.shoprunner.baleen.ValidationError
+import com.shoprunner.baleen.ValidationInfo
+import com.shoprunner.baleen.ValidationResult
+import com.shoprunner.baleen.ValidationSuccess
+import com.shoprunner.baleen.ValidationWarning
+import com.shoprunner.baleen.dataTrace
 import com.shoprunner.baleen.types.NumericType
 import com.shoprunner.baleen.types.StringType
-import org.assertj.core.api.AbstractIterableAssert
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.MapAssert
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -31,22 +34,26 @@ internal class DatabaseUtilTest {
 
     @BeforeAll
     fun setupDatabase() {
-        connection.prepareStatement("""
+        connection.prepareStatement(
+            """
             CREATE TABLE product (
                 id NUMBER PRIMARY KEY,
                 name VARCHAR(50),
                 type VARCHAR(50)
             )
-        """.trimIndent()).use{ it.execute() }
+            """.trimIndent()
+        ).use { it.execute() }
 
-        connection.prepareStatement("""
+        connection.prepareStatement(
+            """
             INSERT INTO product (id, name, type)
             VALUES 
                 (1, 'jeans', 'pants'),
                 (2, 'loafers', 'shoes'),
                 (3, 'button-down', 'shirt'),
                 (4, 'ballcap', 'hat')
-        """.trimIndent()).use{ it.execute() }
+            """.trimIndent()
+        ).use { it.execute() }
     }
 
     @AfterAll
