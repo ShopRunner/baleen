@@ -16,18 +16,18 @@ import java.sql.Connection
 object DatabaseUtil {
 
     @JvmStatic
-    fun table(
+    fun validateTable(
         table: String,
         connection: Connection,
         baleenType: BaleenType,
         dataTrace: DataTrace = dataTrace()
     ): Validation {
         val queryStr = "SELECT * FROM $table"
-        return query(queryStr, connection, baleenType, dataTrace)
+        return validateQuery(queryStr, connection, baleenType, dataTrace)
     }
 
     @JvmStatic
-    fun table(
+    fun validateTable(
         table: String,
         connection: Connection,
         dataDescriptionName: String = table,
@@ -36,11 +36,11 @@ object DatabaseUtil {
         description: DataDescription.() -> Unit
     ): Validation {
         val queryStr = "SELECT * FROM $table"
-        return query(dataDescriptionName, queryStr, connection, tags, dataTrace, description)
+        return validateQuery(dataDescriptionName, queryStr, connection, tags, dataTrace, description)
     }
 
     @JvmStatic
-    fun query(
+    fun validateQuery(
         queryStr: String,
         connection: Connection,
         baleenType: BaleenType,
@@ -56,7 +56,7 @@ object DatabaseUtil {
     }
 
     @JvmStatic
-    fun query(
+    fun validateQuery(
         queryName: String,
         queryStr: String,
         connection: Connection,
