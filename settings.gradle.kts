@@ -13,5 +13,6 @@ include("baleen-kotlin:baleen-kotlin-kapt")
 include("baleen-kotlin:baleen-kotlin-generator")
 include("baleen-kotlin:example")
 include("baleen-poet")
+include("baleen-script")
 
 rootProject.name = "baleen"
