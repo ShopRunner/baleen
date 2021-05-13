@@ -59,7 +59,9 @@ publishing {
 }
 
 signing {
-    sign(publishing.publications["mavenKotlin"])
+    if(!project.hasProperty("skip.signing")) {
+        sign(publishing.publications["mavenKotlin"])
+    }
 }
 
 nexusPublishing {
