@@ -16,14 +16,14 @@ Make sure you set your Snowlake account's url, user, and password if necessary.
 ```bash
 # Snowflake 
 DATABASE_USER=<your user> DATABASE_URL="jdbc:snowflake://<snowflake-url>/?warehouse=BALEEN&db=DEFAULT" \
-  ./gradlew :baleen-script:run --args=baleen-script/src/examples/snowflake.baleen.kts 
+  ./gradlew :baleen-script:run --args=baleen-script/src/examples/snowflake.main.kts 
 
 ```
 
 
 ## Examples
 
-* Snowflake Example: [snowflake.baleen.kts](src/examples/snowflake.baleen.kts)
+* Snowflake Example: [snowflake.baleen.kts](src/examples/snowflake.main.kts)
 
 ### Validate against all rows of a table
 ```kotlin
