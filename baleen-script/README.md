@@ -1,110 +1,120 @@
-# Baleen Script
+# Baleen-Script
 
-## Installation
+Using Baleen-script is a low code, easy to get started using Baleen to validate your data. 
+It is built on top of Kotlin scripting, so all you need is Kotlin installed and then you are good to go
 
-### Gradle
-```kotlin
-implementation("com.shoprunner:baleen-script:$baleen_version")
-```
+## Quick Start
 
-Use [Baleen](https://github.com/ShopRunner/baleen) in a script to test against a database.
-
-## Running Locally
-
-Make sure you set your Snowlake account's url, user, and password if necessary.
+Install Kotlin on your machine or use an IDE like IntelliJ that supports executing kotlin scripts.
 
 ```bash
-# Snowflake 
-DATABASE_USER=<your user> DATABASE_URL="jdbc:snowflake://<snowflake-url>/?warehouse=BALEEN&db=DEFAULT" \
-  ./gradlew :baleen-script:run --args=baleen-script/src/examples/snowflake.main.kts 
-
+brew install kotlin
 ```
 
+Then create a file with a suffix `main.kts` and place these boilerplate lines at the top
+
+```kotlin
+#!/usr/bin/env kotlin
+
+@file:DependsOn("com.shoprunner:baleen-script:1.14.0")
+
+import com.shoprunner.baleen.script.*
+import com.shoprunner.baleen.types.*
+```
+
+Finally add your test code within the `baleen` code block. For example, validating json
+
+```json
+{
+  "id": 1,
+  "firstName": "Jon",
+  "lastName": "Smith"
+}
+```
+
+then add this test code.
+
+```
+baleen {
+    json("./example.json") {
+        "id".type(IntegerType(), required = true)
+        "firstName".type(StringType(0, 32), required = true)
+        "lastName".type(StringType(0, 32), required = true)
+    }
+}
+```
 
 ## Examples
 
-* Snowflake Example: [snowflake.baleen.kts](src/examples/snowflake.main.kts)
+* Snowflake Database Example: [snowflake.main.kts](src/examples/snowflake.main.kts)
 
 ### Validate against all rows of a table
 ```kotlin
-database(credentials) {
-    table("example.employees", tags = mapOf("ID" to withAttributeValue("ID"))) {
-        // Your tests here
+baleen {
+    database {
+        credentials {
+            url = "jdbc:postgresql://localhost:5432/names"
+            user = "user"
+            password = "password"
+        }
+
+        // Does validation on all rows of a table.
+        table(
+            table = "engineer.example",
+            tags = mapOf("ID" to withAttributeValue("ID"))
+        ) {
+
+            "ID".type(IntegerType())
+            "FIRST_NAME".type(StringType(0, 32))
+            "LAST_NAME".type(StringType(0, 32))
+        }
     }
 }
 ```
 
 ### Validate against a random sampling of rows of a table
 ```kotlin
-database(credentials) {
-    sample("example.employees", 1_000, tags = mapOf("ID" to withAttributeValue("ID"))) {
-        // Your tests here
+baleen {
+    database {
+        credentials {
+            url = "jdbc:postgresql://localhost:5432/names"
+            user = "user"
+            password = "password"
+        }
+
+        sample(
+            table = "engineer.example",
+            samplePercent = 0.10,
+            tags = mapOf("ID" to withAttributeValue("ID"))
+        ) {
+
+            "ID".type(IntegerType(), required = true)
+            "FIRST_NAME".type(StringType(0, 1), required = true)
+            "LAST_NAME".type(StringType(0, 32), required = true)
+        }
     }
 }
 ```
 
 ### Validate against query
 ```kotlin
-database(credentials) {
-    query("smith_employees", "SELECT id, first_name, last_name FROM engineer.example WHERE last_name = 'Smith'",
-        tags = mapOf("ID" to withAttributeValue("ID"))) {
-        // Your tests here
-    }
-}
-```
-
-### Defining columns
-
-Each column can be listed out and related to a [BaleenType](https://github.com/ShopRunner/baleen/tree/master/baleen/src/main/kotlin/com/shoprunner/baleen/types).
-
-```kotlin
-database(credentials) {
-    table("example.employees") {
-        "ID".type(IntegerType())
-        "FIRST_NAME".type(StringType(0, 32))
-        "LAST_NAME".type(StringType(0, 32))
-    }
-}
-```
-
-### Defining column tests
-
-Test can be written at the column level using the `test` function. There are assertion function that can be used.
-There can be multiple tests.
-
-```kotlin
-database(credentials) {
-    table("example.employees") {
-        "LAST_NAME".type(StringType(0, 32)).describe {
-            test("is not all caps") { data ->
-                val lastName = data.getAsString("LAST_NAME") 
-                assertNotEquals("LAST_NAME is not all capitalized", lastName, lastName?.toUpperCase())
-            }
-        }
-    }
-}
-```
-
-### Defining row level tests
-
-Each row can be tested and can have multiple tests. There are assertion function that can be used.
-
-```kotlin
-database(credentials) {
-    table("example.employees") {
-        test("ID is odd") { data ->
-            assertTrue("ID is Odd", data.getAsLong("ID")!! % 2 != 0L, data.getAsLong("ID"))
+baleen {
+    database {
+        credentials {
+            url = "jdbc:postgresql://localhost:5432/names"
+            user = "user"
+            password = "password"
         }
 
-        test("FIRST_NAME != LAST_NAME") { data ->
-            assertNotEquals("first name != last name", data.getAsString("FIRST_NAME"), data.getAsString("LAST_NAME"))
-        }
+        query(
+            queryName = "query example",
+            query = "SELECT id, first_name, last_name FROM engineer.example WHERE last_name = 'Smith'",
+            tags = mapOf("ID" to withAttributeValue("ID"))
+        ) {
 
-        test("names should not be all caps") { data ->
-            val firstName = data.getAsString("FIRST_NAME")
-            val lastName = data.getAsString("LAST_NAME")
-            assertNotEquals("first name is not all caps", firstName?.toUpperCase(), firstName)
-            assertNotEquals("last name is not all caps", lastName?.toUpperCase(), lastName)
+            "ID".type(IntegerType(), required = true)
+            "FIRST_NAME".type(StringType(0, 1), required = true)
+            "LAST_NAME".type(StringType(0, 32), required = true)
         }
     }
 }
@@ -112,7 +122,7 @@ database(credentials) {
 
 ## Tagging the tests
 
-On the `table`, `sample`, and `query` function, there is an optional tags map to tag useful row level data points
+On each function, there is an optional tags map to tag useful row level data points
 like a primary key.
 
 With a column value:
