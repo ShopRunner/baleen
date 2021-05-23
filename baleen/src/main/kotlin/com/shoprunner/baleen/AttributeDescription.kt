@@ -39,6 +39,16 @@ class AttributeDescription(
         return this
     }
 
+    fun AttributeDescription.test(testName: String, vararg additionalTags: Pair<String, Tagger>, validator: Assertions.(Data) -> Unit): AttributeDescription {
+        this.test { dataTrace, data ->
+            val additionalTestTags = additionalTags.map { (key, tagger) -> key to tagger(data) } + ("test" to testName)
+            val asserts = Assertions(dataTrace.tag(additionalTestTags.toMap()))
+            asserts.validator(data)
+            asserts.results
+        }
+        return this
+    }
+
     fun describe(block: (AttributeDescription) -> Unit): AttributeDescription {
         block(this)
         return this

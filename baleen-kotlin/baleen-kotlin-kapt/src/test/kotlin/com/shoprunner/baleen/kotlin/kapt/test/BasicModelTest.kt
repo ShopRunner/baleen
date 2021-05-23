@@ -16,6 +16,7 @@ import com.shoprunner.baleen.types.StringType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import java.time.Duration
 import java.time.Instant
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -153,7 +154,7 @@ internal class BasicModelTest {
 
     @Test
     fun `test data class with instants produce valid data descriptions`() {
-        val model = InstantModel(Instant.now(), null)
+        val model = InstantModel(Instant.now().plus(Duration.ofDays(1)), null)
 
         assertBaleen(model.dataDescription())
             .hasName("InstantModel")
