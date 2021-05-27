@@ -34,7 +34,6 @@ class TextPrinter(val file: File, val prettyPrint: Boolean = false) : Printer() 
         } else {
             file.writeText("$validationResult\n")
         }
-
     }
 
     override fun print(validationResults: Iterable<ValidationResult>) {
@@ -113,11 +112,11 @@ class HtmlPrinter(private val file: File) : Printer() {
 
         val output = validationResults.toList()
         val summaryOutput = validationResults.filterIsInstance<ValidationSummary>()
-        if(summaryOutput.isNotEmpty()) {
+        if (summaryOutput.isNotEmpty()) {
             print(summaryOutput)
         }
         val otherOutput = output.filterNot { it is ValidationSummary }
-        if(otherOutput.isNotEmpty()) {
+        if (otherOutput.isNotEmpty()) {
             file.appendText(
                 """
                 <h2>All results</h2>
@@ -162,7 +161,7 @@ class HtmlPrinter(private val file: File) : Printer() {
             """
                         </tbody>
                      </table>
-                    """.trimIndent()
+            """.trimIndent()
         )
 
         validationResults.forEach { summary ->
@@ -174,14 +173,14 @@ class HtmlPrinter(private val file: File) : Printer() {
                             <tr><th scope="col">type</th><th scope="col">message</th><th scope="col">value</th><th scope="col">tags</th><th scope="col">dataTrace</th></tr>
                           </thead>
                           <tbody>
-                        """.trimIndent()
+                """.trimIndent()
             )
             summary.topErrorsAndWarnings.forEach { file.appendText("${print(it)}\n") }
             file.appendText(
                 """
                             </tbody>
                           </table>
-                        """.trimIndent()
+                """.trimIndent()
             )
         }
     }
@@ -201,12 +200,12 @@ class HtmlPrinter(private val file: File) : Printer() {
         }
           </tbody>
         </table>
-    """.trimIndent()
+        """.trimIndent()
 }
 
-class CsvPrinter(val outputDir: File, val separator: String = ","): Printer() {
+class CsvPrinter(val outputDir: File, val separator: String = ",") : Printer() {
     override fun print(validationResult: ValidationResult) {
-        val output =  when (validationResult) {
+        val output = when (validationResult) {
             is ValidationInfo ->
                 listOf(
                     "INFO",
@@ -261,7 +260,7 @@ class CsvPrinter(val outputDir: File, val separator: String = ","): Printer() {
     override fun print(validationResults: Iterable<ValidationResult>) {
         val output = validationResults.toList()
         val summaryOutput = validationResults.filterIsInstance<ValidationSummary>()
-        if(summaryOutput.isNotEmpty()) {
+        if (summaryOutput.isNotEmpty()) {
             val summaryFile = File(outputDir, "summary.csv")
             summaryFile.writeText("summary,numSuccesses,numInfos,numWarnings,numErrors,tags,dataTrace\n")
             summaryOutput.forEach { summary ->
@@ -274,7 +273,7 @@ class CsvPrinter(val outputDir: File, val separator: String = ","): Printer() {
             }
         }
         val otherOutput = output.filterNot { it is ValidationSummary }
-        if(otherOutput.isNotEmpty()) {
+        if (otherOutput.isNotEmpty()) {
             val resultsFile = File(outputDir, "results.csv")
             println("Writing to ${resultsFile.absolutePath}")
             resultsFile.writeText("type,message,value,tags,dataTrace\n")

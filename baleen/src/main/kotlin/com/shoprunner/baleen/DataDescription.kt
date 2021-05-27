@@ -60,12 +60,12 @@ class DataDescription(
         val results = sequence {
             var hasError = false
             allTests.flatMap { it(ctx.dataTrace, ctx.data) }.forEach {
-                if(it is ValidationError) {
+                if (it is ValidationError) {
                     hasError = true
                 }
                 yield(it)
             }
-            if(!hasError) {
+            if (!hasError) {
                 yield(ValidationSuccess(ctx.dataTrace, ctx.data))
             }
         }

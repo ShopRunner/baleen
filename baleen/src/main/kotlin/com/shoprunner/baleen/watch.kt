@@ -30,13 +30,12 @@ fun Sequence<ValidationResult>.watch(
         this@watch.forEachIndexed { index, validationResult ->
             rollingWindow.add(validationResult)
 
-
             // Print out summary every X
             // Consolidate rolling window to the summary so not to hold too much in memory
-            val idxP1 = index +1
+            val idxP1 = index + 1
             val mod = idxP1 % windowSize
 
-            if(mod == 0) {
+            if (mod == 0) {
                 val summary = rollingWindow
                     .createSummary(numErrorsWarningsToKeep = 0, groupBy = groupBy)
                     .toMutableList()
@@ -51,7 +50,7 @@ fun Sequence<ValidationResult>.watch(
         }
 
         // Print final summary for any extra
-        if(isExtra) {
+        if (isExtra) {
             val summary = rollingWindow
                 .createSummary(numErrorsWarningsToKeep = 0, groupBy = groupBy)
                 .toList()

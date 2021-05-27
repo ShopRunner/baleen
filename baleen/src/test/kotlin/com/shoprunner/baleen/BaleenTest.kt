@@ -235,8 +235,8 @@ internal class BaleenTest {
         )
         assertThat(dataDesc.validate(dataOf("name" to "Fido")).results)
             .containsExactly(
-                    ValidationWarning(dataTrace(), "extra attribute \"name\"", dataOf("name" to "Fido")),
-                    ValidationSuccess(dataTrace(), dataOf("name" to "Fido"))
+                ValidationWarning(dataTrace(), "extra attribute \"name\"", dataOf("name" to "Fido")),
+                ValidationSuccess(dataTrace(), dataOf("name" to "Fido"))
             )
     }
 

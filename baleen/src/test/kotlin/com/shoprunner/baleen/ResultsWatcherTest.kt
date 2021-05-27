@@ -32,11 +32,11 @@ internal class ResultsWatcherTest {
         assertThat(count).isEqualTo(42) // 21 infos, 21 successes
 
         assertThat(printer.capturedList).containsExactly(
-            ValidationSummary(dataTrace = dataTrace(), summary="Summary", numInfos=5, numSuccesses=5, numErrors=0, numWarnings=0, topErrorsAndWarnings= emptyList()),
-            ValidationSummary(dataTrace = dataTrace(), summary="Summary", numInfos=10, numSuccesses=10, numErrors=0, numWarnings=0, topErrorsAndWarnings= emptyList()),
-            ValidationSummary(dataTrace = dataTrace(), summary="Summary", numInfos=15, numSuccesses=15, numErrors=0, numWarnings=0, topErrorsAndWarnings= emptyList()),
-            ValidationSummary(dataTrace = dataTrace(), summary="Summary", numInfos=20, numSuccesses=20, numErrors=0, numWarnings=0, topErrorsAndWarnings= emptyList()),
-            ValidationSummary(dataTrace = dataTrace(), summary="Summary", numInfos=21, numSuccesses=21, numErrors=0, numWarnings=0, topErrorsAndWarnings= emptyList())
+            ValidationSummary(dataTrace = dataTrace(), summary = "Summary", numInfos = 5, numSuccesses = 5, numErrors = 0, numWarnings = 0, topErrorsAndWarnings = emptyList()),
+            ValidationSummary(dataTrace = dataTrace(), summary = "Summary", numInfos = 10, numSuccesses = 10, numErrors = 0, numWarnings = 0, topErrorsAndWarnings = emptyList()),
+            ValidationSummary(dataTrace = dataTrace(), summary = "Summary", numInfos = 15, numSuccesses = 15, numErrors = 0, numWarnings = 0, topErrorsAndWarnings = emptyList()),
+            ValidationSummary(dataTrace = dataTrace(), summary = "Summary", numInfos = 20, numSuccesses = 20, numErrors = 0, numWarnings = 0, topErrorsAndWarnings = emptyList()),
+            ValidationSummary(dataTrace = dataTrace(), summary = "Summary", numInfos = 21, numSuccesses = 21, numErrors = 0, numWarnings = 0, topErrorsAndWarnings = emptyList())
         )
     }
 }
