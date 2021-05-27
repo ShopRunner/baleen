@@ -53,19 +53,23 @@ class DataDescription(
         if (value !is Data) {
             return sequenceOf(ValidationError(dataTrace, "expected to be of type Data but is " + value.javaClass, value))
         }
-
         return allTests.asSequence().flatMap { it(dataTrace, value) }
     }
 
     fun validate(ctx: Context): Validation {
-        val results = allTests.flatMap { it(ctx.dataTrace, ctx.data).asIterable() }
-
-        if (results.none { it is ValidationError }) {
-            // TODO should we have ValidationSuccess (it isn't very recursive)
-            return Validation(ctx, results.plus(ValidationSuccess(ctx.dataTrace, ctx.data)))
+        val results = sequence {
+            var hasError = false
+            allTests.flatMap { it(ctx.dataTrace, ctx.data) }.forEach {
+                if(it is ValidationError) {
+                    hasError = true
+                }
+                yield(it)
+            }
+            if(!hasError) {
+                yield(ValidationSuccess(ctx.dataTrace, ctx.data))
+            }
         }
-
-        return Validation(ctx, results)
+        return Validation(ctx, results.asIterable())
     }
 
     fun validate(data: Data) = validate(Context(data, dataTrace()))

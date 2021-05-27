@@ -36,9 +36,9 @@ internal class BaleenTest {
         @Test
         fun `results in success`() {
             assertThat(dataDesc.validate(dataOf<String>()).results)
-                .isEqualTo(listOf(ValidationSuccess(dataTrace(), dataOf<String>())))
+                .containsExactly(ValidationSuccess(dataTrace(), dataOf<String>()))
             assertThat(dataDesc.validate(dataOf("name" to "Fido")).results)
-                .isEqualTo(listOf(ValidationSuccess(dataTrace(), dataOf("name" to "Fido"))))
+                .containsExactly(ValidationSuccess(dataTrace(), dataOf("name" to "Fido")))
         }
     }
 
@@ -230,14 +230,13 @@ internal class BaleenTest {
         assertThat(dataDesc.validate(dataOf<String>())).isValid()
         assertThat(dataDesc.validate(dataOf("name" to "Fido"))).isValid()
 
-        assertThat(dataDesc.validate(dataOf<String>()).results)
-            .isEqualTo(listOf(ValidationSuccess(dataTrace(), dataOf<String>())))
+        assertThat(dataDesc.validate(dataOf<String>()).results).containsExactly(
+            ValidationSuccess(dataTrace(), dataOf<String>())
+        )
         assertThat(dataDesc.validate(dataOf("name" to "Fido")).results)
-            .isEqualTo(
-                listOf(
+            .containsExactly(
                     ValidationWarning(dataTrace(), "extra attribute \"name\"", dataOf("name" to "Fido")),
                     ValidationSuccess(dataTrace(), dataOf("name" to "Fido"))
-                )
             )
     }
 
