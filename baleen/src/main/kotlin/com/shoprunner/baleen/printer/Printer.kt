@@ -1,5 +1,11 @@
-package com.shoprunner.baleen
+package com.shoprunner.baleen.printer
 
+import com.shoprunner.baleen.ValidationError
+import com.shoprunner.baleen.ValidationInfo
+import com.shoprunner.baleen.ValidationResult
+import com.shoprunner.baleen.ValidationSuccess
+import com.shoprunner.baleen.ValidationSummary
+import com.shoprunner.baleen.ValidationWarning
 import java.io.File
 
 sealed class Printer {

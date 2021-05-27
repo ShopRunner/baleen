@@ -1,6 +1,7 @@
 package com.shoprunner.baleen
 
 import com.shoprunner.baleen.Baleen.describeAs
+import com.shoprunner.baleen.printer.ListPrinter
 import com.shoprunner.baleen.types.AllowsNull
 import com.shoprunner.baleen.types.StringType
 import org.assertj.core.api.Assertions.assertThat

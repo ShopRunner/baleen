@@ -2,6 +2,9 @@
 
 package com.shoprunner.baleen
 
+import com.shoprunner.baleen.printer.ConsolePrinter
+import com.shoprunner.baleen.printer.Printer
+
 /**
  * Alias for function that "watches" a chunk of the Validation Results and does some side-effect.
  */
