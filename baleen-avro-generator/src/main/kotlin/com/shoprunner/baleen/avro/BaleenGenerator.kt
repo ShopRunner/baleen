@@ -79,32 +79,32 @@ object BaleenGenerator {
 
         return CodeBlock.builder().apply {
             // create attribute
-            add("p.%L(\n", DataDescription::attr.name)
+            add("p.attr(\n")
             indent()
             // name
-            add("%L = %S,\n", DataDescription::attr.parameters[1].name, field.name())
+            add("name = %S,\n", field.name())
             // type
-            add("%L = ", DataDescription::attr.parameters[2].name)
+            add("type = ")
             add(avroTypeToBaleenType(field.schema()))
             add(",\n")
             // markdownDescription
-            add("%L = %S,\n", DataDescription::attr.parameters[3].name, field.doc())
+            add("markdownDescription = %S,\n", field.doc())
             // aliases
             if (field.aliases().isNotEmpty()) {
                 add(
-                    "%L = %L,\n", DataDescription::attr.parameters[4].name,
+                    "aliases = %L,\n",
                     field.aliases().joinToString(", ", prefix = "arrayOf(\"", postfix = "\")")
                 )
             }
             // required
-            add("%L = %L", DataDescription::attr.parameters[5].name, !isOptional)
+            add("required = %L", !isOptional)
             // default
             if (field.defaultVal() != null) {
                 val defaultValue = if (defaultNull) null else field.defaultVal()
                 if (defaultValue is String) {
-                    add(",\n%L = %S", DataDescription::attr.parameters[6].name, defaultValue)
+                    add(",\ndefault = %S", defaultValue)
                 } else {
-                    add(",\n%L = %L", DataDescription::attr.parameters[6].name, defaultValue)
+                    add(",\ndefault = %L", defaultValue)
                 }
             }
             unindent()
