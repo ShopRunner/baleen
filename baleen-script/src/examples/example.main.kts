@@ -73,7 +73,7 @@ baleen("summary", Output.console, Output.text, Output.html, Output.csv) {
     }
 
     http {
-        get("https://reqres.in/api/users/2", "applicatin/json") { body ->
+        get("https://reqres.in/api/users/2", "application/json") { body ->
             json("http example", body!!.byteInputStream()) {
                 "data".type {
                     "id".type(IntegerType(), required = true)
