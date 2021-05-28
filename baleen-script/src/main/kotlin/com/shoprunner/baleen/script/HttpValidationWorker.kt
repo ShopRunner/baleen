@@ -76,7 +76,7 @@ class HttpValidationWorker(private val dsl: BaleenValidation) {
     }
 
     fun delete(url: String, contentType: String?, body: BaleenValidation.(String?) -> Unit) {
-        val response = makeRequest(url, Method.GET, contentType)
+        val response = makeRequest(url, Method.DELETE, contentType)
         dsl.body(response.body())
     }
 }
