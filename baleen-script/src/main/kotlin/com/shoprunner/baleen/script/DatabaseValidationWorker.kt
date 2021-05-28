@@ -79,7 +79,7 @@ class DatabaseValidationWorker : Closeable {
                 "queryName" to withConstantValue(queryName)
             ),
             description = description,
-        ).results.createSummary(groupBy = groupByTag("table", "query"))
+        ).results.createSummary(groupBy = groupByTag("table", "queryName"))
     }
 
     fun query(
@@ -94,7 +94,7 @@ class DatabaseValidationWorker : Closeable {
             connection = connection,
             tags = tags + ("queryName" to withConstantValue(queryName)),
             description = description,
-        ).results.createSummary(groupBy = groupByTag("query"))
+        ).results.createSummary(groupBy = groupByTag("queryName"))
     }
 
     override fun close() {

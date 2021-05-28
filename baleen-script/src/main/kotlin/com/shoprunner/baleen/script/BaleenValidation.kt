@@ -4,6 +4,7 @@ import com.opencsv.CSVParserBuilder
 import com.opencsv.CSVReaderBuilder
 import com.shoprunner.baleen.Baleen
 import com.shoprunner.baleen.Baleen.describeAs
+import com.shoprunner.baleen.Context
 import com.shoprunner.baleen.DataDescription
 import com.shoprunner.baleen.DataTrace
 import com.shoprunner.baleen.ValidationResult
@@ -55,7 +56,8 @@ class BaleenValidation {
                         headMap = row.mapIndexed { cidx, col -> col to cidx }.toMap()
                     } else {
                         val data = FlowableUtil.CsvData(headMap, row, headMap.keys)
-                        yieldAll(dataDescription.validate(data).results)
+                        val dataTrace = dataTrace().tag("file" to name)
+                        yieldAll(dataDescription.validate(Context(data, dataTrace)).results)
                     }
                 }
         }
