@@ -1,5 +1,3 @@
-@file:JvmName("ResultsWatcher")
-
 package com.shoprunner.baleen
 
 import com.shoprunner.baleen.printer.ConsolePrinter
@@ -33,12 +31,9 @@ fun Sequence<ValidationResult>.watch(
         this@watch.forEachIndexed { index, validationResult ->
             rollingWindow.add(validationResult)
 
-            // Print out summary every X
+            // Print out summary every windowSize
             // Consolidate rolling window to the summary so not to hold too much in memory
-            val idxP1 = index + 1
-            val mod = idxP1 % windowSize
-
-            if (mod == 0) {
+            if (((index + 1) % windowSize) == 0) {
                 val summary = rollingWindow
                     .createSummary(numErrorsWarningsToKeep = 0, groupBy = groupBy)
                     .toMutableList()
