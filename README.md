@@ -2,48 +2,73 @@
 
 # Baleen
 
-Baleen is a library for validating streams of data (XML, CSV, ...).  It can be especially useful for 
-legacy data because a schema can slowly be introduced.
+Baleen is fluent Kotlin DSL for validating data (JSON, XML, CSV, Avro)
 
-Since it is written in Kotlin it can be easily used in any JVM language.
+## Features
 
-## Getting Started
+- [Validating JSON](./baleen-json-jackson)
+- [Validating CSV](./baleen-csv)
+- [Validating XML](./baleen-xml)
+- [Generate JSON Schema from Baleen data description](./baleen-jsonschema-generator)
+- [Generate Avro Schema from Baleen data description](./baleen-avro-generator)
+- [Generate XSD Schema from Baleen data description](./baleen-xsd-generator)
+- [Generate Kotlin data classes from Baleen schema](./baleen-poet)
+- [Generate Baleen data description from Kotlin data class](./baleen-kotlin)
+- [Generate Baleen data description from JSON Schema](./jsonschema-baleen-generator)
+- [Generate Baleen data description from AVRO Schema](./baleen-avro-generator)
 
-### Binaries
-Binaries and dependency information for Maven, Ivy, Gradle and others can be found at [maven.org](https://search.maven.org/search?q=g:%22com.shoprunner%22%20AND%20%22baleen%22).
+## Example Baleen Data Description
 
-You will need the `baleen` core for describing the data and one or more parsers `baleen-csv` or `baleen-xml`.
+```kotlin
+import com.shoprunner.baleen.Baleen.describeAs
+import com.shoprunner.baleen.ValidationError
+import com.shoprunner.baleen.dataTrace
+import com.shoprunner.baleen.types.StringType
 
-Example for Maven:
+val departments = listOf("Mens", "Womens", "Boys", "Girls", "Kids", "Baby & Toddler")
 
-```xml
-<dependency>
-    <groupId>com.shoprunner</groupId>
-    <artifactId>baleen</artifactId>
-    <version>x.y.z</version>
-</dependency>
-<dependency>
-     <groupId>com.shoprunner</groupId>
-     <artifactId>baleen-csv</artifactId>
-     <version>x.y.z</version>
-</dependency>
-<dependency>
-     <groupId>com.shoprunner</groupId>
-     <artifactId>baleen-xml</artifactId>
-     <version>x.y.z</version>
-</dependency>
+val productDescription = "Product".describeAs {
+
+    "sku".type(StringType(min = 1, max = 500),
+          required = true)
+
+    "brand_manufacturer".type(StringType(min = 1, max = 500),
+          required = true)
+
+    "department".type(StringType(min = 0, max = 100))
+         .describeAs {
+             test("department is correct value") { data ->
+                 assertThat(data).hasAttribute("department") {
+                     it.isOneOf(departments)
+                 }
+             }
+         }
+}
+
+// Get your data
+val data: Data = // get from file or database or whatever 
+
+// Get Validation Results
+val validation: Validation = dataDesc.validate(data)
+
+// Each call on `isValid` and `results` will iterate over dataset again. 
+// Warning: that for large datasets this will eat memory
+val cachedValidation: CachedValidation = validation.cache()
+
+// Check if any errors. True if no errors, false otherwise. 
+// val isValid: Boolean = validation.isValid()
+val isValid: Boolean = cachedValidation.isValid() 
+
+// Iterate over results. Each iteration over results will execute entire flow again.
+// validation.results.forEach { }
+cachedValidation.results.forEach { }
+
+// Summarize into Validation object with list of ValidationSummary with examples of errors included    
+// val validationSummary: Validation= validation.createSummary()
+val validationSummary: CachedValidation = cachedValidation.createSummary()
+validationSummary.results.forEach { }
+
 ```
-and for Gradle:
-
-```groovy
-compile 'com.shoprunner:baleen:x.y.z'
-compile 'com.shoprunner:baleen-csv:x.y.z'
-compile 'com.shoprunner:baleen-xml:x.y.z'
-```
-
-### Example
-
-See [CSV example](baleen-csv/src/test/kotlin/com/shoprunner/baleen/csv/Example.kt)
 
 ## Getting Help
 
@@ -71,40 +96,7 @@ Join the [slack channel](https://join.slack.com/t/baleen-validation/signup)
 
 - Don't map data to Types too early.
 
-  Type safe code is great but if the data hasn't been santized then it isn't really typed.  
-
-## Example Schema Definition
-
-```kotlin
-import com.shoprunner.baleen.Baleen.describeAs
-import com.shoprunner.baleen.ValidationError
-import com.shoprunner.baleen.dataTrace
-import com.shoprunner.baleen.types.StringType
-
-val departments = listOf("Mens", "Womens", "Boys", "Girls", "Kids", "Baby & Toddler")
-
-val productDescription = "Product".describeAs {
-
-    "sku".type(StringType(min = 1, max = 500),
-          required = true)
-
-    "brand_manufacturer".type(StringType(min = 1, max = 500),
-          required = true)
-
-    "department".type(StringType(min = 0, max = 100))
-         .describe { attr ->
-
-        attr.test { datatrace, value ->
-            val department = value["department"]
-            if (department != null && !departments.contains(department)) {
-                sequenceOf(ValidationError(dataTrace, "Department ($department) is not a valid value.", value))
-            } else {
-                sequenceOf()
-            }
-        }
-    }
-}
-```
+  Type safe code is great but if the data hasn't been sanitized then it isn't really typed.  
 
 ### Warnings
 
@@ -128,14 +120,10 @@ val productDescription = "Product".describeAs {
     "brand_manufacturer".type(StringType(min = 1, max = 500), required = true).asWarnings()
 
     // The asWarnings() method is on the attribute. The attribute's custom test will also be turned into a warning.
-    "department".type(StringType(min = 0, max = 100)).describe { attr ->
-
-        attr.test { datatrace, value ->
-            val department = value["department"]
-            if (department != null && !departments.contains(department)) {
-                sequenceOf(ValidationError(dataTrace, "Department ($department) is not a valid value.", value))
-            } else {
-                sequenceOf()
+    "department".type(StringType(min = 0, max = 100)).describeAs {
+        test("department is correct value") { data ->
+            assertThat(data).hasAttribute("department") {
+                it.isOneOf(departments)
             }
         }
     }.asWarnings()
@@ -182,26 +170,16 @@ val productDescription = "Product".describeAs {
 .tag("sku", withAttributeValue("sku"))
 ``` 
 
-Tagging is also done at the data evaluation level.  When writing tests, DataTrace can be updated with tags
+Tagging is also done at the data evaluation level.  When writing tests, additional tags can be passed in using the Tagger function.
 ```kotlin
-    "department".type(StringType(min = 0, max = 100)).describe { attr ->
-        attr.test { datatrace, value ->
-            val department = value["department"]
-            if (department != null && !departments.contains(department)) {
-
-                // datatrace has the sku tag added
-                sequenceOf(ValidationError(
-                    dataTrace.tag("sku", value["sku"] ?: "null"), 
-                    "Department ($department) is not a valid value.",
-                     value
-                ))
-
-            } else {
-                sequenceOf()
+    "department".type(StringType(min = 0, max = 100)).describeAs {
+        test("department is correct value", "sku" to withAttributeValue("sku")) { data ->
+            assertThat(data).hasAttribute("department") {
+                it.isOneOf(departments)
             }
         }
     }
-``` 
+```
 
 Some Baleen Validation libraries, such as the XML or JSON validators, use tags to add line and column numbers as it 
 parses the original raw data. This will help identify errors in the raw data much more quickly.    

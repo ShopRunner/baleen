@@ -27,9 +27,25 @@ class AttributeDescription(
             }
         }
 
+    val allTags: Map<String, Tagger>
+        get() = tags.toMap()
+
+    val isWarning: Boolean
+        get() = warn
+
     fun test(validator: Validator): AttributeDescription {
         // TODO change context
         tests.add(validator)
+        return this
+    }
+
+    fun AttributeDescription.test(testName: String, vararg additionalTags: Pair<String, Tagger>, validator: Assertions.(Data) -> Unit): AttributeDescription {
+        this.test { dataTrace, data ->
+            val additionalTestTags = additionalTags.map { (key, tagger) -> key to tagger(data) } + ("test" to testName)
+            val asserts = Assertions(dataTrace.tag(additionalTestTags.toMap()))
+            asserts.validator(data)
+            asserts.results
+        }
         return this
     }
 

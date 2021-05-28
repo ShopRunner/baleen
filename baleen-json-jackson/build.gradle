@@ -1,8 +1,0 @@
-plugins {
-    id("baleen.project-conventions")
-    id("baleen.jackson-conventions")
-}
-
-dependencies {
-    api project(':baleen')
-}
