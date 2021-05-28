@@ -7,8 +7,11 @@ import com.shoprunner.baleen.types.AllowsNull
 import com.shoprunner.baleen.types.IntType
 import com.shoprunner.baleen.types.StringType
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.DynamicTest
+import org.junit.jupiter.api.DynamicTest.dynamicTest
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestFactory
 import org.junit.jupiter.api.TestInstance
 import kotlin.contracts.ExperimentalContracts
 
@@ -136,89 +139,205 @@ internal class BaleenTest {
         }
     }
 
-    @Nested
-    inner class NestedDesc {
-        private val dogDescription = "Dog".describeAs {
+    private fun nestedDescTests(packWithAlpha: DataDescription, packOptionalAlpha: DataDescription): List<DynamicTest> {
+        return listOf(
+            dynamicTest("validates when present") {
+                val dogData = dataOf("name" to "Fido")
+                val packData = dataOf(
+                    "alpha" to dogData
+                )
+                assertThat(packWithAlpha.validate(packData)).isValid()
+                assertThat(packWithAlpha.validate(packData).results)
+                    .contains(ValidationInfo(dataTrace(), "has attribute \"alpha\"", packData))
+                    .contains(
+                        ValidationInfo(
+                            dataTrace("attribute \"alpha\""),
+                            "has attribute \"name\"",
+                            dogData
+                        )
+                    )
+
+                assertThat(packOptionalAlpha.validate(packData)).isValid()
+                assertThat(packOptionalAlpha.validate(packData).results)
+                    .contains(ValidationInfo(dataTrace(), "has attribute \"alpha\"", packData))
+                    .contains(
+                        ValidationInfo(
+                            dataTrace("attribute \"alpha\""),
+                            "has attribute \"name\"",
+                            dogData
+                        )
+                    )
+            },
+
+            dynamicTest("child not the right type") {
+                val data = dataOf(
+                    "alpha" to "Fido"
+                )
+                assertThat(packWithAlpha.validate(data)).isNotValid()
+                assertThat(packWithAlpha.validate(data).results)
+                    .contains(ValidationInfo(dataTrace(), "has attribute \"alpha\"", data))
+                    .contains(
+                        ValidationError(
+                            dataTrace("attribute \"alpha\""),
+                            "expected to be of type Data but is class java.lang.String",
+                            "Fido"
+                        )
+                    )
+
+                assertThat(packOptionalAlpha.validate(data)).isNotValid()
+                assertThat(packOptionalAlpha.validate(data).results)
+                    .contains(ValidationInfo(dataTrace(), "has attribute \"alpha\"", data))
+                    .contains(
+                        ValidationError(
+                            dataTrace("attribute \"alpha\""),
+                            "expected to be of type Data but is class java.lang.String",
+                            "Fido"
+                        )
+                    )
+            },
+
+            dynamicTest("non-required also validates") {
+                val data = dataOf<String>()
+                assertThat(packWithAlpha.validate(data)).isNotValid()
+                assertThat(packWithAlpha.validate(data).results)
+                    .contains(
+                        ValidationError(
+                            dataTrace(),
+                            "missing required attribute \"alpha\"",
+                            data
+                        )
+                    )
+
+                assertThat(packOptionalAlpha.validate(data)).isValid()
+            },
+
+            dynamicTest("fails at parent when child missing") {
+                val data = dataOf<String>()
+                assertThat(packWithAlpha.validate(data)).isNotValid()
+                assertThat(packOptionalAlpha.validate(data)).isValid()
+                // TODO data trace
+            },
+
+            dynamicTest("fails at child when child not valid") {
+                val data = dataOf(
+                    "alpha" to dataOf<String>()
+                )
+                assertThat(packWithAlpha.validate(data)).isNotValid()
+                assertThat(packOptionalAlpha.validate(data)).isNotValid()
+                // TODO data trace
+            },
+        )
+    }
+
+    @TestFactory
+    fun `named nested descriptions`(): List<DynamicTest> {
+        val dogDescription = "Dog".describeAs {
             "name".type(
                 type = StringType(),
                 required = true
             )
         }
 
-        private val packWithAlpha = "Pack".describeAs {
+        val packWithAlpha = "Pack".describeAs {
             "alpha".type(
                 type = dogDescription,
                 required = true
             )
         }
 
-        private val packOptionalAlpha = "Pack".describeAs {
+        val packOptionalAlpha = "Pack".describeAs {
             "alpha".type(
                 type = dogDescription,
                 required = false
             )
         }
 
-        @Test
-        fun `validates when present`() {
-            val dogData = dataOf("name" to "Fido")
-            val packData = dataOf(
-                "alpha" to dogData
+        return nestedDescTests(packWithAlpha, packOptionalAlpha)
+    }
+
+    @TestFactory
+    fun `named nested descriptions attributes`(): List<DynamicTest> {
+        val dogDescription = "Dog".describeAs {
+            attr(
+                name = "name",
+                type = StringType(),
+                required = true
             )
-            assertThat(packWithAlpha.validate(packData)).isValid()
-            assertThat(packWithAlpha.validate(packData).results)
-                .contains(ValidationInfo(dataTrace(), "has attribute \"alpha\"", packData))
-                .contains(ValidationInfo(dataTrace("attribute \"alpha\""), "has attribute \"name\"", dogData))
-
-            assertThat(packOptionalAlpha.validate(packData)).isValid()
-            assertThat(packOptionalAlpha.validate(packData).results)
-                .contains(ValidationInfo(dataTrace(), "has attribute \"alpha\"", packData))
-                .contains(ValidationInfo(dataTrace("attribute \"alpha\""), "has attribute \"name\"", dogData))
         }
 
-        @Test
-        fun `child not the right type`() {
-            val data = dataOf(
-                "alpha" to "Fido"
+        val packWithAlpha = "Pack".describeAs {
+            attr(
+                name = "alpha",
+                type = dogDescription,
+                required = true
             )
-            assertThat(packWithAlpha.validate(data)).isNotValid()
-            assertThat(packWithAlpha.validate(data).results)
-                .contains(ValidationInfo(dataTrace(), "has attribute \"alpha\"", data))
-                .contains(ValidationError(dataTrace("attribute \"alpha\""), "expected to be of type Data but is class java.lang.String", "Fido"))
-
-            assertThat(packOptionalAlpha.validate(data)).isNotValid()
-            assertThat(packOptionalAlpha.validate(data).results)
-                .contains(ValidationInfo(dataTrace(), "has attribute \"alpha\"", data))
-                .contains(ValidationError(dataTrace("attribute \"alpha\""), "expected to be of type Data but is class java.lang.String", "Fido"))
         }
 
-        @Test
-        fun `non-required also validates`() {
-            val data = dataOf<String>()
-            assertThat(packWithAlpha.validate(data)).isNotValid()
-            assertThat(packWithAlpha.validate(data).results)
-                .contains(ValidationError(dataTrace(), "missing required attribute \"alpha\"", data))
-
-            assertThat(packOptionalAlpha.validate(data)).isValid()
-        }
-
-        @Test
-        fun `fails at parent when child missing`() {
-            val data = dataOf<String>()
-            assertThat(packWithAlpha.validate(data)).isNotValid()
-            assertThat(packOptionalAlpha.validate(data)).isValid()
-            // TODO data trace
-        }
-
-        @Test
-        fun `fails at child when child not valid`() {
-            val data = dataOf(
-                "alpha" to dataOf<String>()
+        val packOptionalAlpha = "Pack".describeAs {
+            attr(
+                name = "alpha",
+                type = dogDescription,
+                required = false
             )
-            assertThat(packWithAlpha.validate(data)).isNotValid()
-            assertThat(packOptionalAlpha.validate(data)).isNotValid()
-            // TODO data trace
         }
+
+        return nestedDescTests(packWithAlpha, packOptionalAlpha)
+    }
+
+    @TestFactory
+    fun `anonymous nested descriptions`(): List<DynamicTest> {
+        val packWithAlpha = "Pack".describeAs {
+            "alpha".type(
+                required = true
+            ) {
+                "name".type(
+                    type = StringType(),
+                    required = true
+                )
+            }
+        }
+
+        val packOptionalAlpha = "Pack".describeAs {
+            "alpha".type(
+                required = false
+            ) {
+                "name".type(
+                    type = StringType(),
+                    required = true
+                )
+            }
+        }
+
+        return nestedDescTests(packWithAlpha, packOptionalAlpha)
+    }
+
+    @TestFactory
+    fun `anonymous nested descriptions attr`(): List<DynamicTest> {
+        val packWithAlpha = "Pack".describeAs {
+            attr(
+                name = "alpha",
+                required = true
+            ) {
+                "name".type(
+                    type = StringType(),
+                    required = true
+                )
+            }
+        }
+
+        val packOptionalAlpha = "Pack".describeAs {
+            attr(
+                name = "alpha",
+                required = false
+            ) {
+                "name".type(
+                    type = StringType(),
+                    required = true
+                )
+            }
+        }
+
+        return nestedDescTests(packWithAlpha, packOptionalAlpha)
     }
 
     @Test

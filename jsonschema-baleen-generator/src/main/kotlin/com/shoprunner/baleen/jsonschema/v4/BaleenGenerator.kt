@@ -107,29 +107,29 @@ object BaleenGenerator {
          */
         return CodeBlock.builder().apply {
             // create attribute
-            add("it.%L(\n", DataDescription::attr.name)
+            add("it.attr(\n")
             indent()
             // name
-            add("%L = %S,\n", DataDescription::attr.parameters[1].name, fieldName)
+            add("name = %S,\n", fieldName)
             // type
-            add("%L = ", DataDescription::attr.parameters[2].name)
+            add("type = ")
             add(jsonSchemaToBaleenType(schema))
             // markdownDescription
             if (schema.description != null) {
-                add(",\n%L = %S", DataDescription::attr.parameters[3].name, schema.description)
+                add(",\nmarkdownDescription = %S", schema.description)
             }
             // required
             if (isRequired) {
-                add(",\n%L = %L", DataDescription::attr.parameters[5].name, isRequired)
+                add(",\nrequired = %L", isRequired)
             }
             // default
             if (schema.default != null) {
                 val default = schema.default
                 when (default) {
-                    Null -> add(",\n%L = null", DataDescription::attr.parameters[6].name)
-                    is Int -> add(",\n%L = %LL", DataDescription::attr.parameters[6].name, default.toLong())
-                    is String -> add(",\n%L = %S", DataDescription::attr.parameters[6].name, default)
-                    else -> add(",\n%L = %L", DataDescription::attr.parameters[6].name, default)
+                    Null -> add(",\ndefault = null")
+                    is Int -> add(",\ndefault = %LL", default.toLong())
+                    is String -> add(",\ndefault = %S", default)
+                    else -> add(",\ndefault = %L", default)
                 }
             }
             unindent()
