@@ -51,7 +51,7 @@ class BaleenValidation {
                 .build()
                 .asIterable()
                 .forEachIndexed { idx, row ->
-                    if(idx == 0) {
+                    if (idx == 0) {
                         headMap = row.mapIndexed { cidx, col -> col to cidx }.toMap()
                     } else {
                         val data = FlowableUtil.CsvData(headMap, row, headMap.keys)

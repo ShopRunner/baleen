@@ -11,7 +11,7 @@ import java.io.File
 
 fun baleen(outputDir: String? = null, vararg outputs: Output, body: BaleenValidation.() -> Unit) {
     val results = BaleenValidation().apply(body).results
-        .let { if(Output.console in outputs) it.watch() else it }
+        .let { if (Output.console in outputs) it.watch() else it }
         .filterIsInstance<ValidationSummary>()
         .toList()
 
@@ -42,4 +42,3 @@ fun baleen(outputDir: String? = null, vararg outputs: Output, body: BaleenValida
         }
     }
 }
-
