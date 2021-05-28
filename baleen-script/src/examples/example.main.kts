@@ -12,12 +12,11 @@ import com.shoprunner.baleen.types.*
 
 baleen("summary", Output.console, Output.text, Output.html, Output.csv) {
 
-    // CSV validation is currently is broken
-//    csv("./example.csv") {
-//        "id".type(IntegerType(), required = true)
-//        "firstName".type(StringType(0, 1), required = true)
-//        "lastName".type(StringType(0, 32), required = true)
-//    }
+    csv("./example.csv") {
+        "id".type(IntegerType(), required = true)
+        "firstName".type(StringType(0, 1), required = true)
+        "lastName".type(StringType(0, 32), required = true)
+    }
 
     json("./example.json") {
         "id".type(IntegerType(), required = true)

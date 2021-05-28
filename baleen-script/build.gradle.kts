@@ -12,9 +12,7 @@ dependencies {
     implementation(project(":baleen-xml"))
     api(project(":baleen-json-jackson"))
     // for baleen-csv
-    implementation("io.reactivex.rxjava2:rxkotlin:2.4.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive:1.4.3")
+    implementation("com.opencsv:opencsv:5.3")
 
     testRuntimeOnly("com.h2database:h2:1.4.200")
 }
