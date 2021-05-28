@@ -109,7 +109,7 @@ class HtmlPrinter(private val file: File) : Printer {
         )
     }
 
-    fun print(validationResults: List<ValidationSummary>) {
+    private fun print(validationResults: List<ValidationSummary>) {
         file.appendText(
             """
                  <h2>Summary</h2>

@@ -86,7 +86,6 @@ class CsvPrinter(val outputDir: File, val separator: String = ",") : Printer {
                     "errors_${summary.summary}$tagStr.csv"
                 )
                 currentFile = errorsFile
-                println("Writing to ${errorsFile.absolutePath}")
                 errorsFile.writeText("type,message,value,tags,dataTrace\n")
                 summary.topErrorsAndWarnings.forEach { print(it) }
             }
@@ -95,7 +94,6 @@ class CsvPrinter(val outputDir: File, val separator: String = ",") : Printer {
         if (otherOutput.isNotEmpty()) {
             val resultsFile = File(outputDir, "results.csv")
             currentFile = resultsFile
-            println("Writing to ${resultsFile.absolutePath}")
             resultsFile.writeText("type,message,value,tags,dataTrace\n")
             otherOutput.forEach { print(it) }
         }
