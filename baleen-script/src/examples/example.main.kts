@@ -6,7 +6,6 @@
 @file:DependsOn("net.snowflake:snowflake-jdbc:3.13.1")
 
 import com.shoprunner.baleen.*
-import com.shoprunner.baleen.Baleen.describeAs
 import com.shoprunner.baleen.script.*
 import com.shoprunner.baleen.types.*
 
@@ -25,11 +24,11 @@ baleen("summary", Output.console, Output.text, Output.html, Output.csv) {
     }
 
     xml("./example.xml") {
-        "example".type("example".describeAs {
+        "example".type(required = true) {
             "id".type(StringCoercibleToLong(LongType()), required = true)
             "firstName".type(StringType(0, 1), required = true)
             "lastName".type(StringType(0, 32), required = true)
-        }, required = true)
+        }
     }
 
     database {
@@ -76,11 +75,11 @@ baleen("summary", Output.console, Output.text, Output.html, Output.csv) {
     http {
         get("https://reqres.in/api/users/2", "applicatin/json") { body ->
             json("http example", body!!.byteInputStream()) {
-                "data".type("data".describeAs{
+                "data".type {
                     "id".type(IntegerType(), required = true)
                     "first_name".type(StringType(0, 1), required = true)
                     "last_name".type(StringType(0, 32), required = true)
-                })
+                }
             }
         }
     }
