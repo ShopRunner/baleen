@@ -49,9 +49,9 @@ baleen {
 Then run it in IntelliJ or via command-line Kotlin or Docker
 
 ```bash
-kotlin example.main.kts
+kotlin example-json.main.kts
 
-docker container run -it --rm zenika/kotlin kotlin example.main.kts
+docker container run -it --rm zenika/kotlin kotlin example-json.main.kts
 ```
 
 ## Examples
@@ -67,6 +67,7 @@ docker container run -it --rm zenika/kotlin kotlin example.main.kts
 }
 ```
 
+[./src/examples/example-json.main.kts](./src/examples/example-json.main.kts)
 ```kotlin
 baleen {
     json("./src/examples/example.json") {
@@ -88,6 +89,7 @@ baleen {
 </example>
 ```
 
+[./src/examples/example-xml.main.kts](./src/examples/example-xml.main.kts)
 ```kotlin
 baleen {
     xml("./src/examples/example.xml") {
@@ -102,8 +104,6 @@ baleen {
 
 ### CSV Validation
 
-**Warning**: This is broken and will hang. Help needed to fix it!
-
 [./src/examples/example.csv](./src/examples/example.csv)
 ```csv
 id,firstName,lastName
@@ -112,6 +112,7 @@ id,firstName,lastName
 2,Billy,Idol
 ```
 
+[./src/examples/example-csv.main.kts](./src/examples/example-csv.main.kts)
 ```kotlin
 baleen {
     csv("./src/examples/example.csv") {
@@ -130,7 +131,7 @@ In order to do database validation, the JDBC dependency must be added as a `@Dep
 @file:DependsOn("net.snowflake:snowflake-jdbc:3.13.1")
 ```
 
-* Snowflake Database Example: [snowflake.main.kts](src/examples/snowflake.main.kts)
+* Snowflake Database Example: [snowflake.main.kts](src/examples/example-db-snowflake.main.kts)
 
 #### Validate against all rows of a table
 ```kotlin
@@ -209,16 +210,17 @@ baleen {
 We provide a function called `http` that nests `get`, `post`, `put` or `delete` functions.
 Then call the other validation functions with the body's inputStream.
 
+[./src/examples/example-http.main.kts](./src/examples/example-http.main.kts)
 ```kotlin
 baleen {
     http {
         get("https://reqres.in/api/users/2", "applicatin/json") { body ->
             json("http example", body!!.byteInputStream()) {
-                "data".type("data".describeAs{
+                "data".type(required = true) {
                     "id".type(IntegerType(), required = true)
                     "first_name".type(StringType(0, 1), required = true)
                     "last_name".type(StringType(0, 32), required = true)
-                })
+                }
             }
         }
     }
@@ -234,6 +236,7 @@ More than one can be passed in.
 * Output.html -> Output as single html file
 * Output.text -> Output as single text flle
 * Output.console -> Print output to screen.
+* Output.log -> Print to log
 
 ```kotlin
 baleen("summaryOutDir", Output.console, Output.text, Output.html, Output.csv) {

@@ -12,7 +12,7 @@ baleen {
     database {
         credentials {
             url = "jdbc:snowflake://xp71857.us-east-1.snowflakecomputing.com/?warehouse=SHOPRUNNER&db=SHOPRUNNER"
-            user = "kdallmeyer" //System.getenv("DATABASE_USER")
+            user = System.getenv("DATABASE_USER")
             addDataSourceProperty("authenticator", "externalBrowser")
         }
 
