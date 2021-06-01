@@ -14,6 +14,8 @@ dependencies {
     // for baleen-csv
     implementation("com.opencsv:opencsv:5.3")
 
+    testImplementation("org.mock-server:mockserver-netty:5.11.1")
+    testImplementation("org.mock-server:mockserver-junit-jupiter:5.11.1")
     testRuntimeOnly("com.h2database:h2:1.4.200")
 }
 

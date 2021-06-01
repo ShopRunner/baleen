@@ -57,9 +57,11 @@ class DatabaseValidationWorker : Closeable {
                 it == null ->
                     throw Exception("Database credentials not set. Please use credentials { } block")
                 it.url.startsWith("jdbc:mysql", ignoreCase = true) ->
-                    "SELECT * FROM $table rand() < $samplePercent"
+                    "SELECT * FROM $table WHERE rand() < $samplePercent"
+                it.url.startsWith("jdbc:h2:mem") ->
+                    "SELECT * FROM $table WHERE rand() < $samplePercent"
                 else ->
-                    "SELECT * FROM $table TABLESAMPLE BERNOULLI(${samplePercent * 100})"
+                    "SELECT * FROM $table TABLESAMPLE BERNOULLI(${(samplePercent * 100).toInt()})"
             }
         }
 
