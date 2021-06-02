@@ -9,7 +9,7 @@ class LogPrinter(
     val logLevel: Level = Level.INFO
 ) : Printer {
 
-    override fun print(validationResult: ValidationResult) {
+    fun print(validationResult: ValidationResult) {
         logger.log(logLevel, "$validationResult")
     }
 

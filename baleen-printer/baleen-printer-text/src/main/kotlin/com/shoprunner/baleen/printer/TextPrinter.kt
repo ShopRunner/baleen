@@ -10,7 +10,7 @@ import java.io.OutputStreamWriter
 
 class TextPrinter(private val writer: OutputStreamWriter, val prettyPrint: Boolean = false) : Printer {
 
-    override fun print(validationResult: ValidationResult) {
+    fun print(validationResult: ValidationResult) {
         if (prettyPrint) {
             prettyPrint(validationResult, 0)
             writer.append("\n")

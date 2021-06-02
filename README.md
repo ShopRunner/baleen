@@ -73,7 +73,9 @@ validationSummary.results.forEach { }
 
 // Print the results to various formats including Console, Logger, CSV, HTML, or Text
 // Look at baleen-printer-* sub-modules
-HtmlPrinter("validation.html").print(validationSummary.results)
+File("validation.html").writer().use {
+    HtmlPrinter(it).print(validationSummary.results)
+}
 ```
 
 ## Getting Help

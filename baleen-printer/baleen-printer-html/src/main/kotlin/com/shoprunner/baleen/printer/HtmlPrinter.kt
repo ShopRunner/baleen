@@ -10,7 +10,7 @@ import java.io.OutputStreamWriter
 
 class HtmlPrinter(private val writer: OutputStreamWriter) : Printer {
 
-    override fun print(validationResult: ValidationResult) {
+    fun print(validationResult: ValidationResult) {
         val output = when (validationResult) {
             is ValidationInfo ->
                 listOf(

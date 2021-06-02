@@ -11,12 +11,7 @@ import java.io.OutputStreamWriter
 
 class CsvPrinter(val outputDir: File, val separator: String = ",") : Printer {
 
-    private var currentWriter: OutputStreamWriter? = null
-
-    override fun print(validationResult: ValidationResult) {
-        if (currentWriter == null) {
-            currentWriter = File(outputDir, "results.csv").writer()
-        }
+    fun print(writer: OutputStreamWriter, validationResult: ValidationResult) {
         val output = when (validationResult) {
             is ValidationInfo ->
                 listOf(
@@ -66,7 +61,7 @@ class CsvPrinter(val outputDir: File, val separator: String = ",") : Printer {
 
             else -> ""
         }
-        currentWriter?.append("$output\n")
+        writer.append("$output\n")
     }
 
     override fun print(validationResults: Iterable<ValidationResult>) {
@@ -77,8 +72,7 @@ class CsvPrinter(val outputDir: File, val separator: String = ",") : Printer {
 
                 summaryWriter.write("summary,numSuccesses,numInfos,numWarnings,numErrors,tags,dataTrace\n")
                 summaryOutput.forEach { summary ->
-                    currentWriter = summaryWriter
-                    print(summary)
+                    print(summaryWriter, summary)
 
                     val tagStr = if (summary.dataTrace.tags.isNotEmpty()) {
                         summary.dataTrace.tags.entries.joinToString(
@@ -93,9 +87,8 @@ class CsvPrinter(val outputDir: File, val separator: String = ",") : Printer {
                         outputDir,
                         "errors_${summary.summary}$tagStr.csv"
                     ).writer().use { errorsFileWriter ->
-                        currentWriter = errorsFileWriter
                         errorsFileWriter.write("type,message,value,tags,dataTrace\n")
-                        summary.topErrorsAndWarnings.forEach { print(it) }
+                        summary.topErrorsAndWarnings.forEach { print(errorsFileWriter, it) }
                     }
                 }
             }
@@ -103,9 +96,8 @@ class CsvPrinter(val outputDir: File, val separator: String = ",") : Printer {
         val otherOutput = output.filterNot { it is ValidationSummary }
         if (otherOutput.isNotEmpty()) {
             File(outputDir, "results.csv").writer().use { resultsFileWriter ->
-                currentWriter = resultsFileWriter
                 resultsFileWriter.write("type,message,value,tags,dataTrace\n")
-                otherOutput.forEach { print(it) }
+                otherOutput.forEach { print(resultsFileWriter, it) }
             }
         }
     }
