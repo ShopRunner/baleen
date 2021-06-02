@@ -6,7 +6,7 @@ import com.shoprunner.baleen.ValidationResult
  * Prints to stdout. It erases the line before writing the next on
  */
 object ConsolePrinter : Printer {
-    override fun print(validationResult: ValidationResult) {
+    fun print(validationResult: ValidationResult) {
         kotlin.io.print(validationResult)
     }
 

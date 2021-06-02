@@ -6,7 +6,7 @@ class ListPrinter : Printer {
     private val list = mutableListOf<ValidationResult>()
     val capturedList: List<ValidationResult> get() = list.toList()
 
-    override fun print(validationResult: ValidationResult) {
+    fun print(validationResult: ValidationResult) {
         list.add(validationResult)
     }
 

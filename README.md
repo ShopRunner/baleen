@@ -72,7 +72,10 @@ val validationSummary: CachedValidation = cachedValidation.createSummary()
 validationSummary.results.forEach { }
 
 // Print the results to various formats including Console, Logger, CSV, HTML, or Text
-HtmlPrinter("validation.html").print(validationSummary.results)
+// Look at baleen-printer-* sub-modules
+File("validation.html").writer().use {
+    HtmlPrinter(it).print(validationSummary.results)
+}
 ```
 
 ## Getting Help
