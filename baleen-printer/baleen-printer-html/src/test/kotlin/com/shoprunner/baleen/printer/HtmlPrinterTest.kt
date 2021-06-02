@@ -22,7 +22,9 @@ internal class HtmlPrinterTest {
 
         val file = java.io.File.createTempFile("tmp", ".html")
 
-        HtmlPrinter(file).print(results)
+        file.writer().use {
+            HtmlPrinter(it).print(results)
+        }
 
         Assertions.assertThat(file.readText()).isEqualToIgnoringWhitespace(
             """
@@ -165,7 +167,9 @@ internal class HtmlPrinterTest {
 
         val file = java.io.File.createTempFile("tmp", ".html")
 
-        HtmlPrinter(file).print(results)
+        file.writer().use {
+            HtmlPrinter(it).print(results)
+        }
 
         Assertions.assertThat(file.readText()).isEqualToIgnoringWhitespace(
             """

@@ -7,12 +7,16 @@ import com.shoprunner.baleen.ValidationSuccess
 import com.shoprunner.baleen.ValidationSummary
 import com.shoprunner.baleen.ValidationWarning
 import java.io.File
+import java.io.OutputStreamWriter
 
 class CsvPrinter(val outputDir: File, val separator: String = ",") : Printer {
 
-    private var currentFile: File? = File(outputDir, "results.csv")
+    private var currentWriter: OutputStreamWriter? = null
 
     override fun print(validationResult: ValidationResult) {
+        if (currentWriter == null) {
+            currentWriter = File(outputDir, "results.csv").writer()
+        }
         val output = when (validationResult) {
             is ValidationInfo ->
                 listOf(
@@ -62,42 +66,47 @@ class CsvPrinter(val outputDir: File, val separator: String = ",") : Printer {
 
             else -> ""
         }
-        currentFile?.appendText("$output\n")
+        currentWriter?.append("$output\n")
     }
 
     override fun print(validationResults: Iterable<ValidationResult>) {
         val output = validationResults.toList()
         val summaryOutput = validationResults.filterIsInstance<ValidationSummary>()
         if (summaryOutput.isNotEmpty()) {
-            val summaryFile = File(outputDir, "summary.csv")
-            summaryFile.writeText("summary,numSuccesses,numInfos,numWarnings,numErrors,tags,dataTrace\n")
-            summaryOutput.forEach { summary ->
-                currentFile = summaryFile
-                print(summary)
+            File(outputDir, "summary.csv").writer().use { summaryWriter ->
 
-                val tagStr = if (summary.dataTrace.tags.isNotEmpty()) {
-                    summary.dataTrace.tags.entries.joinToString(prefix = "_", separator = "_") { "${it.key}-${it.value}" }
-                } else {
-                    ""
+                summaryWriter.write("summary,numSuccesses,numInfos,numWarnings,numErrors,tags,dataTrace\n")
+                summaryOutput.forEach { summary ->
+                    currentWriter = summaryWriter
+                    print(summary)
+
+                    val tagStr = if (summary.dataTrace.tags.isNotEmpty()) {
+                        summary.dataTrace.tags.entries.joinToString(
+                            prefix = "_",
+                            separator = "_"
+                        ) { "${it.key}-${it.value}" }
+                    } else {
+                        ""
+                    }
+
+                    File(
+                        outputDir,
+                        "errors_${summary.summary}$tagStr.csv"
+                    ).writer().use { errorsFileWriter ->
+                        currentWriter = errorsFileWriter
+                        errorsFileWriter.write("type,message,value,tags,dataTrace\n")
+                        summary.topErrorsAndWarnings.forEach { print(it) }
+                    }
                 }
-
-                val errorsFile = File(
-                    outputDir,
-                    "errors_${summary.summary}$tagStr.csv"
-                )
-                currentFile = errorsFile
-                println("Writing to ${errorsFile.absolutePath}")
-                errorsFile.writeText("type,message,value,tags,dataTrace\n")
-                summary.topErrorsAndWarnings.forEach { print(it) }
             }
         }
         val otherOutput = output.filterNot { it is ValidationSummary }
         if (otherOutput.isNotEmpty()) {
-            val resultsFile = File(outputDir, "results.csv")
-            currentFile = resultsFile
-            println("Writing to ${resultsFile.absolutePath}")
-            resultsFile.writeText("type,message,value,tags,dataTrace\n")
-            otherOutput.forEach { print(it) }
+            File(outputDir, "results.csv").writer().use { resultsFileWriter ->
+                currentWriter = resultsFileWriter
+                resultsFileWriter.write("type,message,value,tags,dataTrace\n")
+                otherOutput.forEach { print(it) }
+            }
         }
     }
 }

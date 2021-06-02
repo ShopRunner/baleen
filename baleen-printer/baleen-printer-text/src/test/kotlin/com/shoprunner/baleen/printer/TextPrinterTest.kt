@@ -29,7 +29,9 @@ internal class TextPrinterTest {
 
         val file = File.createTempFile("tmp", ".txt")
 
-        TextPrinter(file).print(results)
+        file.writer().use {
+            TextPrinter(it).print(results)
+        }
 
         assertThat(file.readText().trim()).isEqualTo(
             """
@@ -60,7 +62,9 @@ internal class TextPrinterTest {
 
         val file = File.createTempFile("tmp", ".txt")
 
-        TextPrinter(file, prettyPrint = true).print(results)
+        file.writer().use {
+            TextPrinter(it, prettyPrint = true).print(results)
+        }
 
         assertThat(file.readText()).isEqualTo(
 """ValidationSuccess(

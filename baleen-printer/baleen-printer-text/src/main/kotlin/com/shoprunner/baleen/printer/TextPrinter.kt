@@ -6,15 +6,16 @@ import com.shoprunner.baleen.ValidationResult
 import com.shoprunner.baleen.ValidationSuccess
 import com.shoprunner.baleen.ValidationSummary
 import com.shoprunner.baleen.ValidationWarning
-import java.io.File
+import java.io.OutputStreamWriter
 
-class TextPrinter(val file: File, val prettyPrint: Boolean = false) : Printer {
+class TextPrinter(private val writer: OutputStreamWriter, val prettyPrint: Boolean = false) : Printer {
+
     override fun print(validationResult: ValidationResult) {
         if (prettyPrint) {
             prettyPrint(validationResult, 0)
-            file.appendText("\n")
+            writer.append("\n")
         } else {
-            file.appendText("$validationResult\n")
+            writer.append("$validationResult\n")
         }
     }
 
@@ -30,7 +31,7 @@ class TextPrinter(val file: File, val prettyPrint: Boolean = false) : Printer {
 
     private fun prettyPrint(result: ValidationSuccess, nestedLevel: Int) {
         val indent = " ".repeat(2 * nestedLevel)
-        file.appendText(
+        writer.append(
             """
             |${indent}ValidationSuccess(
             |$indent  dataTrace=${result.dataTrace},
@@ -42,7 +43,7 @@ class TextPrinter(val file: File, val prettyPrint: Boolean = false) : Printer {
 
     private fun prettyPrint(result: ValidationInfo, nestedLevel: Int) {
         val indent = " ".repeat(2 * nestedLevel)
-        file.appendText(
+        writer.append(
             """
             |${indent}ValidationInfo(
             |$indent  dataTrace=${result.dataTrace},
@@ -55,7 +56,7 @@ class TextPrinter(val file: File, val prettyPrint: Boolean = false) : Printer {
 
     private fun prettyPrint(result: ValidationError, nestedLevel: Int) {
         val indent = " ".repeat(2 * nestedLevel)
-        file.appendText(
+        writer.append(
             """
             |${indent}ValidationError(
             |$indent  dataTrace=${result.dataTrace},
@@ -68,7 +69,7 @@ class TextPrinter(val file: File, val prettyPrint: Boolean = false) : Printer {
 
     private fun prettyPrint(result: ValidationWarning, nestedLevel: Int) {
         val indent = " ".repeat(2 * nestedLevel)
-        file.appendText(
+        writer.append(
             """
             |${indent}ValidationWarning(
             |$indent  dataTrace=${result.dataTrace},
@@ -81,7 +82,7 @@ class TextPrinter(val file: File, val prettyPrint: Boolean = false) : Printer {
 
     private fun prettyPrint(result: ValidationSummary, nestedLevel: Int) {
         val indent = " ".repeat(2 * nestedLevel)
-        file.appendText(
+        writer.append(
             """
             |${indent}ValidationSummary(
             |$indent  dataTrace=${result.dataTrace},
@@ -95,11 +96,11 @@ class TextPrinter(val file: File, val prettyPrint: Boolean = false) : Printer {
         )
         result.topErrorsAndWarnings
             .forEach {
-                file.appendText("\n")
+                writer.append("\n")
                 prettyPrint(it, nestedLevel + 2)
             }
 
-        file.appendText("\n$indent  ]\n$indent)")
+        writer.append("\n$indent  ]\n$indent)")
     }
 
     override fun print(validationResults: Iterable<ValidationResult>) {

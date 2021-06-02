@@ -6,9 +6,10 @@ import com.shoprunner.baleen.ValidationResult
 import com.shoprunner.baleen.ValidationSuccess
 import com.shoprunner.baleen.ValidationSummary
 import com.shoprunner.baleen.ValidationWarning
-import java.io.File
+import java.io.OutputStreamWriter
 
-class HtmlPrinter(private val file: File) : Printer {
+class HtmlPrinter(private val writer: OutputStreamWriter) : Printer {
+
     override fun print(validationResult: ValidationResult) {
         val output = when (validationResult) {
             is ValidationInfo ->
@@ -59,11 +60,11 @@ class HtmlPrinter(private val file: File) : Printer {
 
             else -> ""
         }
-        file.appendText("$output\n")
+        writer.append("$output\n")
     }
 
     override fun print(validationResults: Iterable<ValidationResult>) {
-        file.writeText(
+        writer.write(
             """
                     <html>
                        <head>
@@ -82,7 +83,7 @@ class HtmlPrinter(private val file: File) : Printer {
         }
         val otherOutput = output.filterNot { it is ValidationSummary }
         if (otherOutput.isNotEmpty()) {
-            file.appendText(
+            writer.append(
                 """
                 <h2>All results</h2>
                 <table class="table table-striped">
@@ -93,7 +94,7 @@ class HtmlPrinter(private val file: File) : Printer {
                 """.trimIndent()
             )
             otherOutput.forEach { print(it) }
-            file.appendText(
+            writer.append(
                 """
                     </tbody>
                   </table>
@@ -101,7 +102,7 @@ class HtmlPrinter(private val file: File) : Printer {
             )
         }
 
-        file.appendText(
+        writer.append(
             """
                </body>
              </html>
@@ -110,7 +111,7 @@ class HtmlPrinter(private val file: File) : Printer {
     }
 
     fun print(validationResults: List<ValidationSummary>) {
-        file.appendText(
+        writer.append(
             """
                  <h2>Summary</h2>
                  <table class="table table-striped">
@@ -121,7 +122,7 @@ class HtmlPrinter(private val file: File) : Printer {
             """.trimIndent()
         )
         validationResults.forEach { print(it) }
-        file.appendText(
+        writer.append(
             """
                         </tbody>
                      </table>
@@ -129,7 +130,7 @@ class HtmlPrinter(private val file: File) : Printer {
         )
 
         validationResults.forEach { summary ->
-            file.appendText(
+            writer.append(
                 """
                         <h2>${summary.summary} - Top Errors and Warnings</h2>
                         <table class="table table-striped">
@@ -140,7 +141,7 @@ class HtmlPrinter(private val file: File) : Printer {
                 """.trimIndent()
             )
             summary.topErrorsAndWarnings.forEach { print(it) }
-            file.appendText(
+            writer.append(
                 """
                             </tbody>
                           </table>
