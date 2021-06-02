@@ -1,4 +1,4 @@
-package com.shoprunner.baleen.printer.jvm
+package com.shoprunner.baleen.printer
 
 import com.shoprunner.baleen.ValidationSuccess
 import com.shoprunner.baleen.dataTrace

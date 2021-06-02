@@ -1,4 +1,4 @@
-package com.shoprunner.baleen.printer.jvm
+package com.shoprunner.baleen.printer
 
 import com.shoprunner.baleen.ValidationError
 import com.shoprunner.baleen.ValidationInfo
@@ -6,7 +6,6 @@ import com.shoprunner.baleen.ValidationResult
 import com.shoprunner.baleen.ValidationSuccess
 import com.shoprunner.baleen.ValidationSummary
 import com.shoprunner.baleen.ValidationWarning
-import com.shoprunner.baleen.printer.Printer
 import java.io.File
 
 class HtmlPrinter(private val file: File) : Printer {
