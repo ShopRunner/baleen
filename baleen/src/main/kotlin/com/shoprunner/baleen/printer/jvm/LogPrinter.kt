@@ -1,6 +1,7 @@
-package com.shoprunner.baleen.printer
+package com.shoprunner.baleen.printer.jvm
 
 import com.shoprunner.baleen.ValidationResult
+import com.shoprunner.baleen.printer.Printer
 import java.util.logging.Level
 import java.util.logging.Logger
 

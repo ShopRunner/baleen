@@ -1,4 +1,4 @@
-package com.shoprunner.baleen.printer
+package com.shoprunner.baleen.printer.jvm
 
 import com.shoprunner.baleen.ValidationError
 import com.shoprunner.baleen.ValidationInfo
@@ -6,7 +6,7 @@ import com.shoprunner.baleen.ValidationResult
 import com.shoprunner.baleen.ValidationSuccess
 import com.shoprunner.baleen.ValidationSummary
 import com.shoprunner.baleen.ValidationWarning
-import com.shoprunner.baleen.dataTrace
+import com.shoprunner.baleen.printer.Printer
 import java.io.File
 
 class TextPrinter(val file: File, val prettyPrint: Boolean = false) : Printer {

@@ -1,4 +1,4 @@
-package com.shoprunner.baleen.printer
+package com.shoprunner.baleen.printer.jvm
 
 import com.shoprunner.baleen.ValidationError
 import com.shoprunner.baleen.ValidationInfo
