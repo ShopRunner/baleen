@@ -1,8 +1,8 @@
 package com.shoprunner.baleen.xml
 
 import com.shoprunner.baleen.Baleen
+import com.shoprunner.baleen.BaleenType
 import com.shoprunner.baleen.Context
-import com.shoprunner.baleen.DataDescription
 import com.shoprunner.baleen.DataTrace
 import com.shoprunner.baleen.Validation
 import java.io.ByteArrayInputStream
@@ -30,11 +30,11 @@ object XmlUtil {
      * Given an InputStream where data is the root, validate it against the DataDescription
      */
     @JvmStatic
-    fun validateFromRoot(description: DataDescription, inputStream: InputStream): Validation {
+    fun validateFromRoot(description: BaleenType, inputStream: InputStream, dataTrace: DataTrace = DataTrace()): Validation {
         val root = Baleen.describe("root") {
             it.attr(description.name(), description)
         }
-        val context = fromXmlToContext(DataTrace(), inputStream)
+        val context = fromXmlToContext(dataTrace, inputStream)
         return root.validate(context)
     }
 
@@ -42,9 +42,9 @@ object XmlUtil {
      * Given an File where data is the root, validate it against the DataDescription
      */
     @JvmStatic
-    fun validateFromRoot(description: DataDescription, file: File): Validation {
+    fun validateFromRoot(description: BaleenType, file: File, dataTrace: DataTrace = DataTrace()): Validation {
         return with(file.inputStream()) {
-            validateFromRoot(description, this)
+            validateFromRoot(description, this, dataTrace)
         }
     }
 
@@ -52,9 +52,9 @@ object XmlUtil {
      * Given an String where data is the root, validate it against the DataDescription
      */
     @JvmStatic
-    fun validateFromRoot(description: DataDescription, xml: String): Validation {
+    fun validateFromRoot(description: BaleenType, xml: String, dataTrace: DataTrace = DataTrace()): Validation {
         return with(ByteArrayInputStream(xml.toByteArray(Charsets.UTF_8))) {
-            validateFromRoot(description, this)
+            validateFromRoot(description, this, dataTrace)
         }
     }
 }

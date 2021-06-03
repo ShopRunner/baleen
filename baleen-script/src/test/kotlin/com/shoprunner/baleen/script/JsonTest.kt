@@ -1,6 +1,9 @@
 package com.shoprunner.baleen.script
 
-import com.shoprunner.baleen.types.IntegerType
+import com.shoprunner.baleen.Baleen.describeAs
+import com.shoprunner.baleen.groupByTag
+import com.shoprunner.baleen.types.LongType
+import com.shoprunner.baleen.types.StringCoercibleToLong
 import com.shoprunner.baleen.types.StringType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -23,13 +26,19 @@ internal class JsonTest {
             """.trimIndent()
         )
 
-        baleen(outDir, Output.console, Output.text) {
-            json(testJson) {
-                "id".type(IntegerType(), required = true)
-                "firstName".type(StringType(0, 32), required = true)
-                "lastName".type(StringType(0, 32), required = true)
-            }
+        val desc = "person".describeAs {
+            "id".type(StringCoercibleToLong(LongType()), required = true)
+            "firstName".type(StringType(0, 32), required = true)
+            "lastName".type(StringType(0, 32), required = true)
         }
+
+        validate(
+            description = desc,
+            data = json(testJson),
+            outputDir = outDir,
+            outputs = arrayOf(Output.text),
+            groupBy = groupByTag("file"),
+        )
 
         val output = File(outDir, "summary.txt").readText()
 

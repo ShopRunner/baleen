@@ -1,6 +1,10 @@
 package com.shoprunner.baleen.script
 
-import com.shoprunner.baleen.types.NumericType
+import com.shoprunner.baleen.Baleen.describeAs
+import com.shoprunner.baleen.groupByTag
+import com.shoprunner.baleen.types.IntegerType
+import com.shoprunner.baleen.types.LongType
+import com.shoprunner.baleen.types.StringCoercibleToLong
 import com.shoprunner.baleen.types.StringType
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.AfterAll
@@ -19,6 +23,12 @@ internal class DatabaseTest {
         val connectionProps = Properties()
         connectionProps["user"] = "test"
         DriverManager.getConnection("jdbc:h2:mem:test;MODE=PostgreSQL", connectionProps)
+    }
+
+    val desc = "person".describeAs {
+        "id".type(IntegerType(), required = true)
+        "first_name".type(StringType(0, 32), required = true)
+        "last_name".type(StringType(0, 32), required = true)
     }
 
     @BeforeAll
@@ -54,19 +64,13 @@ internal class DatabaseTest {
     fun `validate all rows in table`() {
         val outDir = createTempDirectory("table-test").toFile()
 
-        baleen(outDir, Output.console, Output.text) {
-            database {
-                credentials {
-                    url = "jdbc:h2:mem:test"
-                    user = "test"
-                }
-                table("person") {
-                    "id".type(NumericType(), required = true)
-                    "first_name".type(StringType(0, 32), required = true)
-                    "last_name".type(StringType(0, 32), required = true)
-                }
-            }
-        }
+        validate(
+            description = desc,
+            data = table(connection, "person"),
+            outputDir = outDir,
+            groupBy = groupByTag("table"),
+            outputs = arrayOf(Output.text),
+        )
 
         val output = File(outDir, "summary.txt").readText()
 
@@ -90,19 +94,13 @@ internal class DatabaseTest {
     fun `validate sample of a table`() {
         val outDir = createTempDirectory("sample-test").toFile()
 
-        baleen(outDir, Output.console, Output.text) {
-            database {
-                credentials {
-                    url = "jdbc:h2:mem:test"
-                    user = "test"
-                }
-                sample("person", 1.00) {
-                    "id".type(NumericType(), required = true)
-                    "first_name".type(StringType(0, 32), required = true)
-                    "last_name".type(StringType(0, 32), required = true)
-                }
-            }
-        }
+        validate(
+            description = desc,
+            data = sample(connection, "person", 1.00),
+            outputDir = outDir,
+            groupBy = groupByTag("table", "queryName"),
+            outputs = arrayOf(Output.text),
+        )
 
         val output = File(outDir, "summary.txt").readText()
 
@@ -115,19 +113,13 @@ internal class DatabaseTest {
     fun `validate query against table`() {
         val outDir = createTempDirectory("query-test").toFile()
 
-        baleen(outDir, Output.console, Output.text) {
-            database {
-                credentials {
-                    url = "jdbc:h2:mem:test"
-                    user = "test"
-                }
-                query("person", "SELECT * FROM person WHERE id = 1") {
-                    "id".type(NumericType(), required = true)
-                    "first_name".type(StringType(0, 32), required = true)
-                    "last_name".type(StringType(0, 32), required = true)
-                }
-            }
-        }
+        validate(
+            description = desc,
+            data = query(connection, "person", "SELECT * FROM person WHERE id = 1"),
+            outputDir = outDir,
+            groupBy = groupByTag("table", "queryName"),
+            outputs = arrayOf(Output.text),
+        )
 
         val output = File(outDir, "summary.txt").readText()
 

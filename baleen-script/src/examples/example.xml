@@ -1,5 +1,5 @@
-<example>
+<person>
     <id>1</id>
     <firstName>Jon</firstName>
     <lastName>Smith</lastName>
-</example>
+</person>

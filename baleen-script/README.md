@@ -13,18 +13,7 @@ brew install kotlin
 
 Alternatively use a docker image like [zenika/kotlin](https://hub.docker.com/r/zenika/kotlin).
 
-Then create a file with a suffix `main.kts` and place these boilerplate lines at the top
-
-```kotlin
-#!/usr/bin/env kotlin
-
-@file:DependsOn("com.shoprunner:baleen-script:1.14.0")
-
-import com.shoprunner.baleen.script.*
-import com.shoprunner.baleen.types.*
-```
-
-Finally add your test code within the `baleen` code block. For example, validating json
+For example, validating json
 
 ```json
 {
@@ -34,19 +23,60 @@ Finally add your test code within the `baleen` code block. For example, validati
 }
 ```
 
-then add this test code.
+First create a file with a suffix `main.kts` and place these boilerplate lines at the top.
 
 ```kotlin
-baleen {
-    json("./example.json") {
-        "id".type(IntegerType(), required = true)
-        "firstName".type(StringType(0, 32), required = true)
-        "lastName".type(StringType(0, 32), required = true)
+#!/usr/bin/env kotlin
+
+@file:DependsOn("com.shoprunner:baleen-script:1.14.0")
+
+import com.shoprunner.baleen.*
+import com.shoprunner.baleen.Baleen.describeAs
+import com.shoprunner.baleen.script.*
+import com.shoprunner.baleen.types.*
+```
+
+Next define the "shape" of the data you would like to validate.
+
+```kotlin
+val description = "Person".describeAs {
+    "id".type(IntegerType(), required = true)
+    "firstName".type(StringType(0, 32), required = true)
+    "middleName".type(AllowsNull(StringType(0, 32)))
+    "lastName".type(StringType(0, 32), required = true)
+}
+```
+
+Within the `describeAs` function, also include any data level tests.
+
+```kotlin
+val description = "Person".describeAs {
+    "id".type(IntegerType(), required = true)
+    "firstName".type(StringType(0, 32), required = true)
+    "middleName".type(AllowsNull(StringType(0, 32)))
+    "lastName".type(StringType(0, 32), required = true)
+
+    test("first name is not same as last name") { data ->
+        assertNotEquals(
+            "first != last",
+            data.getAsStringOrNull("firstName"),
+            data.getAsStringOrNull("lastName")
+        )
     }
 }
 ```
 
-Then run it in IntelliJ or via command-line Kotlin or Docker
+Finally call the validate function with an output location.
+
+```kotlin
+validate(
+    description = description,
+    data = csv("./example.json"),
+    output = listOf(Output.console)
+)
+```
+
+It can run it in IntelliJ or via command-line Kotlin or Docker
 
 ```bash
 kotlin example-json.main.kts
@@ -69,37 +99,59 @@ docker container run -it --rm zenika/kotlin kotlin example-json.main.kts
 
 [./src/examples/example-json.main.kts](./src/examples/example-json.main.kts)
 ```kotlin
-baleen {
-    json("./src/examples/example.json") {
-        "id".type(IntegerType(), required = true)
-        "firstName".type(StringType(0, 1), required = true)
-        "lastName".type(StringType(0, 32), required = true)
+val description = "Person".describeAs {
+    "id".type(IntegerType(), required = true)
+    "firstName".type(StringType(0, 32), required = true)
+    "middleName".type(AllowsNull(StringType(0, 32)))
+    "lastName".type(StringType(0, 32), required = true)
+
+    test("first name is not same as last name") { data ->
+        assertNotEquals(
+            "first != last",
+            data.getAsStringOrNull("firstName"),
+            data.getAsStringOrNull("lastName")
+        )
     }
 }
+
+validate(
+    description = description,
+    data = json("./src/examples/example.json")
+)
 ```
 
 ### XML Validation
 
 [./src/examples/example.xml](./src/examples/example.xml)
 ```xml
-<example>
+<person>
     <id>1</id>
     <firstName>Jon</firstName>
     <lastName>Smith</lastName>
-</example>
+</person>
 ```
 
 [./src/examples/example-xml.main.kts](./src/examples/example-xml.main.kts)
 ```kotlin
-baleen {
-    xml("./src/examples/example.xml") {
-        "example".type("example".describeAs {
-            "id".type(StringCoercibleToLong(LongType()), required = true)
-            "firstName".type(StringType(0, 1), required = true)
-            "lastName".type(StringType(0, 32), required = true)
-        }, required = true)
+val description = "person".describeAs {
+    "id".type(IntegerType(), required = true)
+    "firstName".type(StringType(0, 32), required = true)
+    "middleName".type(AllowsNull(StringType(0, 32)))
+    "lastName".type(StringType(0, 32), required = true)
+
+    test("first name is not same as last name") { data ->
+        assertNotEquals(
+            "first != last",
+            data.getAsStringOrNull("firstName"),
+            data.getAsStringOrNull("lastName")
+        )
     }
 }
+
+validate(
+    description = description,
+    data = xml("./src/examples/example.xml")
+)
 ```
 
 ### CSV Validation
@@ -114,13 +166,25 @@ id,firstName,lastName
 
 [./src/examples/example-csv.main.kts](./src/examples/example-csv.main.kts)
 ```kotlin
-baleen {
-    csv("./src/examples/example.csv") {
-        "id".type(StringCoercibleToLong(LongType()), required = true)
-        "firstName".type(StringType(0, 1), required = true)
-        "lastName".type(StringType(0, 32), required = true)
+val description = "Person".describeAs {
+    "id".type(IntegerType(), required = true)
+    "firstName".type(StringType(0, 32), required = true)
+    "middleName".type(AllowsNull(StringType(0, 32)))
+    "lastName".type(StringType(0, 32), required = true)
+
+    test("first name is not same as last name") { data ->
+        assertNotEquals(
+            "first != last",
+            data.getAsStringOrNull("firstName"),
+            data.getAsStringOrNull("lastName")
+        )
     }
 }
+
+validate(
+    description = description,
+    data = csv("./src/examples/example.csv")
+)
 ```
 
 ### Database validation
@@ -135,74 +199,61 @@ In order to do database validation, the JDBC dependency must be added as a `@Dep
 
 #### Validate against all rows of a table
 ```kotlin
-baleen {
-    database {
-        credentials {
-            url = "jdbc:postgresql://localhost:5432/names"
-            user = "user"
-            password = "password"
-        }
+val description = "Person".describeAs {
+    "id".type(IntegerType(), required = true)
+    "first_name".type(StringType(0, 32), required = true)
+    "last_name".type(StringType(0, 32), required = true)
 
-        // Does validation on all rows of a table.
-        table(
-            table = "engineer.example",
-            tags = mapOf("ID" to withAttributeValue("ID"))
-        ) {
-
-            "ID".type(IntegerType())
-            "FIRST_NAME".type(StringType(0, 32))
-            "LAST_NAME".type(StringType(0, 32))
-        }
+    test("first name is not same as last name") { data ->
+        assertNotEquals(
+            "first != last",
+            data.getAsStringOrNull("first_name"),
+            data.getAsStringOrNull("last_name")
+        )
     }
 }
+
+val connection = databaseConnection(
+    Credentials(
+        url = "jdbc:postgresql://localhost:5432/names",
+        user = "user",
+        password = "password"
+    )
+)
+
+validate(
+    description = description,
+    data = table(
+        table = "engineer.example",
+        connection = connection
+        tags = mapOf("ID" to withAttributeValue("ID"))
+    )
+)
 ```
 
 #### Validate against a random sampling of rows of a table
 ```kotlin
-baleen {
-    database {
-        credentials {
-            url = "jdbc:postgresql://localhost:5432/names"
-            user = "user"
-            password = "password"
-        }
-
-        sample(
-            table = "engineer.example",
-            samplePercent = 0.10,
-            tags = mapOf("ID" to withAttributeValue("ID"))
-        ) {
-
-            "ID".type(IntegerType(), required = true)
-            "FIRST_NAME".type(StringType(0, 1), required = true)
-            "LAST_NAME".type(StringType(0, 32), required = true)
-        }
-    }
-}
+validate(
+    description = description,
+    data = sample(
+        table = "engineer.example",
+        connection = connection,
+        tags = mapOf("ID" to withAttributeValue("ID"))
+    )
+)
 ```
 
 #### Validate against query
 ```kotlin
-baleen {
-    database {
-        credentials {
-            url = "jdbc:postgresql://localhost:5432/names"
-            user = "user"
-            password = "password"
-        }
-
-        query(
-            queryName = "query example",
-            query = "SELECT id, first_name, last_name FROM engineer.example WHERE last_name = 'Smith'",
-            tags = mapOf("ID" to withAttributeValue("ID"))
-        ) {
-
-            "ID".type(IntegerType(), required = true)
-            "FIRST_NAME".type(StringType(0, 1), required = true)
-            "LAST_NAME".type(StringType(0, 32), required = true)
-        }
-    }
-}
+validate(
+    description = description,
+    data = query(
+        queryName = "query example",
+        query = "SELECT id, first_name, last_name FROM engineer.example WHERE last_name = 'Smith'",
+        connection = connection,
+        tags = mapOf("ID" to withAttributeValue("ID"))
+    )
+)
 ```
 
 ### Validating data from service
@@ -212,19 +263,31 @@ Then call the other validation functions with the body's inputStream.
 
 [./src/examples/example-http.main.kts](./src/examples/example-http.main.kts)
 ```kotlin
-baleen {
-    http {
-        get("https://reqres.in/api/users/2", "applicatin/json") { body ->
-            json("http example", body!!.byteInputStream()) {
-                "data".type(required = true) {
-                    "id".type(IntegerType(), required = true)
-                    "first_name".type(StringType(0, 1), required = true)
-                    "last_name".type(StringType(0, 32), required = true)
-                }
-            }
+val description = "Person".describeAs {
+    "data".type {
+        "id".type(IntegerType(), required = true)
+        "firstName".type(StringType(0, 32), required = true)
+        "lastName".type(StringType(0, 32), required = true)
+
+        test("first name is not same as last name") { data ->
+            assertNotEquals(
+                "first != last",
+                data.getAsStringOrNull("first_name"),
+                data.getAsStringOrNull("last_name")
+            )
         }
     }
 }
+
+validate(
+    description = description,
+    data = http(
+        url = "https://reqres.in/api/users/2",
+        methid = Method.GET,
+        contentType = "application/json",
+        data = json()
+    )
+)
 ```
 
 ## Changing output location
@@ -239,9 +302,12 @@ More than one can be passed in.
 * Output.log -> Print to log
 
 ```kotlin
-baleen("summaryOutDir", Output.console, Output.text, Output.html, Output.csv) {
-    
-}
+validate(
+    description = description,
+    data = json("./example.json"),
+    output = listOf(Output.console, Output.text, Output.html, Output.csv),
+    outputDir = "summaryOutDir"
+)
 ```
 
 ## Tagging the tests

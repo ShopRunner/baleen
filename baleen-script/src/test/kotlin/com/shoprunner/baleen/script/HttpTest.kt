@@ -1,6 +1,9 @@
 package com.shoprunner.baleen.script
 
+import com.shoprunner.baleen.Baleen.describeAs
 import com.shoprunner.baleen.types.IntegerType
+import com.shoprunner.baleen.types.LongType
+import com.shoprunner.baleen.types.StringCoercibleToLong
 import com.shoprunner.baleen.types.StringType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -42,25 +45,32 @@ internal class HttpTest {
 
         val outDir = createTempDirectory("post-test").toFile()
 
-        baleen(outDir, Output.console, Output.text) {
-            http {
-                post(url, "application/json", "testbody") { data ->
-                    json("post", data!!.byteInputStream()) {
-                        "id".type(IntegerType(), required = true)
-                        "firstName".type(StringType(0, 32), required = true)
-                        "lastName".type(StringType(0, 32), required = true)
-                    }
-                }
-            }
+        val desc = "person".describeAs {
+            "id".type(IntegerType(), required = true)
+            "firstName".type(StringType(0, 32), required = true)
+            "lastName".type(StringType(0, 32), required = true)
         }
+
+        validate(
+            description = desc,
+            data = http(
+                url = url,
+                method = Method.POST,
+                contentType = "application/json",
+                requestBody = "testbody",
+                data = json()
+            ),
+            outputDir = outDir,
+            outputs = arrayOf(Output.text),
+        )
 
         val output = File(outDir, "summary.txt").readText()
 
         assertThat(output).isEqualToIgnoringWhitespace(
             """
             ValidationSummary(
-              dataTrace=DataTrace(stack=[], tags={file=post}),
-              summary=Summary for file=post,
+              dataTrace=DataTrace(stack=[], tags={}),
+              summary=Summary,
               numSuccesses=1,
               numInfos=3,
               numErrors=0,
@@ -97,25 +107,31 @@ internal class HttpTest {
 
         val outDir = createTempDirectory("get-test").toFile()
 
-        baleen(outDir, Output.console, Output.text) {
-            http {
-                get(url, "application/json") { data ->
-                    json("get", data!!.byteInputStream()) {
-                        "id".type(IntegerType(), required = true)
-                        "firstName".type(StringType(0, 32), required = true)
-                        "lastName".type(StringType(0, 32), required = true)
-                    }
-                }
-            }
+        val desc = "person".describeAs {
+            "id".type(IntegerType(), required = true)
+            "firstName".type(StringType(0, 32), required = true)
+            "lastName".type(StringType(0, 32), required = true)
         }
+
+        validate(
+            description = desc,
+            data = http(
+                url = url,
+                method = Method.GET,
+                contentType = "application/json",
+                data = json()
+            ),
+            outputDir = outDir,
+            outputs = arrayOf(Output.text),
+        )
 
         val output = File(outDir, "summary.txt").readText()
 
         assertThat(output).isEqualToIgnoringWhitespace(
             """
             ValidationSummary(
-              dataTrace=DataTrace(stack=[], tags={file=get}),
-              summary=Summary for file=get,
+              dataTrace=DataTrace(stack=[], tags={}),
+              summary=Summary,
               numSuccesses=1,
               numInfos=3,
               numErrors=0,
@@ -152,25 +168,32 @@ internal class HttpTest {
 
         val outDir = createTempDirectory("put-test").toFile()
 
-        baleen(outDir, Output.console, Output.text) {
-            http {
-                put(url, "application/json", "testbody") { data ->
-                    json("put", data!!.byteInputStream()) {
-                        "id".type(IntegerType(), required = true)
-                        "firstName".type(StringType(0, 32), required = true)
-                        "lastName".type(StringType(0, 32), required = true)
-                    }
-                }
-            }
+        val desc = "person".describeAs {
+            "id".type(IntegerType(), required = true)
+            "firstName".type(StringType(0, 32), required = true)
+            "lastName".type(StringType(0, 32), required = true)
         }
+
+        validate(
+            description = desc,
+            data = http(
+                url = url,
+                method = Method.PUT,
+                contentType = "application/json",
+                requestBody = "testbody",
+                data = json()
+            ),
+            outputDir = outDir,
+            outputs = arrayOf(Output.text),
+        )
 
         val output = File(outDir, "summary.txt").readText()
 
         assertThat(output).isEqualToIgnoringWhitespace(
             """
             ValidationSummary(
-              dataTrace=DataTrace(stack=[], tags={file=put}),
-              summary=Summary for file=put,
+              dataTrace=DataTrace(stack=[], tags={}),
+              summary=Summary,
               numSuccesses=1,
               numInfos=3,
               numErrors=0,
@@ -207,25 +230,31 @@ internal class HttpTest {
 
         val outDir = createTempDirectory("delete-test").toFile()
 
-        baleen(outDir, Output.console, Output.text) {
-            http {
-                delete(url, "application/json") { data ->
-                    json("delete", data!!.byteInputStream()) {
-                        "id".type(IntegerType(), required = true)
-                        "firstName".type(StringType(0, 32), required = true)
-                        "lastName".type(StringType(0, 32), required = true)
-                    }
-                }
-            }
+        val desc = "person".describeAs {
+            "id".type(IntegerType(), required = true)
+            "firstName".type(StringType(0, 32), required = true)
+            "lastName".type(StringType(0, 32), required = true)
         }
+
+        validate(
+            description = desc,
+            data = http(
+                url = url,
+                method = Method.DELETE,
+                contentType = "application/json",
+                data = json()
+            ),
+            outputDir = outDir,
+            outputs = arrayOf(Output.text),
+        )
 
         val output = File(outDir, "summary.txt").readText()
 
         assertThat(output).isEqualToIgnoringWhitespace(
             """
             ValidationSummary(
-              dataTrace=DataTrace(stack=[], tags={file=delete}),
-              summary=Summary for file=delete,
+              dataTrace=DataTrace(stack=[], tags={}),
+              summary=Summary,
               numSuccesses=1,
               numInfos=3,
               numErrors=0,

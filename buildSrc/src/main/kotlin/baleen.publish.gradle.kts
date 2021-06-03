@@ -5,6 +5,13 @@ plugins {
     signing
 }
 
+// jcenter is deprecated but is needed by dokkaJavadocs task for some reason.
+// Remove when dokka no longer requires it.
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
 val sourceJar = tasks.register<Jar>("sourceJar") {
     archiveClassifier.set("sources")
     from(sourceSets["main"].allSource)
