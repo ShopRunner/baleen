@@ -422,7 +422,7 @@ internal class BaleenTest {
         assertThat(summary).containsExactlyInAnyOrder(
             ValidationSummary(
                 dataTrace = dataTrace().tag("test", "false"),
-                summary = "Summary",
+                summary = "Summary for test=false",
                 numInfos = 1,
                 numSuccesses = 0,
                 numErrors = 0,
@@ -431,7 +431,7 @@ internal class BaleenTest {
             ),
             ValidationSummary(
                 dataTrace = dataTrace().tag("test", "true"),
-                summary = "Summary",
+                summary = "Summary for test=true",
                 numInfos = 0,
                 numSuccesses = 0,
                 numErrors = 1,

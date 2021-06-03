@@ -124,19 +124,19 @@ class ValidationSummaryTest {
 
         assertThat(results.createSummary(groupBy = groupByTag("priority"))).containsExactly(
             ValidationSummary(
-                dataTrace().tag("priority", "high"), "Summary", 1, 0, 1, 0,
+                dataTrace().tag("priority", "high"), "Summary for priority=high", 1, 0, 1, 0,
                 listOf(
                     ValidationError(dataTrace().tag("priority", "high"), "Error 1", null),
                 )
             ),
             ValidationSummary(
-                dataTrace().tag("priority", "medium"), "Summary", 1, 0, 1, 0,
+                dataTrace().tag("priority", "medium"), "Summary for priority=medium", 1, 0, 1, 0,
                 listOf(
                     ValidationError(dataTrace().tag("priority", "medium"), "Error 2", null),
                 )
             ),
             ValidationSummary(
-                dataTrace().tag("priority", "low"), "Summary", 1, 0, 1, 0,
+                dataTrace().tag("priority", "low"), "Summary for priority=low", 1, 0, 1, 0,
                 listOf(
                     ValidationError(dataTrace().tag("priority", "low"), "Error 3", null),
                 )
@@ -159,19 +159,19 @@ class ValidationSummaryTest {
 
         Assertions.assertThat(summaries).containsExactly(
             ValidationSummary(
-                dataTrace().tag("priority", "high"), "Summary", 1, 0, 1, 0,
+                dataTrace().tag("priority", "high"), "Summary for priority=high", 1, 0, 1, 0,
                 listOf(
                     ValidationError(dataTrace().tag("priority", "high"), "Error 1", null),
                 )
             ),
             ValidationSummary(
-                dataTrace().tag("priority", "medium"), "Summary", 1, 0, 1, 0,
+                dataTrace().tag("priority", "medium"), "Summary for priority=medium", 1, 0, 1, 0,
                 listOf(
                     ValidationError(dataTrace().tag("priority", "medium"), "Error 2", null),
                 )
             ),
             ValidationSummary(
-                dataTrace().tag("priority", "low"), "Summary", 1, 0, 1, 0,
+                dataTrace().tag("priority", "low"), "Summary for priority=low", 1, 0, 1, 0,
                 listOf(
                     ValidationError(dataTrace().tag("priority", "low"), "Error 3", null),
                 )

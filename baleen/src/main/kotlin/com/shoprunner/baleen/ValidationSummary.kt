@@ -32,7 +32,13 @@ fun Sequence<ValidationResult>.createSummary(
         seq.groupingBy(groupBy)
             .fold(
                 { key, _ ->
-                    ValidationSummary(dataTrace.tag(key), "Summary", 0, 0, 0, 0, emptyList())
+                    val summaryDetail = if (key.isNotEmpty()) {
+                        val keyFormatted = key.map { (k, v) -> "$k=$v" }.joinToString()
+                        " for $keyFormatted"
+                    } else {
+                        ""
+                    }
+                    ValidationSummary(dataTrace.tag(key), "Summary$summaryDetail", 0, 0, 0, 0, emptyList())
                 },
                 { _, accumulator, element ->
                     if (element is ValidationSummary) {

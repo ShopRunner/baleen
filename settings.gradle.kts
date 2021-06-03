@@ -18,5 +18,6 @@ include("baleen-printer:baleen-printer-csv")
 include("baleen-printer:baleen-printer-html")
 include("baleen-printer:baleen-printer-java-logger")
 include("baleen-printer:baleen-printer-text")
+include("baleen-script")
 
 rootProject.name = "baleen"
