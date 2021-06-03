@@ -67,13 +67,12 @@ val description = "Person".describeAs {
 }
 ```
 
-Finally, call the validate function with an output location.
+Finally, call the validate function.
 
 ```kotlin
 validate(
     description = description,
-    data = csv("./example.json"),
-    printers = arrayOf(ConsolePrinter)
+    data = csv("./example.json")
 )
 ```
 
@@ -254,8 +253,8 @@ validate(
 
 ### Validating data from service
 
-We provide a function called `http` that nests `get`, `post`, `put` or `delete` functions.
-Then call the other validation functions with the body's inputStream.
+We provide a function called `http` that takes a Method (GET, POST, PUT, or DELETE).
+Then within the http function, tell it how to validate the data by passing `json`, `xml`, or `csv`.
 
 [./src/examples/example-http.main.kts](./src/examples/example-http.main.kts)
 ```kotlin
@@ -279,7 +278,7 @@ validate(
     description = description,
     data = http(
         url = "https://reqres.in/api/users/2",
-        methid = Method.GET,
+        method = Method.GET,
         contentType = "application/json",
         data = json()
     )
