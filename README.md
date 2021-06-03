@@ -59,15 +59,23 @@ val cachedValidation: CachedValidation = validation.cache()
 // val isValid: Boolean = validation.isValid()
 val isValid: Boolean = cachedValidation.isValid() 
 
-// Iterate over results. Each iteration over results will execute entire flow again.
+// Iterate over results. Each iteration over results will execute entire flow again unless cached.
 // validation.results.forEach { }
 cachedValidation.results.forEach { }
+
+// Use `watch` to print to Console summaries every 1,000 results
+cachedValidation.results.watch().forEach { }
 
 // Summarize into Validation object with list of ValidationSummary with examples of errors included    
 // val validationSummary: Validation= validation.createSummary()
 val validationSummary: CachedValidation = cachedValidation.createSummary()
 validationSummary.results.forEach { }
 
+// Print the results to various formats including Console, Logger, CSV, HTML, or Text
+// Look at baleen-printer-* sub-modules
+File("validation.html").writer().use {
+    HtmlPrinter(it).print(validationSummary.results)
+}
 ```
 
 ## Getting Help

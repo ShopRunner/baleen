@@ -14,5 +14,9 @@ include("baleen-kotlin:baleen-kotlin-kapt")
 include("baleen-kotlin:baleen-kotlin-generator")
 include("baleen-kotlin:example")
 include("baleen-poet")
+include("baleen-printer:baleen-printer-csv")
+include("baleen-printer:baleen-printer-html")
+include("baleen-printer:baleen-printer-java-logger")
+include("baleen-printer:baleen-printer-text")
 
 rootProject.name = "baleen"
