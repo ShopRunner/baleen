@@ -36,8 +36,8 @@ internal class XmlTest {
             description = desc,
             data = xml(testXml),
             outputDir = outDir,
+            groupBy = groupByTag("file"),
             outputs = arrayOf(Output.text),
-            groupBy = groupByTag("file")
         )
 
         val output = File(outDir, "summary.txt").readText()

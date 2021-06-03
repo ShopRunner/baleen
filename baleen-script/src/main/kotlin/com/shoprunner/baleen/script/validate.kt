@@ -17,7 +17,7 @@ fun validate(
     groupBy: SummaryGroupBy = { emptyMap() },
     vararg outputs: Output,
 ) {
-    validate(description, data, outputDir?.let { File(it ) }, groupBy, *outputs)
+    validate(description, data, outputDir?.let { File(it) }, groupBy, *outputs)
 }
 
 fun validate(

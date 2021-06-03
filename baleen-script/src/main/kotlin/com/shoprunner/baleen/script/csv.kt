@@ -2,6 +2,8 @@ package com.shoprunner.baleen.script
 
 import com.opencsv.CSVParserBuilder
 import com.opencsv.CSVReaderBuilder
+import com.shoprunner.baleen.Context
+import com.shoprunner.baleen.DataDescription
 import com.shoprunner.baleen.ValidationResult
 import com.shoprunner.baleen.csv.FlowableUtil
 import com.shoprunner.baleen.dataTrace
@@ -34,7 +36,11 @@ fun csv(inputStream: InputStream, delimiter: Char = ',', quote: Char = '"', esca
                     } else {
                         val data = FlowableUtil.CsvData(headMap, row, headMap.keys)
                         val dataTrace = dataTrace().tag("format" to "csv", *tags)
-                        yieldAll(dataDescription.validate(dataTrace, data))
+                        if (dataDescription is DataDescription) {
+                            yieldAll(dataDescription.validate(Context(data, dataTrace)).results)
+                        } else {
+                            yieldAll(dataDescription.validate(dataTrace, data))
+                        }
                     }
                 }
         }.asIterable()

@@ -3,8 +3,6 @@ package com.shoprunner.baleen.script
 import com.shoprunner.baleen.Baleen.describeAs
 import com.shoprunner.baleen.groupByTag
 import com.shoprunner.baleen.types.IntegerType
-import com.shoprunner.baleen.types.LongType
-import com.shoprunner.baleen.types.StringCoercibleToLong
 import com.shoprunner.baleen.types.StringType
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.AfterAll
