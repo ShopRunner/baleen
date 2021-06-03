@@ -2,17 +2,17 @@ package com.shoprunner.baleen.script
 
 import com.shoprunner.baleen.Baleen.describeAs
 import com.shoprunner.baleen.groupByTag
+import com.shoprunner.baleen.printer.TextPrinter
 import com.shoprunner.baleen.types.IntegerType
 import com.shoprunner.baleen.types.StringType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.io.File
-import java.nio.file.Files
 
 internal class JsonTest {
     @Test
     fun `test json script`() {
-        val outDir = Files.createTempDirectory("json-test").toFile()
+        val outputFile = File.createTempFile("json-test", ".txt")
         val testJson = File.createTempFile("json-test", ".json")
 
         testJson.writeText(
@@ -31,15 +31,16 @@ internal class JsonTest {
             "lastName".type(StringType(0, 32), required = true)
         }
 
-        validate(
-            description = desc,
-            data = json(testJson),
-            outputDir = outDir,
-            groupBy = groupByTag("file"),
-            outputs = arrayOf(Output.text),
-        )
+        outputFile.writer().use {
+            validate(
+                description = desc,
+                data = json(testJson),
+                groupBy = groupByTag("file"),
+                printers = arrayOf(TextPrinter(it, prettyPrint = true)),
+            )
+        }
 
-        val output = File(outDir, "summary.txt").readText()
+        val output = outputFile.readText()
 
         assertThat(output).isEqualToIgnoringWhitespace(
             """

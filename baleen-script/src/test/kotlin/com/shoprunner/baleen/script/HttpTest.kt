@@ -1,6 +1,7 @@
 package com.shoprunner.baleen.script
 
 import com.shoprunner.baleen.Baleen.describeAs
+import com.shoprunner.baleen.printer.TextPrinter
 import com.shoprunner.baleen.types.IntegerType
 import com.shoprunner.baleen.types.StringType
 import org.assertj.core.api.Assertions.assertThat
@@ -12,7 +13,6 @@ import org.mockserver.junit.jupiter.MockServerExtension
 import org.mockserver.model.HttpRequest
 import org.mockserver.model.HttpResponse
 import java.io.File
-import java.nio.file.Files.createTempDirectory
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockServerExtension::class)
@@ -41,7 +41,7 @@ internal class HttpTest {
                 )
         )
 
-        val outDir = createTempDirectory("post-test").toFile()
+        val outputFile = File.createTempFile("post-test", ".txt")
 
         val desc = "person".describeAs {
             "id".type(IntegerType(), required = true)
@@ -49,20 +49,21 @@ internal class HttpTest {
             "lastName".type(StringType(0, 32), required = true)
         }
 
-        validate(
-            description = desc,
-            data = http(
-                url = url,
-                method = Method.POST,
-                contentType = "application/json",
-                requestBody = "testbody",
-                data = json()
-            ),
-            outputDir = outDir,
-            outputs = arrayOf(Output.text),
-        )
+        outputFile.writer().use {
+            validate(
+                description = desc,
+                data = http(
+                    url = url,
+                    method = Method.POST,
+                    contentType = "application/json",
+                    requestBody = "testbody",
+                    data = json()
+                ),
+                printers = arrayOf(TextPrinter(it, prettyPrint = true)),
+            )
+        }
 
-        val output = File(outDir, "summary.txt").readText()
+        val output = outputFile.readText()
 
         assertThat(output).isEqualToIgnoringWhitespace(
             """
@@ -103,7 +104,7 @@ internal class HttpTest {
                 )
         )
 
-        val outDir = createTempDirectory("get-test").toFile()
+        val outputFile = File.createTempFile("get-test", ".txt")
 
         val desc = "person".describeAs {
             "id".type(IntegerType(), required = true)
@@ -111,19 +112,20 @@ internal class HttpTest {
             "lastName".type(StringType(0, 32), required = true)
         }
 
-        validate(
-            description = desc,
-            data = http(
-                url = url,
-                method = Method.GET,
-                contentType = "application/json",
-                data = json()
-            ),
-            outputDir = outDir,
-            outputs = arrayOf(Output.text),
-        )
+        outputFile.writer().use {
+            validate(
+                description = desc,
+                data = http(
+                    url = url,
+                    method = Method.GET,
+                    contentType = "application/json",
+                    data = json()
+                ),
+                printers = arrayOf(TextPrinter(it, prettyPrint = true)),
+            )
+        }
 
-        val output = File(outDir, "summary.txt").readText()
+        val output = outputFile.readText()
 
         assertThat(output).isEqualToIgnoringWhitespace(
             """
@@ -164,7 +166,7 @@ internal class HttpTest {
                 )
         )
 
-        val outDir = createTempDirectory("put-test").toFile()
+        val outputFile = File.createTempFile("put-test", ".txt")
 
         val desc = "person".describeAs {
             "id".type(IntegerType(), required = true)
@@ -172,20 +174,21 @@ internal class HttpTest {
             "lastName".type(StringType(0, 32), required = true)
         }
 
-        validate(
-            description = desc,
-            data = http(
-                url = url,
-                method = Method.PUT,
-                contentType = "application/json",
-                requestBody = "testbody",
-                data = json()
-            ),
-            outputDir = outDir,
-            outputs = arrayOf(Output.text),
-        )
+        outputFile.writer().use {
+            validate(
+                description = desc,
+                data = http(
+                    url = url,
+                    method = Method.PUT,
+                    contentType = "application/json",
+                    requestBody = "testbody",
+                    data = json()
+                ),
+                printers = arrayOf(TextPrinter(it, prettyPrint = true)),
+            )
+        }
 
-        val output = File(outDir, "summary.txt").readText()
+        val output = outputFile.readText()
 
         assertThat(output).isEqualToIgnoringWhitespace(
             """
@@ -226,7 +229,7 @@ internal class HttpTest {
                 )
         )
 
-        val outDir = createTempDirectory("delete-test").toFile()
+        val outputFile = File.createTempFile("delete-test", ".txt")
 
         val desc = "person".describeAs {
             "id".type(IntegerType(), required = true)
@@ -234,19 +237,20 @@ internal class HttpTest {
             "lastName".type(StringType(0, 32), required = true)
         }
 
-        validate(
-            description = desc,
-            data = http(
-                url = url,
-                method = Method.DELETE,
-                contentType = "application/json",
-                data = json()
-            ),
-            outputDir = outDir,
-            outputs = arrayOf(Output.text),
-        )
+        outputFile.writer().use {
+            validate(
+                description = desc,
+                data = http(
+                    url = url,
+                    method = Method.DELETE,
+                    contentType = "application/json",
+                    data = json()
+                ),
+                printers = arrayOf(TextPrinter(it, prettyPrint = true)),
+            )
+        }
 
-        val output = File(outDir, "summary.txt").readText()
+        val output = outputFile.readText()
 
         assertThat(output).isEqualToIgnoringWhitespace(
             """

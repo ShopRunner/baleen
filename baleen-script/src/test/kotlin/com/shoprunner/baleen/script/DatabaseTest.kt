@@ -2,6 +2,7 @@ package com.shoprunner.baleen.script
 
 import com.shoprunner.baleen.Baleen.describeAs
 import com.shoprunner.baleen.groupByTag
+import com.shoprunner.baleen.printer.TextPrinter
 import com.shoprunner.baleen.types.IntegerType
 import com.shoprunner.baleen.types.StringType
 import org.assertj.core.api.Assertions
@@ -10,7 +11,6 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import java.io.File
-import java.nio.file.Files.createTempDirectory
 import java.sql.Connection
 import java.sql.DriverManager
 import java.util.Properties
@@ -60,17 +60,18 @@ internal class DatabaseTest {
 
     @Test
     fun `validate all rows in table`() {
-        val outDir = createTempDirectory("table-test").toFile()
+        val outputFile = File.createTempFile("table-test", ".txt")
 
-        validate(
-            description = desc,
-            data = table(connection, "person"),
-            outputDir = outDir,
-            groupBy = groupByTag("table"),
-            outputs = arrayOf(Output.text),
-        )
+        outputFile.writer().use {
+            validate(
+                description = desc,
+                data = table(connection, "person"),
+                groupBy = groupByTag("table"),
+                printers = arrayOf(TextPrinter(it, prettyPrint = true)),
+            )
+        }
 
-        val output = File(outDir, "summary.txt").readText()
+        val output = outputFile.readText()
 
         Assertions.assertThat(output).isEqualToIgnoringWhitespace(
             """
@@ -90,17 +91,18 @@ internal class DatabaseTest {
 
     @Test
     fun `validate sample of a table`() {
-        val outDir = createTempDirectory("sample-test").toFile()
+        val outputFile = File.createTempFile("sample-test", ".txt")
 
-        validate(
-            description = desc,
-            data = sample(connection, "person", 1.00),
-            outputDir = outDir,
-            groupBy = groupByTag("table", "queryName"),
-            outputs = arrayOf(Output.text),
-        )
+        outputFile.writer().use {
+            validate(
+                description = desc,
+                data = sample(connection, "person", 1.00),
+                groupBy = groupByTag("table", "queryName"),
+                printers = arrayOf(TextPrinter(it, prettyPrint = true)),
+            )
+        }
 
-        val output = File(outDir, "summary.txt").readText()
+        val output = outputFile.readText()
 
         Assertions.assertThat(output)
             .contains("ValidationSummary")
@@ -109,17 +111,18 @@ internal class DatabaseTest {
 
     @Test
     fun `validate query against table`() {
-        val outDir = createTempDirectory("query-test").toFile()
+        val outputFile = File.createTempFile("csv-test", ".txt")
 
-        validate(
-            description = desc,
-            data = query(connection, "person", "SELECT * FROM person WHERE id = 1"),
-            outputDir = outDir,
-            groupBy = groupByTag("table", "queryName"),
-            outputs = arrayOf(Output.text),
-        )
+        outputFile.writer().use {
+            validate(
+                description = desc,
+                data = query(connection, "person", "SELECT * FROM person WHERE id = 1"),
+                groupBy = groupByTag("table", "queryName"),
+                printers = arrayOf(TextPrinter(it, prettyPrint = true)),
+            )
+        }
 
-        val output = File(outDir, "summary.txt").readText()
+        val output = outputFile.readText()
 
         Assertions.assertThat(output).isEqualToIgnoringWhitespace(
             """

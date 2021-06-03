@@ -32,6 +32,7 @@ First create a file with a suffix `main.kts` and place these boilerplate lines a
 
 import com.shoprunner.baleen.*
 import com.shoprunner.baleen.Baleen.describeAs
+import com.shoprunner.baleen.printer.*
 import com.shoprunner.baleen.script.*
 import com.shoprunner.baleen.types.*
 ```
@@ -66,13 +67,13 @@ val description = "Person".describeAs {
 }
 ```
 
-Finally call the validate function with an output location.
+Finally, call the validate function with an output location.
 
 ```kotlin
 validate(
     description = description,
     data = csv("./example.json"),
-    output = listOf(Output.console)
+    printers = arrayOf(ConsolePrinter)
 )
 ```
 
@@ -211,14 +212,12 @@ val description = "Person".describeAs {
             data.getAsStringOrNull("last_name")
         )
     }
-}
+}.tags("ID" to withAttributeValue("ID"))
 
-val connection = databaseConnection(
-    Credentials(
-        url = "jdbc:postgresql://localhost:5432/names",
-        user = "user",
-        password = "password"
-    )
+val connection = getConnection(
+    url = "jdbc:postgresql://localhost:5432/names",
+    user = "user",
+    password = "password"
 )
 
 validate(
@@ -226,7 +225,6 @@ validate(
     data = table(
         table = "engineer.example",
         connection = connection
-        tags = mapOf("ID" to withAttributeValue("ID"))
     )
 )
 ```
@@ -238,7 +236,6 @@ validate(
     data = sample(
         table = "engineer.example",
         connection = connection,
-        tags = mapOf("ID" to withAttributeValue("ID"))
     )
 )
 ```
@@ -251,7 +248,6 @@ validate(
         queryName = "query example",
         query = "SELECT id, first_name, last_name FROM engineer.example WHERE last_name = 'Smith'",
         connection = connection,
-        tags = mapOf("ID" to withAttributeValue("ID"))
     )
 )
 ```
@@ -295,42 +291,18 @@ validate(
 By default, the baleen test output is printed to console. Other output formats are supported.
 More than one can be passed in.
 
-* Output.csv -> Output as multiple csv files
-* Output.html -> Output as single html file
-* Output.text -> Output as single text flle
-* Output.console -> Print output to screen.
-* Output.log -> Print to log
+* CsvPrinter(outputDir) -> Output as multiple csv files
+* HtmlPrinter(OutputStreamWriter) -> Output as single html file
+* TextPrinter(OutputStreamWriter) -> Output as single text flle
+* ConsolePrinter -> Print output to screen.
+* LogPrinter() -> Print to log
 
 ```kotlin
-validate(
-    description = description,
-    data = json("./example.json"),
-    output = listOf(Output.console, Output.text, Output.html, Output.csv),
-    outputDir = "summaryOutDir"
-)
-```
-
-## Tagging the tests
-
-On each function, there is an optional tags map to tag useful row level data points
-like a primary key.
-
-With a column value:
-```kotlin
-tags = mapOf("ID" to withAttributeValue("ID"))
-```
-
-With a constant:
-```kotlin
-tags = mapOf("KEY" to withConstantValue("HARDCODED"))
-```
-
-With a function that takes the data row and outputs a string:
-```kotlin
-tags = mapOf("NAME" to { d ->
-    when {
-        d is Data -> "${d["FIRST_NAME"]}_${d["LAST_NAME"]}"
-        else -> "error"
-    }    
-})
+File("summary.html").writer().use {
+    validate(
+        description = description,
+        data = json("./example.json"),
+        printers = arrayOf(ConsolePrinter, HtmlPrinter(it)),
+    )
+}
 ```

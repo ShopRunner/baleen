@@ -6,8 +6,10 @@
 
 import com.shoprunner.baleen.*
 import com.shoprunner.baleen.Baleen.describeAs
+import com.shoprunner.baleen.printer.*
 import com.shoprunner.baleen.script.*
 import com.shoprunner.baleen.types.*
+import java.io.File
 
 val description = "person".describeAs {
     "id".type(StringCoercibleToLong(LongType()), required = true)
@@ -24,10 +26,11 @@ val description = "person".describeAs {
     }
 }
 
-validate(
-    description = description,
-    data = xml("./example.xml"),
-    outputDir = "summary",
-    groupBy = groupByTag("file"),
-    outputs = arrayOf(Output.console, Output.html),
-)
+File("summary/example-xml.html").writer().use {
+    validate(
+        description = description,
+        data = xml("./example.xml"),
+        groupBy = groupByTag("file"),
+        printers = arrayOf(ConsolePrinter, HtmlPrinter(it)),
+    )
+}

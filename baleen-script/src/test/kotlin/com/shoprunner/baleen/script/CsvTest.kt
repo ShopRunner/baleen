@@ -2,18 +2,18 @@ package com.shoprunner.baleen.script
 
 import com.shoprunner.baleen.Baleen.describeAs
 import com.shoprunner.baleen.groupByTag
+import com.shoprunner.baleen.printer.TextPrinter
 import com.shoprunner.baleen.types.LongType
 import com.shoprunner.baleen.types.StringCoercibleToLong
 import com.shoprunner.baleen.types.StringType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.io.File
-import java.nio.file.Files.createTempDirectory
 
 internal class CsvTest {
     @Test
     fun `test csv script`() {
-        val outDir = createTempDirectory("csv-test").toFile()
+        val outputFile = File.createTempFile("csv-test", ".txt")
         val testCsv = File.createTempFile("csv-test", ".csv")
 
         testCsv.writeText(
@@ -31,15 +31,16 @@ internal class CsvTest {
             "lastName".type(StringType(0, 32), required = true)
         }
 
-        validate(
-            description = desc,
-            data = csv(testCsv),
-            outputDir = outDir,
-            groupBy = groupByTag("file"),
-            outputs = arrayOf(Output.text),
-        )
+        outputFile.writer().use {
+            validate(
+                description = desc,
+                data = csv(testCsv),
+                groupBy = groupByTag("file"),
+                printers = arrayOf(TextPrinter(it, prettyPrint = true)),
+            )
+        }
 
-        val output = File(outDir, "summary.txt").readText()
+        val output = outputFile.readText()
 
         assertThat(output).isEqualToIgnoringWhitespace(
             """

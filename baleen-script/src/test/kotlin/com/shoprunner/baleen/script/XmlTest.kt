@@ -2,18 +2,18 @@ package com.shoprunner.baleen.script
 
 import com.shoprunner.baleen.Baleen.describeAs
 import com.shoprunner.baleen.groupByTag
+import com.shoprunner.baleen.printer.TextPrinter
 import com.shoprunner.baleen.types.LongType
 import com.shoprunner.baleen.types.StringCoercibleToLong
 import com.shoprunner.baleen.types.StringType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.io.File
-import java.nio.file.Files
 
 internal class XmlTest {
     @Test
     fun `test xml script`() {
-        val outDir = Files.createTempDirectory("xml-test").toFile()
+        val outputFile = File.createTempFile("xml-test", ".txt")
         val testXml = File.createTempFile("xml-test", ".xml")
 
         testXml.writeText(
@@ -32,15 +32,16 @@ internal class XmlTest {
             "lastName".type(StringType(0, 32), required = true)
         }
 
-        validate(
-            description = desc,
-            data = xml(testXml),
-            outputDir = outDir,
-            groupBy = groupByTag("file"),
-            outputs = arrayOf(Output.text),
-        )
+        outputFile.writer().use {
+            validate(
+                description = desc,
+                data = xml(testXml),
+                groupBy = groupByTag("file"),
+                printers = arrayOf(TextPrinter(it, prettyPrint = true)),
+            )
+        }
 
-        val output = File(outDir, "summary.txt").readText()
+        val output = outputFile.readText()
 
         assertThat(output).isEqualToIgnoringWhitespace(
             """

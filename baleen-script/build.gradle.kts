@@ -11,10 +11,10 @@ dependencies {
     implementation(project(":baleen-db:baleen-jdbc"))
     implementation(project(":baleen-xml"))
     api(project(":baleen-json-jackson"))
-    implementation(project(":baleen-printer:baleen-printer-csv"))
-    implementation(project(":baleen-printer:baleen-printer-html"))
-    implementation(project(":baleen-printer:baleen-printer-java-logger"))
-    implementation(project(":baleen-printer:baleen-printer-text"))
+    api(project(":baleen-printer:baleen-printer-csv"))
+    api(project(":baleen-printer:baleen-printer-html"))
+    api(project(":baleen-printer:baleen-printer-java-logger"))
+    api(project(":baleen-printer:baleen-printer-text"))
     // for baleen-csv
     implementation("com.opencsv:opencsv:5.3")
 

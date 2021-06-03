@@ -6,8 +6,10 @@
 
 import com.shoprunner.baleen.*
 import com.shoprunner.baleen.Baleen.describeAs
+import com.shoprunner.baleen.printer.*
 import com.shoprunner.baleen.script.*
 import com.shoprunner.baleen.types.*
+import java.io.File
 
 val description = "person".describeAs {
     "data".type {
@@ -27,14 +29,15 @@ val description = "person".describeAs {
 
 }
 
-validate(
-    description = description,
-    data = http(
-        url = "https://reqres.in/api/users/2",
-        method = Method.GET,
-        contentType =  "application/json",
-        data = json()
-    ),
-    outputDir = "summary",
-    outputs = arrayOf(Output.console, Output.html),
-)
+File("summary/example-http.html").writer().use {
+    validate(
+        description = description,
+        data = http(
+            url = "https://reqres.in/api/users/2",
+            method = Method.GET,
+            contentType = "application/json",
+            data = json()
+        ),
+        printers = arrayOf(ConsolePrinter, HtmlPrinter(it)),
+    )
+}

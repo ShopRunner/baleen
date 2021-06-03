@@ -6,8 +6,10 @@
 
 import com.shoprunner.baleen.*
 import com.shoprunner.baleen.Baleen.describeAs
+import com.shoprunner.baleen.printer.*
 import com.shoprunner.baleen.script.*
 import com.shoprunner.baleen.types.*
+import java.io.File
 
 val description = "Person".describeAs {
     "id".type(IntegerType(), required = true)
@@ -24,10 +26,11 @@ val description = "Person".describeAs {
     }
 }
 
-validate(
-    description = description,
-    data = json("./example.json"),
-    outputDir = "summary",
-    groupBy = groupByTag("file"),
-    outputs = arrayOf(Output.console, Output.html),
-)
+File("summary/example-json.html").writer().use {
+    validate(
+        description = description,
+        data = json("./example.json"),
+        groupBy = groupByTag("file"),
+        printers = arrayOf(ConsolePrinter, HtmlPrinter(it)),
+    )
+}
