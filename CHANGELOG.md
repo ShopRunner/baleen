@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.14.0] - 2021-06-04
+
+New Features 
+- [Baleen-Poet](./baleen-poet/README.md) - Code generation from Baleen to Kotlin code.
+- [baleen-jdbc](./baleen-db/baleen-jdbc/README.md) - Baleen validator for JDBC queries
+- [Baleen Script](./baleen-script/README.md) - Run Baleen from Kotlin Scripts
+- Generate ValidationSummary of all ValidationResults
+- JUnit-style assertions and tests within Baleen Data Descriptions
+- Anonymous Nested DataDescriptions
+- Print ValidationResult to various formats: Console, Log, HTML, CSV, Text
+
+Bug Fixes
+- baleen-jsonschema-generator module needs dependencies exposed as api
+
+Other improvements
+- Switch Gradle scripts from Groovy to Kotlin
+- Update to Gradle 7
+- Update documentation for  XML
+- Use Github native dependabot
+
 ## [1.13.0] - 2020-12-29
 - Switch build to java 11 (LTS)
 
