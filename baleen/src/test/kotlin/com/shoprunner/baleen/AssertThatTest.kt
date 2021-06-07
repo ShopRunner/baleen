@@ -780,6 +780,7 @@ internal class AssertThatTest {
         with(Assertions(dataTrace())) {
             assertThat(data).hasAttribute("valueStr") { it.isA<String>() }
             assertThat(data).hasAttribute("valueStr") { it.isA<Int>() }
+            assertThat(data).hasAttribute("valueStr") { it.isNullOr { x -> x.isA<Double>() } }
             assertThat(data).hasAttribute("valueNull") { it.isA<String>() }
             assertThat(data).hasAttribute("valueNull") { it.isA<String?>() }
 
@@ -788,6 +789,7 @@ internal class AssertThatTest {
             junitAssertThat(results).contains(
                 ValidationInfo(dataTrace().tag("assertion" to "data[valueStr] is a kotlin.String"), "Pass: data[valueStr] is a kotlin.String", "Hello World"),
                 ValidationError(dataTrace().tag("assertion" to "data[valueStr] is a kotlin.Int"), "Fail: data[valueStr] is a kotlin.Int", "Hello World"),
+                ValidationError(dataTrace().tag("assertion" to "data[valueStr] is a kotlin.Double"), "Fail: data[valueStr] is a kotlin.Double", "Hello World"),
                 ValidationError(dataTrace().tag("assertion" to "data[valueNull] is a kotlin.String"), "Fail: data[valueNull] is a kotlin.String", null),
                 ValidationInfo(dataTrace().tag("assertion" to "data[valueNull] is a kotlin.String"), "Pass: data[valueNull] is a kotlin.String", null),
             )
