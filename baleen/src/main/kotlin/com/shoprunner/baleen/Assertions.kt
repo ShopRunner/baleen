@@ -536,7 +536,7 @@ class Assertions(val dataTrace: DataTrace) {
         return assertTrue(message, value is T, "$value is a ${value?.let { it::class.qualifiedName } ?: "${T::class.qualifiedName}?"}")
     }
 
-    inline fun <reified T : Any?> AssertThat<Any?>.isA(message: String = "is a ${T::class.qualifiedName}"): AssertThat<T> {
+    inline fun <reified T : Any?> AssertThat<*>.isA(message: String = "is a ${T::class.qualifiedName}"): AssertThat<T> {
         return when (this) {
             is AssertThatValue ->
                 if (this.typedActual is T) {
