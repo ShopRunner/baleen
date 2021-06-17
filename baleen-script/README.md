@@ -28,7 +28,7 @@ First create a file with a suffix `main.kts` and place these boilerplate lines a
 ```kotlin
 #!/usr/bin/env kotlin
 
-@file:DependsOn("com.shoprunner:baleen-script:1.14.0")
+@file:DependsOn("com.shoprunner:baleen-script:1.14.1")
 
 import com.shoprunner.baleen.*
 import com.shoprunner.baleen.Baleen.describeAs

@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.14.1] - 2021-06-17
+
+Bug Fixes
+- AssertThat<Any?>.isA should compile on non-null receivers
+
+Other improvements
+- Switch back to targeting jvm 1.8
+
 ## [1.14.0] - 2021-06-04
 
 New Features 
