@@ -2,7 +2,7 @@
 
 // Uncomment to use mavenLocal. Run `./gradlew publishToMavenLocal -Pskip.signing=true`
 //@file:Repository("file:///Users/username/.m2/repository/")
-@file:DependsOn("com.shoprunner:baleen-script:1.14.0")
+@file:DependsOn("com.shoprunner:baleen-script:1.14.1")
 @file:DependsOn("net.snowflake:snowflake-jdbc:3.13.1")
 
 import com.shoprunner.baleen.*
