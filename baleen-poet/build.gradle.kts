@@ -5,7 +5,7 @@ plugins {
 
 dependencies {
     api(project(":baleen"))
-    api("com.squareup:kotlinpoet:1.7.2")
+    api("com.squareup:kotlinpoet:1.10.1")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     testImplementation("org.jetbrains.kotlin:kotlin-compiler")
 }
