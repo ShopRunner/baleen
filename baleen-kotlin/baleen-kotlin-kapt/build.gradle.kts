@@ -9,9 +9,9 @@ dependencies {
     implementation("com.squareup:kotlinpoet:1.7.2")
     implementation("com.squareup:kotlinpoet-metadata:1.7.2")
     implementation("com.squareup:kotlinpoet-metadata-specs:1.7.2")
-    implementation("com.google.auto.service:auto-service:1.0-rc7")
+    implementation("com.google.auto.service:auto-service:1.0")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
-    kapt("com.google.auto.service:auto-service:1.0-rc6")
+    kapt("com.google.auto.service:auto-service:1.0")
 
     kaptTest(project(":baleen-kotlin:baleen-kotlin-kapt"))
 }
