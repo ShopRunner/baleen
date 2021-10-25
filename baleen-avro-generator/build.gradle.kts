@@ -7,7 +7,7 @@ dependencies {
     api(project(":baleen"))
     api("org.apache.avro:avro:1.10.2")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("com.squareup:kotlinpoet:1.10.1")
+    implementation("com.squareup:kotlinpoet:1.10.2")
     testImplementation("org.jetbrains.kotlin:kotlin-compiler")
 }
 
