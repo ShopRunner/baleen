@@ -166,7 +166,7 @@ object JsonSchemaGenerator : BaseGenerator<JsonSchema, JsonSchemaOptions> {
     }
 
     fun encodeAsSelfDescribing(dataDescription: DataDescription, version: String, namespace: String = dataDescription.nameSpace, options: JsonSchemaOptions = JsonSchemaOptions(), typeMapper: JsonSchemaTypeMapper = ::defaultTypeMapper): RootJsonSchema {
-        val selfDescribingSchema = "http://iglucentral.com/schemas/com.snowplowananalytics.self-desc/schema/jsonschema/1-0-0"
+        val selfDescribingSchema = "http://iglucentral.com/schemas/com.snowplowanalytics.self-desc/schema/jsonschema/1-0-0"
 
         val rootSchema = encode(dataDescription, options, typeMapper)
 
