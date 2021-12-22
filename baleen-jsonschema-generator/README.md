@@ -107,7 +107,7 @@ Will output to file `outDir/com/shoprunner/data/dogs/Dog.schema.json` with the f
     }
   },
   "$ref" : "#/definitions/record:com.shoprunner.data.dogs.Dog",
-  "$schema" : "http://iglucentral.com/schemas/com.snowplowananalytics.self-desc/schema/jsonschema/1-0-0",
+  "$schema" : "http://iglucentral.com/schemas/com.snowplowanalytics.self-desc/schema/jsonschema/1-0-0",
   "self" : {
     "vendor" : "com.shoprunner.data.dogs",
     "name" : "Dog",
