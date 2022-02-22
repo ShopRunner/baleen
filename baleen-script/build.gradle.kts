@@ -16,7 +16,7 @@ dependencies {
     api(project(":baleen-printer:baleen-printer-java-logger"))
     api(project(":baleen-printer:baleen-printer-text"))
     // for baleen-csv
-    implementation("com.opencsv:opencsv:5.5.2")
+    implementation("com.opencsv:opencsv:5.6")
 
     testImplementation("org.mock-server:mockserver-netty:5.11.2")
     testImplementation("org.mock-server:mockserver-junit-jupiter:5.11.2")
