@@ -7,7 +7,7 @@ plugins {
 dependencies {
     api(project(":jsonschema-model"))
     implementation(project(":baleen"))
-    implementation("com.squareup:kotlinpoet:1.10.1")
+    implementation("com.squareup:kotlinpoet:1.11.0")
     testImplementation("org.jetbrains.kotlin:kotlin-compiler")
 }
 
