@@ -5,5 +5,5 @@ plugins {
 
 dependencies {
     api(project(":baleen"))
-    testRuntimeOnly("com.h2database:h2:1.4.200")
+    testRuntimeOnly("com.h2database:h2:2.1.214")
 }
